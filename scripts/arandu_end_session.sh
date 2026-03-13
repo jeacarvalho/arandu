@@ -52,4 +52,19 @@ fi
 
 # Calcular duração
 END_TIME=$(date +%s)
-DUR
+if [ -n "$START_TIME" ]; then
+  DURATION=$((END_TIME - START_TIME))
+  HOURS=$((DURATION / 3600))
+  MINUTES=$(( (DURATION % 3600) / 60 ))
+  SECONDS=$((DURATION % 60))
+  
+  echo
+  echo "⏱️  Duração da sessão: ${HOURS}h ${MINUTES}m ${SECONDS}s"
+fi
+
+# Limpar diretório da sessão
+rm -rf "$SESSION_DIR"
+
+echo
+echo "✅ Sessão encerrada com sucesso!"
+echo "📁 Arquivos da sessão movidos para: $ARCHIVE_DIR"

@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** sex 13 mar 2026 19:28:58 -03
+**Gerado em:** sex 13 mar 2026 20:34:15 -03
 
 ## 🌳 Estrutura de Visões
 
@@ -17,6 +17,7 @@
 
 ## ⚙️ Capabilities
 
+- cap-01-00-gestao-pacientes.md
 - cap-01-01-registro-sessoes.md
 - cap-01-02-observacoes-clinicas.md
 - cap-01-03-intervencoes-terapeuticas.md
@@ -58,18 +59,24 @@
 
 ## 🛠️ Tarefas recentes
 
+- task_20260313_193204
+- task_20260313_192951
+- task_20260313_192946
 - task_20260313_192852
 - task_20260313_185952
 
 ## 📚 Aprendizados recentes
 
+- task_20260313_193204.md
+- req-01-01-01.md
+- task_20260313_192946.md
 - Teste.md
 - README.md
 
 ## 📊 Status do Sistema
 
 - Visions: 10
-- Capabilities: 15
+- Capabilities: 16
 - Requirements: 18
-- Learnings: 2
+- Learnings: 5
 
