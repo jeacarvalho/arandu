@@ -1,0 +1,49 @@
+# Binários
+arandu
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Testes
+*.test
+*.out
+
+# Dependências
+vendor/
+node_modules/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Banco de dados SQLite
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Diretórios de sistema
+.DS_Store
+Thumbs.db
+
+# Diretórios de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Arquivos de build do Go
+go-build*/
+go-test*/

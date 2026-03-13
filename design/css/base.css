@@ -1,0 +1,50 @@
+body {
+font-family: Inter, system-ui, sans-serif;
+background: #F7F8FA;
+color: #1F2937;
+margin: 0;
+padding: 0;
+}
+
+.card {
+background: white;
+border: 1px solid #E5E7EB;
+border-radius: 10px;
+padding: 16px;
+}
+
+.button-primary {
+background: #1E3A5F;
+color: white;
+border-radius: 8px;
+padding: 8px 14px;
+}
+
+.button-secondary {
+background: transparent;
+border: 1px solid #D1D5DB;
+border-radius: 8px;
+padding: 8px 14px;
+}
+
+.block-observation {
+border-left: 4px solid #3A7D6B;
+padding-left: 12px;
+}
+
+.block-hypothesis {
+border-left: 4px solid #1E3A5F;
+padding-left: 12px;
+}
+
+.block-intervention {
+border-left: 4px solid #6B7280;
+padding-left: 12px;
+}
+
+.block-insight {
+border-left: 4px solid #D4A84F;
+background: #FFFBEB;
+padding-left: 12px;
+}
+
