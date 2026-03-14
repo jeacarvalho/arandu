@@ -53,6 +53,7 @@ func (h *Handler) loadTemplates() {
 		"web/templates/patient_detail.html",
 		"web/templates/session.html",
 		"web/templates/new_patient.html",
+		"web/templates/session_new.html",
 	}
 
 	for _, file := range templateFiles {
@@ -285,7 +286,7 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessions, err := h.sessionService.ListSessionsByPatient(id)
+	sessions, err := h.sessionService.ListSessionsByPatient(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -329,7 +330,7 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.sessionService.GetSession(id)
+	session, err := h.sessionService.GetSession(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -380,6 +381,84 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.renderTemplate(w, "session", data)
+}
+
+func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	path := strings.TrimPrefix(r.URL.Path, "/patient/")
+	parts := strings.Split(path, "/")
+	if len(parts) < 2 || parts[1] != "sessions" || parts[2] != "new" {
+		http.NotFound(w, r)
+		return
+	}
+
+	patientID := parts[0]
+	if patientID == "" {
+		http.Error(w, "patient ID is required", http.StatusBadRequest)
+		return
+	}
+
+	patient, err := h.patientService.GetPatientByID(r.Context(), patientID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if patient == nil {
+		http.Error(w, "Patient not found", http.StatusNotFound)
+		return
+	}
+
+	data := struct {
+		Patient interface{}
+	}{
+		Patient: patient,
+	}
+
+	h.renderTemplate(w, "session_new.html", data)
+}
+
+func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form data", http.StatusBadRequest)
+		return
+	}
+
+	patientID := r.FormValue("patient_id")
+	if patientID == "" {
+		http.Error(w, "patient_id is required", http.StatusBadRequest)
+		return
+	}
+
+	dateStr := r.FormValue("date")
+	if dateStr == "" {
+		http.Error(w, "date is required", http.StatusBadRequest)
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		http.Error(w, "invalid date format", http.StatusBadRequest)
+		return
+	}
+
+	summary := r.FormValue("summary")
+
+	session, err := h.sessionService.CreateSession(r.Context(), patientID, date, summary)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/patient/"+session.PatientID, http.StatusSeeOther)
 }
 
 // Helper functions para o dashboard

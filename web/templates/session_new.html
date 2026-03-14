@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova sessão - Arandu</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nova sessão</h1>
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/patients">Pacientes</a>
+            </nav>
+        </header>
+
+        <main>
+            <form 
+                method="POST"
+                action="/sessions"
+                hx-post="/sessions"
+                hx-swap="none"
+            >
+                <input type="hidden" name="patient_id" value="{{ .PatientID }}">
+
+                <div class="form-group">
+                    <label for="date">Data da sessão</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="summary">Resumo da sessão</label>
+                    <textarea id="summary" name="summary" rows="6" placeholder="Registre os pontos principais da sessão..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Salvar sessão</button>
+                    <a href="/patient/{{ .PatientID }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

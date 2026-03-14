@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"time"
 
 	"arandu/internal/domain/session"
@@ -14,45 +15,18 @@ func NewSessionService(repo session.Repository) *SessionService {
 	return &SessionService{repo: repo}
 }
 
-func (s *SessionService) CreateSession(patientID string, date time.Time, notes string) (*session.Session, error) {
-	sess := &session.Session{
-		PatientID: patientID,
-		Date:      date,
-		Notes:     notes,
-	}
-	if err := s.repo.Save(sess); err != nil {
+func (s *SessionService) CreateSession(ctx context.Context, patientID string, date time.Time, summary string) (*session.Session, error) {
+	sess := session.NewSession(patientID, date, summary)
+	if err := s.repo.Create(ctx, sess); err != nil {
 		return nil, err
 	}
 	return sess, nil
 }
 
-func (s *SessionService) GetSession(id string) (*session.Session, error) {
-	return s.repo.FindByID(id)
+func (s *SessionService) GetSession(ctx context.Context, id string) (*session.Session, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
-func (s *SessionService) ListSessions() ([]*session.Session, error) {
-	return s.repo.FindAll()
-}
-
-func (s *SessionService) ListSessionsByPatient(patientID string) ([]*session.Session, error) {
-	return s.repo.FindByPatientID(patientID)
-}
-
-func (s *SessionService) UpdateSession(id, patientID string, date time.Time, notes string) error {
-	sess, err := s.repo.FindByID(id)
-	if err != nil {
-		return err
-	}
-	if sess == nil {
-		return nil
-	}
-
-	sess.PatientID = patientID
-	sess.Date = date
-	sess.Notes = notes
-	return s.repo.Update(sess)
-}
-
-func (s *SessionService) DeleteSession(id string) error {
-	return s.repo.Delete(id)
+func (s *SessionService) ListSessionsByPatient(ctx context.Context, patientID string) ([]*session.Session, error) {
+	return s.repo.ListByPatient(ctx, patientID)
 }

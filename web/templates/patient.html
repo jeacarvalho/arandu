@@ -31,7 +31,7 @@
                                 <h1 class="text-4xl font-serif font-semibold mb-2">{{.Patient.Name}}</h1>
                                 <p class="text-sm text-gray-400 uppercase tracking-widest">Início do acompanhamento: {{.Patient.CreatedAt.Format "Jan 2006"}}</p>
                             </div>
-                            <button class="text-sm font-semibold text-[#3A7D6B] hover:underline">Nova Sessão</button>
+                            <a href="/patient/{{.Patient.ID}}/sessions/new" class="text-sm font-semibold text-[#3A7D6B] hover:underline">Nova Sessão</a>
                         </div>
                     </header>
 
@@ -50,7 +50,7 @@
                                 <div class="absolute -left-[5px] top-4 w-2 h-2 rounded-full bg-gray-200 group-hover:bg-[#1E3A5F]"></div>
                                 <a href="/session/{{.ID}}" class="block">
                                     <span class="text-sm text-gray-400 font-sans uppercase tracking-tight">{{.Date.Format "02/01/2006"}}</span>
-                                    <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Notes}}{{.Notes}}{{else}}Registro de encontro terapêutico.{{end}}</p>
+                                    <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
                                 </a>
                             </div>
                             {{else}}
