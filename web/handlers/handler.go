@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"html/template"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -41,18 +44,27 @@ func NewHandler(
 func (h *Handler) loadTemplates() {
 	tmpl := template.New("")
 
+	// Parse all templates with explicit names to avoid caching issues
 	templateFiles := []string{
 		"web/templates/layout.html",
 		"web/templates/dashboard.html",
 		"web/templates/patients.html",
 		"web/templates/patient.html",
+		"web/templates/patient_detail.html",
 		"web/templates/session.html",
 		"web/templates/new_patient.html",
 	}
 
 	for _, file := range templateFiles {
-		if _, err := tmpl.ParseFiles(file); err != nil {
-			panic(err)
+		content, err := os.ReadFile(file)
+		if err != nil {
+			log.Printf("Error reading template %s: %v", file, err)
+			continue
+		}
+
+		_, err = tmpl.New(filepath.Base(file)).Parse(string(content))
+		if err != nil {
+			log.Printf("Error parsing template %s: %v", file, err)
 		}
 	}
 
@@ -76,36 +88,59 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	// Futuramente integrar com serviços reais
 	dashboardData := MockDashboardData()
 
-	// Converter para a estrutura esperada pelo template
-	// (mantendo compatibilidade com o template existente por enquanto)
-	data := struct {
-		DashboardData DashboardData
-		Patients      []interface{}
-		Sessions      []interface{}
-		Insights      []interface{}
-	}{
-		DashboardData: dashboardData,
-		Patients:      make([]interface{}, len(dashboardData.ActivePatients)),
-		Sessions:      make([]interface{}, len(dashboardData.RecentSessions)),
-		Insights:      make([]interface{}, len(dashboardData.AIInsights)),
+	// Estrutura de dados para o novo dashboard
+	type DashboardStats struct {
+		TotalPatients      int
+		NewThisWeek        int
+		ActiveThisMonth    int
+		TotalSessions      int
+		SessionsThisWeek   int
+		SessionsToday      int
+		TotalInsights      int
+		NewInsights        int
+		HighConfidence     int
+		AvgSessionDuration int
 	}
 
-	// Converter ActivePatients para interface{} (para compatibilidade)
+	data := struct {
+		Stats    DashboardStats
+		Patients []interface{}
+		Sessions []interface{}
+		Insights []interface{}
+	}{
+		Stats: DashboardStats{
+			TotalPatients:      len(dashboardData.ActivePatients),
+			NewThisWeek:        2, // Placeholder - em produção viria do banco
+			ActiveThisMonth:    len(dashboardData.ActivePatients),
+			TotalSessions:      dashboardData.TotalSessions,
+			SessionsThisWeek:   8, // Placeholder
+			SessionsToday:      1, // Placeholder
+			TotalInsights:      len(dashboardData.AIInsights),
+			NewInsights:        3,  // Placeholder
+			HighConfidence:     2,  // Placeholder
+			AvgSessionDuration: 50, // Placeholder
+		},
+		Patients: make([]interface{}, len(dashboardData.ActivePatients)),
+		Sessions: make([]interface{}, len(dashboardData.RecentSessions)),
+		Insights: make([]interface{}, len(dashboardData.AIInsights)),
+	}
+
+	// Converter ActivePatients
 	for i, p := range dashboardData.ActivePatients {
 		data.Patients[i] = struct {
-			ID           string
-			Name         string
-			LastSession  string
-			SessionCount int
+			ID        string
+			Name      string
+			CreatedAt time.Time
+			Notes     string
 		}{
-			ID:           p.ID,
-			Name:         p.Name,
-			LastSession:  formatRelativeTime(p.LastSession),
-			SessionCount: p.SessionCount,
+			ID:        p.ID,
+			Name:      p.Name,
+			CreatedAt: p.CreatedAt,
+			Notes:     p.Notes,
 		}
 	}
 
-	// Converter RecentSessions para interface{} (para compatibilidade)
+	// Converter RecentSessions
 	for i, s := range dashboardData.RecentSessions {
 		data.Sessions[i] = struct {
 			ID            string
@@ -122,7 +157,7 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Converter AIInsights para interface{} (para compatibilidade)
+	// Converter AIInsights
 	for i, ins := range dashboardData.AIInsights {
 		data.Insights[i] = struct {
 			ID         string
@@ -135,11 +170,11 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 			Title:      ins.Title,
 			Content:    ins.Content,
 			Confidence: formatConfidence(ins.Confidence),
-			CreatedAt:  formatRelativeTime(ins.CreatedAt),
+			CreatedAt:  ins.CreatedAt.Format("02/01/2006"),
 		}
 	}
 
-	h.renderTemplate(w, "dashboard.html", data)
+	h.renderTemplate(w, "dashboard", data)
 }
 
 func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
@@ -279,7 +314,7 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		data.Insights[i] = ins
 	}
 
-	h.renderTemplate(w, "patient", data)
+	h.renderTemplate(w, "patient-detail", data)
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {

@@ -10,6 +10,7 @@ type DashboardData struct {
 	RecentSessions   []RecentSession
 	AIInsights       []AIInsight
 	EmergingPatterns []EmergingPattern
+	TotalSessions    int
 }
 
 // ActivePatient representa um paciente ativo para o dashboard
@@ -18,6 +19,8 @@ type ActivePatient struct {
 	Name         string
 	LastSession  time.Time
 	SessionCount int
+	CreatedAt    time.Time
+	Notes        string
 }
 
 // RecentSession representa uma sessão recente para o dashboard
@@ -53,24 +56,31 @@ func MockDashboardData() DashboardData {
 	now := time.Now()
 
 	return DashboardData{
+		TotalSessions: 25,
 		ActivePatients: []ActivePatient{
 			{
 				ID:           "1",
-				Name:         "Maria S.",
+				Name:         "Maria Silva",
 				LastSession:  now.Add(-24 * time.Hour), // ontem
 				SessionCount: 12,
+				CreatedAt:    now.Add(-30 * 24 * time.Hour), // 30 dias atrás
+				Notes:        "Ansiedade generalizada, foco em desempenho profissional",
 			},
 			{
 				ID:           "2",
-				Name:         "João P.",
+				Name:         "João Pereira",
 				LastSession:  now.Add(-48 * time.Hour), // 2 dias atrás
 				SessionCount: 8,
+				CreatedAt:    now.Add(-45 * 24 * time.Hour), // 45 dias atrás
+				Notes:        "Dificuldades com limites pessoais e assertividade",
 			},
 			{
 				ID:           "3",
-				Name:         "Ana R.",
+				Name:         "Ana Rodrigues",
 				LastSession:  now.Add(-72 * time.Hour), // 3 dias atrás
 				SessionCount: 5,
+				CreatedAt:    now.Add(-20 * 24 * time.Hour), // 20 dias atrás
+				Notes:        "Processamento de luto recente, apoio no ajuste emocional",
 			},
 		},
 		RecentSessions: []RecentSession{
