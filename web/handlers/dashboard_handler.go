@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 )
 
 // DashboardHandler lida com requisições do dashboard clínico
@@ -54,10 +55,10 @@ func (h *DashboardHandler) renderDashboard(w http.ResponseWriter, data Dashboard
 	// Por enquanto, apenas retornamos um placeholder
 	// O template real será implementado separadamente
 	html := `<html><body><h1>Dashboard Clínico (Em desenvolvimento)</h1>
-	<p>Active Patients: ` + string(len(data.ActivePatients)) + `</p>
-	<p>Recent Sessions: ` + string(len(data.RecentSessions)) + `</p>
-	<p>AI Insights: ` + string(len(data.AIInsights)) + `</p>
-	<p>Emerging Patterns: ` + string(len(data.EmergingPatterns)) + `</p>
+	<p>Active Patients: ` + strconv.Itoa(len(data.ActivePatients)) + `</p>
+	<p>Recent Sessions: ` + strconv.Itoa(len(data.RecentSessions)) + `</p>
+	<p>AI Insights: ` + strconv.Itoa(len(data.AIInsights)) + `</p>
+	<p>Emerging Patterns: ` + strconv.Itoa(len(data.EmergingPatterns)) + `</p>
 	</body></html>`
 
 	w.Write([]byte(html))

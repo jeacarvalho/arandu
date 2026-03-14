@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"arandu/internal/infrastructure/repository/sqlite/migrations"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -32,4 +33,24 @@ func NewDB(dbPath string) (*DB, error) {
 
 func (db *DB) Close() error {
 	return db.DB.Close()
+}
+
+// Migrate applies all pending database migrations
+func (db *DB) Migrate(migrationsDir string) error {
+	manager, err := migrations.NewMigrationManagerFromDir(db.DB, migrationsDir)
+	if err != nil {
+		return fmt.Errorf("failed to create migration manager: %w", err)
+	}
+
+	return manager.Migrate()
+}
+
+// MigrationStatus returns the current migration status
+func (db *DB) MigrationStatus(migrationsDir string) (map[string]string, error) {
+	manager, err := migrations.NewMigrationManagerFromDir(db.DB, migrationsDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create migration manager: %w", err)
+	}
+
+	return manager.Status()
 }

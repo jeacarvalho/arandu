@@ -1,0 +1,122 @@
+{{define "new-patient"}}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arandu — Novo Paciente</title>
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <script src="/static/js/patients.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 p-4">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-primary">Arandu</h1>
+                <p class="text-sm text-gray-600">Sistema de Inteligência Clínica</p>
+            </div>
+            
+            <nav>
+                <a href="/dashboard" class="block py-2 px-3 rounded hover:bg-gray-100 mb-1">Dashboard</a>
+                <a href="/patients" class="block py-2 px-3 rounded hover:bg-gray-100 mb-1">Pacientes</a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 p-6">
+            <div class="max-w-2xl mx-auto">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Novo Paciente</h1>
+                    <p class="text-gray-600">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <form id="new-patient-form" action="/patients" method="POST" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                                Nome do paciente *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Digite o nome completo do paciente"
+                                maxlength="255"
+                            >
+                            <p class="mt-1 text-sm text-gray-500">
+                                Nome completo do paciente. Este campo é obrigatório.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
+                                Observações iniciais
+                            </label>
+                            <textarea 
+                                id="notes" 
+                                name="notes" 
+                                rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, etc.)"
+                                maxlength="5000"
+                            ></textarea>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Informações relevantes para o acompanhamento clínico. Este campo é opcional.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                            <a href="/patients" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                Cancelar
+                            </a>
+                            <button 
+                                type="submit" 
+                                class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            >
+                                Salvar paciente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="text-sm font-medium text-blue-800 mb-2">Informações importantes</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• O paciente é a entidade raiz do sistema Arandu</li>
+                        <li>• Após criar o paciente, você poderá registrar sessões clínicas</li>
+                        <li>• Todos os registros clínicos dependem da existência de um paciente</li>
+                        <li>• O sistema gerará automaticamente um identificador único para o paciente</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right panel (Insights) -->
+        <aside class="w-80 bg-white border-l border-gray-200 p-4">
+            <h2 class="text-lg font-semibold mb-4">Insights</h2>
+            <div id="insights-panel">
+                {{if .Insights}}
+                {{range .Insights}}
+                <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-sm">{{.Content}}</p>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-xs text-gray-500">{{.Source}}</span>
+                        <span class="text-xs text-gray-500">{{.CreatedAt.Format "02/01/2006"}}</span>
+                    </div>
+                </div>
+                {{end}}
+                {{else}}
+                <p class="text-gray-500 text-sm">Nenhum insight disponível.</p>
+                {{end}}
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
+{{end}}

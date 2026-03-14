@@ -9,6 +9,7 @@
     <link href="/static/css/style.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <script src="/static/js/patients.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div class="min-h-screen flex">
@@ -27,28 +28,49 @@
 
         <!-- Main content -->
         <main class="flex-1 p-6">
-<div class="mb-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold mb-2">Pacientes</h1>
-            <p class="text-gray-600">Gerencie seus pacientes</p>
-        </div>
-        <button class="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark">
-            Novo Paciente
-        </button>
-    </div>
-</div>
+            <div class="mb-8">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Pacientes</h1>
+                        <p class="text-gray-600">Gerencie seus pacientes</p>
+                    </div>
+                    <a href="/patients/new" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark">
+                        Novo Paciente
+                    </a>
+                </div>
+            </div>
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    {{if .Patients}}
-    <div class="divide-y divide-gray-200">
-        {{range .Patients}}
-        <a href="/patient/{{.ID}}" class="block p-6 hover:bg-gray-50">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg font-medium">{{.Name}}</h3>
-                    {{if .Notes}}
-                    <p class="text-gray-600 mt-1">{{.Notes}}</p>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                {{if .Patients}}
+                <div class="divide-y divide-gray-200">
+                    {{range .Patients}}
+                    <a href="/patient/{{.ID}}" class="block p-6 hover:bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-medium">{{.Name}}</h3>
+                                {{if .Notes}}
+                                <p class="text-gray-600 mt-1">{{.Notes}}</p>
+                                {{end}}
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm text-gray-500">Criado em {{.CreatedAt.Format "02/01/2006"}}</span>
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Ativo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {{end}}
+                </div>
+                {{else}}
+                <div class="p-12 text-center">
+                    <p class="text-gray-500 text-lg">Nenhum paciente cadastrado.</p>
+                    <p class="text-gray-400 mt-2">Comece adicionando seu primeiro paciente.</p>
+                </div>
+                {{end}}
+            </div>
         </main>
 
         <!-- Right panel (Insights) -->
@@ -73,25 +95,4 @@
     </div>
 </body>
 </html>
-{{end}}
-                </div>
-                <div class="text-right">
-                    <span class="text-sm text-gray-500">Criado em {{.CreatedAt.Format "02/01/2006"}}</span>
-                    <div class="mt-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            Ativo
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </a>
-        {{end}}
-    </div>
-    {{else}}
-    <div class="p-12 text-center">
-        <p class="text-gray-500 text-lg">Nenhum paciente cadastrado.</p>
-        <p class="text-gray-400 mt-2">Comece adicionando seu primeiro paciente.</p>
-    </div>
-    {{end}}
-</div>
 {{end}}

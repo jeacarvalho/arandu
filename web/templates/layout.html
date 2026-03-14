@@ -4,49 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arandu — Sistema de Inteligência Clínica</title>
+    <title>Arandu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
     <link href="/static/css/tailwind.css" rel="stylesheet">
-    <link href="/static/css/style.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900">
-    <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 p-4">
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-primary">Arandu</h1>
-                <p class="text-sm text-gray-600">Sistema de Inteligência Clínica</p>
+<body class="bg-arandu-background text-arandu-text font-sans antialiased">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
+            <div class="p-6">
+                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
             </div>
             
-            <nav>
-                <a href="/dashboard" class="block py-2 px-3 rounded hover:bg-gray-100 mb-1">Dashboard</a>
-                <a href="/patients" class="block py-2 px-3 rounded hover:bg-gray-100 mb-1">Pacientes</a>
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
+                    <span class="hidden lg:inline">Dashboard</span>
+                </a>
+                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
+                    <span class="hidden lg:inline">Pacientes</span>
+                </a>
             </nav>
         </aside>
 
-        <!-- Main content -->
-        <main class="flex-1 p-6">
-            {{template "content" .}}
-        </main>
-
-        <!-- Right panel (Insights) -->
-        <aside class="w-80 bg-white border-l border-gray-200 p-4">
-            <h2 class="text-lg font-semibold mb-4">Insights</h2>
-            <div id="insights-panel">
-                {{range .Insights}}
-                <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                    <p class="text-sm">{{.Content}}</p>
-                    <div class="flex justify-between items-center mt-2">
-                        <span class="text-xs text-gray-500">{{.Source}}</span>
-                        <span class="text-xs text-gray-500">{{.CreatedAt.Format "02/01/2006"}}</span>
-                    </div>
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
+                <div class="max-w-4xl mx-auto">
+                    {{template "content" .}}
                 </div>
-                {{else}}
-                <p class="text-gray-500 text-sm">Nenhum insight disponível.</p>
-                {{end}}
-            </div>
-        </aside>
+            </section>
+
+            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
+                <header class="mb-6 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
+                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
+                </header>
+                
+                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
+                    {{range .Insights}}
+                    <div class="relative pl-4 border-l border-arandu-insight/30">
+                        <p class="text-sm leading-relaxed">{{.Content}}</p>
+                        <footer class="mt-2 text-[10px] font-sans not-italic uppercase tracking-tighter text-gray-400">
+                            {{.Source}} • {{.CreatedAt.Format "02 Jan"}}
+                        </footer>
+                    </div>
+                    {{else}}
+                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
+                    {{end}}
+                </div>
+            </aside>
+
+        </main>
     </div>
 </body>
 </html>

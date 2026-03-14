@@ -23,12 +23,41 @@ echo "📋 Tarefa: ${TASK_ID}"
 echo "📁 Diretório: ${TASK_DIR}"
 echo ""
 
-# Mostrar conteúdo da tarefa
-if [ -f "$TASK_DIR/task.md" ]; then
-  cat "$TASK_DIR/task.md"
-else
-  echo "⚠️  Arquivo task.md não encontrado na tarefa"
+# Verificar se o arquivo task.md existe
+if [ ! -f "$TASK_DIR/task.md" ]; then
+  echo "❌ Arquivo task.md não encontrado na tarefa"
+  echo "   Crie o arquivo $TASK_DIR/task.md com os detalhes da implementação primeiro."
+  exit 1
 fi
+
+# Verificar se o task.md tem conteúdo além do template básico
+TASK_CONTENT=$(cat "$TASK_DIR/task.md")
+BASIC_TEMPLATE_LINES=$(cat "$TASK_DIR/task.md" | wc -l)
+
+# Se o arquivo tem apenas o template básico (13 linhas ou menos), pedir para preencher
+if [ "$BASIC_TEMPLATE_LINES" -le 13 ]; then
+  echo "⚠️  Arquivo task.md contém apenas o template básico."
+  echo ""
+  echo "📝 Por favor, preencha o arquivo $TASK_DIR/task.md com:"
+  echo "   1. Detalhes específicos da implementação"
+  echo "   2. Passos a serem seguidos"
+  echo "   3. Requisitos técnicos"
+  echo "   4. Restrições de design"
+  echo ""
+  echo "📋 Conteúdo atual do task.md:"
+  echo "---"
+  cat "$TASK_DIR/task.md"
+  echo "---"
+  echo ""
+  echo "❌ Não é possível processar a tarefa até que task.md seja preenchido."
+  exit 1
+fi
+
+# Mostrar conteúdo da tarefa
+echo "✅ Tarefa pronta para processamento:"
+echo "---"
+cat "$TASK_DIR/task.md"
+echo "---"
 
 echo ""
 echo "⚠️  Antes de implementar, leia o requirement correspondente"

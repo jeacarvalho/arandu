@@ -47,6 +47,7 @@ func (h *Handler) loadTemplates() {
 		"web/templates/patients.html",
 		"web/templates/patient.html",
 		"web/templates/session.html",
+		"web/templates/new_patient.html",
 	}
 
 	for _, file := range templateFiles {
@@ -142,12 +143,17 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method == http.MethodGet {
+		h.handleGetPatients(w, r)
+	} else if r.Method == http.MethodPost {
+		h.handleCreatePatient(w, r)
+	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
 	}
+}
 
-	patients, err := h.patientService.ListPatients()
+func (h *Handler) handleGetPatients(w http.ResponseWriter, r *http.Request) {
+	patients, err := h.patientService.ListPatients(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -174,7 +180,52 @@ func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
 		data.Insights[i] = ins
 	}
 
-	h.renderTemplate(w, "patients.html", data)
+	h.renderTemplate(w, "patients", data)
+}
+
+func (h *Handler) handleCreatePatient(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+		return
+	}
+
+	input := services.CreatePatientInput{
+		Name:  r.FormValue("name"),
+		Notes: r.FormValue("notes"),
+	}
+
+	patient, err := h.patientService.CreatePatient(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/patient/"+patient.ID, http.StatusSeeOther)
+}
+
+func (h *Handler) NewPatient(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	insights, err := h.insightService.ListInsights()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Insights []interface{}
+	}{
+		Insights: make([]interface{}, len(insights)),
+	}
+
+	for i, ins := range insights {
+		data.Insights[i] = ins
+	}
+
+	h.renderTemplate(w, "new-patient", data)
 }
 
 func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
@@ -189,7 +240,7 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	patient, err := h.patientService.GetPatient(id)
+	patient, err := h.patientService.GetPatientByID(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -228,7 +279,7 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		data.Insights[i] = ins
 	}
 
-	h.renderTemplate(w, "patient.html", data)
+	h.renderTemplate(w, "patient", data)
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
@@ -293,7 +344,7 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 		data.Insights[i] = ins
 	}
 
-	h.renderTemplate(w, "session.html", data)
+	h.renderTemplate(w, "session", data)
 }
 
 // Helper functions para o dashboard
