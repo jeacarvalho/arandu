@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -44,7 +43,6 @@ func NewHandler(
 func (h *Handler) loadTemplates() {
 	tmpl := template.New("")
 
-	// Parse all templates with explicit names to avoid caching issues
 	templateFiles := []string{
 		"web/templates/layout.html",
 		"web/templates/dashboard.html",
@@ -66,6 +64,7 @@ func (h *Handler) loadTemplates() {
 		_, err = tmpl.New(filepath.Base(file)).Parse(string(content))
 		if err != nil {
 			log.Printf("Error parsing template %s: %v", file, err)
+			continue
 		}
 	}
 
@@ -85,11 +84,42 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Usar dados mock para o dashboard clínico
-	// Futuramente integrar com serviços reais
-	dashboardData := MockDashboardData()
+	ctx := r.Context()
 
-	// Estrutura de dados para o novo dashboard
+	patients, err := h.patientService.ListPatients(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var allSessions []interface{}
+	var totalSessions int
+	for _, patient := range patients {
+		sessions, err := h.sessionService.ListSessionsByPatient(ctx, patient.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalSessions += len(sessions)
+
+		for i, session := range sessions {
+			if i >= 5 {
+				break
+			}
+			allSessions = append(allSessions, struct {
+				ID          string
+				PatientName string
+				Date        string
+				Summary     string
+			}{
+				ID:          session.ID,
+				PatientName: patient.Name,
+				Date:        session.Date.Format("02/01/2006"),
+				Summary:     session.Summary,
+			})
+		}
+	}
+
 	type DashboardStats struct {
 		TotalPatients      int
 		NewThisWeek        int
@@ -110,24 +140,23 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		Insights []interface{}
 	}{
 		Stats: DashboardStats{
-			TotalPatients:      len(dashboardData.ActivePatients),
-			NewThisWeek:        2, // Placeholder - em produção viria do banco
-			ActiveThisMonth:    len(dashboardData.ActivePatients),
-			TotalSessions:      dashboardData.TotalSessions,
-			SessionsThisWeek:   8, // Placeholder
-			SessionsToday:      1, // Placeholder
-			TotalInsights:      len(dashboardData.AIInsights),
-			NewInsights:        3,  // Placeholder
-			HighConfidence:     2,  // Placeholder
-			AvgSessionDuration: 50, // Placeholder
+			TotalPatients:      len(patients),
+			NewThisWeek:        0,
+			ActiveThisMonth:    len(patients),
+			TotalSessions:      totalSessions,
+			SessionsThisWeek:   0,
+			SessionsToday:      0,
+			TotalInsights:      0,
+			NewInsights:        0,
+			HighConfidence:     0,
+			AvgSessionDuration: 0,
 		},
-		Patients: make([]interface{}, len(dashboardData.ActivePatients)),
-		Sessions: make([]interface{}, len(dashboardData.RecentSessions)),
-		Insights: make([]interface{}, len(dashboardData.AIInsights)),
+		Patients: make([]interface{}, len(patients)),
+		Sessions: allSessions,
+		Insights: []interface{}{},
 	}
 
-	// Converter ActivePatients
-	for i, p := range dashboardData.ActivePatients {
+	for i, p := range patients {
 		data.Patients[i] = struct {
 			ID        string
 			Name      string
@@ -138,40 +167,6 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 			Name:      p.Name,
 			CreatedAt: p.CreatedAt,
 			Notes:     p.Notes,
-		}
-	}
-
-	// Converter RecentSessions
-	for i, s := range dashboardData.RecentSessions {
-		data.Sessions[i] = struct {
-			ID            string
-			PatientName   string
-			Date          string
-			Summary       string
-			SessionNumber string
-		}{
-			ID:            s.ID,
-			PatientName:   s.PatientName,
-			Date:          s.Date.Format("02/01/2006"),
-			Summary:       s.Summary,
-			SessionNumber: formatSessionNumber(s.SessionNumber),
-		}
-	}
-
-	// Converter AIInsights
-	for i, ins := range dashboardData.AIInsights {
-		data.Insights[i] = struct {
-			ID         string
-			Title      string
-			Content    string
-			Confidence string
-			CreatedAt  string
-		}{
-			ID:         ins.ID,
-			Title:      ins.Title,
-			Content:    ins.Content,
-			Confidence: formatConfidence(ins.Confidence),
-			CreatedAt:  ins.CreatedAt.Format("02/01/2006"),
 		}
 	}
 
@@ -195,25 +190,16 @@ func (h *Handler) handleGetPatients(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	insights, err := h.insightService.ListInsights()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data := struct {
 		Patients []interface{}
 		Insights []interface{}
 	}{
 		Patients: make([]interface{}, len(patients)),
-		Insights: make([]interface{}, len(insights)),
+		Insights: []interface{}{},
 	}
 
 	for i, p := range patients {
 		data.Patients[i] = p
-	}
-	for i, ins := range insights {
-		data.Insights[i] = ins
 	}
 
 	h.renderTemplate(w, "patients", data)
@@ -245,23 +231,7 @@ func (h *Handler) NewPatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	insights, err := h.insightService.ListInsights()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := struct {
-		Insights []interface{}
-	}{
-		Insights: make([]interface{}, len(insights)),
-	}
-
-	for i, ins := range insights {
-		data.Insights[i] = ins
-	}
-
-	h.renderTemplate(w, "new-patient", data)
+	h.renderTemplate(w, "new_patient", nil)
 }
 
 func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
@@ -292,30 +262,19 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	insights, err := h.insightService.ListInsights()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data := struct {
 		Patient  interface{}
 		Sessions []interface{}
-		Insights []interface{}
 	}{
 		Patient:  patient,
 		Sessions: make([]interface{}, len(sessions)),
-		Insights: make([]interface{}, len(insights)),
 	}
 
 	for i, s := range sessions {
 		data.Sessions[i] = s
 	}
-	for i, ins := range insights {
-		data.Insights[i] = ins
-	}
 
-	h.renderTemplate(w, "patient-detail", data)
+	h.renderTemplate(w, "patient", data)
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
@@ -340,44 +299,10 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	observations, err := h.observationService.ListObservationsBySession(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	interventions, err := h.interventionService.ListInterventionsBySession(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	insights, err := h.insightService.ListInsights()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data := struct {
-		Session       interface{}
-		Observations  []interface{}
-		Interventions []interface{}
-		Insights      []interface{}
+		Session interface{}
 	}{
-		Session:       session,
-		Observations:  make([]interface{}, len(observations)),
-		Interventions: make([]interface{}, len(interventions)),
-		Insights:      make([]interface{}, len(insights)),
-	}
-
-	for i, obs := range observations {
-		data.Observations[i] = obs
-	}
-	for i, interv := range interventions {
-		data.Interventions[i] = interv
-	}
-	for i, ins := range insights {
-		data.Insights[i] = ins
+		Session: session,
 	}
 
 	h.renderTemplate(w, "session", data)
@@ -459,36 +384,4 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/patient/"+session.PatientID, http.StatusSeeOther)
-}
-
-// Helper functions para o dashboard
-func formatRelativeTime(t time.Time) string {
-	now := time.Now()
-	diff := now.Sub(t)
-
-	if diff < time.Hour {
-		return "há menos de 1 hora"
-	} else if diff < 24*time.Hour {
-		hours := int(diff.Hours())
-		if hours == 1 {
-			return "há 1 hora"
-		}
-		return "há " + strconv.Itoa(hours) + " horas"
-	} else if diff < 7*24*time.Hour {
-		days := int(diff.Hours() / 24)
-		if days == 1 {
-			return "ontem"
-		}
-		return "há " + strconv.Itoa(days) + " dias"
-	}
-
-	return t.Format("02/01/2006")
-}
-
-func formatConfidence(c float64) string {
-	return strconv.Itoa(int(c*100)) + "%"
-}
-
-func formatSessionNumber(n int) string {
-	return "Sessão " + strconv.Itoa(n)
 }

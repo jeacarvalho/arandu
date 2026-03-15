@@ -114,49 +114,49 @@
                     </div>
                 </div>
                 
-                <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+                 <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
                     <div style="font-size: 3rem; font-weight: 800; color: var(--accent-600); margin-bottom: var(--space-sm); line-height: 1;">
-                        {{if .Stats}}{{.Stats.TotalInsights}}{{else}}0{{end}}
+                        0
                     </div>
                     <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
                         <i class="fas fa-lightbulb" style="margin-right: var(--space-xs);"></i>
-                        Insights Gerados
+                        Insights de IA
                     </div>
                     <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
-                        Análises automáticas
+                        Em desenvolvimento
                     </div>
                     <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
                         <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-                            <span style="color: var(--success);">
-                                <i class="fas fa-chart-line" style="margin-right: var(--space-xs);"></i>
-                                {{if .Stats}}{{.Stats.NewInsights}}{{else}}0{{end}} novos
+                            <span style="color: var(--neutral-500);">
+                                <i class="fas fa-code" style="margin-right: var(--space-xs);"></i>
+                                Em breve
                             </span>
                             <span style="color: var(--neutral-500);">
-                                {{if .Stats}}{{.Stats.HighConfidence}}{{else}}0{{end}} alta confiança
+                                CAP-03-01
                             </span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+                 <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
                     <div style="font-size: 3rem; font-weight: 800; color: var(--clinical-purple); margin-bottom: var(--space-sm); line-height: 1;">
-                        {{if .Stats}}{{.Stats.AvgSessionDuration}}{{else}}0{{end}}min
+                        0
                     </div>
                     <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
-                        <i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>
-                        Duração Média
+                        <i class="fas fa-chart-bar" style="margin-right: var(--space-xs);"></i>
+                        Análises
                     </div>
                     <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
-                        Por sessão clínica
+                        Em desenvolvimento
                     </div>
                     <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
                         <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-                            <span style="color: var(--success);">
-                                <i class="fas fa-trend-up" style="margin-right: var(--space-xs);"></i>
-                                +5% vs mês passado
+                            <span style="color: var(--neutral-500);">
+                                <i class="fas fa-code" style="margin-right: var(--space-xs);"></i>
+                                Em breve
                             </span>
                             <span style="color: var(--neutral-500);">
-                                Ideal: 50-60min
+                                CAP-02-01
                             </span>
                         </div>
                     </div>
@@ -237,10 +237,10 @@
                                 <h2 class="card-title">Sessões Recentes</h2>
                                 <p class="card-subtitle">Últimas sessões clínicas registradas</p>
                             </div>
-                            <button class="btn btn-ghost btn-sm" id="new-session-btn">
+                            <a href="/patients" class="btn btn-ghost btn-sm">
                                 <i class="fas fa-plus btn-icon"></i>
                                 Nova Sessão
-                            </button>
+                            </a>
                         </div>
                         
                         <div style="max-height: 300px; overflow-y: auto;">
@@ -293,9 +293,9 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Insights & Patterns -->
+                 <!-- Right Column: Coming Soon -->
                 <div style="display: flex; flex-direction: column; gap: var(--space-2xl);">
-                    <!-- AI Insights -->
+                    <!-- Coming Soon: AI Insights -->
                     <div class="card" style="background: linear-gradient(135deg, var(--accent-50) 0%, var(--accent-100) 100%); border: 2px solid var(--accent-200);">
                         <div class="card-header" style="border-bottom-color: var(--accent-200);">
                             <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%); color: white;">
@@ -303,112 +303,48 @@
                             </div>
                             <div>
                                 <h2 class="card-title" style="color: var(--accent-800);">Insights de IA</h2>
-                                <p class="card-subtitle" style="color: var(--accent-600);">Análises automáticas do sistema</p>
+                                <p class="card-subtitle" style="color: var(--accent-600);">Em desenvolvimento</p>
                             </div>
-                            <button class="btn btn-ghost btn-sm" style="color: var(--accent-700);">
-                                <i class="fas fa-sync-alt btn-icon"></i>
-                            </button>
                         </div>
                         
-                        <div style="max-height: 300px; overflow-y: auto;">
-                            {{if .Insights}}
-                            <div style="display: flex; flex-direction: column; gap: var(--space-md);">
-                                {{range .Insights}}
-                                <div class="card-hover" style="background: white; padding: var(--space-md); border-radius: var(--radius-md); border-left: 4px solid var(--accent-500);">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-xs);">
-                                        <span style="font-size: 0.875rem; font-weight: 600; color: var(--accent-800);">
-                                            {{.Title}}
-                                        </span>
-                                        <span style="font-size: 0.75rem; background: var(--accent-100); color: var(--accent-700); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);">
-                                            {{.Confidence}}
-                                        </span>
-                                    </div>
-                                    <p style="font-size: 0.875rem; color: var(--neutral-700); line-height: 1.5; margin-bottom: var(--space-sm);">
-                                        {{.Content}}
-                                    </p>
-                                    <div style="font-size: 0.75rem; color: var(--neutral-500);">
-                                        <i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>
-                                        {{.CreatedAt}}
-                                    </div>
-                                </div>
-                                {{end}}
+                        <div style="text-align: center; padding: var(--space-2xl); color: var(--accent-600);">
+                            <i class="fas fa-code" style="font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                            <h3 style="font-size: 1.25rem; color: var(--accent-800); margin-bottom: var(--space-sm);">Capacidade em desenvolvimento</h3>
+                            <p style="margin-bottom: var(--space-lg); line-height: 1.6;">
+                                A análise automática de padrões clínicos e geração de insights será implementada na <strong>Vision 03: Inteligência Clínica Assistida</strong>
+                            </p>
+                            <div style="font-size: 0.875rem; color: var(--accent-700); background: var(--accent-100); padding: var(--space-md); border-radius: var(--radius-md);">
+                                <i class="fas fa-road" style="margin-right: var(--space-sm);"></i>
+                                <strong>CAP-03-01:</strong> Análise automática de padrões
                             </div>
-                            {{else}}
-                            <div style="text-align: center; padding: var(--space-xl); color: var(--accent-600);">
-                                <i class="fas fa-brain" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
-                                <p style="font-style: italic;">O sistema está analisando os dados...</p>
-                                <div style="font-size: 0.75rem; color: var(--accent-500); margin-top: var(--space-sm);">
-                                    Novos insights em breve
-                                </div>
-                            </div>
-                            {{end}}
                         </div>
                     </div>
 
-                    <!-- Emerging Patterns -->
+                    <!-- Coming Soon: Clinical Analysis -->
                     <div class="card">
                         <div class="card-header">
                             <div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
                                 <i class="fas fa-chart-network"></i>
                             </div>
                             <div>
-                                <h2 class="card-title">Padrões Emergentes</h2>
-                                <p class="card-subtitle">Tendências identificadas na prática</p>
+                                <h2 class="card-title">Análise Clínica</h2>
+                                <p class="card-subtitle">Em desenvolvimento</p>
                             </div>
                         </div>
                         
-                        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
-                            <div class="card-hover" style="background: var(--primary-50); padding: var(--space-md); border-radius: var(--radius-md); border-left: 4px solid var(--primary-500);">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--primary-800);">
-                                        Ansiedade Social
-                                    </span>
-                                    <span style="font-size: 0.75rem; background: var(--primary-100); color: var(--primary-700); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);">
-                                        4 pacientes
-                                    </span>
+                        <div style="text-align: center; padding: var(--space-xl); color: var(--neutral-600);">
+                            <i class="fas fa-chart-bar" style="font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                            <p style="margin-bottom: var(--space-lg); line-height: 1.6;">
+                                Visualizações de evolução clínica, identificação de padrões e análises estatísticas serão implementadas na <strong>Vision 02: Acompanhamento e Análise</strong>
+                            </p>
+                            <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                                <div style="font-size: 0.875rem; color: var(--primary-700); background: var(--primary-50); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); text-align: left;">
+                                    <i class="fas fa-history" style="margin-right: var(--space-sm);"></i>
+                                    <strong>CAP-02-01:</strong> Histórico do paciente
                                 </div>
-                                <p style="font-size: 0.875rem; color: var(--primary-700); line-height: 1.5;">
-                                    Medo de avaliação social em contextos profissionais
-                                </p>
-                                <div style="font-size: 0.75rem; color: var(--primary-600); margin-top: var(--space-xs);">
-                                    <i class="fas fa-history" style="margin-right: var(--space-xs);"></i>
-                                    Detectado há 1 semana
-                                </div>
-                            </div>
-                            
-                            <div class="card-hover" style="background: var(--secondary-50); padding: var(--space-md); border-radius: var(--radius-md); border-left: 4px solid var(--secondary-500);">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--secondary-800);">
-                                        Conflito com Autoridade
-                                    </span>
-                                    <span style="font-size: 0.75rem; background: var(--secondary-100); color: var(--secondary-700); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);">
-                                        3 pacientes
-                                    </span>
-                                </div>
-                                <p style="font-size: 0.875rem; color: var(--secondary-700); line-height: 1.5;">
-                                    Dificuldade em lidar com figuras de autoridade
-                                </p>
-                                <div style="font-size: 0.75rem; color: var(--secondary-600); margin-top: var(--space-xs);">
-                                    <i class="fas fa-history" style="margin-right: var(--space-xs);"></i>
-                                    Detectado há 2 semanas
-                                </div>
-                            </div>
-                            
-                            <div class="card-hover" style="background: var(--accent-50); padding: var(--space-md); border-radius: var(--radius-md); border-left: 4px solid var(--accent-500);">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--accent-800);">
-                                        Burnout Profissional
-                                    </span>
-                                    <span style="font-size: 0.75rem; background: var(--accent-100); color: var(--accent-700); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);">
-                                        2 pacientes
-                                    </span>
-                                </div>
-                                <p style="font-size: 0.875rem; color: var(--accent-700); line-height: 1.5;">
-                                    Esgotamento relacionado ao trabalho
-                                </p>
-                                <div style="font-size: 0.75rem; color: var(--accent-600); margin-top: var(--space-xs);">
-                                    <i class="fas fa-history" style="margin-right: var(--space-xs);"></i>
-                                    Detectado há 3 dias
+                                <div style="font-size: 0.875rem; color: var(--secondary-700); background: var(--secondary-50); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); text-align: left;">
+                                    <i class="fas fa-timeline" style="margin-right: var(--space-sm);"></i>
+                                    <strong>CAP-02-02:</strong> Linha do tempo clínica
                                 </div>
                             </div>
                         </div>
@@ -448,7 +384,7 @@
                 </div>
             </div>
 
-            <!-- Activity Chart -->
+                     <!-- Activity Chart (Placeholder) -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
@@ -456,17 +392,19 @@
                     </div>
                     <div>
                         <h2 class="card-title">Atividade Clínica</h2>
-                        <p class="card-subtitle">Sessões por semana (últimos 30 dias)</p>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-ghost btn-sm active">30 dias</button>
-                        <button class="btn btn-ghost btn-sm">90 dias</button>
-                        <button class="btn btn-ghost btn-sm">1 ano</button>
+                        <p class="card-subtitle">Em desenvolvimento - Visualização de dados</p>
                     </div>
                 </div>
                 
-                <div style="height: 300px; padding: var(--space-lg);">
-                    <canvas id="activityChart"></canvas>
+                <div style="height: 300px; padding: var(--space-lg); display: flex; align-items: center; justify-content: center; color: var(--neutral-400);">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.3;"></i>
+                        <p style="font-style: italic;">Gráficos e visualizações serão implementados<br>conforme mais dados forem coletados</p>
+                        <div style="font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-md);">
+                            <i class="fas fa-info-circle" style="margin-right: var(--space-xs);"></i>
+                            Disponível na Vision 02: Acompanhamento e Análise
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -474,66 +412,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Chart.js
-            const ctx = document.getElementById('activityChart').getContext('2d');
-            const activityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-                    datasets: [{
-                        label: 'Sessões',
-                        data: [12, 19, 8, 15],
-                        borderColor: 'var(--primary-500)',
-                        backgroundColor: 'rgba(45, 125, 229, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: 'var(--primary-500)',
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'var(--neutral-900)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            borderColor: 'var(--neutral-700)',
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 6
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'var(--neutral-200)'
-                            },
-                            ticks: {
-                                color: 'var(--neutral-500)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'var(--neutral-200)'
-                            },
-                            ticks: {
-                                color: 'var(--neutral-500)'
-                            }
-                        }
-                    }
-                }
-            });
-
             // Refresh button
             document.getElementById('refresh-btn').addEventListener('click', function() {
                 const icon = this.querySelector('.btn-icon');
@@ -545,35 +423,12 @@
                 }, 1000);
             });
 
-            // Export button
+            // Export button (placeholder)
             document.getElementById('export-btn').addEventListener('click', function() {
-                showToast('Exportando dados...', 'info');
-                setTimeout(() => {
-                    showToast('Dados exportados com sucesso', 'success');
-                }, 1500);
+                showToast('Funcionalidade em desenvolvimento', 'info');
             });
 
-            // New session button
-            document.getElementById('new-session-btn').addEventListener('click', function() {
-                showToast('Redirecionando para nova sessão...', 'info');
-                setTimeout(() => {
-                    // In a real app, this would redirect to new session page
-                    showToast('Funcionalidade em desenvolvimento', 'warning');
-                }, 1000);
-            });
-
-            // Period buttons
-            const periodButtons = document.querySelectorAll('.btn-group .btn');
-            periodButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    periodButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update chart based on period
-                    const period = this.textContent.trim();
-                    showToast(`Período alterado para: ${period}`, 'info');
-                });
-            });
+            // New session button removed - now links to patients page
 
             // Initialize tooltips
             initTooltips();

@@ -1,47 +1,145 @@
+{{define "session_new.html"}}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova sessão - Arandu</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <title>Arandu — Nova Sessão</title>
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="/static/js/patients.js" defer></script>
+    <script src="/static/js/interactions.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Nova sessão</h1>
-            <nav>
-                <a href="/dashboard">Dashboard</a>
-                <a href="/patients">Pacientes</a>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <i class="fas fa-brain"></i>
+                    Arandu
+                </div>
+                <div class="sidebar-subtitle">Sistema de Inteligência Clínica</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    Dashboard
+                </a>
+                <a href="/patients" class="nav-item">
+                    <i class="fas fa-users nav-icon"></i>
+                    Pacientes
+                </a>
+                <a href="/patients/new" class="nav-item">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    Novo Paciente
+                </a>
             </nav>
-        </header>
+        </aside>
 
-        <main>
-            <form 
-                method="POST"
-                action="/sessions"
-                hx-post="/sessions"
-                hx-swap="none"
-            >
-                <input type="hidden" name="patient_id" value="{{ .PatientID }}">
-
-                <div class="form-group">
-                    <label for="date">Data da sessão</label>
-                    <input type="date" id="date" name="date" required>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="header-title">
+                    <div>
+                        <h1>Nova Sessão</h1>
+                        <p class="header-subtitle">Registre um novo encontro terapêutico com {{.Patient.Name}}</p>
+                    </div>
+                    <div class="header-actions">
+                        <a href="/patient/{{.Patient.ID}}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left btn-icon"></i>
+                            Voltar
+                        </a>
+                    </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="summary">Resumo da sessão</label>
-                    <textarea id="summary" name="summary" rows="6" placeholder="Registre os pontos principais da sessão..."></textarea>
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Registro da Sessão</h2>
+                        <p class="card-subtitle">Preencha os dados do encontro terapêutico</p>
+                    </div>
                 </div>
+                
+                <form 
+                    method="POST"
+                    action="/sessions"
+                    style="padding: var(--space-xl);"
+                >
+                    <input type="hidden" name="patient_id" value="{{.Patient.ID}}">
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Salvar sessão</button>
-                    <a href="/patient/{{ .PatientID }}" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
+                    <div class="form-group" style="margin-bottom: var(--space-xl);">
+                        <label for="date" class="form-label">
+                            <i class="fas fa-calendar-alt" style="margin-right: var(--space-sm); color: var(--primary-500);"></i>
+                            Data da Sessão
+                        </label>
+                        <input 
+                            type="date" 
+                            id="date" 
+                            name="date" 
+                            required
+                            class="form-input"
+                            style="font-size: 1rem; padding: var(--space-md);"
+                        >
+                        <div class="form-hint">Selecione a data em que a sessão ocorreu</div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: var(--space-xl);">
+                        <label for="summary" class="form-label">
+                            <i class="fas fa-sticky-note" style="margin-right: var(--space-sm); color: var(--accent-500);"></i>
+                            Resumo da Sessão
+                        </label>
+                        <textarea 
+                            id="summary" 
+                            name="summary" 
+                            rows="8" 
+                            placeholder="Descreva os principais pontos discutidos, observações clínicas relevantes, intervenções realizadas, e reflexões sobre o processo terapêutico..."
+                            class="form-textarea"
+                            style="font-size: 1rem; line-height: 1.6;"
+                        ></textarea>
+                        <div class="form-hint">Este resumo será a base para futuras análises e acompanhamento clínico</div>
+                    </div>
+
+                    <div class="form-actions" style="display: flex; gap: var(--space-md); justify-content: flex-end; border-top: 1px solid var(--neutral-200); padding-top: var(--space-xl);">
+                        <a href="/patient/{{.Patient.ID}}" class="btn btn-outline">
+                            <i class="fas fa-times btn-icon"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save btn-icon"></i>
+                            Salvar Sessão
+                        </button>
+                    </div>
+                </form>
+            </div>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const date = document.getElementById('date').value;
+                if (!date) {
+                    e.preventDefault();
+                    alert('Por favor, selecione a data da sessão.');
+                    return false;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+{{end}}

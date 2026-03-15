@@ -163,24 +163,23 @@
             </div>
             {{end}}
 
-            <!-- Insights Panel -->
-            {{if .Insights}}
-            <div class="insights-panel fade-in" style="margin-top: 3rem;">
+            <!-- Insights Panel (Placeholder) -->
+            <div class="insights-panel fade-in" style="margin-top: 3rem; background: var(--accent-50); border: 1px solid var(--accent-200); border-radius: 0.5rem; padding: 1.5rem;">
                 <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--accent-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-lightbulb"></i>
-                    Insights do Sistema
+                    <i class="fas fa-brain"></i>
+                    Insights de IA
                 </h2>
-                {{range .Insights}}
-                <div class="insight-item">
-                    <div class="insight-content">{{.Content}}</div>
-                    <div class="insight-meta">
-                        <span>{{.Source}}</span>
-                        <span>{{.CreatedAt.Format "02/01/2006"}}</span>
+                <div style="text-align: center; padding: 1.5rem; color: var(--accent-600);">
+                    <i class="fas fa-code" style="font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.5;"></i>
+                    <p style="margin-bottom: 0.75rem; line-height: 1.5;">
+                        A análise automática de padrões clínicos e geração de insights será implementada na <strong>Vision 03: Inteligência Clínica Assistida</strong>
+                    </p>
+                    <div style="font-size: 0.875rem; color: var(--accent-700);">
+                        <i class="fas fa-road" style="margin-right: 0.5rem;"></i>
+                        <strong>CAP-03-01:</strong> Análise automática de padrões
                     </div>
                 </div>
-                {{end}}
             </div>
-            {{end}}
         </main>
     </div>
 
