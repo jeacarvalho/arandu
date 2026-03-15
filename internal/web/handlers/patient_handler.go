@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
@@ -55,7 +56,7 @@ type PatientService interface {
 // SessionService defines the interface for session operations
 type SessionService interface {
 	ListSessionsByPatient(ctx context.Context, patientID string) ([]*session.Session, error)
-	CreateSession(ctx context.Context, patientID string, date string, summary string) (*session.Session, error)
+	CreateSession(ctx context.Context, patientID string, date time.Time, summary string) (*session.Session, error)
 	GetSession(ctx context.Context, id string) (*session.Session, error)
 	UpdateSession(ctx context.Context, input services.UpdateSessionInput) error
 }
