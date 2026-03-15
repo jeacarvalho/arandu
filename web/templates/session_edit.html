@@ -1,0 +1,93 @@
+{{define "session_edit.html"}}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arandu — Editar Sessão</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-arandu-background text-arandu-text font-sans antialiased">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
+            <div class="p-6">
+                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
+                    <span class="hidden lg:inline">Dashboard</span>
+                </a>
+                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
+                    <span class="hidden lg:inline">Pacientes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
+                <div class="max-w-4xl mx-auto">
+                    
+<header class="mb-12">
+    <h1 class="text-3xl font-bold text-arandu-text leading-tight">Editar Sessão</h1>
+    <p class="text-arandu-text-secondary mt-2">Atualize o encontro terapêutico com {{.Patient.Name}}</p>
+</header>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-100">
+    <form method="POST" action="/sessions/update/" class="p-8">
+        <input type="hidden" name="session_id" value="{{.Session.ID}}">
+
+        <div class="mb-8">
+            <label for="date" class="block text-sm font-medium text-arandu-text-secondary mb-2">Data da Sessão</label>
+            <input type="date" id="date" name="date" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition" value="{{.Session.Date.Format "2006-01-02"}}">
+        </div>
+
+        <div class="mb-8">
+            <label for="summary" class="block text-sm font-medium text-arandu-text-secondary mb-2">Observações Clínicas</label>
+            <textarea id="summary" name="summary" rows="10" placeholder="Descreva os principais pontos discutidos, observações clínicas, intervenções e reflexões..." class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base">{{.Session.Summary}}</textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+            <a href="/patient/{{.Patient.ID}}" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
+                Cancelar
+            </a>
+            <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+                Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>
+
+                </div>
+            </section>
+
+            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
+                <header class="mb-6 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
+                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
+                </header>
+                
+                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
+                    {{range .Insights}}
+                    <div class="relative pl-4 border-l border-arandu-insight/30">
+                        <p class="text-sm leading-relaxed">{{.Content}}</p>
+                        <footer class="mt-2 text-[10px] font-sans not-italic uppercase tracking-tighter text-gray-400">
+                            {{.Source}} • {{.CreatedAt.Format "02 Jan"}}
+                        </footer>
+                    </div>
+                    {{else}}
+                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
+                    {{end}}
+                </div>
+            </aside>
+
+        </main>
+    </div>
+</body>
+</html>
+{{end}}

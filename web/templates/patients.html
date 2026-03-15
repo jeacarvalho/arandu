@@ -1,221 +1,41 @@
-{{define "patients"}}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arandu — Pacientes</title>
-    <link href="/static/css/style.css" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="/static/js/patients.js" defer></script>
-    <script src="/static/js/interactions.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <i class="fas fa-brain"></i>
-                    Arandu
-                </div>
-                <div class="sidebar-subtitle">Sistema de Inteligência Clínica</div>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <a href="/dashboard" class="nav-item">
-                    <i class="fas fa-chart-line nav-icon"></i>
-                    Dashboard
-                </a>
-                <a href="/patients" class="nav-item active">
-                    <i class="fas fa-users nav-icon"></i>
-                    Pacientes
-                </a>
-                <a href="/patients/new" class="nav-item">
-                    <i class="fas fa-user-plus nav-icon"></i>
-                    Novo Paciente
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-header">
-                <div class="header-title">
-                    <div>
-                        <h1>Pacientes</h1>
-                        <p>Gerencie seus pacientes e acompanhe a evolução clínica</p>
-                    </div>
-                    <div class="header-actions">
-                        <a href="/patients/new" class="btn btn-success">
-                            <i class="fas fa-user-plus btn-icon"></i>
-                            Novo Paciente
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{if .Patients}}
-            <!-- Stats Overview -->
-            <div class="form-grid" style="margin-bottom: var(--space-2xl);">
-                <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
-                    <div style="font-size: 3rem; font-weight: 800; color: var(--primary-600); margin-bottom: var(--space-sm); line-height: 1;">
-                        {{len .Patients}}
-                    </div>
-                    <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
-                        <i class="fas fa-users" style="margin-right: var(--space-xs);"></i>
-                        Pacientes Ativos
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
-                        Em acompanhamento clínico
-                    </div>
-                </div>
-                
-                <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
-                    <div style="font-size: 3rem; font-weight: 800; color: var(--secondary-600); margin-bottom: var(--space-sm); line-height: 1;">
-                        0
-                    </div>
-                    <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
-                        <i class="fas fa-calendar-check" style="margin-right: var(--space-xs);"></i>
-                        Sessões Hoje
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
-                        Agendadas para hoje
-                    </div>
-                </div>
-                
-                <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
-                    <div style="font-size: 3rem; font-weight: 800; color: var(--accent-600); margin-bottom: var(--space-sm); line-height: 1;">
-                        0
-                    </div>
-                    <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
-                        <i class="fas fa-lightbulb" style="margin-right: var(--space-xs);"></i>
-                        Insights Gerados
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
-                        Análises automáticas
-                    </div>
-                </div>
-            </div>
-
-            <!-- Patients Grid -->
-            <div class="form-grid">
-                {{range .Patients}}
-                <a href="/patient/{{.ID}}" class="patient-card fade-in card-hover" style="display: block; text-decoration: none;">
-                    <div style="display: flex; align-items: flex-start; gap: var(--space-md); margin-bottom: var(--space-md);">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); font-size: 1.25rem; flex-shrink: 0;">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div class="patient-name" style="font-size: 1.125rem; font-weight: 600; color: var(--neutral-900); margin-bottom: var(--space-xs);">{{.Name}}</div>
-                            <div style="font-size: 0.75rem; color: var(--neutral-500);">
-                                <i class="fas fa-id-card" style="margin-right: var(--space-xs);"></i>
-                                ID: {{.ID}}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {{if .Notes}}
-                    <div class="patient-notes" style="color: var(--neutral-600); font-size: 0.875rem; line-height: 1.6; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-md); border-left: 3px solid var(--primary-300);">
-                        {{.Notes}}
-                    </div>
-                    {{else}}
-                    <div class="patient-notes" style="color: var(--neutral-400); font-style: italic; font-size: 0.875rem; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-md); border-left: 3px solid var(--neutral-300);">
-                        <i class="fas fa-sticky-note" style="margin-right: var(--space-xs);"></i>
-                        Nenhuma observação registrada
-                    </div>
-                    {{end}}
-                    
-                    <div class="patient-meta" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--neutral-500); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
-                        <div style="display: flex; align-items: center; gap: var(--space-xs);">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Cadastrado em {{.CreatedAt.Format "02/01/2006"}}</span>
-                        </div>
-                        <div class="patient-status" style="display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); background: var(--secondary-50); color: var(--secondary-700); border-radius: var(--radius-full); font-weight: 500;">
-                            <span class="status-dot"></span>
-                            Ativo
-                        </div>
-                    </div>
-                </a>
-                {{end}}
-            </div>
-            {{else}}
-            <!-- Empty State -->
-            <div class="card empty-state" style="max-width: 600px; margin: 0 auto; padding: var(--space-3xl);">
-                <div class="empty-state-icon" style="width: 100px; height: 100px; margin-bottom: var(--space-xl);">
-                    <i class="fas fa-user-friends" style="font-size: 2.5rem;"></i>
-                </div>
-                <h2 class="empty-state-title" style="font-size: 1.75rem; margin-bottom: var(--space-md);">Nenhum paciente cadastrado</h2>
-                <p class="empty-state-description" style="font-size: 1.125rem; line-height: 1.7; margin-bottom: var(--space-2xl); max-width: 400px;">
-                    Comece adicionando seu primeiro paciente para iniciar o registro clínico no Arandu.
-                </p>
-                <a href="/patients/new" class="btn btn-success btn-lg">
-                    <i class="fas fa-user-plus btn-icon"></i>
-                    Adicionar Primeiro Paciente
-                </a>
-                <div style="margin-top: var(--space-xl); padding-top: var(--space-xl); border-top: 1px solid var(--neutral-200);">
-                    <p style="font-size: 0.875rem; color: var(--neutral-500); text-align: center;">
-                        <i class="fas fa-lightbulb" style="margin-right: var(--space-xs);"></i>
-                        O sistema Arandu organizará automaticamente todas as informações clínicas dos seus pacientes
-                    </p>
-                </div>
-            </div>
-            {{end}}
-
-            <!-- Insights Panel (Placeholder) -->
-            <div class="insights-panel fade-in" style="margin-top: 3rem; background: var(--accent-50); border: 1px solid var(--accent-200); border-radius: 0.5rem; padding: 1.5rem;">
-                <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--accent-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-brain"></i>
-                    Insights de IA
-                </h2>
-                <div style="text-align: center; padding: 1.5rem; color: var(--accent-600);">
-                    <i class="fas fa-code" style="font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.5;"></i>
-                    <p style="margin-bottom: 0.75rem; line-height: 1.5;">
-                        A análise automática de padrões clínicos e geração de insights será implementada na <strong>Vision 03: Inteligência Clínica Assistida</strong>
-                    </p>
-                    <div style="font-size: 0.875rem; color: var(--accent-700);">
-                        <i class="fas fa-road" style="margin-right: 0.5rem;"></i>
-                        <strong>CAP-03-01:</strong> Análise automática de padrões
-                    </div>
-                </div>
-            </div>
-        </main>
+{{define "content"}}
+<header class="flex items-center justify-between mb-12">
+    <div>
+        <h1 class="text-3xl font-bold text-arandu-text leading-tight">Pacientes</h1>
+        <p class="text-arandu-text-secondary mt-2">Gerencie seus pacientes e acompanhe a evolução clínica</p>
     </div>
+    <a href="/patients/new" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+        Novo Paciente
+    </a>
+</header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Patient card hover effects
-            const patientCards = document.querySelectorAll('.patient-card');
-            patientCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-4px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-            
-            // Search functionality (if implemented in future)
-            const searchInput = document.getElementById('patient-search');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    patientCards.forEach(card => {
-                        const patientName = card.querySelector('.patient-name').textContent.toLowerCase();
-                        const patientNotes = card.querySelector('.patient-notes').textContent.toLowerCase();
-                        
-                        if (patientName.includes(searchTerm) || patientNotes.includes(searchTerm)) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+{{if .Patients}}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {{range .Patients}}
+    <a href="/patient/{{.ID}}" class="block bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-arandu-text mb-2">{{.Name}}</h2>
+            {{if .Notes}}
+            <p class="text-sm text-arandu-text-secondary font-serif italic border-l-2 border-arandu-primary-light pl-3 py-1">"{{.Notes}}"</p>
+            {{else}}
+            <p class="text-sm text-gray-400">Nenhuma observação registrada.</p>
+            {{end}}
+        </div>
+        <div class="px-6 py-3 bg-gray-50/70 border-t border-gray-100 text-xs text-arandu-text-secondary flex items-center justify-between">
+            <span>Cadastrado em {{.CreatedAt.Format "02 Jan 2006"}}</span>
+            <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Ativo</span>
+        </div>
+    </a>
+    {{end}}
+</div>
+{{else}}
+<div class="text-center py-20">
+    <h2 class="text-2xl font-semibold text-arandu-text mb-2">Nenhum paciente cadastrado</h2>
+    <p class="text-arandu-text-secondary mb-6">Comece adicionando seu primeiro paciente para iniciar o registro clínico.</p>
+    <a href="/patients/new" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+        Adicionar Primeiro Paciente
+    </a>
+</div>
+{{end}}
+
 {{end}}

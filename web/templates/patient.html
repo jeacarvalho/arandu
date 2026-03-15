@@ -1,4 +1,4 @@
-{{define "patient"}}
+{{define "patient.html"}}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -50,11 +50,12 @@
                                 <div class="absolute -left-[5px] top-4 w-2 h-2 rounded-full bg-gray-200 group-hover:bg-[#1E3A5F]"></div>
                                 <a href="/session/{{.ID}}" class="block">
                                     <span class="text-sm text-gray-400 font-sans uppercase tracking-tight">{{.Date.Format "02/01/2006"}}</span>
-                                    <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
-                                </a>
-                            </div>
-                            {{else}}
-                            <p class="font-serif text-gray-400 italic">Nenhuma sessão registrada até o momento.</p>
+                                      <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
+                                 </a>
+								 <a href="/sessions/edit/{{.ID}}" class="absolute right-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">Editar</a>
+                             </div>
+                             {{else}}
+                             <p class="font-serif text-gray-400 italic">Nenhuma sessão registrada até o momento.</p>
                             {{end}}
                         </div>
                     </div>

@@ -1,327 +1,82 @@
-{{define "new-patient"}}
+{{define "new_patient.html"}}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arandu — Novo Paciente</title>
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <link href="/static/css/tailwind.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="/static/js/patients.js" defer></script>
-    <script src="/static/js/interactions.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <i class="fas fa-brain"></i>
-                    Arandu
-                </div>
-                <div class="sidebar-subtitle">Sistema de Inteligência Clínica</div>
+<body class="bg-arandu-background text-arandu-text font-sans antialiased">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
+            <div class="p-6">
+                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
             </div>
             
-            <nav class="sidebar-nav">
-                <a href="/dashboard" class="nav-item">
-                    <i class="fas fa-chart-line nav-icon"></i>
-                    Dashboard
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
+                    <span class="hidden lg:inline">Dashboard</span>
                 </a>
-                <a href="/patients" class="nav-item">
-                    <i class="fas fa-users nav-icon"></i>
-                    Pacientes
-                </a>
-                <a href="/patients/new" class="nav-item active">
-                    <i class="fas fa-user-plus nav-icon"></i>
-                    Novo Paciente
+                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
+                    <span class="hidden lg:inline">Pacientes</span>
                 </a>
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-header">
-                <div class="header-title">
-                    <div>
-                        <h1>Novo Paciente</h1>
-                        <p>Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
-                    </div>
-                    <div class="header-actions">
-                        <a href="/patients" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left btn-icon"></i>
-                            Voltar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card fade-in">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div>
-                        <h2 class="card-title">Informações do Paciente</h2>
-                        <p class="card-subtitle">Preencha os dados básicos para iniciar o registro clínico</p>
-                    </div>
-                </div>
-
-                <form id="new-patient-form" action="/patients" method="POST">
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-id-card"></i>
-                            Identificação
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="name" class="form-label required">
-                                <i class="fas fa-user"></i>
-                                Nome Completo
-                            </label>
-                            <div class="form-control-wrapper">
-                                <input 
-                                    type="text" 
-                                    id="name" 
-                                    name="name" 
-                                    required
-                                    class="form-control"
-                                    placeholder="Digite o nome completo do paciente"
-                                    maxlength="255"
-                                >
-                                <div class="form-control-icon">
-                                    <i class="fas fa-user-md"></i>
-                                </div>
-                            </div>
-                            <div class="form-help">
-                                <i class="fas fa-info-circle"></i>
-                                Nome completo do paciente. Este campo é obrigatório para iniciar o acompanhamento.
-                            </div>
-                            <div id="name-error" class="form-error" style="display: none;">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-sticky-note"></i>
-                            Contexto Clínico
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="notes" class="form-label">
-                                <i class="fas fa-clipboard-list"></i>
-                                Observações Iniciais
-                            </label>
-                            <div class="form-control-wrapper">
-                                <textarea 
-                                    id="notes" 
-                                    name="notes" 
-                                    rows="6"
-                                    class="form-control form-textarea"
-                                    placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)"
-                                    maxlength="5000"
-                                ></textarea>
-                            </div>
-                            <div class="form-help">
-                                <i class="fas fa-lightbulb"></i>
-                                Informações relevantes para o acompanhamento clínico. Este campo é opcional, mas recomendado.
-                            </div>
-                            <div class="form-counter" id="notes-counter">
-                                <span>0/5000 caracteres</span>
-                                <span><i class="fas fa-text-height"></i></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section" style="margin-top: var(--space-2xl); padding-top: var(--space-xl); border-top: 2px solid var(--neutral-200);">
-                        <div class="btn-group" style="justify-content: flex-end;">
-                            <a href="/patients" class="btn btn-secondary">
-                                <i class="fas fa-times btn-icon"></i>
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-save btn-icon"></i>
-                                Salvar Paciente
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Information Card -->
-            <div class="card fade-in" style="margin-top: var(--space-2xl); background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border: 2px solid var(--primary-200);">
-                <div class="card-header" style="border-bottom-color: var(--primary-200);">
-                    <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div>
-                        <h2 class="card-title" style="color: var(--primary-800);">Importância do Registro Clínico</h2>
-                        <p class="card-subtitle" style="color: var(--primary-600);">Fundamentos do sistema Arandu para acompanhamento terapêutico</p>
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="info-item card-hover" style="background: white; padding: var(--space-lg); border-radius: var(--radius-md); border: 1px solid var(--primary-100);">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
-                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                                1
-                            </div>
-                            <h3 style="font-size: 1rem; font-weight: 600; color: var(--primary-800);">Base do Sistema</h3>
-                        </div>
-                        <p style="color: var(--primary-700); font-size: 0.875rem; line-height: 1.6;">
-                            O paciente é a entidade raiz do sistema Arandu. Todos os registros clínicos dependem desta informação fundamental.
-                        </p>
-                    </div>
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
+                <div class="max-w-4xl mx-auto">
                     
-                    <div class="info-item card-hover" style="background: white; padding: var(--space-lg); border-radius: var(--radius-md); border: 1px solid var(--secondary-100);">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
-                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                                2
-                            </div>
-                            <h3 style="font-size: 1rem; font-weight: 600; color: var(--secondary-800);">Histórico Clínico</h3>
-                        </div>
-                        <p style="color: var(--secondary-700); font-size: 0.875rem; line-height: 1.6;">
-                            Após criar o paciente, você poderá registrar sessões clínicas e construir um histórico terapêutico completo.
-                        </p>
-                    </div>
-                    
-                    <div class="info-item card-hover" style="background: white; padding: var(--space-lg); border-radius: var(--radius-md); border: 1px solid var(--accent-100);">
-                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
-                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                                3
-                            </div>
-                            <h3 style="font-size: 1rem; font-weight: 600; color: var(--accent-800);">Identificação Única</h3>
-                        </div>
-                        <p style="color: var(--accent-700); font-size: 0.875rem; line-height: 1.6;">
-                            O sistema gerará automaticamente um identificador único para o paciente, garantindo a segurança e organização dos dados.
-                        </p>
-                    </div>
-                </div>
-            </div>
+<header class="mb-12">
+    <h1 class="text-3xl font-bold text-arandu-text leading-tight">Novo Paciente</h1>
+    <p class="text-arandu-text-secondary mt-2">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+</header>
 
-            <!-- Insights Panel -->
-            {{if .Insights}}
-            <div class="insights-panel fade-in">
-                <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--accent-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-lightbulb"></i>
-                    Insights do Sistema
-                </h2>
-                {{range .Insights}}
-                <div class="insight-item">
-                    <div class="insight-content">{{.Content}}</div>
-                    <div class="insight-meta">
-                        <span>{{.Source}}</span>
-                        <span>{{.CreatedAt.Format "02/01/2006"}}</span>
-                    </div>
+<div class="bg-white rounded-lg shadow-sm border border-gray-100">
+    <form action="/patients" method="POST" class="p-8">
+        <div class="mb-8">
+            <label for="name" class="block text-sm font-medium text-arandu-text-secondary mb-2">Nome Completo</label>
+            <input type="text" id="name" name="name" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition" placeholder="Nome do paciente">
+        </div>
+
+        <div class="mb-8">
+            <label for="notes" class="block text-sm font-medium text-arandu-text-secondary mb-2">Observações Iniciais</label>
+            <textarea id="notes" name="notes" rows="6" placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)" class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+            <a href="/patients" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
+                Cancelar
+            </a>
+            <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+                Salvar Paciente
+            </button>
+        </div>
+    </form>
+</div>
+
                 </div>
-                {{end}}
-            </div>
-            {{end}}
+            </section>
+
+            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
+                <header class="mb-6 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
+                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
+                </header>
+                
+                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
+                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
+                </div>
+            </aside>
+
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('new-patient-form');
-            const nameInput = document.getElementById('name');
-            const notesInput = document.getElementById('notes');
-            const notesCounter = document.getElementById('notes-counter');
-            const nameError = document.getElementById('name-error');
-            
-            // Character counter for notes
-            if (notesInput && notesCounter) {
-                notesInput.addEventListener('input', function() {
-                    const charCount = this.value.length;
-                    const counterSpan = notesCounter.querySelector('span');
-                    if (counterSpan) {
-                        counterSpan.textContent = `${charCount}/5000 caracteres`;
-                        
-                        if (charCount > 5000) {
-                            notesCounter.style.color = 'var(--error)';
-                        } else {
-                            notesCounter.style.color = '';
-                        }
-                    }
-                });
-            }
-            
-            // Form validation
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    let isValid = true;
-                    
-                    // Clear previous errors
-                    if (nameError) {
-                        nameError.style.display = 'none';
-                    }
-                    
-                    // Validate name
-                    if (!nameInput.value.trim()) {
-                        isValid = false;
-                        if (nameError) {
-                            nameError.querySelector('span').textContent = 'O nome do paciente é obrigatório.';
-                            nameError.style.display = 'flex';
-                        }
-                        nameInput.style.borderColor = 'var(--error)';
-                    } else if (nameInput.value.trim().length > 255) {
-                        isValid = false;
-                        if (nameError) {
-                            nameError.querySelector('span').textContent = 'O nome não pode exceder 255 caracteres.';
-                            nameError.style.display = 'flex';
-                        }
-                        nameInput.style.borderColor = 'var(--error)';
-                    } else {
-                        nameInput.style.borderColor = '';
-                    }
-                    
-                    // Validate notes length
-                    if (notesInput && notesInput.value.length > 5000) {
-                        isValid = false;
-                        notesInput.style.borderColor = 'var(--error)';
-                    } else if (notesInput) {
-                        notesInput.style.borderColor = '';
-                    }
-                    
-                    if (!isValid) {
-                        e.preventDefault();
-                        // Scroll to first error
-                        const firstError = document.querySelector('.form-error[style*="display: flex"]');
-                        if (firstError) {
-                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    } else {
-                        // Show loading state
-                        const submitButton = form.querySelector('button[type="submit"]');
-                        if (submitButton) {
-                            submitButton.disabled = true;
-                            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i> Salvando...';
-                            submitButton.classList.add('loading');
-                        }
-                    }
-                });
-            }
-            
-            // Real-time validation for name
-            if (nameInput) {
-                nameInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 255) {
-                        if (nameError) {
-                            nameError.querySelector('span').textContent = 'O nome não pode exceder 255 caracteres.';
-                            nameError.style.display = 'flex';
-                        }
-                        this.style.borderColor = 'var(--error)';
-                    } else {
-                        if (nameError) {
-                            nameError.style.display = 'none';
-                        }
-                        this.style.borderColor = '';
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
 {{end}}

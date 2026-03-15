@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -27,6 +26,7 @@ func NewHandler(
 	observationService *services.ObservationService,
 	interventionService *services.InterventionService,
 	insightService *services.InsightService,
+	templatePath string,
 ) *Handler {
 	h := &Handler{
 		patientService:      patientService,
@@ -36,45 +36,50 @@ func NewHandler(
 		insightService:      insightService,
 	}
 
-	h.loadTemplates()
+	h.LoadTemplates(templatePath)
 	return h
 }
 
-func (h *Handler) loadTemplates() {
-	tmpl := template.New("")
-
-	templateFiles := []string{
-		"web/templates/layout.html",
-		"web/templates/dashboard.html",
-		"web/templates/patients.html",
-		"web/templates/patient.html",
-		"web/templates/patient_detail.html",
-		"web/templates/session.html",
-		"web/templates/new_patient.html",
-		"web/templates/session_new.html",
+func (h *Handler) LoadTemplates(basePath string) {
+	// Using a function to add custom functions to the templates
+	funcMap := template.FuncMap{
+		"ToUpper": strings.ToUpper,
 	}
 
-	for _, file := range templateFiles {
-		content, err := os.ReadFile(file)
-		if err != nil {
-			log.Printf("Error reading template %s: %v", file, err)
-			continue
-		}
-
-		_, err = tmpl.New(filepath.Base(file)).Parse(string(content))
-		if err != nil {
-			log.Printf("Error parsing template %s: %v", file, err)
-			continue
-		}
+	// Using template.ParseGlob to find and parse all .html files in the directory
+	templates, err := template.New("").Funcs(funcMap).ParseGlob(filepath.Join(basePath, "*.html"))
+	if err != nil {
+		log.Fatalf("Failed to parse templates: %v", err)
 	}
-
-	h.templates = tmpl
+	h.templates = templates
 }
 
-func (h *Handler) renderTemplate(w http.ResponseWriter, name string, data interface{}) {
+func (h *Handler) render(w http.ResponseWriter, contentName string, data map[string]interface{}) {
+	if data == nil {
+		data = make(map[string]interface{})
+	}
+	// Execute the layout template which includes the content template
+	err := h.templates.ExecuteTemplate(w, "layout", data)
+	if err != nil {
+		log.Printf("Error rendering template %s: %v", contentName, err)
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) renderSimple(w http.ResponseWriter, name string, data interface{}) {
 	err := h.templates.ExecuteTemplate(w, name, data)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Error rendering template %s: %v", name, err)
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) renderTemplate(w http.ResponseWriter, name string, data map[string]interface{}) {
+	err := h.templates.ExecuteTemplate(w, name, data)
+	if err != nil {
+		// More detailed error logging
+		log.Printf("Error rendering template %s: %v", name, err)
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 	}
 }
 
@@ -133,44 +138,27 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		AvgSessionDuration int
 	}
 
-	data := struct {
-		Stats    DashboardStats
-		Patients []interface{}
-		Sessions []interface{}
-		Insights []interface{}
-	}{
-		Stats: DashboardStats{
-			TotalPatients:      len(patients),
-			NewThisWeek:        0,
-			ActiveThisMonth:    len(patients),
-			TotalSessions:      totalSessions,
-			SessionsThisWeek:   0,
-			SessionsToday:      0,
-			TotalInsights:      0,
-			NewInsights:        0,
-			HighConfidence:     0,
-			AvgSessionDuration: 0,
-		},
-		Patients: make([]interface{}, len(patients)),
-		Sessions: allSessions,
-		Insights: []interface{}{},
+	stats := DashboardStats{
+		TotalPatients:      len(patients),
+		NewThisWeek:        0,
+		ActiveThisMonth:    len(patients),
+		TotalSessions:      totalSessions,
+		SessionsThisWeek:   0,
+		SessionsToday:      0,
+		TotalInsights:      0,
+		NewInsights:        0,
+		HighConfidence:     0,
+		AvgSessionDuration: 0,
 	}
 
-	for i, p := range patients {
-		data.Patients[i] = struct {
-			ID        string
-			Name      string
-			CreatedAt time.Time
-			Notes     string
-		}{
-			ID:        p.ID,
-			Name:      p.Name,
-			CreatedAt: p.CreatedAt,
-			Notes:     p.Notes,
-		}
+	data := map[string]interface{}{
+		"Stats":    stats,
+		"Patients": patients,
+		"Sessions": allSessions,
+		"Insights": []interface{}{},
 	}
 
-	h.renderTemplate(w, "dashboard", data)
+	h.renderSimple(w, "dashboard.html", data)
 }
 
 func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
@@ -190,19 +178,12 @@ func (h *Handler) handleGetPatients(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Patients []interface{}
-		Insights []interface{}
-	}{
-		Patients: make([]interface{}, len(patients)),
-		Insights: []interface{}{},
+	data := map[string]interface{}{
+		"Patients": patients,
+		"Insights": []interface{}{},
 	}
 
-	for i, p := range patients {
-		data.Patients[i] = p
-	}
-
-	h.renderTemplate(w, "patients", data)
+	h.renderSimple(w, "patients.html", data)
 }
 
 func (h *Handler) handleCreatePatient(w http.ResponseWriter, r *http.Request) {
@@ -231,7 +212,7 @@ func (h *Handler) NewPatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.renderTemplate(w, "new_patient", nil)
+	h.renderSimple(w, "new_patient.html", nil)
 }
 
 func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
@@ -262,19 +243,16 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Patient  interface{}
-		Sessions []interface{}
-	}{
-		Patient:  patient,
-		Sessions: make([]interface{}, len(sessions)),
+	data := map[string]interface{}{
+		"Patient":  patient,
+		"Sessions": make([]interface{}, len(sessions)),
 	}
 
 	for i, s := range sessions {
-		data.Sessions[i] = s
+		data["Sessions"].([]interface{})[i] = s
 	}
 
-	h.renderTemplate(w, "patient", data)
+	h.renderSimple(w, "patient.html", data)
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
@@ -299,13 +277,11 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Session interface{}
-	}{
-		Session: session,
+	data := map[string]interface{}{
+		"Session": session,
 	}
 
-	h.renderTemplate(w, "session", data)
+	h.renderSimple(w, "session.html", data)
 }
 
 func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {
@@ -337,13 +313,11 @@ func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Patient interface{}
-	}{
-		Patient: patient,
+	data := map[string]interface{}{
+		"Patient": patient,
 	}
 
-	h.renderTemplate(w, "session_new.html", data)
+	h.renderSimple(w, "session_new.html", data)
 }
 
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
@@ -380,6 +354,96 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	session, err := h.sessionService.CreateSession(r.Context(), patientID, date, summary)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/patient/"+session.PatientID, http.StatusSeeOther)
+}
+
+func (h *Handler) EditSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := strings.TrimPrefix(r.URL.Path, "/sessions/edit/")
+	if id == "" {
+		http.Error(w, "Session ID required", http.StatusBadRequest)
+		return
+	}
+
+	session, err := h.sessionService.GetSession(r.Context(), id)
+	if err != nil {
+		log.Printf("Error getting session: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if session == nil {
+		http.Error(w, "Session not found", http.StatusNotFound)
+		return
+	}
+
+	patient, err := h.patientService.GetPatientByID(r.Context(), session.PatientID)
+	if err != nil {
+		log.Printf("Error getting patient: %v", err)
+		http.Error(w, "Failed to get patient", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"Session": session,
+		"Patient": patient,
+	}
+
+	h.renderSimple(w, "session_edit.html", data)
+}
+
+func (h *Handler) UpdateSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form data", http.StatusBadRequest)
+		return
+	}
+
+	sessionID := r.FormValue("session_id")
+	if sessionID == "" {
+		http.Error(w, "session_id is required", http.StatusBadRequest)
+		return
+	}
+
+	dateStr := r.FormValue("date")
+	if dateStr == "" {
+		http.Error(w, "date is required", http.StatusBadRequest)
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		http.Error(w, "invalid date format", http.StatusBadRequest)
+		return
+	}
+
+	summary := r.FormValue("summary")
+
+	input := services.UpdateSessionInput{
+		ID:      sessionID,
+		Date:    date,
+		Summary: summary,
+	}
+
+	err = h.sessionService.UpdateSession(r.Context(), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	session, err := h.sessionService.GetSession(r.Context(), sessionID)
+	if err != nil {
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
 		return
 	}
 

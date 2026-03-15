@@ -5,141 +5,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arandu — Nova Sessão</title>
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <link href="/static/css/tailwind.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="/static/js/patients.js" defer></script>
-    <script src="/static/js/interactions.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <i class="fas fa-brain"></i>
-                    Arandu
-                </div>
-                <div class="sidebar-subtitle">Sistema de Inteligência Clínica</div>
+<body class="bg-arandu-background text-arandu-text font-sans antialiased">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
+            <div class="p-6">
+                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
             </div>
             
-            <nav class="sidebar-nav">
-                <a href="/dashboard" class="nav-item">
-                    <i class="fas fa-chart-line nav-icon"></i>
-                    Dashboard
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
+                    <span class="hidden lg:inline">Dashboard</span>
                 </a>
-                <a href="/patients" class="nav-item">
-                    <i class="fas fa-users nav-icon"></i>
-                    Pacientes
-                </a>
-                <a href="/patients/new" class="nav-item">
-                    <i class="fas fa-user-plus nav-icon"></i>
-                    Novo Paciente
+                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
+                    <span class="hidden lg:inline">Pacientes</span>
                 </a>
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-header">
-                <div class="header-title">
-                    <div>
-                        <h1>Nova Sessão</h1>
-                        <p class="header-subtitle">Registre um novo encontro terapêutico com {{.Patient.Name}}</p>
-                    </div>
-                    <div class="header-actions">
-                        <a href="/patient/{{.Patient.ID}}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left btn-icon"></i>
-                            Voltar
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
+                <div class="max-w-4xl mx-auto">
+                    
+<header class="mb-12">
+    <h1 class="text-3xl font-bold text-arandu-text leading-tight">Nova Sessão</h1>
+    <p class="text-arandu-text-secondary mt-2">Registre um novo encontro terapêutico com {{.Patient.Name}}</p>
+</header>
 
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <div class="card-header">
-                    <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
-                        <i class="fas fa-calendar-plus"></i>
-                    </div>
-                    <div>
-                        <h2 class="card-title">Registro da Sessão</h2>
-                        <p class="card-subtitle">Preencha os dados do encontro terapêutico</p>
-                    </div>
+<div class="bg-white rounded-lg shadow-sm border border-gray-100">
+    <form method="POST" action="/sessions" class="p-8">
+        <input type="hidden" name="patient_id" value="{{.Patient.ID}}">
+
+        <div class="mb-8">
+            <label for="date" class="block text-sm font-medium text-arandu-text-secondary mb-2">Data da Sessão</label>
+            <input type="date" id="date" name="date" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition">
+        </div>
+
+        <div class="mb-8">
+            <label for="summary" class="block text-sm font-medium text-arandu-text-secondary mb-2">Resumo da Sessão</label>
+            <textarea id="summary" name="summary" rows="10" placeholder="Descreva os principais pontos discutidos, observações clínicas, intervenções e reflexões..." class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+            <a href="/patient/{{.Patient.ID}}" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
+                Cancelar
+            </a>
+            <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+                Salvar Sessão
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('date');
+        if (dateInput) {
+            dateInput.value = today;
+        }
+    });
+</script>
+
                 </div>
+            </section>
+
+            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
+                <header class="mb-6 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
+                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
+                </header>
                 
-                <form 
-                    method="POST"
-                    action="/sessions"
-                    style="padding: var(--space-xl);"
-                >
-                    <input type="hidden" name="patient_id" value="{{.Patient.ID}}">
-
-                    <div class="form-group" style="margin-bottom: var(--space-xl);">
-                        <label for="date" class="form-label">
-                            <i class="fas fa-calendar-alt" style="margin-right: var(--space-sm); color: var(--primary-500);"></i>
-                            Data da Sessão
-                        </label>
-                        <input 
-                            type="date" 
-                            id="date" 
-                            name="date" 
-                            required
-                            class="form-input"
-                            style="font-size: 1rem; padding: var(--space-md);"
-                        >
-                        <div class="form-hint">Selecione a data em que a sessão ocorreu</div>
+                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
+                    {{range .Insights}}
+                    <div class="relative pl-4 border-l border-arandu-insight/30">
+                        <p class="text-sm leading-relaxed">{{.Content}}</p>
+                        <footer class="mt-2 text-[10px] font-sans not-italic uppercase tracking-tighter text-gray-400">
+                            {{.Source}} • {{.CreatedAt.Format "02 Jan"}}
+                        </footer>
                     </div>
+                    {{else}}
+                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
+                    {{end}}
+                </div>
+            </aside>
 
-                    <div class="form-group" style="margin-bottom: var(--space-xl);">
-                        <label for="summary" class="form-label">
-                            <i class="fas fa-sticky-note" style="margin-right: var(--space-sm); color: var(--accent-500);"></i>
-                            Resumo da Sessão
-                        </label>
-                        <textarea 
-                            id="summary" 
-                            name="summary" 
-                            rows="8" 
-                            placeholder="Descreva os principais pontos discutidos, observações clínicas relevantes, intervenções realizadas, e reflexões sobre o processo terapêutico..."
-                            class="form-textarea"
-                            style="font-size: 1rem; line-height: 1.6;"
-                        ></textarea>
-                        <div class="form-hint">Este resumo será a base para futuras análises e acompanhamento clínico</div>
-                    </div>
-
-                    <div class="form-actions" style="display: flex; gap: var(--space-md); justify-content: flex-end; border-top: 1px solid var(--neutral-200); padding-top: var(--space-xl);">
-                        <a href="/patient/{{.Patient.ID}}" class="btn btn-outline">
-                            <i class="fas fa-times btn-icon"></i>
-                            Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save btn-icon"></i>
-                            Salvar Sessão
-                        </button>
-                    </div>
-                </form>
-            </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set today's date as default
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
-            
-            // Form validation
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                const date = document.getElementById('date').value;
-                if (!date) {
-                    e.preventDefault();
-                    alert('Por favor, selecione a data da sessão.');
-                    return false;
-                }
-            });
-        });
-    </script>
 </body>
 </html>
 {{end}}

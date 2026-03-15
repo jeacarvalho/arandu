@@ -55,6 +55,12 @@ func (r *SessionRepository) ListByPatient(ctx context.Context, patientID string)
 	return sessions, nil
 }
 
+func (r *SessionRepository) Update(ctx context.Context, s *session.Session) error {
+	query := `UPDATE sessions SET date = ?, summary = ?, updated_at = ? WHERE id = ?`
+	_, err := r.db.ExecContext(ctx, query, s.Date, s.Summary, s.UpdatedAt, s.ID)
+	return err
+}
+
 func (r *SessionRepository) InitSchema() error {
 	query := `
 	CREATE TABLE IF NOT EXISTS sessions (
