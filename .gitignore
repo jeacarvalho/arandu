@@ -1,49 +1,83 @@
-# Binários
-arandu
-*.exe
-*.exe~
-*.dll
+```
+# Go build artifacts
+*.o
+*.a
 *.so
+*.exe
+*.dll
 *.dylib
-
-# Testes
 *.test
-*.out
+*.prof
 
-# Dependências
+# Go cache directories
+go/pkg/mod/
+go/build/
+
+# Dependencies
 vendor/
-node_modules/
 
-# Arquivos de ambiente
+# Logs
+*.log
+
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.env.*
 
-# Banco de dados SQLite
-*.db
-*.db-journal
-*.sqlite
-*.sqlite3
-
-# Diretórios de sistema
-.DS_Store
-Thumbs.db
-
-# Diretórios de IDE
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Logs
-*.log
+# OS
+.DS_Store
+Thumbs.db
 
-# Arquivos temporários
-tmp/
-temp/
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# Arquivos de build do Go
-go-build*/
-go-test*/
+# Build output
+bin/
+dist/
+build/
+target/
+
+# Python (if any Python files exist in project)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+*.so
+.Python
+env/
+venv/
+.venv/
+.venv.bak/
+venv.bak/
+
+# Node (if any JS/TS files exist in project)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage.xml
+*.gcov
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+```

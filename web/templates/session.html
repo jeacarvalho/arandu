@@ -1,8 +1,26 @@
+{{/* Session detail page - defines both full page content and HTMX fragment */}}
+
+{{/* Main content block for full page rendering */}}
 {{define "content"}}
+{{template "session-content" .}}
+{{end}}
+
+{{/* HTMX fragment for partial updates - can be rendered standalone */}}
+{{define "session-content"}}
+{{if .Error}}
+<div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+    <p class="text-red-700 font-medium">{{.Error}}</p>
+    {{if .Patient}}
+    <a href="/patient/{{.Patient.ID}}" class="mt-4 inline-block text-sm text-red-600 hover:underline">Voltar para o paciente</a>
+    {{else}}
+    <a href="/patients" class="mt-4 inline-block text-sm text-red-600 hover:underline">Voltar para lista de pacientes</a>
+    {{end}}
+</div>
+{{else if .Session}}
 <div class="mb-8">
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold mb-2">Sessão {{.Session.Date.Format "02/01/2006"}}</h1>
+            <h1 class="text-3xl font-bold mb-2">Sessão {{.Session.Date}}</h1>
             <p class="text-gray-600">Detalhes da sessão terapêutica</p>
         </div>
         <div class="space-x-2">
@@ -22,10 +40,10 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-bold mb-4">Observações Clínicas</h2>
             <div class="space-y-4">
-                {{range .Observations}}
+                {{range .Session.Observations}}
                 <div class="border-l-4 border-primary pl-4 py-2">
                     <p class="text-gray-700">{{.Content}}</p>
-                    <p class="text-sm text-gray-500 mt-1">{{.CreatedAt.Format "02/01/2006 15:04"}}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{.CreatedAt}}</p>
                 </div>
                 {{else}}
                 <p class="text-gray-500 italic">Nenhuma observação registrada.</p>
@@ -42,10 +60,10 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-bold mb-4">Intervenções Terapêuticas</h2>
             <div class="space-y-4">
-                {{range .Interventions}}
+                {{range .Session.Interventions}}
                 <div class="border-l-4 border-secondary pl-4 py-2">
                     <p class="text-gray-700">{{.Content}}</p>
-                    <p class="text-sm text-gray-500 mt-1">{{.CreatedAt.Format "02/01/2006 15:04"}}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{.CreatedAt}}</p>
                 </div>
                 {{else}}
                 <p class="text-gray-500 italic">Nenhuma intervenção registrada.</p>
@@ -71,4 +89,9 @@
         </div>
     </div>
 </div>
+{{else}}
+<div class="text-center py-20">
+    <p class="text-gray-500">Sessão não encontrada</p>
+</div>
+{{end}}
 {{end}}

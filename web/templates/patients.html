@@ -1,4 +1,17 @@
-{{define "patients_content"}}
+{{/* Patients list page - defines both full page content and HTMX fragment */}}
+
+{{/* Main content block for full page rendering */}}
+{{define "content"}}
+{{template "patients-content" .}}
+{{end}}
+
+{{/* HTMX fragment for partial updates - can be rendered standalone */}}
+{{define "patients-content"}}
+{{if .Error}}
+<div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+    <p class="text-red-700 font-medium">{{.Error}}</p>
+</div>
+{{else}}
 <header class="flex items-center justify-between mb-12">
     <div>
         <h1 class="text-3xl font-bold text-arandu-text leading-tight">Pacientes</h1>
@@ -22,7 +35,7 @@
             {{end}}
         </div>
         <div class="px-6 py-3 bg-gray-50/70 border-t border-gray-100 text-xs text-arandu-text-secondary flex items-center justify-between">
-            <span>Cadastrado em {{.CreatedAt.Format "02 Jan 2006"}}</span>
+            <span>Cadastrado em {{.CreatedAt}}</span>
             <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Ativo</span>
         </div>
     </a>
@@ -37,5 +50,5 @@
     </a>
 </div>
 {{end}}
-
+{{end}}
 {{end}}

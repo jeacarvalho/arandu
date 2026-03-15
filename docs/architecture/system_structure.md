@@ -44,11 +44,29 @@ arandu/
 - **Testabilidade**: Domínio puro pode ser testado sem infraestrutura
 
 ### 3. SOLID
-- **Single Responsibility**: Cada classe/pacote tem uma única responsabilidade
-- **Open/Closed**: Aberto para extensão, fechado para modificação
-- **Liskov Substitution**: Substituição segura de implementações
-- **Interface Segregation**: Interfaces específicas para cada cliente
-- **Dependency Inversion**: Dependa de abstrações, não de implementações
+
+- **Single Responsibility**: Handlers apenas orquestram, services têm lógica de negócio, templates apenas renderizam
+- **Open/Closed**: ViewModels permitem estender dados da view sem modificar domínio
+- **Liskov Substitution**: Interfaces de serviço permitem trocar implementações (ex: SQLite → PostgreSQL)
+- **Interface Segregation**: Cada handler define interfaces específicas com apenas métodos que usa
+- **Dependency Inversion**: Handlers dependem de abstrações (interfaces), não de implementações concretas
+
+### 4. Regras de Ouro da Camada Web
+
+#### Independência de Domínio
+Handlers não contêm lógica de negócio. Eles apenas:
+1. Decodificam o Request
+2. Chamam o Application Service
+3. Mapeiam o resultado para um ViewModel
+4. Renderizam o Template
+
+#### Consciência de Contexto HTMX
+Cada Handler verifica se a requisição é HTMX (`HX-Request`):
+- **Se for HTMX**: Renderiza apenas o fragmento (bloco específico)
+- **Se não for**: Renderiza a página completa com o `layout.html`
+
+#### Tipagem Forte (ViewModels)
+Nunca passe entidades de domínio diretamente para o template. Crie structs específicas de "ViewData" dentro do handler para garantir que o template tenha exatamente o que precisa e nada mais.
 
 ## Modelo de Domínio
 
@@ -110,23 +128,49 @@ Princípios de implementação:
 ## Camada Web
 
 ### Handlers HTTP (`web/handlers`)
-- **Handler**: Handler principal com injeção de dependências
-- **Dashboard**: Página inicial com visão geral
-- **Patients**: Lista de pacientes
-- **Patient**: Detalhes do paciente e histórico
-- **Session**: Detalhes da sessão com observações e intervenções
+- **PatientHandler**: Gerencia operações com pacientes (listar, mostrar detalhes, criar)
+- **SessionHandler**: Gerencia operações com sessões (mostrar, criar, editar, atualizar)
 
-Características:
-- Handlers finos (apenas recebem request, chamam serviço, retornam response)
-- Compatível com HTMX (retorna HTML fragments quando necessário)
-- Templates separados da lógica
+Características arquiteturais:
+- **Injeção de Dependência**: Handlers recebem serviços via interfaces (Clean Architecture)
+- **Handlers Finos**: Apenas orquestram (recebem request → chamam service → retornam response)
+- **ViewModels Fortemente Tipados**: Entidades de domínio nunca são passadas diretamente para templates
+- **Consciência HTMX**: Verificam header `HX-Request` para decidir entre fragmento ou página completa
+- **Tratamento de Erros Contextual**: Retornam fragmentos de erro amigáveis para requisições HTMX
+
+Padrão de implementação:
+```go
+// 1. Extração de Parâmetros
+id := chi.URLParam(r, "id")
+
+// 2. Chamada ao Serviço (DDD Application Layer)
+patient, err := h.service.GetPatient(r.Context(), id)
+
+// 3. Mapeamento para ViewModel (Protege o Domínio)
+data := PatientViewData{
+    Patient: patient,
+    Insights: h.getInsights(r.Context(), id),
+}
+
+// 4. Renderização Inteligente (Full Page vs HTMX Fragment)
+if r.Header.Get("HX-Request") == "true" {
+    h.templates.ExecuteTemplate(w, "patient-content", data) // Só o miolo
+} else {
+    h.templates.ExecuteTemplate(w, "layout", data) // Layout completo + miolo
+}
+```
 
 ### Templates (`web/templates`)
-- **layout.html**: Layout base com sidebar e painel de insights
-- **dashboard.html**: Dashboard com pacientes e sessões recentes
-- **patients.html**: Lista completa de pacientes
-- **patient.html**: Perfil do paciente com histórico
-- **session.html**: Detalhes da sessão com observações e intervenções
+- **layout.html**: Esqueleto base com sidebar e painel de insights (contém `{{block "content" .}}`)
+- **patient.html**: Define `{{define "content"}}` (full-page) e `{{define "patient-content"}}` (fragmento HTMX)
+- **patients.html**: Define `{{define "content"}}` e `{{define "patients-content"}}`
+- **session.html**: Define `{{define "content"}}` e `{{define "session-content"}}`
+- **session_new.html**: Define `{{define "content"}}` e `{{define "new-session-form"}}`
+
+Princípios:
+- **DRY (Don't Repeat Yourself)**: Uso de `{{template}}` para evitar duplicação
+- **Nomes Únicos**: Fragmentos com nomes específicos para evitar conflitos
+- **Separação Clara**: Layout é esqueleto, fragments são conteúdo injetável
 
 ## Persistência
 
@@ -223,6 +267,13 @@ Response HTTP ← Template ← Service ← Domain
 - Arquitetura em camadas (pode adicionar novas funcionalidades)
 
 ## Próximos Passos Arquiteturais
+
+### Fase 1: Consolidação Web (Concluída)
+- ✅ Handlers com injeção de dependência via interfaces
+- ✅ ViewModels fortemente tipados protegendo o domínio
+- ✅ Consciência HTMX em todos handlers
+- ✅ Templates modulares com fragments nomeados especificamente
+- ✅ Tratamento de erros contextual (full-page vs HTMX fragment)
 
 ### Fase 2: Inteligência Assistida
 - Serviço de IA como camada de aplicação

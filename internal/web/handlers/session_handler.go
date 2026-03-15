@@ -1,88 +1,446 @@
 package handlers
 
 import (
+	"context"
+	"errors"
 	"net/http"
-	"strings"
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/patient"
+	"arandu/internal/domain/session"
 )
 
+// SessionViewData is a ViewModel that protects the domain from template concerns
+type SessionViewData struct {
+	Session    *SessionDetailViewModel
+	Patient    *PatientViewModel
+	Insights   []InsightViewModel
+	Error      string
+	FormData   *SessionFormValues
+	ServerError string
+}
+
+// SessionDetailViewModel is a view-specific representation of a session with full details
+type SessionDetailViewModel struct {
+	ID          string
+	PatientID   string
+	Date        string
+	Summary     string
+	CreatedAt   string
+	UpdatedAt   string
+	Observations []ObservationViewModel
+	Interventions []InterventionViewModel
+}
+
+// ObservationViewModel represents a clinical observation
+type ObservationViewModel struct {
+	ID        string
+	Content   string
+	CreatedAt string
+}
+
+// InterventionViewModel represents a therapeutic intervention
+type InterventionViewModel struct {
+	ID        string
+	Content   string
+	CreatedAt string
+}
+
+// SessionFormValues holds form data for session creation/update
+type SessionFormValues struct {
+	PatientID string
+	Date      string
+	Summary   string
+}
+
+// SessionServiceInterface defines the interface for session operations (dependency inversion)
+type SessionServiceInterface interface {
+	GetSession(ctx context.Context, id string) (*session.Session, error)
+	ListSessionsByPatient(ctx context.Context, patientID string) ([]*session.Session, error)
+	CreateSession(ctx context.Context, patientID string, date time.Time, summary string) (*session.Session, error)
+	UpdateSession(ctx context.Context, input services.UpdateSessionInput) error
+}
+
+// PatientServiceInterface defines the interface for patient operations
+type PatientServiceInterface interface {
+	GetPatientByID(ctx context.Context, id string) (*patient.Patient, error)
+}
+
+// SessionHandler handles HTTP requests related to sessions
 type SessionHandler struct {
-	createSessionService *services.CreateSessionService
+	sessionService SessionServiceInterface
+	patientService PatientServiceInterface
+	templates      TemplateRenderer
 }
 
-func NewSessionHandler(createSessionService *services.CreateSessionService) *SessionHandler {
+// NewSessionHandler creates a new SessionHandler with dependency injection
+func NewSessionHandler(
+	sessionService SessionServiceInterface,
+	patientService PatientServiceInterface,
+	templates TemplateRenderer,
+) *SessionHandler {
 	return &SessionHandler{
-		createSessionService: createSessionService,
+		sessionService: sessionService,
+		patientService: patientService,
+		templates:      templates,
 	}
 }
 
+// mapSessionToDetailViewModel maps domain session to detail view model
+func mapSessionToDetailViewModel(s *session.Session) *SessionDetailViewModel {
+	if s == nil {
+		return nil
+	}
+	return &SessionDetailViewModel{
+		ID:          s.ID,
+		PatientID:   s.PatientID,
+		Date:        s.Date.Format("02/01/2006"),
+		Summary:     s.Summary,
+		CreatedAt:   s.CreatedAt.Format("02/01/2006 15:04"),
+		UpdatedAt:   s.UpdatedAt.Format("02/01/2006 15:04"),
+		Observations: []ObservationViewModel{},
+		Interventions: []InterventionViewModel{},
+	}
+}
+
+// renderError handles error rendering with HTMX awareness
+func (h *SessionHandler) renderError(w http.ResponseWriter, r *http.Request, message string, statusCode int) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(statusCode)
+
+	data := SessionViewData{
+		Error: message,
+	}
+
+	if r.Header.Get("HX-Request") == "true" {
+		h.templates.ExecuteTemplate(w, "error-fragment", data)
+		return
+	}
+
+	h.templates.ExecuteTemplate(w, "layout", data)
+}
+
+// Show handles GET /session/{id} - shows session details
+func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// 1. Extração de Parâmetros usando extração manual
+	id := extractIDFromPath(r.URL.Path, "/session/")
+	if id == "" {
+		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	// 2. Chamada ao Serviço (DDD Application Layer)
+	sess, err := h.sessionService.GetSession(r.Context(), id)
+	if err != nil {
+		h.renderError(w, r, "Sessão não encontrada", http.StatusNotFound)
+		return
+	}
+
+	// Get patient info
+	patient, err := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
+	if err != nil {
+		h.renderError(w, r, "Erro ao buscar paciente", http.StatusInternalServerError)
+		return
+	}
+
+	// 3. Mapeamento para ViewModel (Protege o Domínio)
+	data := SessionViewData{
+		Session:  mapSessionToDetailViewModel(sess),
+		Patient:  mapPatientToViewModel(patient),
+		Insights: []InsightViewModel{},
+	}
+
+	// 4. Renderização Inteligente (Full Page vs HTMX Fragment)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if r.Header.Get("HX-Request") == "true" {
+		h.templates.ExecuteTemplate(w, "session-content", data) // Só o miolo
+		return
+	}
+
+	h.templates.ExecuteTemplate(w, "layout", data) // Layout completo + miolo
+}
+
+// NewSession handles GET /patient/{id}/sessions/new - shows new session form
 func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/patient/")
-	parts := strings.Split(path, "/")
-	if len(parts) < 2 || parts[1] != "sessions" || parts[2] != "new" {
-		http.NotFound(w, r)
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	patientID := parts[0]
+	// Extract patient ID from URL path
+	patientID := extractPatientIDFromPath(r.URL.Path)
 	if patientID == "" {
-		http.Error(w, "patient ID is required", http.StatusBadRequest)
+		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
 		return
 	}
 
-	data := map[string]interface{}{
-		"PatientID": patientID,
+	// Get patient info
+	patient, err := h.patientService.GetPatientByID(r.Context(), patientID)
+	if err != nil {
+		h.renderError(w, r, "Paciente não encontrado", http.StatusNotFound)
+		return
+	}
+
+	data := SessionViewData{
+		Patient: mapPatientToViewModel(patient),
+		FormData: &SessionFormValues{
+			PatientID: patientID,
+			Date:      time.Now().Format("2006-01-02"),
+		},
+		Insights: []InsightViewModel{},
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	renderTemplate(w, "session_new.html", data)
+	if r.Header.Get("HX-Request") == "true" {
+		h.templates.ExecuteTemplate(w, "new-session-form", data)
+		return
+	}
+
+	h.templates.ExecuteTemplate(w, "layout", data)
 }
 
+// CreateSession handles POST /sessions - creates a new session
 func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "invalid form data", http.StatusBadRequest)
+		h.renderError(w, r, "Dados do formulário inválidos", http.StatusBadRequest)
 		return
 	}
 
 	patientID := r.FormValue("patient_id")
 	if patientID == "" {
-		http.Error(w, "patient_id is required", http.StatusBadRequest)
+		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
 		return
 	}
 
 	dateStr := r.FormValue("date")
 	if dateStr == "" {
-		http.Error(w, "date is required", http.StatusBadRequest)
+		h.renderError(w, r, "Data é obrigatória", http.StatusBadRequest)
 		return
 	}
 
 	date, err := time.Parse("2006-01-02", dateStr)
 	if err != nil {
-		http.Error(w, "invalid date format", http.StatusBadRequest)
+		h.renderError(w, r, "Formato de data inválido", http.StatusBadRequest)
 		return
 	}
 
 	summary := r.FormValue("summary")
 
-	input := services.CreateSessionInput{
-		PatientID: patientID,
-		Date:      date,
-		Summary:   summary,
-	}
-
-	session, err := h.createSessionService.Execute(r.Context(), input)
+	sess, err := h.sessionService.CreateSession(r.Context(), patientID, date, summary)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// For HTMX requests, return form with error
+		if r.Header.Get("HX-Request") == "true" {
+			patient, _ := h.patientService.GetPatientByID(r.Context(), patientID)
+			data := SessionViewData{
+				Error: err.Error(),
+				Patient: mapPatientToViewModel(patient),
+				FormData: &SessionFormValues{
+					PatientID: patientID,
+					Date:      dateStr,
+					Summary:   summary,
+				},
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			h.templates.ExecuteTemplate(w, "new-session-form", data)
+			return
+		}
+
+		h.renderError(w, r, "Erro ao criar sessão: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, "/patient/"+session.PatientID, http.StatusSeeOther)
+	// Redirect on success
+	http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
 }
 
-func renderTemplate(w http.ResponseWriter, templateName string, data interface{}) {
-	// This function should be implemented in a template rendering package
-	// For now, we'll use a placeholder
-	w.Write([]byte("Template rendering not implemented"))
+// EditSession handles GET /sessions/edit/{id} - shows edit session form
+func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract session ID from URL path
+	sessionID := extractSessionIDFromPath(r.URL.Path, "/sessions/edit/")
+	if sessionID == "" {
+		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	// Get session
+	sess, err := h.sessionService.GetSession(r.Context(), sessionID)
+	if err != nil {
+		h.renderError(w, r, "Sessão não encontrada", http.StatusNotFound)
+		return
+	}
+
+	// Get patient
+	patient, err := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
+	if err != nil {
+		h.renderError(w, r, "Erro ao buscar paciente", http.StatusInternalServerError)
+		return
+	}
+
+	data := SessionViewData{
+		Session: mapSessionToDetailViewModel(sess),
+		Patient: mapPatientToViewModel(patient),
+		FormData: &SessionFormValues{
+			PatientID: sess.PatientID,
+			Date:      sess.Date.Format("2006-01-02"),
+			Summary:   sess.Summary,
+		},
+		Insights: []InsightViewModel{},
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if r.Header.Get("HX-Request") == "true" {
+		h.templates.ExecuteTemplate(w, "edit-session-form", data)
+		return
+	}
+
+	h.templates.ExecuteTemplate(w, "layout", data)
+}
+
+// UpdateSession handles POST /sessions/update - updates an existing session
+func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Dados do formulário inválidos", http.StatusBadRequest)
+		return
+	}
+
+	sessionID := r.FormValue("session_id")
+	if sessionID == "" {
+		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	dateStr := r.FormValue("date")
+	if dateStr == "" {
+		h.renderError(w, r, "Data é obrigatória", http.StatusBadRequest)
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		h.renderError(w, r, "Formato de data inválido", http.StatusBadRequest)
+		return
+	}
+
+	summary := r.FormValue("summary")
+
+	input := services.UpdateSessionInput{
+		ID:      sessionID,
+		Date:    date,
+		Summary: summary,
+	}
+
+	err = h.sessionService.UpdateSession(r.Context(), input)
+	if err != nil {
+		if errors.Is(err, errors.New("session not found")) {
+			h.renderError(w, r, "Sessão não encontrada", http.StatusNotFound)
+			return
+		}
+
+		// For HTMX requests, return form with error
+		if r.Header.Get("HX-Request") == "true" {
+			sess, _ := h.sessionService.GetSession(r.Context(), sessionID)
+			patient, _ := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
+			data := SessionViewData{
+				Error: err.Error(),
+				Patient: mapPatientToViewModel(patient),
+				FormData: &SessionFormValues{
+					PatientID: sess.PatientID,
+					Date:      dateStr,
+					Summary:   summary,
+				},
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			h.templates.ExecuteTemplate(w, "edit-session-form", data)
+			return
+		}
+
+		h.renderError(w, r, "Erro ao atualizar sessão: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get session to redirect to patient page
+	sess, err := h.sessionService.GetSession(r.Context(), sessionID)
+	if err != nil {
+		http.Redirect(w, r, "/patients", http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
+}
+
+// extractPatientIDFromPath extracts patient ID from URL path like /patient/{id}/sessions/new
+func extractPatientIDFromPath(path string) string {
+	parts := splitPath(path)
+	for i, part := range parts {
+		if part == "patient" && i+1 < len(parts) {
+			return parts[i+1]
+		}
+	}
+	return ""
+}
+
+// extractSessionIDFromPath extracts session ID from URL path
+func extractSessionIDFromPath(path, prefix string) string {
+	id := trimPrefix(path, prefix)
+	if id == "" {
+		return ""
+	}
+	// Handle trailing slashes
+	id = trimSuffix(id, "/")
+	return id
+}
+
+// Helper functions to avoid importing strings package
+func splitPath(path string) []string {
+	result := make([]string, 0)
+	current := ""
+	for _, c := range path {
+		if c == '/' {
+			if current != "" {
+				result = append(result, current)
+				current = ""
+			}
+		} else {
+			current += string(c)
+		}
+	}
+	if current != "" {
+		result = append(result, current)
+	}
+	return result
+}
+
+func trimPrefix(s, prefix string) string {
+	if len(s) >= len(prefix) && s[:len(prefix)] == prefix {
+		return s[len(prefix):]
+	}
+	return s
+}
+
+func trimSuffix(s, suffix string) string {
+	if len(s) >= len(suffix) && s[len(s)-len(suffix):] == suffix {
+		return s[:len(s)-len(suffix)]
+	}
+	return s
 }

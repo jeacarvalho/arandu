@@ -1,4 +1,18 @@
+{{/* New Session page - defines both full page content and HTMX fragment */}}
+
+{{/* Main content block for full page rendering */}}
 {{define "content"}}
+{{template "new-session-form" .}}
+{{end}}
+
+{{/* HTMX fragment for partial updates - can be rendered standalone */}}
+{{define "new-session-form"}}
+{{if .Error}}
+<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <p class="text-red-700 font-medium">{{.Error}}</p>
+</div>
+{{end}}
+
 <header class="mb-12">
     <h1 class="text-3xl font-bold text-arandu-text leading-tight">Nova Sessão</h1>
     <p class="text-arandu-text-secondary mt-2">Registre um novo encontro terapêutico com {{.Patient.Name}}</p>
@@ -6,16 +20,20 @@
 
 <div class="bg-white rounded-lg shadow-sm border border-gray-100">
     <form method="POST" action="/sessions" class="p-8">
-        <input type="hidden" name="patient_id" value="{{.Patient.ID}}">
+        <input type="hidden" name="patient_id" value="{{if .FormData}}{{.FormData.PatientID}}{{else}}{{.Patient.ID}}{{end}}">
 
         <div class="mb-8">
             <label for="date" class="block text-sm font-medium text-arandu-text-secondary mb-2">Data da Sessão</label>
-            <input type="date" id="date" name="date" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition">
+            <input type="date" id="date" name="date" required 
+                value="{{if .FormData}}{{.FormData.Date}}{{else}}{{now | dateFormat "2006-01-02"}}{{end}}"
+                class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition">
         </div>
 
         <div class="mb-8">
             <label for="summary" class="block text-sm font-medium text-arandu-text-secondary mb-2">Resumo da Sessão</label>
-            <textarea id="summary" name="summary" rows="10" placeholder="Descreva os principais pontos discutidos, observações clínicas, intervenções e reflexões..." class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
+            <textarea id="summary" name="summary" rows="10" 
+                placeholder="Descreva os principais pontos discutidos, observações clínicas, intervenções e reflexões..." 
+                class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base">{{if .FormData}}{{.FormData.Summary}}{{end}}</textarea>
         </div>
 
         <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
@@ -28,14 +46,4 @@
         </div>
     </form>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById('date');
-        if (dateInput) {
-            dateInput.value = today;
-        }
-    });
-</script>
 {{end}}
