@@ -46,3 +46,45 @@ if [ -f "scripts/arandu_update_context.sh" ]; then
   echo "🧠 Gerando contexto inicial do projeto..."
   bash scripts/arandu_update_context.sh
 fi
+
+echo
+echo "📚 Carregando contexto obrigatório do projeto..."
+
+# Ler o project_state.md
+if [ -f "docs/agent_context/project_state.md" ]; then
+  echo "📄 Lendo project_state.md..."
+  cat docs/agent_context/project_state.md
+  echo
+fi
+
+# Ler todos os arquivos listados no project_state.md
+echo "📚 Lendo arquivos de contexto obrigatório..."
+
+# Ler vision files
+for vision_file in docs/vision/vision-*.md; do
+  if [ -f "$vision_file" ]; then
+    echo "📄 $vision_file"
+    head -20 "$vision_file"
+    echo "..."
+  fi
+done
+
+# Ler capability files
+for cap_file in docs/capabilities/cap-*.md; do
+  if [ -f "$cap_file" ]; then
+    echo "📄 $cap_file"
+    head -10 "$cap_file"
+    echo "..."
+  fi
+done
+
+# Ler requirement files
+for req_file in docs/requirements/req-*.md; do
+  if [ -f "$req_file" ]; then
+    echo "📄 $req_file"
+    head -10 "$req_file"
+    echo "..."
+  fi
+done
+
+echo "✅ Contexto obrigatório carregado"

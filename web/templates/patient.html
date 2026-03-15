@@ -1,84 +1,36 @@
-{{define "patient.html"}}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arandu — {{.Patient.Name}}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link href="/static/css/tailwind.css" rel="stylesheet">
-    <link href="/static/css/style.css" rel="stylesheet"> </head>
-<body class="bg-[#F7F8FA] text-[#1F2937] font-sans antialiased">
-    <div class="flex min-h-screen">
-        
-        <aside class="w-64 bg-white border-r border-gray-100 p-8">
-            <div class="mb-12">
-                <h1 class="text-xl font-bold text-[#1E3A5F] tracking-tight">Arandu</h1>
-            </div>
-            <nav class="space-y-4">
-                <a href="/dashboard" class="block text-sm text-gray-500 hover:text-[#1E3A5F]">Dashboard</a>
-                <a href="/patients" class="block text-sm font-semibold text-[#1E3A5F]">Pacientes</a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 flex overflow-hidden">
-            
-            <section class="flex-1 overflow-y-auto p-12 bg-white">
-                <div class="max-w-3xl mx-auto">
-                    <header class="mb-12 border-b border-gray-50 pb-8">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h1 class="text-4xl font-serif font-semibold mb-2">{{.Patient.Name}}</h1>
-                                <p class="text-sm text-gray-400 uppercase tracking-widest">Início do acompanhamento: {{.Patient.CreatedAt.Format "Jan 2006"}}</p>
-                            </div>
-                            <a href="/patient/{{.Patient.ID}}/sessions/new" class="text-sm font-semibold text-[#3A7D6B] hover:underline">Nova Sessão</a>
-                        </div>
-                    </header>
-
-                    <div class="space-y-12">
-                        <div class="prose prose-slate max-w-none">
-                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">Notas de Contexto</h3>
-                            <p class="font-serif text-lg leading-relaxed text-gray-700 italic">
-                                {{if .Patient.Notes}}{{.Patient.Notes}}{{else}}Sem notas iniciais registradas.{{end}}
-                            </p>
-                        </div>
-
-                        <div class="space-y-8">
-                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Histórico Longitudinal</h3>
-                            {{range .Sessions}}
-                            <div class="group relative pl-8 py-2 border-l border-gray-100 hover:border-[#1E3A5F] transition-colors">
-                                <div class="absolute -left-[5px] top-4 w-2 h-2 rounded-full bg-gray-200 group-hover:bg-[#1E3A5F]"></div>
-                                <a href="/session/{{.ID}}" class="block">
-                                    <span class="text-sm text-gray-400 font-sans uppercase tracking-tight">{{.Date.Format "02/01/2006"}}</span>
-                                      <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
-                                 </a>
-								 <a href="/sessions/edit/{{.ID}}" class="absolute right-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">Editar</a>
-                             </div>
-                             {{else}}
-                             <p class="font-serif text-gray-400 italic">Nenhuma sessão registrada até o momento.</p>
-                            {{end}}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <aside class="w-80 bg-[#F7F8FA] border-l border-gray-100 p-8">
-                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">Reflexões Assistidas</h2>
-                <div class="space-y-8">
-                    {{range .Insights}}
-                    <div class="relative">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-[#D4A84F]/20 rounded"></div>
-                        <p class="font-serif text-sm leading-relaxed text-gray-600 italic">"{{.Content}}"</p>
-                        <footer class="mt-2 text-[10px] text-gray-400 uppercase tracking-tighter">{{.Source}}</footer>
-                    </div>
-                    {{else}}
-                    <p class="text-xs text-gray-400 italic">O assistente refletirá sobre o caso conforme novas sessões forem registradas.</p>
-                    {{end}}
-                </div>
-            </aside>
-
-        </main>
+{{define "patient_content"}}
+<header class="mb-12 border-b border-gray-50 pb-8">
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-4xl font-serif font-semibold mb-2">{{.Patient.Name}}</h1>
+            <p class="text-sm text-gray-400 uppercase tracking-widest">Início do acompanhamento: {{.Patient.CreatedAt.Format "Jan 2006"}}</p>
+        </div>
+        <a href="/patient/{{.Patient.ID}}/sessions/new" class="text-sm font-semibold text-[#3A7D6B] hover:underline">Nova Sessão</a>
     </div>
-</body>
-</html>
+</header>
+
+<div class="space-y-12">
+    <div class="prose prose-slate max-w-none">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">Notas de Contexto</h3>
+        <p class="font-serif text-lg leading-relaxed text-gray-700 italic">
+            {{if .Patient.Notes}}{{.Patient.Notes}}{{else}}Sem notas iniciais registradas.{{end}}
+        </p>
+    </div>
+
+    <div class="space-y-8">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Histórico Longitudinal</h3>
+        {{range .Sessions}}
+        <div class="group relative pl-8 py-2 border-l border-gray-100 hover:border-[#1E3A5F] transition-colors">
+            <div class="absolute -left-[5px] top-4 w-2 h-2 rounded-full bg-gray-200 group-hover:bg-[#1E3A5F]"></div>
+            <a href="/session/{{.ID}}" class="block">
+                <span class="text-sm text-gray-400 font-sans uppercase tracking-tight">{{.Date.Format "02/01/2006"}}</span>
+                  <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
+             </a>
+             <a href="/sessions/edit/{{.ID}}" class="absolute right-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">Editar</a>
+          </div>
+          {{else}}
+          <p class="font-serif text-gray-400 italic">Nenhuma sessão registrada até o momento.</p>
+        {{end}}
+    </div>
+</div>
 {{end}}

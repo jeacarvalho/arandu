@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -59,7 +60,7 @@ func (h *Handler) render(w http.ResponseWriter, contentName string, data map[str
 		data = make(map[string]interface{})
 	}
 	// Execute the layout template which includes the content template
-	err := h.templates.ExecuteTemplate(w, "layout", data)
+	err := h.templates.ExecuteTemplate(w, contentName, data)
 	if err != nil {
 		log.Printf("Error rendering template %s: %v", contentName, err)
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -67,10 +68,13 @@ func (h *Handler) render(w http.ResponseWriter, contentName string, data map[str
 }
 
 func (h *Handler) renderSimple(w http.ResponseWriter, name string, data interface{}) {
+	log.Printf("Attempting to render template: %s", name)
 	err := h.templates.ExecuteTemplate(w, name, data)
 	if err != nil {
 		log.Printf("Error rendering template %s: %v", name, err)
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	} else {
+		log.Printf("Successfully rendered template: %s", name)
 	}
 }
 
@@ -172,18 +176,23 @@ func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleGetPatients(w http.ResponseWriter, r *http.Request) {
+	log.Printf("handleGetPatients called")
+
 	patients, err := h.patientService.ListPatients(r.Context())
 	if err != nil {
+		log.Printf("Error listing patients: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	data := map[string]interface{}{
-		"Patients": patients,
-		"Insights": []interface{}{},
-	}
+	log.Printf("Found %d patients", len(patients))
 
-	h.renderSimple(w, "patients.html", data)
+	// Simple test response
+	html := `<html><body><h1>Pacientes</h1><p>Total: ` + strconv.Itoa(len(patients)) + `</p></body></html>`
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	log.Printf("Sending test response, length: %d", len(html))
+	w.Write([]byte(html))
 }
 
 func (h *Handler) handleCreatePatient(w http.ResponseWriter, r *http.Request) {
@@ -212,7 +221,88 @@ func (h *Handler) NewPatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.renderSimple(w, "new_patient.html", nil)
+	// Serve a complete HTML page for new patient
+	html := `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arandu — Novo Paciente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-arandu-background text-arandu-text font-sans antialiased">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
+            <div class="p-6">
+                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
+                    <span class="hidden lg:inline">Dashboard</span>
+                </a>
+                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
+                    <span class="hidden lg:inline">Pacientes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
+                <div class="max-w-4xl mx-auto">
+                    <header class="mb-12">
+                        <h1 class="text-3xl font-bold text-arandu-text leading-tight">Novo Paciente</h1>
+                        <p class="text-arandu-text-secondary mt-2">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+                    </header>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                        <form action="/patients" method="POST" class="p-8">
+                            <div class="mb-8">
+                                <label for="name" class="block text-sm font-medium text-arandu-text-secondary mb-2">Nome Completo</label>
+                                <input type="text" id="name" name="name" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition" placeholder="Nome do paciente">
+                            </div>
+
+                            <div class="mb-8">
+                                <label for="notes" class="block text-sm font-medium text-arandu-text-secondary mb-2">Observações Iniciais</label>
+                                <textarea id="notes" name="notes" rows="6" placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)" class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
+                            </div>
+
+                            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+                                <a href="/patients" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+                                    Salvar Paciente
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
+                <header class="mb-6 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
+                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
+                </header>
+                
+                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
+                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
+                </div>
+            </aside>
+
+        </main>
+    </div>
+</body>
+</html>`
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(html))
 }
 
 func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
@@ -252,7 +342,21 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 		data["Sessions"].([]interface{})[i] = s
 	}
 
-	h.renderSimple(w, "patient.html", data)
+	// For now, serve a simple response
+	html := `<!DOCTYPE html>
+<html>
+<head><title>Paciente</title></head>
+<body>
+	<h1>Paciente: ` + patient.Name + `</h1>
+	<p>ID: ` + patient.ID + `</p>
+	<p>Notas: ` + patient.Notes + `</p>
+	<p>Sessões: ` + string(len(sessions)) + `</p>
+	<a href="/patients">Voltar</a>
+</body>
+</html>`
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(html))
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
@@ -281,7 +385,7 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 		"Session": session,
 	}
 
-	h.renderSimple(w, "session.html", data)
+	h.render(w, "session.html", data)
 }
 
 func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {
@@ -317,7 +421,7 @@ func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {
 		"Patient": patient,
 	}
 
-	h.renderSimple(w, "session_new.html", data)
+	h.render(w, "session_new.html", data)
 }
 
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
@@ -395,7 +499,7 @@ func (h *Handler) EditSession(w http.ResponseWriter, r *http.Request) {
 		"Patient": patient,
 	}
 
-	h.renderSimple(w, "session_edit.html", data)
+	h.render(w, "session_edit.html", data)
 }
 
 func (h *Handler) UpdateSession(w http.ResponseWriter, r *http.Request) {

@@ -54,7 +54,18 @@ ${TITLE}
 ## Descrição
 
 Tarefa criada sem requirement específico.
+
+## Instruções para o Agente
+
+1. Aguarde o usuário fornecer detalhes da tarefa neste arquivo
+2. Quando o usuário editar este arquivo com os detalhes, inicie a implementação
+3. Siga o padrão de referenciar requirements quando aplicável
 EOF
 fi
 
 echo "✅ tarefa criada: ${TASK_ID}"
+echo "📁 Tarefa em: $TASK_DIR/task.md"
+echo ""
+echo "📝 Instruções:"
+echo "1. Edite $TASK_DIR/task.md para detalhar a tarefa"
+echo "2. O agente aguardará sua descrição antes de iniciar"

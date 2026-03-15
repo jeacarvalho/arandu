@@ -1,4 +1,4 @@
-{{define "new_patient.html"}}
+{{define "new_patient_page"}}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -32,35 +32,33 @@
             
             <section class="flex-1 overflow-y-auto p-8 lg:p-12">
                 <div class="max-w-4xl mx-auto">
-                    
-<header class="mb-12">
-    <h1 class="text-3xl font-bold text-arandu-text leading-tight">Novo Paciente</h1>
-    <p class="text-arandu-text-secondary mt-2">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
-</header>
+                    <header class="mb-12">
+                        <h1 class="text-3xl font-bold text-arandu-text leading-tight">Novo Paciente</h1>
+                        <p class="text-arandu-text-secondary mt-2">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+                    </header>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-100">
-    <form action="/patients" method="POST" class="p-8">
-        <div class="mb-8">
-            <label for="name" class="block text-sm font-medium text-arandu-text-secondary mb-2">Nome Completo</label>
-            <input type="text" id="name" name="name" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition" placeholder="Nome do paciente">
-        </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                        <form action="/patients" method="POST" class="p-8">
+                            <div class="mb-8">
+                                <label for="name" class="block text-sm font-medium text-arandu-text-secondary mb-2">Nome Completo</label>
+                                <input type="text" id="name" name="name" required class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition" placeholder="Nome do paciente">
+                            </div>
 
-        <div class="mb-8">
-            <label for="notes" class="block text-sm font-medium text-arandu-text-secondary mb-2">Observações Iniciais</label>
-            <textarea id="notes" name="notes" rows="6" placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)" class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
-        </div>
+                            <div class="mb-8">
+                                <label for="notes" class="block text-sm font-medium text-arandu-text-secondary mb-2">Observações Iniciais</label>
+                                <textarea id="notes" name="notes" rows="6" placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)" class="block w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-md text-arandu-text placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-arandu-primary-focus focus:border-transparent transition font-serif text-base"></textarea>
+                            </div>
 
-        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
-            <a href="/patients" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
-                Cancelar
-            </a>
-            <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
-                Salvar Paciente
-            </button>
-        </div>
-    </form>
-</div>
-
+                            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+                                <a href="/patients" class="px-6 py-2.5 rounded-md text-sm font-semibold text-arandu-text-secondary hover:bg-gray-100 transition">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
+                                    Salvar Paciente
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </section>
 
