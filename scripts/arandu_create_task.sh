@@ -47,6 +47,9 @@ else
 
 Title: ${TITLE}
 
+## Status
+**AGUARDANDO_DETALHES_DO_USUARIO** - NÃO inicie trabalho até que o usuário edite este arquivo
+
 ## Objetivo
 
 ${TITLE}
@@ -57,15 +60,24 @@ Tarefa criada sem requirement específico.
 
 ## Instruções para o Agente
 
+**CRÍTICO: NÃO leia, edite ou execute qualquer ação nesta tarefa até que o usuário tenha editado este arquivo com os detalhes completos.**
+
 1. Aguarde o usuário fornecer detalhes da tarefa neste arquivo
-2. Quando o usuário editar este arquivo com os detalhes, inicie a implementação
+2. Quando o usuário editar este arquivo com os detalhes completos (removendo esta seção de instruções), inicie a implementação
 3. Siga o padrão de referenciar requirements quando aplicável
+
+**Verificação obrigatória antes de iniciar:**
+- Esta seção "Instruções para o Agente" deve ter sido removida/replaceada pelo usuário
+- O arquivo deve conter uma descrição detalhada da tarefa fornecida pelo usuário
+- O status deve ter sido atualizado para "PRONTO_PARA_IMPLEMENTACAO" ou similar
 EOF
 fi
 
 echo "✅ tarefa criada: ${TASK_ID}"
 echo "📁 Tarefa em: $TASK_DIR/task.md"
 echo ""
-echo "📝 Instruções:"
-echo "1. Edite $TASK_DIR/task.md para detalhar a tarefa"
-echo "2. O agente aguardará sua descrição antes de iniciar"
+echo "📝 Instruções CRÍTICAS:"
+echo "1. Edite $TASK_DIR/task.md para detalhar a tarefa COMPLETAMENTE"
+echo "2. REMOVA a seção 'Instruções para o Agente' do arquivo task.md"
+echo "3. Atualize o status para 'PRONTO_PARA_IMPLEMENTACAO'"
+echo "4. O agente NÃO iniciará até que você tenha feito essas alterações"

@@ -69,16 +69,15 @@ func main() {
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, templateRenderer)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, templateRenderer)
+	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, templateRenderer)
 
 	mux := http.NewServeMux()
 
-	// Dashboard (keeping old handler for now - TODO: migrate)
+	// Dashboard
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/patients", http.StatusFound)
+		http.Redirect(w, r, "/dashboard", http.StatusFound)
 	})
-	mux.HandleFunc("/dashboard", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/patients", http.StatusFound)
-	})
+	mux.HandleFunc("/dashboard", dashboardHandler.Show)
 
 	// Patient routes - using the actual method names from the new handlers
 	mux.HandleFunc("/patients", patientHandler.ListPatients)

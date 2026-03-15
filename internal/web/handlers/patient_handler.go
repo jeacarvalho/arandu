@@ -10,6 +10,9 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+
+	layoutComponents "arandu/web/components/layout"
+	patientComponents "arandu/web/components/patient"
 )
 
 // PatientViewData is a ViewModel that protects the domain from template concerns
@@ -77,6 +80,20 @@ type PatientHandler struct {
 // TemplateRenderer defines the interface for template rendering
 type TemplateRenderer interface {
 	ExecuteTemplate(w http.ResponseWriter, name string, data interface{}) error
+}
+
+// Render handles HTMX vs full page rendering automatically
+func (h *PatientHandler) Render(w http.ResponseWriter, r *http.Request, pageTemplate string, data interface{}) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	if r.Header.Get("HX-Request") == "true" {
+		// Render just the fragment for HTMX
+		h.templates.ExecuteTemplate(w, pageTemplate, data)
+		return
+	}
+
+	// Render full page - pass data directly, layout uses content block
+	h.templates.ExecuteTemplate(w, "layout", data)
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -183,24 +200,29 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Map to view models
-	patientViewModels := make([]*PatientViewModel, len(patients))
+	// Map to templ components
+	patientItems := make([]patientComponents.PatientListItem, len(patients))
 	for i, p := range patients {
-		patientViewModels[i] = mapPatientToViewModel(p)
+		patientItems[i] = patientComponents.PatientListItem{
+			ID:        p.ID,
+			Name:      p.Name,
+			Notes:     p.Notes,
+			CreatedAt: p.CreatedAt.Format("02/01/2006"),
+		}
 	}
 
-	data := PatientsViewData{
-		Patients: patientViewModels,
-		Insights: []InsightViewModel{},
-	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "patients-content", data)
+		// Render just the patient list fragment
+		patientComponents.PatientList(patientItems, "").Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data)
+	// Render with layout using templ
+	patientList := patientComponents.PatientList(patientItems, "")
+	layoutComponents.BaseWithContent("Pacientes", patientList).Render(r.Context(), w)
 }
 
 // PatientsViewData is a ViewModel for the patients list page
@@ -217,14 +239,14 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. Extração de Parâmetros usando chi.URLParam ou extração manual
+	// 1. Extração de Parâmetros
 	id := extractIDFromPath(r.URL.Path, "/patient/")
 	if id == "" {
 		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
 		return
 	}
 
-	// 2. Chamada ao Serviço (DDD Application Layer)
+	// 2. Chamada ao Serviço
 	patient, err := h.patientService.GetPatientByID(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, services.ErrPatientNotFound) {
@@ -241,21 +263,34 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		sessions = []*session.Session{}
 	}
 
-	// 3. Mapeamento para ViewModel (Protege o Domínio)
-	data := PatientViewData{
-		Patient:  mapPatientToViewModel(patient),
-		Sessions: mapSessionsToViewModel(sessions),
-		Insights: h.getInsights(r.Context(), id),
+	// Map to templ components
+	patientDetail := patientComponents.PatientDetailItem{
+		ID:        patient.ID,
+		Name:      patient.Name,
+		Notes:     patient.Notes,
+		CreatedAt: patient.CreatedAt.Format("02/01/2006 às 15:04"),
 	}
 
-	// 4. Renderização Inteligente (Full Page vs HTMX Fragment)
+	sessionItems := make([]patientComponents.SessionItem, len(sessions))
+	for i, s := range sessions {
+		sessionItems[i] = patientComponents.SessionItem{
+			ID:            s.ID,
+			SessionNumber: i + 1,
+			Date:          s.Date.Format("02/01/2006"),
+			Summary:       s.Summary,
+		}
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "patient-content", data) // Só o miolo
+		patientComponents.PatientDetail(patientDetail, sessionItems).Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data) // Layout completo + miolo
+	detail := patientComponents.PatientDetail(patientDetail, sessionItems)
+	layoutComponents.BaseWithContent(patient.Name, detail).Render(r.Context(), w)
 }
 
 // NewPatient handles GET /patients/new - shows new patient form
@@ -270,12 +305,7 @@ func (h *PatientHandler) NewPatient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "new-patient-form", data)
-		return
-	}
-
-	h.templates.ExecuteTemplate(w, "layout", data)
+	h.templates.ExecuteTemplate(w, "patient-new.html", data)
 }
 
 // NewPatientViewData is a ViewModel for the new patient form

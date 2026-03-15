@@ -1,0 +1,149 @@
+package session
+
+type SessionDetail struct {
+	ID        string
+	PatientID string
+	PatientName string
+	Date      string
+	Summary   string
+	CreatedAt string
+}
+
+type Observation struct {
+	Content   string
+	CreatedAt string
+}
+
+type Intervention struct {
+	Content   string
+	CreatedAt string
+}
+
+templ SessionDetailView(session SessionDetail, observations []Observation, interventions []Intervention, patientID string, errorMsg string) {
+	if errorMsg != "" {
+		<div class="form-error">
+			<i class="fas fa-exclamation-circle"></i>
+			<p>{ errorMsg }</p>
+			<a href={ templ.URL("/patient/" + patientID) } class="mt-4 btn btn-outline btn-sm">Voltar para o paciente</a>
+		</div>
+	} else {
+		<div class="content-header">
+			<div class="header-title">
+				<div>
+					<h1>Sessão { session.Date }</h1>
+					<p class="header-subtitle">Detalhes da sessão terapêutica</p>
+				</div>
+				<div class="header-actions">
+					<a href={ templ.URL("/sessions/edit/" + session.ID) } class="btn btn-outline">
+						<i class="fas fa-edit btn-icon"></i>Editar
+					</a>
+					<button class="btn btn-primary">
+						<i class="fas fa-plus btn-icon"></i>Nova Observação
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-grid" style="margin-bottom: var(--space-2xl);">
+			<div class="card">
+				<div class="card-header">
+					<div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+						<i class="fas fa-sticky-note"></i>
+					</div>
+					<div>
+						<h2 class="card-title">Observações Clínicas</h2>
+						<p class="card-subtitle">Registros e anotações da sessão</p>
+					</div>
+				</div>
+				if len(observations) > 0 {
+					<div style="max-height: 300px; overflow-y: auto;">
+						<div style="display: flex; flex-direction: column; gap: var(--space-md);">
+							for _, o := range observations {
+								<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--primary-500); background: var(--neutral-50);">
+									<div class="clinical-content">{ o.Content }</div>
+									<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
+										<div style="font-size: 0.75rem; color: var(--neutral-500);">
+											<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ o.CreatedAt }
+										</div>
+										<div class="badge badge-primary">Observação</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				} else {
+					<div style="text-align: center; padding: var(--space-xl); color: var(--neutral-400);">
+						<i class="fas fa-sticky-note" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+						<p style="font-style: italic;">Nenhuma observação registrada</p>
+					</div>
+				}
+				<div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);">
+					<button class="btn btn-primary btn-full">
+						<i class="fas fa-plus btn-icon"></i>Adicionar Observação
+					</button>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card-header">
+					<div class="card-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;">
+						<i class="fas fa-hands-helping"></i>
+					</div>
+					<div>
+						<h2 class="card-title">Intervenções Terapêuticas</h2>
+						<p class="card-subtitle">Ações e técnicas aplicadas</p>
+					</div>
+				</div>
+				if len(interventions) > 0 {
+					<div style="max-height: 300px; overflow-y: auto;">
+						<div style="display: flex; flex-direction: column; gap: var(--space-md);">
+							for _, i := range interventions {
+								<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--secondary-500); background: var(--neutral-50);">
+									<div class="clinical-content">{ i.Content }</div>
+									<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
+										<div style="font-size: 0.75rem; color: var(--neutral-500);">
+											<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ i.CreatedAt }
+										</div>
+										<div class="badge badge-secondary">Intervenção</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				} else {
+					<div style="text-align: center; padding: var(--space-xl); color: var(--neutral-400);">
+						<i class="fas fa-hands-helping" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+						<p style="font-style: italic;">Nenhuma intervenção registrada</p>
+					</div>
+				}
+				<div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);">
+					<button class="btn btn-secondary btn-full">
+						<i class="fas fa-plus btn-icon"></i>Adicionar Intervenção
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
+					<i class="fas fa-file-medical-alt"></i>
+				</div>
+				<div>
+					<h2 class="card-title">Resumo da Sessão</h2>
+					<p class="card-subtitle">Síntese e reflexões clínicas</p>
+				</div>
+			</div>
+			<div class="clinical-content" style="padding: var(--space-xl);">
+				if session.Summary != "" {
+					{ session.Summary }
+				} else {
+					<div style="text-align: center; color: var(--neutral-400);">
+						<i class="fas fa-file-medical-alt" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+						<p style="font-style: italic;">Nenhum resumo registrado</p>
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

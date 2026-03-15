@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arandu — Novo Paciente</title>
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container" x-data="{ sidebarOpen: true }">
+        <aside class="sidebar" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+            <div class="sidebar-header">
+                <div class="flex items-center justify-between">
+                    <div class="sidebar-title">
+                        <i class="fas fa-brain"></i>
+                        <span x-show="sidebarOpen">Arandu</span>
+                    </div>
+                    <button @click="sidebarOpen = !sidebarOpen" class="btn-ghost btn-sm" style="color: white;">
+                        <i x-show="sidebarOpen" class="fas fa-chevron-left"></i>
+                        <i x-show="!sidebarOpen" class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div x-show="sidebarOpen" class="sidebar-subtitle">Inteligência Clínica</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item"><i class="fas fa-chart-line nav-icon"></i><span x-show="sidebarOpen">Dashboard</span></a>
+                <a href="/patients" class="nav-item"><i class="fas fa-users nav-icon"></i><span x-show="sidebarOpen">Pacientes</span></a>
+                <a href="/patients/new" class="nav-item active"><i class="fas fa-user-plus nav-icon"></i><span x-show="sidebarOpen">Novo Paciente</span></a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <div class="content-header">
+                <div class="header-title">
+                    <div>
+                        <h1>Novo Paciente</h1>
+                        <p class="header-subtitle">Cadastre um novo paciente no sistema</p>
+                    </div>
+                    <div class="header-actions">
+                        <a href="/patients" class="btn btn-outline"><i class="fas fa-arrow-left btn-icon"></i>Cancelar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="max-width: 800px;">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;"><i class="fas fa-user-plus"></i></div>
+                    <div><h2 class="card-title">Dados do Paciente</h2><p class="card-subtitle">Preencha os dados para criar um novo cadastro</p></div>
+                </div>
+                <form action="/patient/create" method="POST" class="form-section">
+                    <div class="form-group">
+                        <label class="form-label required">Nome completo</label>
+                        <input type="text" name="name" class="form-control" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notas clínicas</label>
+                        <textarea name="notes" class="form-control form-textarea" placeholder="Observações iniciais..." rows="6"></textarea>
+                    </div>
+                    <div style="display: flex; gap: var(--space-md); margin-top: var(--space-xl);">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save btn-icon"></i>Cadastrar</button>
+                        <a href="/patients" class="btn btn-outline">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

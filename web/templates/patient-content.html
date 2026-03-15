@@ -1,0 +1,168 @@
+{{/* Patient detail content for layout rendering */}}
+{{define "patient-content"}}
+<div class="content-header">
+    <div class="header-title">
+        <div>
+            <h1>{{.Patient.Name}}</h1>
+            <p class="header-subtitle">Perfil clínico do paciente</p>
+        </div>
+        <div class="header-actions">
+            <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-primary">
+                <i class="fas fa-calendar-plus btn-icon"></i>
+                Nova Sessão
+            </a>
+            <a href="/patients" class="btn btn-outline">
+                <i class="fas fa-arrow-left btn-icon"></i>
+                Voltar para Pacientes
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="form-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: var(--space-2xl);">
+    <!-- Informações do Paciente -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+                <i class="fas fa-user"></i>
+            </div>
+            <div>
+                <h2 class="card-title">Informações do Paciente</h2>
+                <p class="card-subtitle">Dados cadastrais e observações</p>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label class="form-label">ID do Paciente</label>
+                <div class="form-control" style="background: var(--neutral-50); font-family: var(--font-mono);">
+                    {{.Patient.ID}}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notas Clínicas</label>
+                {{if .Patient.Notes}}
+                <div class="clinical-content" style="background: var(--neutral-50); padding: var(--space-lg); border-radius: var(--radius-md); border-left: 3px solid var(--primary-500);">
+                    {{.Patient.Notes}}
+                </div>
+                {{else}}
+                <div class="form-help">
+                    <i class="fas fa-info-circle"></i>
+                    Nenhuma nota clínica registrada
+                </div>
+                {{end}}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Data de Cadastro</label>
+                <div class="form-control" style="background: var(--neutral-50);">
+                    {{.Patient.CreatedAt.Format "02/01/2006 às 15:04"}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div>
+                <h2 class="card-title">Ações Rápidas</h2>
+                <p class="card-subtitle">Operações frequentes</p>
+            </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-primary btn-full" style="justify-content: flex-start;">
+                <i class="fas fa-calendar-plus btn-icon"></i>
+                Nova Sessão
+            </a>
+            <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                <i class="fas fa-file-medical btn-icon"></i>
+                Registrar Observação
+            </button>
+            <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                <i class="fas fa-chart-line btn-icon"></i>
+                Ver Evolução
+            </button>
+            <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                <i class="fas fa-download btn-icon"></i>
+                Exportar Dados
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Sessões do Paciente -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div>
+            <h2 class="card-title">Sessões Clínicas</h2>
+            <p class="card-subtitle">Histórico de atendimentos</p>
+        </div>
+        <div class="badge badge-primary">
+            {{len .Sessions}} sessões
+        </div>
+    </div>
+    
+    {{if .Sessions}}
+    <div style="max-height: 400px; overflow-y: auto;">
+        <div style="position: relative; padding-left: var(--space-xl);">
+            <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--secondary-300) 0%, transparent 100%);"></div>
+            
+            {{range .Sessions}}
+            <div style="position: relative; margin-bottom: var(--space-lg);">
+                <div style="position: absolute; left: calc(-1 * var(--space-xl)); top: 0; width: 10px; height: 10px; background: var(--secondary-500); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--secondary-300);"></div>
+                
+                <a href="/session/{{.ID}}" class="card-hover" style="display: block; margin-left: var(--space-lg); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-500); text-decoration: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-sm);">
+                        <div>
+                            <h3 style="font-size: 1rem; font-weight: 600; color: var(--neutral-900); margin-bottom: var(--space-xs);">
+                                Sessão {{.SessionNumber}}
+                            </h3>
+                            <div style="font-size: 0.75rem; color: var(--neutral-500);">
+                                <i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>
+                                {{.Date.Format "02/01/2006 às 15:04"}}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-xs);">
+                            <div class="badge" style="background: var(--primary-100); color: var(--primary-700);">
+                                <i class="fas fa-calendar-day" style="margin-right: var(--space-xs);"></i>
+                                {{.Date.Format "02/01"}}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{if .Summary}}
+                    <p style="color: var(--neutral-700); line-height: 1.5; font-size: 0.875rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{.Summary}}
+                    </p>
+                    {{else}}
+                    <p style="color: var(--neutral-400); font-style: italic; font-size: 0.875rem;">
+                        Nenhuma descrição registrada
+                    </p>
+                    {{end}}
+                </a>
+            </div>
+            {{end}}
+        </div>
+    </div>
+    {{else}}
+    <div style="text-align: center; padding: var(--space-2xl) var(--space-xl); color: var(--neutral-400);">
+        <i class="fas fa-calendar-times" style="font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+        <h3 style="font-size: 1.25rem; color: var(--neutral-600); margin-bottom: var(--space-sm);">Nenhuma sessão registrada</h3>
+        <p style="margin-bottom: var(--space-lg);">Comece registrando a primeira sessão clínica</p>
+        <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-success">
+            <i class="fas fa-calendar-plus btn-icon"></i>
+            Registrar Primeira Sessão
+        </a>
+    </div>
+    {{end}}
+</div>
+{{end}}

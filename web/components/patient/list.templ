@@ -1,0 +1,64 @@
+package patient
+
+type PatientListItem struct {
+	ID        string
+	Name      string
+	Notes     string
+	CreatedAt string
+}
+
+templ PatientList(patients []PatientListItem, errorMsg string) {
+	<div class="content-header">
+		<div class="header-title">
+			<div>
+				<h1>Pacientes</h1>
+				<p class="header-subtitle">Gerencie seus pacientes e acompanhe a evolução clínica</p>
+			</div>
+			<div class="header-actions">
+				<a href="/patients/new" class="btn btn-primary">
+					<i class="fas fa-user-plus btn-icon"></i>Novo Paciente
+				</a>
+			</div>
+		</div>
+	</div>
+
+	if errorMsg != "" {
+		<div class="form-error">
+			<i class="fas fa-exclamation-circle"></i>
+			<p>{ errorMsg }</p>
+		</div>
+	}
+
+	if len(patients) > 0 {
+		<div class="form-grid">
+			for _, p := range patients {
+				<a href={ templ.URL("/patient/" + p.ID) } class="patient-card card-hover">
+					<div class="patient-name">{ p.Name }</div>
+					if p.Notes != "" {
+						<div class="patient-notes">{ p.Notes }</div>
+					} else {
+						<div class="patient-notes text-tertiary">Nenhuma observação registrada.</div>
+					}
+					<div class="patient-meta">
+						<span>Cadastrado em { p.CreatedAt }</span>
+						<div class="patient-status"><span class="status-dot"></span>Ativo</div>
+					</div>
+				</a>
+			}
+		</div>
+	} else {
+		<div class="empty-state">
+			<div class="empty-state-icon"><i class="fas fa-user-friends"></i></div>
+			<h2 class="empty-state-title">Nenhum paciente cadastrado</h2>
+			<p class="empty-state-description">Comece adicionando seu primeiro paciente.</p>
+			<a href="/patients/new" class="btn btn-success">
+				<i class="fas fa-user-plus btn-icon"></i>Adicionar Primeiro Paciente
+			</a>
+		</div>
+	}
+}
+
+// HTMX fragment version (without layout)
+templ PatientListFragment(patients []PatientListItem, errorMsg string) {
+	@PatientList(patients, errorMsg)
+}

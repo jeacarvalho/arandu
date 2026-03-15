@@ -1,0 +1,138 @@
+package layout
+
+type PageData struct {
+	PageTitle  string
+	ActivePage string
+}
+
+templ BaseWithContent(pageTitle string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			Arandu
+			if pageTitle != "" {
+				— { pageTitle }
+			}
+		</title>
+		<link href="/static/css/style.css" rel="stylesheet">
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="app-container" x-data="{ sidebarOpen: true }">
+			@Sidebar()
+			<main class="main-content" :class="{ 'main-content-expanded': !sidebarOpen }">
+				@content
+			</main>
+		</div>
+		<script>
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
+				}
+				
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+		</script>
+	</body>
+	</html>
+}
+
+templ Base(pageTitle string) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			Arandu
+			if pageTitle != "" {
+				— { pageTitle }
+			}
+		</title>
+		<link href="/static/css/style.css" rel="stylesheet">
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		@Layout()
+	</body>
+	</html>
+}
+
+templ Layout() {
+	<div class="app-container" x-data="{ sidebarOpen: true }">
+		@Sidebar()
+		<main class="main-content" :class="{ 'main-content-expanded': !sidebarOpen }">
+			{ children... }
+		</main>
+	</div>
+	<script>
+		document.addEventListener('alpine:init', () => {
+			const saved = localStorage.getItem('arandu-sidebar-open');
+			if (saved !== null) {
+				Alpine.store('sidebar', { open: saved === 'true' });
+			}
+			
+			Alpine.effect(() => {
+				const open = Alpine.store('sidebar')?.open;
+				if (open !== undefined) {
+					localStorage.setItem('arandu-sidebar-open', open);
+				}
+			});
+		});
+	</script>
+}
+
+templ Sidebar() {
+	<aside class="sidebar" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+		<div class="sidebar-header">
+			<div class="flex items-center justify-between">
+				<div class="sidebar-title">
+					<i class="fas fa-brain"></i>
+					<span x-show="sidebarOpen">Arandu</span>
+					<span x-show="!sidebarOpen" class="text-2xl">A</span>
+				</div>
+				<button @click="sidebarOpen = !sidebarOpen" 
+					class="btn-ghost btn-sm !p-2 !text-white hover:!bg-white/10"
+					:title="sidebarOpen ? 'Recolher menu' : 'Expandir menu'">
+					<i x-show="sidebarOpen" class="fas fa-chevron-left"></i>
+					<i x-show="!sidebarOpen" class="fas fa-chevron-right"></i>
+				</button>
+			</div>
+			<div x-show="sidebarOpen" class="sidebar-subtitle">
+				Inteligência Clínica
+			</div>
+		</div>
+		
+		<nav class="sidebar-nav">
+			<a href="/dashboard" class="nav-item" :class="{ 'active': window.location.pathname === '/dashboard' }">
+				<i class="fas fa-chart-line nav-icon"></i>
+				<span x-show="sidebarOpen">Dashboard</span>
+			</a>
+			
+			<a href="/patients" class="nav-item" :class="{ 'active': window.location.pathname.startsWith('/patients') }">
+				<i class="fas fa-users nav-icon"></i>
+				<span x-show="sidebarOpen">Pacientes</span>
+			</a>
+			
+			<a href="/patients/new" class="nav-item" :class="{ 'active': window.location.pathname === '/patients/new' }">
+				<i class="fas fa-user-plus nav-icon"></i>
+				<span x-show="sidebarOpen">Novo Paciente</span>
+			</a>
+		</nav>
+	</aside>
+}

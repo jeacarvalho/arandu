@@ -1,54 +1,46 @@
-{{/* Patients list page - defines both full page content and HTMX fragment */}}
+{{/* Patients list page - includes layout */}}
+{{template "layout" .}}
 
-{{/* Main content block for full page rendering */}}
 {{define "content"}}
-{{template "patients-content" .}}
-{{end}}
-
-{{/* HTMX fragment for partial updates - can be rendered standalone */}}
-{{define "patients-content"}}
-{{if .Error}}
-<div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-    <p class="text-red-700 font-medium">{{.Error}}</p>
-</div>
-{{else}}
-<header class="flex items-center justify-between mb-12">
-    <div>
-        <h1 class="text-3xl font-bold text-arandu-text leading-tight">Pacientes</h1>
-        <p class="text-arandu-text-secondary mt-2">Gerencie seus pacientes e acompanhe a evolução clínica</p>
+<div class="content-header">
+    <div class="header-title">
+        <div>
+            <h1>Pacientes</h1>
+            <p class="header-subtitle">Gerencie seus pacientes e acompanhe a evolução clínica</p>
+        </div>
+        <div class="header-actions">
+            <a href="/patients/new" class="btn btn-primary">
+                <i class="fas fa-user-plus btn-icon"></i>Novo Paciente
+            </a>
+        </div>
     </div>
-    <a href="/patients/new" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
-        Novo Paciente
-    </a>
-</header>
+</div>
 
 {{if .Patients}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="form-grid">
     {{range .Patients}}
-    <a href="/patient/{{.ID}}" class="block bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-        <div class="p-6">
-            <h2 class="text-lg font-semibold text-arandu-text mb-2">{{.Name}}</h2>
-            {{if .Notes}}
-            <p class="text-sm text-arandu-text-secondary font-serif italic border-l-2 border-arandu-primary-light pl-3 py-1">"{{.Notes}}"</p>
-            {{else}}
-            <p class="text-sm text-gray-400">Nenhuma observação registrada.</p>
-            {{end}}
-        </div>
-        <div class="px-6 py-3 bg-gray-50/70 border-t border-gray-100 text-xs text-arandu-text-secondary flex items-center justify-between">
+    <a href="/patient/{{.ID}}" class="patient-card card-hover">
+        <div class="patient-name">{{.Name}}</div>
+        {{if .Notes}}
+        <div class="patient-notes">{{.Notes}}</div>
+        {{else}}
+        <div class="patient-notes text-tertiary">Nenhuma observação registrada.</div>
+        {{end}}
+        <div class="patient-meta">
             <span>Cadastrado em {{.CreatedAt}}</span>
-            <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Ativo</span>
+            <div class="patient-status"><span class="status-dot"></span>Ativo</div>
         </div>
     </a>
     {{end}}
 </div>
 {{else}}
-<div class="text-center py-20">
-    <h2 class="text-2xl font-semibold text-arandu-text mb-2">Nenhum paciente cadastrado</h2>
-    <p class="text-arandu-text-secondary mb-6">Comece adicionando seu primeiro paciente para iniciar o registro clínico.</p>
-    <a href="/patients/new" class="px-6 py-2.5 rounded-md text-sm font-semibold text-white bg-arandu-primary hover:bg-arandu-primary-dark transition">
-        Adicionar Primeiro Paciente
+<div class="empty-state">
+    <div class="empty-state-icon"><i class="fas fa-user-friends"></i></div>
+    <h2 class="empty-state-title">Nenhum paciente cadastrado</h2>
+    <p class="empty-state-description">Comece adicionando seu primeiro paciente.</p>
+    <a href="/patients/new" class="btn btn-success">
+        <i class="fas fa-user-plus btn-icon"></i>Adicionar Primeiro Paciente
     </a>
 </div>
-{{end}}
 {{end}}
 {{end}}

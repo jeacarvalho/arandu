@@ -9,27 +9,30 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+
+	layoutComponents "arandu/web/components/layout"
+	sessionComponents "arandu/web/components/session"
 )
 
 // SessionViewData is a ViewModel that protects the domain from template concerns
 type SessionViewData struct {
-	Session    *SessionDetailViewModel
-	Patient    *PatientViewModel
-	Insights   []InsightViewModel
-	Error      string
-	FormData   *SessionFormValues
+	Session     *SessionDetailViewModel
+	Patient     *PatientViewModel
+	Insights    []InsightViewModel
+	Error       string
+	FormData    *SessionFormValues
 	ServerError string
 }
 
 // SessionDetailViewModel is a view-specific representation of a session with full details
 type SessionDetailViewModel struct {
-	ID          string
-	PatientID   string
-	Date        string
-	Summary     string
-	CreatedAt   string
-	UpdatedAt   string
-	Observations []ObservationViewModel
+	ID            string
+	PatientID     string
+	Date          string
+	Summary       string
+	CreatedAt     string
+	UpdatedAt     string
+	Observations  []ObservationViewModel
 	Interventions []InterventionViewModel
 }
 
@@ -93,13 +96,13 @@ func mapSessionToDetailViewModel(s *session.Session) *SessionDetailViewModel {
 		return nil
 	}
 	return &SessionDetailViewModel{
-		ID:          s.ID,
-		PatientID:   s.PatientID,
-		Date:        s.Date.Format("02/01/2006"),
-		Summary:     s.Summary,
-		CreatedAt:   s.CreatedAt.Format("02/01/2006 15:04"),
-		UpdatedAt:   s.UpdatedAt.Format("02/01/2006 15:04"),
-		Observations: []ObservationViewModel{},
+		ID:            s.ID,
+		PatientID:     s.PatientID,
+		Date:          s.Date.Format("02/01/2006"),
+		Summary:       s.Summary,
+		CreatedAt:     s.CreatedAt.Format("02/01/2006 15:04"),
+		UpdatedAt:     s.UpdatedAt.Format("02/01/2006 15:04"),
+		Observations:  []ObservationViewModel{},
 		Interventions: []InterventionViewModel{},
 	}
 }
@@ -128,14 +131,14 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. Extração de Parâmetros usando extração manual
+	// 1. Extração de Parâmetros
 	id := extractIDFromPath(r.URL.Path, "/session/")
 	if id == "" {
 		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
 		return
 	}
 
-	// 2. Chamada ao Serviço (DDD Application Layer)
+	// 2. Chamada ao Serviço
 	sess, err := h.sessionService.GetSession(r.Context(), id)
 	if err != nil {
 		h.renderError(w, r, "Sessão não encontrada", http.StatusNotFound)
@@ -149,21 +152,30 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Mapeamento para ViewModel (Protege o Domínio)
-	data := SessionViewData{
-		Session:  mapSessionToDetailViewModel(sess),
-		Patient:  mapPatientToViewModel(patient),
-		Insights: []InsightViewModel{},
+	// Map to templ components
+	sessionDetail := sessionComponents.SessionDetail{
+		ID:          sess.ID,
+		PatientID:   sess.PatientID,
+		PatientName: patient.Name,
+		Date:        sess.Date.Format("02/01/2006"),
+		Summary:     sess.Summary,
+		CreatedAt:   sess.CreatedAt.Format("02/01/2006 às 15:04"),
 	}
 
-	// 4. Renderização Inteligente (Full Page vs HTMX Fragment)
+	// Empty observations and interventions for now (can be expanded later)
+	observations := []sessionComponents.Observation{}
+	interventions := []sessionComponents.Intervention{}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "session-content", data) // Só o miolo
+		sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "").Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data) // Layout completo + miolo
+	detail := sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "")
+	layoutComponents.BaseWithContent("Sessão "+sessionDetail.Date, detail).Render(r.Context(), w)
 }
 
 // NewSession handles GET /patient/{id}/sessions/new - shows new session form
@@ -243,7 +255,7 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("HX-Request") == "true" {
 			patient, _ := h.patientService.GetPatientByID(r.Context(), patientID)
 			data := SessionViewData{
-				Error: err.Error(),
+				Error:   err.Error(),
 				Patient: mapPatientToViewModel(patient),
 				FormData: &SessionFormValues{
 					PatientID: patientID,
@@ -362,7 +374,7 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 			sess, _ := h.sessionService.GetSession(r.Context(), sessionID)
 			patient, _ := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
 			data := SessionViewData{
-				Error: err.Error(),
+				Error:   err.Error(),
 				Patient: mapPatientToViewModel(patient),
 				FormData: &SessionFormValues{
 					PatientID: sess.PatientID,

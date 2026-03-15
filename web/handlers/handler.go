@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -59,17 +58,61 @@ func (h *Handler) render(w http.ResponseWriter, contentName string, data map[str
 	if data == nil {
 		data = make(map[string]interface{})
 	}
+
+	log.Printf("Rendering template: %s with layout_basic", contentName)
+
 	// Execute the layout template which includes the content template
-	err := h.templates.ExecuteTemplate(w, contentName, data)
+	err := h.templates.ExecuteTemplate(w, "layout_basic", data)
 	if err != nil {
 		log.Printf("Error rendering template %s: %v", contentName, err)
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	} else {
+		log.Printf("Successfully rendered template: %s", contentName)
 	}
+}
+
+func (h *Handler) prepareLayoutData(data map[string]interface{}, currentPage string, pageTitle string, pageSubtitle string) map[string]interface{} {
+	if data == nil {
+		data = make(map[string]interface{})
+	}
+
+	// Add layout metadata
+	data["CurrentPage"] = currentPage
+	data["PageTitle"] = pageTitle
+	if pageSubtitle != "" {
+		data["PageSubtitle"] = pageSubtitle
+	}
+
+	// Ensure Insights is always present (even if empty)
+	if _, exists := data["Insights"]; !exists {
+		data["Insights"] = []interface{}{}
+	}
+
+	return data
 }
 
 func (h *Handler) renderSimple(w http.ResponseWriter, name string, data interface{}) {
 	log.Printf("Attempting to render template: %s", name)
-	err := h.templates.ExecuteTemplate(w, name, data)
+
+	// Convert data to map if it's not already
+	var dataMap map[string]interface{}
+	if m, ok := data.(map[string]interface{}); ok {
+		dataMap = m
+	} else {
+		dataMap = make(map[string]interface{})
+		// Try to extract common fields
+		// This is a simple fallback for existing code
+	}
+
+	// Ensure it has layout data
+	if _, exists := dataMap["CurrentPage"]; !exists {
+		dataMap["CurrentPage"] = "unknown"
+	}
+	if _, exists := dataMap["PageTitle"]; !exists {
+		dataMap["PageTitle"] = "Arandu"
+	}
+
+	err := h.templates.ExecuteTemplate(w, "layout", dataMap)
 	if err != nil {
 		log.Printf("Error rendering template %s: %v", name, err)
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -159,10 +202,12 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		"Stats":    stats,
 		"Patients": patients,
 		"Sessions": allSessions,
-		"Insights": []interface{}{},
 	}
 
-	h.renderSimple(w, "dashboard.html", data)
+	// Prepare layout data
+	layoutData := h.prepareLayoutData(data, "dashboard", "Dashboard Clínico", "Visão geral para reflexão terapêutica")
+
+	h.render(w, "dashboard_content.html", layoutData)
 }
 
 func (h *Handler) Patients(w http.ResponseWriter, r *http.Request) {
@@ -187,11 +232,10 @@ func (h *Handler) handleGetPatients(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Found %d patients", len(patients))
 
-	// Simple test response
-	html := `<html><body><h1>Pacientes</h1><p>Total: ` + strconv.Itoa(len(patients)) + `</p></body></html>`
+	// HTML MÍNIMO para teste - SEM template, SEM layout
+	html := "TESTE1234567890TESTE"
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	log.Printf("Sending test response, length: %d", len(html))
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Write([]byte(html))
 }
 
@@ -334,29 +378,15 @@ func (h *Handler) Patient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"Patient":  patient,
-		"Sessions": make([]interface{}, len(sessions)),
+		"Patient":   patient,
+		"Sessions":  sessions,
+		"PatientID": id,
 	}
 
-	for i, s := range sessions {
-		data["Sessions"].([]interface{})[i] = s
-	}
+	// Prepare layout data
+	layoutData := h.prepareLayoutData(data, "patient", patient.Name, "Perfil clínico do paciente")
 
-	// For now, serve a simple response
-	html := `<!DOCTYPE html>
-<html>
-<head><title>Paciente</title></head>
-<body>
-	<h1>Paciente: ` + patient.Name + `</h1>
-	<p>ID: ` + patient.ID + `</p>
-	<p>Notas: ` + patient.Notes + `</p>
-	<p>Sessões: ` + string(len(sessions)) + `</p>
-	<a href="/patients">Voltar</a>
-</body>
-</html>`
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(html))
+	h.render(w, "patient.html", layoutData)
 }
 
 func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
@@ -382,10 +412,15 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"Session": session,
+		"Session":   session,
+		"SessionID": id,
+		"PatientID": session.PatientID,
 	}
 
-	h.render(w, "session.html", data)
+	// Prepare layout data
+	layoutData := h.prepareLayoutData(data, "session", "Sessão Clínica", session.Date.Format("02/01/2006"))
+
+	h.render(w, "session.html", layoutData)
 }
 
 func (h *Handler) NewSession(w http.ResponseWriter, r *http.Request) {

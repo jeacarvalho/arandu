@@ -1,55 +1,91 @@
-{{/* Patient detail page - defines both full page content and HTMX fragment */}}
+{{/* Patient detail page - includes layout */}}
+{{template "layout" .}}
 
-{{/* Main content block for full page rendering */}}
 {{define "content"}}
-{{template "patient-content" .}}
-{{end}}
-
-{{/* HTMX fragment for partial updates - can be rendered standalone */}}
-{{define "patient-content"}}
-{{if .Error}}
-<div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-    <p class="text-red-700 font-medium">{{.Error}}</p>
-    <a href="/patients" class="mt-4 inline-block text-sm text-red-600 hover:underline">Voltar para lista de pacientes</a>
-</div>
-{{else if .Patient}}
-<header class="mb-12 border-b border-gray-50 pb-8">
-    <div class="flex justify-between items-end">
+<div class="content-header">
+    <div class="header-title">
         <div>
-            <h1 class="text-4xl font-serif font-semibold mb-2">{{.Patient.Name}}</h1>
-            <p class="text-sm text-gray-400 uppercase tracking-widest">Início do acompanhamento: {{.Patient.CreatedAt}}</p>
+            <h1>{{.Patient.Name}}</h1>
+            <p class="header-subtitle">Perfil clínico do paciente</p>
         </div>
-        <a href="/patient/{{.Patient.ID}}/sessions/new" class="text-sm font-semibold text-[#3A7D6B] hover:underline">Nova Sessão</a>
+        <div class="header-actions">
+            <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-primary">
+                <i class="fas fa-calendar-plus btn-icon"></i>Nova Sessão
+            </a>
+            <a href="/patients" class="btn btn-outline">
+                <i class="fas fa-arrow-left btn-icon"></i>Voltar
+            </a>
+        </div>
     </div>
-</header>
+</div>
 
-<div class="space-y-12">
-    <div class="prose prose-slate max-w-none">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">Notas de Contexto</h3>
-        <p class="font-serif text-lg leading-relaxed text-gray-700 italic">
-            {{if .Patient.Notes}}{{.Patient.Notes}}{{else}}Sem notas iniciais registradas.{{end}}
-        </p>
+<div class="form-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: var(--space-2xl);">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+                <i class="fas fa-user"></i>
+            </div>
+            <div><h2 class="card-title">Informações do Paciente</h2></div>
+        </div>
+        <div class="form-section">
+            <div class="form-group">
+                <label class="form-label">ID do Paciente</label>
+                <div class="form-control" style="background: var(--neutral-50); font-family: var(--font-mono);">{{.Patient.ID}}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notas Clínicas</label>
+                {{if .Patient.Notes}}
+                <div class="clinical-content" style="background: var(--neutral-50); padding: var(--space-lg); border-radius: var(--radius-md); border-left: 3px solid var(--primary-500);">{{.Patient.Notes}}</div>
+                {{else}}<div class="form-help">Nenhuma nota clínica registrada</div>{{end}}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de Cadastro</label>
+                <div class="form-control" style="background: var(--neutral-50);">{{.Patient.CreatedAt.Format "02/01/2006 às 15:04"}}</div>
+            </div>
+        </div>
     </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div><h2 class="card-title">Ações Rápidas</h2></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-primary btn-full" style="justify-content: flex-start;">
+                <i class="fas fa-calendar-plus btn-icon"></i>Nova Sessão
+            </a>
+        </div>
+    </div>
+</div>
 
-    <div class="space-y-8">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Histórico Longitudinal</h3>
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div><h2 class="card-title">Sessões Clínicas</h2></div>
+        <div class="badge badge-primary">{{len .Sessions}} sessões</div>
+    </div>
+    {{if .Sessions}}
+    <div style="max-height: 400px; overflow-y: auto;">
         {{range .Sessions}}
-        <div class="group relative pl-8 py-2 border-l border-gray-100 hover:border-[#1E3A5F] transition-colors">
-            <div class="absolute -left-[5px] top-4 w-2 h-2 rounded-full bg-gray-200 group-hover:bg-[#1E3A5F]"></div>
-            <a href="/session/{{.ID}}" class="block">
-                <span class="text-sm text-gray-400 font-sans uppercase tracking-tight">{{.Date}}</span>
-                  <p class="font-serif text-gray-800 mt-1 leading-snug">{{if .Summary}}{{.Summary}}{{else}}Registro de encontro terapêutico.{{end}}</p>
-             </a>
-             <a href="/sessions/edit/{{.ID}}" class="absolute right-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">Editar</a>
-          </div>
-          {{else}}
-          <p class="font-serif text-gray-400 italic">Nenhuma sessão registrada até o momento.</p>
+        <a href="/session/{{.ID}}" class="patient-card card-hover" style="display: block; margin-bottom: var(--space-sm);">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <div style="font-weight: 600;">Sessão {{.SessionNumber}}</div>
+                    <div style="font-size: 0.75rem; color: var(--neutral-500);">{{.Date.Format "02/01/2006"}}</div>
+                </div>
+                {{if .Summary}}<p style="font-size: 0.875rem; color: var(--neutral-600);">{{.Summary}}</p>{{end}}
+            </div>
+        </a>
         {{end}}
     </div>
+    {{else}}
+    <div style="text-align: center; padding: var(--space-2xl); color: var(--neutral-400);">
+        <p>Nenhuma sessão registrada</p>
+        <a href="/patient/{{.Patient.ID}}/sessions/new" class="btn btn-success" style="margin-top: var(--space-md);">Registrar Primeira Sessão</a>
+    </div>
+    {{end}}
 </div>
-{{else}}
-<div class="text-center py-20">
-    <p class="text-gray-500">Paciente não encontrado</p>
-</div>
-{{end}}
 {{end}}

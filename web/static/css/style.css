@@ -1,5 +1,11 @@
 /* Arandu Design System - Clinical Intelligence Platform */
 :root {
+    /* Arandu Brand Colors (from prompt) */
+    --arandu-primary: #1E3A5F;
+    --arandu-secondary: #3A7D6B;
+    --arandu-insight: #D4A84F;
+    --arandu-bg: #F7F8FA;
+    
     /* Primary Colors - Deep Clinical Blue */
     --primary-50: #f0f7ff;
     --primary-100: #e0effe;
@@ -64,15 +70,15 @@
     
     /* Background & Text */
     --bg-primary: #ffffff;
-    --bg-secondary: #f9fafb;
-    --bg-sidebar: linear-gradient(180deg, var(--primary-900) 0%, var(--primary-800) 100%);
+    --bg-secondary: var(--arandu-bg);
+    --bg-sidebar: linear-gradient(180deg, var(--arandu-primary) 0%, #152642 100%);
     --bg-card: #ffffff;
     --bg-hover: var(--neutral-50);
     --text-primary: var(--neutral-900);
     --text-secondary: var(--neutral-600);
     --text-tertiary: var(--neutral-400);
     --text-inverse: #ffffff;
-    --text-clinical: var(--primary-700);
+    --text-clinical: var(--arandu-primary);
     
     /* Shadows */
     --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
@@ -109,6 +115,11 @@
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-serif: 'Source Serif 4', Georgia, serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    
+    /* Sidebar */
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --sidebar-transition: var(--transition-normal);
 }
 
 /* Base Styles */
@@ -201,9 +212,9 @@ p {
     background: var(--bg-secondary);
 }
 
-/* Sidebar */
+/* Sidebar - Retractable */
 .sidebar {
-    width: 280px;
+    width: var(--sidebar-width);
     background: var(--bg-sidebar);
     color: var(--text-inverse);
     padding: var(--space-xl) var(--space-lg);
@@ -213,6 +224,12 @@ p {
     z-index: 10;
     position: relative;
     overflow: hidden;
+    transition: width var(--sidebar-transition);
+}
+
+.sidebar-collapsed {
+    width: var(--sidebar-collapsed-width);
+    padding: var(--space-xl) var(--space-md);
 }
 
 .sidebar::before {
@@ -230,6 +247,12 @@ p {
     padding-bottom: var(--space-lg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
+    overflow: hidden;
+}
+
+.sidebar-collapsed .sidebar-header {
+    padding-bottom: var(--space-md);
+    margin-bottom: var(--space-xl);
 }
 
 .sidebar-title {
@@ -241,6 +264,13 @@ p {
     gap: var(--space-sm);
     margin-bottom: var(--space-xs);
     letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-collapsed .sidebar-title {
+    font-size: 2rem;
+    justify-content: center;
 }
 
 .sidebar-title i {
@@ -252,6 +282,15 @@ p {
     font-size: 0.875rem;
     color: rgba(255, 255, 255, 0.7);
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity var(--transition-fast);
+}
+
+.sidebar-collapsed .sidebar-subtitle {
+    opacity: 0;
+    height: 0;
+    margin: 0;
 }
 
 .sidebar-nav {
@@ -259,6 +298,10 @@ p {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+}
+
+.sidebar-collapsed .sidebar-nav {
+    align-items: center;
 }
 
 .nav-item {
@@ -273,6 +316,12 @@ p {
     font-weight: 500;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar-collapsed .nav-item {
+    padding: var(--space-md);
+    justify-content: center;
 }
 
 .nav-item::before {
@@ -282,7 +331,7 @@ p {
     top: 0;
     bottom: 0;
     width: 3px;
-    background: var(--accent-500);
+    background: var(--arandu-insight);
     transform: translateX(-100%);
     transition: transform var(--transition-normal);
 }
@@ -291,6 +340,10 @@ p {
     background: rgba(255, 255, 255, 0.05);
     color: white;
     transform: translateX(4px);
+}
+
+.sidebar-collapsed .nav-item:hover {
+    transform: scale(1.05);
 }
 
 .nav-item:hover::before {
@@ -312,18 +365,41 @@ p {
     height: 1.25rem;
     opacity: 0.9;
     transition: opacity var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .nav-item:hover .nav-icon {
     opacity: 1;
 }
 
-/* Main Content */
+.sidebar-collapsed .nav-icon {
+    margin: 0;
+}
+
+.nav-item span {
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    overflow: hidden;
+}
+
+.sidebar-collapsed .nav-item span {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Main Content - Adjusts with sidebar */
 .main-content {
     flex: 1;
     padding: var(--space-2xl);
     overflow-y: auto;
     background: var(--bg-secondary);
+    transition: margin-left var(--sidebar-transition);
+    margin-left: 0;
+}
+
+.main-content-expanded {
+    margin-left: calc(var(--sidebar-width) - var(--sidebar-collapsed-width));
 }
 
 .content-header {
@@ -362,7 +438,7 @@ p {
     max-width: 800px;
 }
 
-/* Cards */
+/* Cards - Enhanced with card-hover pattern */
 .card {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -381,13 +457,13 @@ p {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary-200), transparent);
+    background: linear-gradient(90deg, transparent, var(--arandu-primary), transparent);
 }
 
 .card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
-    border-color: var(--primary-200);
+    border-color: var(--arandu-primary);
 }
 
 .card-header {
@@ -407,12 +483,14 @@ p {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    font-family: var(--font-sans);
 }
 
 .card-subtitle {
     color: var(--text-secondary);
     font-size: 0.875rem;
     margin-top: var(--space-xs);
+    font-family: var(--font-sans);
 }
 
 .card-icon {
@@ -423,18 +501,75 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-600);
+    color: var(--arandu-primary);
     font-size: 1.25rem;
 }
 
+/* Card Hover Pattern (from dashAtual.html) */
 .card-hover {
     cursor: pointer;
     transition: all var(--transition-normal);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--neutral-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--arandu-secondary), transparent);
 }
 
 .card-hover:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
+    border-color: var(--arandu-secondary);
+}
+
+/* Clinical Content Typography */
+.clinical-content {
+    font-family: var(--font-serif);
+    color: var(--text-clinical);
+    line-height: 1.8;
+}
+
+.clinical-content h1,
+.clinical-content h2,
+.clinical-content h3,
+.clinical-content h4 {
+    font-family: var(--font-sans);
+    color: var(--arandu-primary);
+}
+
+.clinical-content p {
+    margin-bottom: var(--space-lg);
+    font-size: 1.125rem;
+}
+
+.clinical-content blockquote {
+    border-left: 4px solid var(--arandu-insight);
+    padding-left: var(--space-lg);
+    margin: var(--space-xl) 0;
+    font-style: italic;
+    color: var(--neutral-700);
+}
+
+.clinical-content ul,
+.clinical-content ol {
+    margin: var(--space-lg) 0;
+    padding-left: var(--space-xl);
+}
+
+.clinical-content li {
+    margin-bottom: var(--space-sm);
 }
 
 /* Forms */
@@ -661,53 +796,74 @@ p {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    background: linear-gradient(135deg, var(--arandu-primary) 0%, #152642 100%);
     color: white;
     box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+    background: linear-gradient(135deg, #152642 0%, #0d1a2f 100%);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
 .btn-secondary {
     background: white;
-    color: var(--neutral-700);
-    border: 2px solid var(--neutral-300);
+    color: var(--arandu-secondary);
+    border: 2px solid var(--arandu-secondary);
     box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-    background: var(--neutral-50);
-    border-color: var(--neutral-400);
+    background: var(--arandu-secondary);
+    color: white;
+    border-color: var(--arandu-secondary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
 .btn-success {
-    background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+    background: linear-gradient(135deg, var(--arandu-secondary) 0%, #2d6b5a 100%);
     color: white;
     box-shadow: var(--shadow-md);
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, var(--secondary-600) 0%, var(--secondary-700) 100%);
+    background: linear-gradient(135deg, #2d6b5a 0%, #1f4a3e 100%);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
+.btn-success:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
 .btn-outline {
     background: transparent;
-    color: var(--primary-600);
-    border: 2px solid var(--primary-300);
+    color: var(--arandu-primary);
+    border: 2px solid var(--arandu-primary);
 }
 
 .btn-outline:hover {
-    background: var(--primary-50);
-    border-color: var(--primary-500);
+    background: var(--arandu-primary);
+    color: white;
+    border-color: var(--arandu-primary);
     transform: translateY(-2px);
+}
+
+.btn-outline:active {
+    transform: translateY(0);
 }
 
 .btn-ghost {
@@ -719,6 +875,12 @@ p {
 .btn-ghost:hover {
     background: var(--neutral-100);
     color: var(--neutral-800);
+    transform: translateY(-2px);
+}
+
+.btn-ghost:active {
+    transform: translateY(0);
+    background: var(--neutral-200);
 }
 
 .btn-icon {
@@ -980,7 +1142,7 @@ p {
     animation: shimmer 2s infinite linear;
 }
 
-/* Responsive Design */
+/* Responsive Design - Sidebar retractable */
 @media (max-width: 1024px) {
     .app-container {
         flex-direction: column;
@@ -988,22 +1150,111 @@ p {
     
     .sidebar {
         width: 100%;
-        padding: 1rem;
+        height: auto;
+        padding: var(--space-md);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .sidebar-collapsed {
+        width: 100%;
+        height: 60px;
+        padding: var(--space-sm);
+    }
+    
+    .sidebar-header {
+        margin-bottom: var(--space-md);
+        padding-bottom: var(--space-sm);
     }
     
     .sidebar-nav {
-        display: flex;
-        gap: 0.5rem;
+        flex-direction: row;
+        gap: var(--space-xs);
         overflow-x: auto;
+        padding-bottom: var(--space-xs);
     }
     
     .nav-item {
         flex-shrink: 0;
-        margin-bottom: 0;
+        padding: var(--space-sm) var(--space-md);
+        min-width: fit-content;
+    }
+    
+    .sidebar-collapsed .nav-item {
+        padding: var(--space-sm);
+    }
+    
+    .nav-item span {
+        display: none;
+    }
+    
+    .sidebar-collapsed .nav-item span {
+        display: none;
     }
     
     .main-content {
-        padding: 1.5rem;
+        padding: var(--space-lg);
+        margin-left: 0 !important;
+    }
+    
+    .main-content-expanded {
+        margin-left: 0 !important;
+    }
+    
+    .content-header {
+        padding: var(--space-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        height: 50px;
+    }
+    
+    .sidebar-collapsed {
+        height: 50px;
+    }
+    
+    .sidebar-title {
+        font-size: 1.25rem;
+    }
+    
+    .sidebar-collapsed .sidebar-title {
+        font-size: 1.5rem;
+    }
+    
+    .sidebar-subtitle {
+        display: none;
+    }
+    
+    .nav-item {
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    .nav-icon {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .main-content {
+        padding: var(--space-md);
+    }
+    
+    .content-header {
+        padding: var(--space-md);
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .clinical-content p {
+        font-size: 1rem;
     }
 }
 

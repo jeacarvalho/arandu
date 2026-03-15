@@ -130,16 +130,134 @@ h.templates.ExecuteTemplate(w, "layout", data)
 
 ## Estrutura de Templates
 
-### Hierarquia Modular
+### Sistema de Templates: Templ (v0.3+)
+
+O projeto utiliza o framework **Templ** para renderização de componentes. Este sistema substitui o Go html/template nativo.
+
+#### Instalação
+```bash
+go install github.com/a-h/templ/cmd/templ@latest
+```
+
+#### Estrutura de Componentes
 
 ```
-web/templates/
+web/components/
+├── layout/
+│   ├── layout.templ        # Layout base + sidebar
+│   └── layout_templ.go    # Código gerado
+├── patient/
+│   ├── list.templ         # Lista de pacientes
+│   └── detail.templ       # Detalhe do paciente
+├── session/
+│   └── detail.templ      # Detalhe da sessão
+└── dashboard/
+    └── dashboard.templ    # Dashboard
+```
+
+#### Padrão de Componente
+
+```templ
+// web/components/patient/list.templ
+package patient
+
+type PatientListItem struct {
+    ID        string
+    Name      string
+    Notes     string
+    CreatedAt string
+}
+
+templ PatientList(patients []PatientListItem, errorMsg string) {
+    <div class="content-header">
+        <h1>Pacientes</h1>
+    </div>
+    // Conteúdo do componente
+}
+```
+
+#### Geração de Código
+
+```bash
+# Gera código Go a partir dos arquivos .templ
+templ generate
+```
+
+**Importante:** 
+- Não use `//go:build templ` - o código compila nativamente
+- Não inclua `import "github.com/a-h/templ"` nos arquivos .templ - o gerador adiciona automaticamente
+
+#### Integração no Handler
+
+```go
+import (
+    layoutComponents "arandu/web/components/layout"
+    patientComponents "arandu/web/components/patient"
+)
+
+func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
+    // ... obter pacientes ...
+    
+    patientItems := make([]patientComponents.PatientListItem, len(patients))
+    for i, p := range patients {
+        patientItems[i] = patientComponents.PatientListItem{
+            ID:        p.ID,
+            Name:      p.Name,
+            CreatedAt: p.CreatedAt.Format("02/01/2006"),
+        }
+    }
+    
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+    
+    // HTMX: renderiza apenas o fragmento
+    if r.Header.Get("HX-Request") == "true" {
+        patientComponents.PatientList(patientItems, "").Render(r.Context(), w)
+        return
+    }
+    
+    // Full-page: injeta componente no layout
+    patientList := patientComponents.PatientList(patientItems, "")
+    layoutComponents.BaseWithContent("Pacientes", patientList).Render(r.Context(), w)
+}
+```
+
+#### Componente de Layout
+
+```templ
+// web/components/layout/layout.templ
+package layout
+
+templ BaseWithContent(pageTitle string, content templ.Component) {
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Arandu — { pageTitle }</title>
+        <!-- CSS, scripts, etc -->
+    </head>
+    <body>
+        <div class="app-container" x-data="{ sidebarOpen: true }">
+            @Sidebar()
+            <main class="main-content">
+                @content
+            </main>
+        </div>
+    </body>
+    </html>
+}
+```
+
+### Hierarquia (Legado - Migrar)
+
+> **Nota:** Os templates em `web/templates/` estão em processo de migração para `web/components/`.
+
+```
+web/templates/           # LEGADO - Migrar para components/
 ├── layout.html           # Esqueleto base (head, sidebar, scripts)
-├── error-fragment.html   # Fragmento de erro para HTMX
-├── patients.html         # Define "content" + "patients-content"
-├── patient.html          # Define "content" + "patient-content"
-├── session.html          # Define "content" + "session-content"
-└── session_new.html      # Define "content" + "new-session-form"
+├── error-fragment.html  # Fragmento de erro para HTMX
+├── patients.html        # Define "content" + "patients-content"
+├── patient.html         # Define "content" + "patient-content"
+├── session.html         # Define "content" + "session-content"
+└── session_new.html     # Define "content" + "new-session-form"
 ```
 
 ### Padrão de Definição

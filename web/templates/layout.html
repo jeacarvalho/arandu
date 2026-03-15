@@ -4,60 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arandu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <title>Arandu{{if .PageTitle}} — {{.PageTitle}}{{end}}</title>
+    <link href="/static/css/style.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
-<body class="bg-arandu-background text-arandu-text font-sans antialiased">
-    <div class="flex min-h-screen">
-        
-        <aside class="w-20 lg:w-64 bg-white border-r border-gray-100 flex flex-col transition-all">
-            <div class="p-6">
-                <h1 class="text-xl font-semibold text-arandu-primary tracking-tight">Arandu</h1>
+<body>
+    <div class="app-container" x-data="{ sidebarOpen: true }">
+        <!-- Sidebar -->
+        <aside class="sidebar" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+            <div class="sidebar-header">
+                <div class="flex items-center justify-between">
+                    <div class="sidebar-title">
+                        <i class="fas fa-brain"></i>
+                        <span x-show="sidebarOpen">Arandu</span>
+                        <span x-show="!sidebarOpen" class="text-2xl">A</span>
+                    </div>
+                    <button @click="sidebarOpen = !sidebarOpen" 
+                            class="btn-ghost btn-sm !p-2 !text-white hover:!bg-white/10"
+                            :title="sidebarOpen ? 'Recolher menu' : 'Expandir menu'">
+                        <i x-show="sidebarOpen" class="fas fa-chevron-left"></i>
+                        <i x-show="!sidebarOpen" class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div x-show="sidebarOpen" class="sidebar-subtitle">
+                    Inteligência Clínica
+                </div>
             </div>
             
-            <nav class="flex-1 px-4 space-y-2">
-                <a href="/dashboard" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary">
-                    <span class="hidden lg:inline">Dashboard</span>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item" :class="{ 'active': window.location.pathname === '/dashboard' }">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span x-show="sidebarOpen">Dashboard</span>
                 </a>
-                <a href="/patients" class="flex items-center p-2 rounded-md hover:bg-gray-50 text-gray-600 hover:text-arandu-primary border-l-2 border-transparent hover:border-arandu-primary">
-                    <span class="hidden lg:inline">Pacientes</span>
+                
+                <a href="/patients" class="nav-item" :class="{ 'active': window.location.pathname.startsWith('/patients') }">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span x-show="sidebarOpen">Pacientes</span>
+                </a>
+                
+                <a href="/patients/new" class="nav-item" :class="{ 'active': window.location.pathname === '/patients/new' }">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <span x-show="sidebarOpen">Novo Paciente</span>
                 </a>
             </nav>
         </aside>
 
-        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
-            
-            <section class="flex-1 overflow-y-auto p-8 lg:p-12">
-                <div class="max-w-4xl mx-auto">
-                    {{template "content" .}}
-                </div>
-            </section>
-
-            <aside class="w-full lg:w-72 bg-gray-50/50 border-l border-gray-100 p-6 overflow-y-auto">
-                <header class="mb-6 flex items-center justify-between">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Reflexões</h2>
-                    <span class="h-2 w-2 rounded-full bg-arandu-insight animate-pulse"></span>
-                </header>
-                
-                <div id="insights-panel" class="space-y-6 font-serif italic text-gray-600">
-                    {{range .Insights}}
-                    <div class="relative pl-4 border-l border-arandu-insight/30">
-                        <p class="text-sm leading-relaxed">{{.Content}}</p>
-                        <footer class="mt-2 text-[10px] font-sans not-italic uppercase tracking-tighter text-gray-400">
-                            {{.Source}} • {{.CreatedAt.Format "02 Jan"}}
-                        </footer>
-                    </div>
-                    {{else}}
-                    <p class="text-sm text-gray-400 font-sans not-italic">O sistema aguarda novos registros para gerar reflexões.</p>
-                    {{end}}
-                </div>
-            </aside>
-
+        <!-- Main Content -->
+        <main class="main-content" :class="{ 'main-content-expanded': !sidebarOpen }">
+            {{template "content" .}}
         </main>
     </div>
+
+    <script>
+        // Restaurar estado da sidebar do localStorage
+        document.addEventListener('alpine:init', () => {
+            const saved = localStorage.getItem('arandu-sidebar-open');
+            if (saved !== null) {
+                Alpine.store('sidebar', { open: saved === 'true' });
+            }
+            
+            // Salvar estado quando mudar
+            Alpine.effect(() => {
+                const open = Alpine.store('sidebar')?.open;
+                if (open !== undefined) {
+                    localStorage.setItem('arandu-sidebar-open', open);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 {{end}}

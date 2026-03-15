@@ -1,0 +1,392 @@
+{{/* Dashboard content for layout rendering */}}
+{{define "dashboard-content"}}
+<div class="content-header">
+    <div class="header-title">
+        <div>
+            <h1>Dashboard Clínico</h1>
+            <p class="header-subtitle">Visão geral para reflexão terapêutica e acompanhamento</p>
+        </div>
+        <div class="header-actions">
+            <div class="btn-group">
+                <button class="btn btn-outline" id="refresh-btn">
+                    <i class="fas fa-sync-alt btn-icon"></i>
+                    Atualizar
+                </button>
+                <button class="btn btn-outline" id="export-btn">
+                    <i class="fas fa-download btn-icon"></i>
+                    Exportar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Overview -->
+<div class="form-grid" style="margin-bottom: var(--space-2xl);">
+    <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+        <div style="font-size: 3rem; font-weight: 800; color: var(--primary-600); margin-bottom: var(--space-sm); line-height: 1;">
+            {{if .Stats}}{{.Stats.TotalPatients}}{{else}}0{{end}}
+        </div>
+        <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
+            <i class="fas fa-users" style="margin-right: var(--space-xs);"></i>
+            Pacientes Ativos
+        </div>
+        <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
+            Em acompanhamento clínico
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                <span style="color: var(--success);">
+                    <i class="fas fa-arrow-up" style="margin-right: var(--space-xs);"></i>
+                    +{{if .Stats}}{{.Stats.NewThisWeek}}{{else}}0{{end}} esta semana
+                </span>
+                <span style="color: var(--neutral-500);">
+                    {{if .Stats}}{{.Stats.ActiveThisMonth}}{{else}}0{{end}} este mês
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+        <div style="font-size: 3rem; font-weight: 800; color: var(--secondary-600); margin-bottom: var(--space-sm); line-height: 1;">
+            {{if .Stats}}{{.Stats.TotalSessions}}{{else}}0{{end}}
+        </div>
+        <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
+            <i class="fas fa-calendar-check" style="margin-right: var(--space-xs);"></i>
+            Sessões Totais
+        </div>
+        <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
+            Registradas no sistema
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                <span style="color: var(--success);">
+                    <i class="fas fa-calendar-day" style="margin-right: var(--space-xs);"></i>
+                    {{if .Stats}}{{.Stats.SessionsThisWeek}}{{else}}0{{end}} esta semana
+                </span>
+                <span style="color: var(--neutral-500);">
+                    {{if .Stats}}{{.Stats.SessionsToday}}{{else}}0{{end}} hoje
+                </span>
+            </div>
+        </div>
+    </div>
+    
+     <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+        <div style="font-size: 3rem; font-weight: 800; color: var(--accent-600); margin-bottom: var(--space-sm); line-height: 1;">
+            0
+        </div>
+        <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
+            <i class="fas fa-lightbulb" style="margin-right: var(--space-xs);"></i>
+            Insights de IA
+        </div>
+        <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
+            Em desenvolvimento
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                <span style="color: var(--neutral-500);">
+                    <i class="fas fa-code" style="margin-right: var(--space-xs);"></i>
+                    Em breve
+                </span>
+                <span style="color: var(--neutral-500);">
+                    CAP-03-01
+                </span>
+            </div>
+        </div>
+    </div>
+    
+     <div class="card card-hover" style="text-align: center; padding: var(--space-xl);">
+        <div style="font-size: 3rem; font-weight: 800; color: var(--clinical-purple); margin-bottom: var(--space-sm); line-height: 1;">
+            0
+        </div>
+        <div style="font-size: 0.875rem; color: var(--neutral-600); font-weight: 500;">
+            <i class="fas fa-chart-bar" style="margin-right: var(--space-xs);"></i>
+            Análises
+        </div>
+        <div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs);">
+            Em desenvolvimento
+        </div>
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                <span style="color: var(--neutral-500);">
+                    <i class="fas fa-code" style="margin-right: var(--space-xs);"></i>
+                    Em breve
+                </span>
+                <span style="color: var(--neutral-500);">
+                    CAP-02-01
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="form-grid" style="margin-bottom: var(--space-2xl); grid-template-columns: 2fr 1fr;">
+    <!-- Left Column: Patients & Sessions -->
+    <div style="display: flex; flex-direction: column; gap: var(--space-2xl);">
+        <!-- Active Patients -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">Pacientes Ativos</h2>
+                    <p class="card-subtitle">Pacientes em acompanhamento clínico ativo</p>
+                </div>
+                <a href="/patients" class="btn btn-ghost btn-sm">
+                    Ver Todos
+                    <i class="fas fa-arrow-right btn-icon"></i>
+                </a>
+            </div>
+            
+            <div style="max-height: 400px; overflow-y: auto;">
+                {{if .Patients}}
+                <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    {{range .Patients}}
+                    <a href="/patient/{{.ID}}" class="patient-card card-hover" style="display: block; text-decoration: none; padding: var(--space-md);">
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); font-size: 1rem; flex-shrink: 0;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1rem; font-weight: 600; color: var(--neutral-900);">{{.Name}}</div>
+                                <div style="font-size: 0.75rem; color: var(--neutral-500); display: flex; gap: var(--space-md); margin-top: var(--space-xs);">
+                                    <span>
+                                        <i class="fas fa-calendar-alt" style="margin-right: var(--space-xs);"></i>
+                                        Desde {{.CreatedAt.Format "02/01/2006"}}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-sticky-note" style="margin-right: var(--space-xs);"></i>
+                                        {{if .Notes}}Com notas{{else}}Sem notas{{end}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="patient-status" style="display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); background: var(--secondary-50); color: var(--secondary-700); border-radius: var(--radius-full); font-weight: 500; font-size: 0.75rem;">
+                                <span class="status-dot"></span>
+                                Ativo
+                            </div>
+                        </div>
+                    </a>
+                    {{end}}
+                </div>
+                {{else}}
+                <div style="text-align: center; padding: var(--space-2xl) var(--space-xl); color: var(--neutral-400);">
+                    <i class="fas fa-user-friends" style="font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                    <h3 style="font-size: 1.25rem; color: var(--neutral-600); margin-bottom: var(--space-sm);">Nenhum paciente ativo</h3>
+                    <p style="margin-bottom: var(--space-lg);">Comece adicionando seu primeiro paciente</p>
+                    <a href="/patients/new" class="btn btn-success">
+                        <i class="fas fa-user-plus btn-icon"></i>
+                        Adicionar Paciente
+                    </a>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">Sessões Recentes</h2>
+                    <p class="card-subtitle">Últimas sessões clínicas registradas</p>
+                </div>
+                <a href="/patients" class="btn btn-ghost btn-sm">
+                    <i class="fas fa-plus btn-icon"></i>
+                    Nova Sessão
+                </a>
+            </div>
+            
+            <div style="max-height: 300px; overflow-y: auto;">
+                {{if .Sessions}}
+                <div style="position: relative; padding-left: var(--space-xl);">
+                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--secondary-300) 0%, transparent 100%);"></div>
+                    
+                    {{range .Sessions}}
+                    <div style="position: relative; margin-bottom: var(--space-lg);">
+                        <div style="position: absolute; left: calc(-1 * var(--space-xl)); top: 0; width: 10px; height: 10px; background: var(--secondary-500); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--secondary-300);"></div>
+                        
+                        <div class="card-hover" style="margin-left: var(--space-lg); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-500);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-sm);">
+                                <div>
+                                    <h3 style="font-size: 1rem; font-weight: 600; color: var(--neutral-900); margin-bottom: var(--space-xs);">
+                                        {{.PatientName}}
+                                    </h3>
+                                    <div style="font-size: 0.75rem; color: var(--neutral-500);">
+                                        <i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>
+                                        {{.Date}}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: var(--space-xs);">
+                                    <button class="btn btn-ghost btn-sm" style="padding: var(--space-xs);">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {{if .Summary}}
+                            <p style="color: var(--neutral-700); line-height: 1.5; font-size: 0.875rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                {{.Summary}}
+                            </p>
+                            {{else}}
+                            <p style="color: var(--neutral-400); font-style: italic; font-size: 0.875rem;">
+                                Nenhuma descrição registrada
+                            </p>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                {{else}}
+                <div style="text-align: center; padding: var(--space-xl); color: var(--neutral-400);">
+                    <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                    <p style="font-style: italic;">Nenhuma sessão recente registrada</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+     <!-- Right Column: Coming Soon -->
+    <div style="display: flex; flex-direction: column; gap: var(--space-2xl);">
+        <!-- Coming Soon: AI Insights -->
+        <div class="card" style="background: linear-gradient(135deg, var(--accent-50) 0%, var(--accent-100) 100%); border: 2px solid var(--accent-200);">
+            <div class="card-header" style="border-bottom-color: var(--accent-200);">
+                <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%); color: white;">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h2 class="card-title" style="color: var(--accent-800);">Insights de IA</h2>
+                    <p class="card-subtitle" style="color: var(--accent-600);">Em desenvolvimento</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: var(--space-2xl); color: var(--accent-600);">
+                <i class="fas fa-code" style="font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                <h3 style="font-size: 1.25rem; color: var(--accent-800); margin-bottom: var(--space-sm);">Capacidade em desenvolvimento</h3>
+                <p style="margin-bottom: var(--space-lg); line-height: 1.6;">
+                    A análise automática de padrões clínicos e geração de insights será implementada na <strong>Vision 03: Inteligência Clínica Assistida</strong>
+                </p>
+                <div style="font-size: 0.875rem; color: var(--accent-700); background: var(--accent-100); padding: var(--space-md); border-radius: var(--radius-md);">
+                    <i class="fas fa-road" style="margin-right: var(--space-sm);"></i>
+                    <strong>CAP-03-01:</strong> Análise automática de padrões
+                </div>
+            </div>
+        </div>
+
+        <!-- Coming Soon: Clinical Analysis -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
+                    <i class="fas fa-chart-network"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">Análise Clínica</h2>
+                    <p class="card-subtitle">Em desenvolvimento</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: var(--space-xl); color: var(--neutral-600);">
+                <i class="fas fa-chart-bar" style="font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+                <p style="margin-bottom: var(--space-lg); line-height: 1.6;">
+                    Visualizações de evolução clínica, identificação de padrões e análises estatísticas serão implementadas na <strong>Vision 02: Acompanhamento e Análise</strong>
+                </p>
+                <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div style="font-size: 0.875rem; color: var(--primary-700); background: var(--primary-50); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); text-align: left;">
+                        <i class="fas fa-history" style="margin-right: var(--space-sm);"></i>
+                        <strong>CAP-02-01:</strong> Histórico do paciente
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--secondary-700); background: var(--secondary-50); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); text-align: left;">
+                        <i class="fas fa-timeline" style="margin-right: var(--space-sm);"></i>
+                        <strong>CAP-02-02:</strong> Linha do tempo clínica
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-teal) 0%, #0d9488 100%); color: white;">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">Ações Rápidas</h2>
+                    <p class="card-subtitle">Operações frequentes</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                <a href="/patients/new" class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                    <i class="fas fa-user-plus btn-icon"></i>
+                    Novo Paciente
+                </a>
+                <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                    <i class="fas fa-calendar-plus btn-icon"></i>
+                    Agendar Sessão
+                </button>
+                <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                    <i class="fas fa-file-medical btn-icon"></i>
+                    Registrar Observação
+                </button>
+                <button class="btn btn-outline btn-full" style="justify-content: flex-start;">
+                    <i class="fas fa-chart-bar btn-icon"></i>
+                    Gerar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- Activity Chart (Placeholder) -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div>
+            <h2 class="card-title">Atividade Clínica</h2>
+            <p class="card-subtitle">Em desenvolvimento - Visualização de dados</p>
+        </div>
+    </div>
+    
+    <div style="height: 300px; padding: var(--space-lg); display: flex; align-items: center; justify-content: center; color: var(--neutral-400);">
+        <div style="text-align: center;">
+            <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.3;"></i>
+            <p style="font-style: italic;">Gráficos e visualizações serão implementados<br>conforme mais dados forem coletados</p>
+            <div style="font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-md);">
+                <i class="fas fa-info-circle" style="margin-right: var(--space-xs);"></i>
+                Disponível na Vision 02: Acompanhamento e Análise
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Refresh button
+        document.getElementById('refresh-btn').addEventListener('click', function() {
+            const icon = this.querySelector('.btn-icon');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                showToast('Dashboard atualizado', 'success');
+            }, 1000);
+        });
+
+        // Export button (placeholder)
+        document.getElementById('export-btn').addEventListener('click', function() {
+            showToast('Funcionalidade em desenvolvimento', 'info');
+        });
+
+        // New session button removed - now links to patients page
+
+        // Initialize tooltips
+        initTooltips();
+    });
+</script>
+{{end}}

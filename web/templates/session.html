@@ -2,6 +2,10 @@
 
 {{/* Main content block for full page rendering */}}
 {{define "content"}}
+{{template "session-body" .}}
+{{end}}
+
+{{define "session-body"}}
 {{template "session-content" .}}
 {{end}}
 
