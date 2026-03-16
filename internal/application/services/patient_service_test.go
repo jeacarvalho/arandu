@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"arandu/internal/domain/patient"
 )
@@ -800,4 +801,201 @@ func TestInputSanitization(t *testing.T) {
 	if input.Notes != "Test notes" {
 		t.Errorf("Expected sanitized notes 'Test notes', got %q", input.Notes)
 	}
+}
+
+func TestPatientService_CreatePatientLegacy(t *testing.T) {
+	repo := &mockPatientRepository{
+		saveFunc: func(p *patient.Patient) error {
+			return nil
+		},
+	}
+	service := NewPatientService(repo)
+
+	t.Run("Valid input creates patient", func(t *testing.T) {
+		p, err := service.CreatePatientLegacy("John Doe", "Test notes")
+		if err != nil {
+			t.Errorf("Expected no error, got %v", err)
+		}
+		if p == nil {
+			t.Error("Expected patient to be created")
+		}
+		if p.Name != "John Doe" {
+			t.Errorf("Expected name 'John Doe', got %q", p.Name)
+		}
+		if p.Notes != "Test notes" {
+			t.Errorf("Expected notes 'Test notes', got %q", p.Notes)
+		}
+	})
+
+	t.Run("Invalid name returns error", func(t *testing.T) {
+		p, err := service.CreatePatientLegacy("", "Test notes")
+		if err == nil {
+			t.Error("Expected error for empty name")
+		}
+		if p != nil {
+			t.Error("Expected no patient to be created on error")
+		}
+	})
+}
+
+func TestPatientService_GetPatientLegacy(t *testing.T) {
+	expectedPatient := &patient.Patient{
+		ID:        "patient-123",
+		Name:      "John Doe",
+		Notes:     "Test notes",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	repo := &mockPatientRepository{
+		findByIDFunc: func(id string) (*patient.Patient, error) {
+			if id == "patient-123" {
+				return expectedPatient, nil
+			}
+			return nil, nil
+		},
+	}
+	service := NewPatientService(repo)
+
+	t.Run("Valid ID returns patient", func(t *testing.T) {
+		p, err := service.GetPatientLegacy("patient-123")
+		if err != nil {
+			t.Errorf("Expected no error, got %v", err)
+		}
+		if p != expectedPatient {
+			t.Error("Expected patient to be returned")
+		}
+	})
+
+	t.Run("Empty ID returns error", func(t *testing.T) {
+		p, err := service.GetPatientLegacy("")
+		if err == nil {
+			t.Error("Expected error for empty ID")
+		}
+		if p != nil {
+			t.Error("Expected no patient to be returned on error")
+		}
+	})
+
+	t.Run("Non-existent patient returns error", func(t *testing.T) {
+		p, err := service.GetPatientLegacy("non-existent")
+		if err == nil {
+			t.Error("Expected error for non-existent patient")
+		}
+		if p != nil {
+			t.Error("Expected no patient to be returned for non-existent ID")
+		}
+	})
+}
+
+func TestPatientService_ListPatientsLegacy(t *testing.T) {
+	expectedPatients := []*patient.Patient{
+		{
+			ID:        "patient-1",
+			Name:      "John Doe",
+			Notes:     "Notes 1",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		{
+			ID:        "patient-2",
+			Name:      "Jane Smith",
+			Notes:     "Notes 2",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+	}
+
+	repo := &mockPatientRepository{
+		findAllFunc: func() ([]*patient.Patient, error) {
+			return expectedPatients, nil
+		},
+	}
+	service := NewPatientService(repo)
+
+	t.Run("Returns all patients", func(t *testing.T) {
+		patients, err := service.ListPatientsLegacy()
+		if err != nil {
+			t.Errorf("Expected no error, got %v", err)
+		}
+		if len(patients) != len(expectedPatients) {
+			t.Errorf("Expected %d patients, got %d", len(expectedPatients), len(patients))
+		}
+	})
+
+	t.Run("Repository error returns wrapped error", func(t *testing.T) {
+		expectedErr := errors.New("repository error")
+		errorRepo := &mockPatientRepository{
+			findAllFunc: func() ([]*patient.Patient, error) {
+				return nil, expectedErr
+			},
+		}
+		errorService := NewPatientService(errorRepo)
+
+		patients, err := errorService.ListPatientsLegacy()
+		if err == nil {
+			t.Error("Expected error from repository")
+		}
+		if patients != nil {
+			t.Error("Expected no patients on repository error")
+		}
+	})
+}
+
+func TestPatientService_UpdatePatientLegacy(t *testing.T) {
+	existingPatient := &patient.Patient{
+		ID:        "patient-123",
+		Name:      "Old Name",
+		Notes:     "Old notes",
+		CreatedAt: time.Now().Add(-time.Hour),
+		UpdatedAt: time.Now().Add(-time.Hour),
+	}
+
+	var updatedPatient *patient.Patient
+	repo := &mockPatientRepository{
+		findByIDFunc: func(id string) (*patient.Patient, error) {
+			if id == "patient-123" {
+				return existingPatient, nil
+			}
+			return nil, nil
+		},
+		updateFunc: func(p *patient.Patient) error {
+			updatedPatient = p
+			return nil
+		},
+	}
+	service := NewPatientService(repo)
+
+	t.Run("Valid update succeeds", func(t *testing.T) {
+		err := service.UpdatePatientLegacy("patient-123", "New Name", "New notes")
+		if err != nil {
+			t.Errorf("Expected no error, got %v", err)
+		}
+		if updatedPatient == nil {
+			t.Error("Expected patient to be updated")
+		}
+		if updatedPatient.Name != "New Name" {
+			t.Errorf("Expected name 'New Name', got %q", updatedPatient.Name)
+		}
+		if updatedPatient.Notes != "New notes" {
+			t.Errorf("Expected notes 'New notes', got %q", updatedPatient.Notes)
+		}
+		// Note: UpdatePatientLegacy calls UpdatePatient which should update UpdatedAt
+		// but we're mocking the repository, so the domain object's UpdatedAt might not be updated
+		// in our mock. This is acceptable for unit testing.
+	})
+
+	t.Run("Patient not found returns error", func(t *testing.T) {
+		err := service.UpdatePatientLegacy("non-existent", "New Name", "New notes")
+		if err == nil {
+			t.Error("Expected error for non-existent patient")
+		}
+	})
+
+	t.Run("Invalid name returns error", func(t *testing.T) {
+		err := service.UpdatePatientLegacy("patient-123", "", "New notes")
+		if err == nil {
+			t.Error("Expected error for empty name")
+		}
+	})
 }

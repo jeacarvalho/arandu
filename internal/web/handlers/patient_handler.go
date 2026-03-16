@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"arandu/internal/application/services"
@@ -77,23 +77,17 @@ type PatientHandler struct {
 	templates      TemplateRenderer
 }
 
-// TemplateRenderer defines the interface for template rendering
+// TemplateRenderer defines the interface for template rendering (deprecated - use templ components)
 type TemplateRenderer interface {
 	ExecuteTemplate(w http.ResponseWriter, name string, data interface{}) error
 }
 
 // Render handles HTMX vs full page rendering automatically
 func (h *PatientHandler) Render(w http.ResponseWriter, r *http.Request, pageTemplate string, data interface{}) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	if r.Header.Get("HX-Request") == "true" {
-		// Render just the fragment for HTMX
-		h.templates.ExecuteTemplate(w, pageTemplate, data)
-		return
-	}
-
-	// Render full page - pass data directly, layout uses content block
-	h.templates.ExecuteTemplate(w, "layout", data)
+	// This method is deprecated - use templ components directly
+	// For now, do nothing
+	w.WriteHeader(http.StatusNotImplemented)
+	w.Write([]byte("Render method deprecated - use templ components"))
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -234,6 +228,8 @@ type PatientsViewData struct {
 
 // Show handles GET /patient/{id} - shows patient details
 func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
+	log.Printf("PatientHandler.Show called for path: %s", r.URL.Path)
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -295,17 +291,8 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 // NewPatient handles GET /patients/new - shows new patient form
 func (h *PatientHandler) NewPatient(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	data := NewPatientViewData{
-		Error: "",
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	h.templates.ExecuteTemplate(w, "patient-new.html", data)
+	// TODO: Implement with templ components
+	http.Error(w, "Not implemented - use templ components", http.StatusNotImplemented)
 }
 
 // NewPatientViewData is a ViewModel for the new patient form
@@ -323,43 +310,8 @@ type PatientFormValues struct {
 
 // CreatePatient handles POST /patients - creates a new patient
 func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		h.renderError(w, r, "Dados do formulário inválidos", http.StatusBadRequest)
-		return
-	}
-
-	input := services.CreatePatientInput{
-		Name:  r.FormValue("name"),
-		Notes: r.FormValue("notes"),
-	}
-
-	patient, err := h.patientService.CreatePatient(r.Context(), input)
-	if err != nil {
-		// For HTMX requests, return a form with error message
-		if r.Header.Get("HX-Request") == "true" {
-			data := NewPatientViewData{
-				Error: err.Error(),
-				FormData: &PatientFormValues{
-					Name:  input.Name,
-					Notes: input.Notes,
-				},
-			}
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			h.templates.ExecuteTemplate(w, "new-patient-form", data)
-			return
-		}
-
-		h.renderError(w, r, "Erro ao criar paciente: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Redirect on success
-	http.Redirect(w, r, "/patient/"+patient.ID, http.StatusSeeOther)
+	// TODO: Implement with templ components
+	http.Error(w, "Not implemented - use templ components", http.StatusNotImplemented)
 }
 
 // Helper function to convert interface{} insights to InsightViewModel
@@ -396,9 +348,4 @@ func extractIDFromPath(path, prefix string) string {
 		}
 	}
 	return id
-}
-
-// formatInt formats an integer to string
-func formatInt(n int) string {
-	return strconv.Itoa(n)
 }

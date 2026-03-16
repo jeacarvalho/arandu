@@ -10,18 +10,15 @@ import (
 type DashboardHandler struct {
 	patientService PatientService
 	sessionService SessionService
-	templates      TemplateRenderer
 }
 
 func NewDashboardHandler(
 	patientService PatientService,
 	sessionService SessionService,
-	templates TemplateRenderer,
 ) *DashboardHandler {
 	return &DashboardHandler{
 		patientService: patientService,
 		sessionService: sessionService,
-		templates:      templates,
 	}
 }
 

@@ -1,0 +1,40 @@
+package session
+
+import "github.com/a-h/templ"
+
+templ ObservationForm(sessionID string) {
+	<form 
+		hx-post={ templ.URL("/sessions/" + sessionID + "/observations") }
+		hx-target="#observations-list"
+		hx-swap="afterbegin"
+		hx-on::after-request="this.reset()"
+		class="observation-form"
+	>
+		<div class="form-group">
+			<label for="observation-content" class="form-label">
+				<i class="fas fa-sticky-note" style="margin-right: var(--space-xs);"></i>
+				Nova Observação Clínica
+			</label>
+			<textarea 
+				id="observation-content" 
+				name="content" 
+				placeholder="Digite sua percepção clínica aqui..."
+				rows="3"
+				class="form-textarea source-serif"
+				required
+			></textarea>
+			<div class="form-hint">
+				<i class="fas fa-info-circle"></i>
+				Registre percepções atômicas que serão usadas na análise da evolução do paciente.
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">
+				<i class="fas fa-plus btn-icon"></i>Adicionar Observação
+			</button>
+			<button type="button" class="btn btn-outline" onclick="this.closest('form').reset()">
+				<i class="fas fa-times btn-icon"></i>Limpar
+			</button>
+		</div>
+	</form>
+}

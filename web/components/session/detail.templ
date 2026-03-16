@@ -77,10 +77,23 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p style="font-style: italic;">Nenhuma observação registrada</p>
 					</div>
 				}
+				<div id="observations-list" style="margin-top: var(--space-lg);">
+					if len(observations) > 0 {
+						for _, o := range observations {
+							<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--primary-500); background: var(--neutral-50); margin-bottom: var(--space-md);">
+								<div class="clinical-content source-serif">{ o.Content }</div>
+								<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
+									<div style="font-size: 0.75rem; color: var(--neutral-500);">
+										<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ o.CreatedAt }
+									</div>
+									<div class="badge badge-primary">Observação</div>
+								</div>
+							</div>
+						}
+					}
+				</div>
 				<div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);">
-					<button class="btn btn-primary btn-full">
-						<i class="fas fa-plus btn-icon"></i>Adicionar Observação
-					</button>
+					@ObservationForm(session.ID)
 				</div>
 			</div>
 

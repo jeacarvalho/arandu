@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** dom 15 mar 2026 18:43:22 -03
+**Gerado em:** dom 15 mar 2026 20:10:24 -03
 
 ## 🌳 Estrutura de Visões
 
@@ -60,24 +60,24 @@
 
 ## 🛠️ Tarefas recentes
 
+- task_20260315_194932
+- task_20260315_191104
 - task_20260315_154905
 - task_20260315_143141
 - task_20260315_131839
-- task_20260314_222910
-- task_20260314_221708
 
 ## 📚 Aprendizados recentes
 
+- task_20260315_194932.md
+- task_20260315_191104.md
 - task_20260315_154905.md
 - task_20260315_174000.md
 - task_20260315_143141.md
-- task_20260315_131839.md
-- [req-01-01-02].md
 
 ## 📊 Status do Sistema
 
 - Visions: 10
 - Capabilities: 16
 - Requirements: 19
-- Learnings: 14
+- Learnings: 16
 

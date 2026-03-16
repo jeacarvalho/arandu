@@ -3,10 +3,13 @@ package handlers
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
 
@@ -70,23 +73,31 @@ type PatientServiceInterface interface {
 	GetPatientByID(ctx context.Context, id string) (*patient.Patient, error)
 }
 
+type ObservationServiceInterface interface {
+	CreateObservation(ctx context.Context, sessionID, content string) (interface{}, error)
+	GetObservationsBySession(ctx context.Context, sessionID string) ([]interface{}, error)
+}
+
 // SessionHandler handles HTTP requests related to sessions
 type SessionHandler struct {
-	sessionService SessionServiceInterface
-	patientService PatientServiceInterface
-	templates      TemplateRenderer
+	sessionService     SessionServiceInterface
+	patientService     PatientServiceInterface
+	observationService ObservationServiceInterface
+	templates          TemplateRenderer
 }
 
 // NewSessionHandler creates a new SessionHandler with dependency injection
 func NewSessionHandler(
 	sessionService SessionServiceInterface,
 	patientService PatientServiceInterface,
+	observationService ObservationServiceInterface,
 	templates TemplateRenderer,
 ) *SessionHandler {
 	return &SessionHandler{
-		sessionService: sessionService,
-		patientService: patientService,
-		templates:      templates,
+		sessionService:     sessionService,
+		patientService:     patientService,
+		observationService: observationService,
+		templates:          templates,
 	}
 }
 
@@ -180,6 +191,7 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 // NewSession handles GET /patient/{id}/sessions/new - shows new session form
 func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
+	log.Printf("NewSession called: %s", r.URL.Path)
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -187,6 +199,7 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 
 	// Extract patient ID from URL path
 	patientID := extractPatientIDFromPath(r.URL.Path)
+	log.Printf("Extracted patientID: %s", patientID)
 	if patientID == "" {
 		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
 		return
@@ -195,9 +208,11 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 	// Get patient info
 	patient, err := h.patientService.GetPatientByID(r.Context(), patientID)
 	if err != nil {
-		h.renderError(w, r, "Paciente não encontrado", http.StatusNotFound)
+		log.Printf("Error getting patient: %v", err)
+		h.renderError(w, r, "Paciente não encontrado: "+patientID, http.StatusNotFound)
 		return
 	}
+	log.Printf("Found patient: %s", patient.Name)
 
 	data := SessionViewData{
 		Patient: mapPatientToViewModel(patient),
@@ -210,11 +225,17 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "new-session-form", data)
+		templateErr := h.templates.ExecuteTemplate(w, "new-session-form", data)
+		if templateErr != nil {
+			http.Error(w, "Error rendering template: "+templateErr.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data)
+	templateErr := h.templates.ExecuteTemplate(w, "session-new.html", data)
+	if templateErr != nil {
+		http.Error(w, "Error rendering template: "+templateErr.Error(), http.StatusInternalServerError)
+	}
 }
 
 // CreateSession handles POST /sessions - creates a new session
@@ -455,4 +476,77 @@ func trimSuffix(s, suffix string) string {
 		return s[:len(s)-len(suffix)]
 	}
 	return s
+}
+
+// CreateObservation handles POST /sessions/{id}/observations
+func (h *SessionHandler) CreateObservation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// Extract session ID from URL
+	sessionID := extractSessionID(r.URL.Path, "/sessions/", "/observations")
+	if sessionID == "" {
+		h.renderError(w, r, "ID da sessão não encontrado", http.StatusBadRequest)
+		return
+	}
+
+	// Parse form
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	content := r.FormValue("content")
+	if content == "" {
+		h.renderError(w, r, "Conteúdo da observação não pode ser vazio", http.StatusBadRequest)
+		return
+	}
+
+	// Create observation
+	obs, err := h.observationService.CreateObservation(ctx, sessionID, content)
+	if err != nil {
+		h.renderError(w, r, "Erro ao criar observação: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Convert to domain observation
+	observation, ok := obs.(*observation.Observation)
+	if !ok {
+		h.renderError(w, r, "Erro ao converter observação", http.StatusInternalServerError)
+		return
+	}
+
+	// Render observation item component
+	obsVM := ObservationViewModel{
+		ID:        observation.ID,
+		Content:   observation.Content,
+		CreatedAt: observation.CreatedAt.Format("02/01/2006 15:04"),
+	}
+
+	// Use templ component
+	component := sessionComponents.ObservationItem(sessionComponents.ObservationItemData{
+		ID:        obsVM.ID,
+		Content:   obsVM.Content,
+		CreatedAt: obsVM.CreatedAt,
+	})
+
+	// Render HTMX fragment
+	w.Header().Set("Content-Type", "text/html")
+	if err := component.Render(ctx, w); err != nil {
+		log.Printf("Error rendering observation item: %v", err)
+		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	}
+}
+
+// Helper function to extract session ID from URL path
+func extractSessionID(path, prefix, suffix string) string {
+	path = strings.TrimPrefix(path, prefix)
+	path = strings.TrimSuffix(path, suffix)
+	path = strings.Trim(path, "/")
+
+	// Split to get just the ID (remove any trailing parts)
+	parts := strings.Split(path, "/")
+	if len(parts) > 0 {
+		return parts[0]
+	}
+	return ""
 }

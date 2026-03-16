@@ -12,12 +12,18 @@ VISION-07
 
 ## Descrição
 
-TODO: Descrever esta capability.
+Capacidade para gerenciar a agenda clínica do terapeuta, incluindo:
+- Agendamento de sessões com pacientes
+- Visualização da agenda por dia, semana ou mês
+- Controle de horários disponíveis e ocupados
+- Lembretes e notificações de próximas sessões
+- Gestão de cancelamentos e reagendamentos
 
 ## Requisitos relacionados
 
-TODO
+- REQ-07-01-01: Gerenciar agenda clínica
+- REQ-07-02-01: Registrar atendimento clínico
 
 ## Observações
 
-Capability derivada de VISION-07.
+Capability derivada de VISION-07 (Organização operacional do consultório). Esta capability é essencial para a operação diária da prática clínica, permitindo que o terapeuta organize seu tempo de forma eficiente e mantenha controle sobre seus compromissos profissionais.

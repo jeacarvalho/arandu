@@ -12,7 +12,7 @@ VISION-05
 
 ## Descrição
 
-TODO: Descrever esta capability.
+Capacidade para [descrever funcionalidade].
 
 ## Requisitos relacionados
 

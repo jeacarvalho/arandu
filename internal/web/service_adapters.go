@@ -79,3 +79,33 @@ func (a *PatientServiceAdapter) ListPatients(ctx context.Context) ([]*patient.Pa
 func (a *PatientServiceAdapter) CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error) {
 	return a.service.CreatePatient(ctx, input)
 }
+
+// ObservationServiceAdapter adapts services.ObservationService to handlers.ObservationServiceInterface
+type ObservationServiceAdapter struct {
+	service *services.ObservationService
+}
+
+// NewObservationServiceAdapter creates a new adapter
+func NewObservationServiceAdapter(service *services.ObservationService) *ObservationServiceAdapter {
+	return &ObservationServiceAdapter{service: service}
+}
+
+// CreateObservation implements handlers.ObservationServiceInterface
+func (a *ObservationServiceAdapter) CreateObservation(ctx context.Context, sessionID, content string) (interface{}, error) {
+	return a.service.CreateObservation(sessionID, content)
+}
+
+// GetObservationsBySession implements handlers.ObservationServiceInterface
+func (a *ObservationServiceAdapter) GetObservationsBySession(ctx context.Context, sessionID string) ([]interface{}, error) {
+	observations, err := a.service.ListObservationsBySession(sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to []interface{}
+	result := make([]interface{}, len(observations))
+	for i, obs := range observations {
+		result[i] = obs
+	}
+	return result, nil
+}

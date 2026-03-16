@@ -2,6 +2,7 @@ package services
 
 import (
 	"arandu/internal/domain/observation"
+	"fmt"
 )
 
 type ObservationService struct {
@@ -13,6 +14,14 @@ func NewObservationService(repo observation.Repository) *ObservationService {
 }
 
 func (s *ObservationService) CreateObservation(sessionID, content string) (*observation.Observation, error) {
+	if content == "" {
+		return nil, fmt.Errorf("observation content cannot be empty")
+	}
+
+	if len(content) > 5000 {
+		return nil, fmt.Errorf("observation content cannot exceed 5000 characters")
+	}
+
 	obs := &observation.Observation{
 		SessionID: sessionID,
 		Content:   content,

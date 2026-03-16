@@ -12,7 +12,7 @@ VISION-09
 
 ## Descrição
 
-TODO: Descrever esta capability.
+Capacidade para [descrever funcionalidade].
 
 ## Requisitos relacionados
 
