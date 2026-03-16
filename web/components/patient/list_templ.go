@@ -36,7 +36,7 @@ func PatientList(patients []PatientListItem, errorMsg string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"content-header\"><div class=\"header-title\"><div><h1>Pacientes</h1><p class=\"header-subtitle\">Gerencie seus pacientes e acompanhe a evolução clínica</p></div><div class=\"header-actions\"><a href=\"/patients/new\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i>Novo Paciente</a></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"content-header\" style=\"margin-bottom: var(--space-xl);\"><div class=\"header-title\"><div><h1 style=\"font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);\">Pacientes</h1><p class=\"header-subtitle\" style=\"font-size: 0.875rem; color: var(--neutral-500);\">Gerencie seus pacientes e acompanhe a evolução clínica</p></div><div class=\"header-actions\"><a href=\"/patients/new\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i>Novo Paciente</a></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,7 +60,7 @@ func PatientList(patients []PatientListItem, errorMsg string) templ.Component {
 			}
 		}
 		if len(patients) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"form-grid\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div style=\"display: flex; flex-direction: column; gap: var(--space-sm); max-width: 56rem; margin: 0 auto;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,20 +72,20 @@ func PatientList(patients []PatientListItem, errorMsg string) templ.Component {
 				var templ_7745c5c3_Var3 templ.SafeURL
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patient/" + p.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 35, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 36, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"patient-card card-hover\"><div class=\"patient-name\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" style=\"display: flex; align-items: center; justify-content: space-between; padding: var(--space-lg) var(--space-xl); background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); text-decoration: none; transition: all 0.2s ease;\" onmouseover=\"this.style.borderColor='var(--primary-200)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)';\" onmouseout=\"this.style.borderColor='var(--neutral-100)'; this.style.boxShadow='none';\"><div style=\"display: flex; align-items: center; gap: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;\"><i class=\"fas fa-user\"></i></div><div><div style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-900);\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 36, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 46, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -96,14 +96,14 @@ func PatientList(patients []PatientListItem, errorMsg string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if p.Notes != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"patient-notes\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div style=\"font-family: var(--font-clinical); font-size: 0.875rem; color: var(--neutral-500); max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Notes)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 38, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 48, Col: 195}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -114,25 +114,25 @@ func PatientList(patients []PatientListItem, errorMsg string) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"patient-notes text-tertiary\">Nenhuma observação registrada.</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div style=\"font-size: 0.875rem; color: var(--neutral-400); font-style: italic;\">Nenhuma observação registrada</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"patient-meta\"><span>Cadastrado em ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><div style=\"display: flex; align-items: center; gap: var(--space-lg);\"><div style=\"font-size: 0.75rem; color: var(--neutral-400);\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.CreatedAt)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 43, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 55, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span><div class=\"patient-status\"><span class=\"status-dot\"></span>Ativo</div></div></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><div style=\"width: 8px; height: 8px; background: var(--success-500); border-radius: var(--radius-full); flex-shrink: 0;\"></div></div></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

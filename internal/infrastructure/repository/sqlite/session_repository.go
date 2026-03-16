@@ -61,18 +61,9 @@ func (r *SessionRepository) Update(ctx context.Context, s *session.Session) erro
 	return err
 }
 
+// InitSchema is deprecated - use migrations instead
 func (r *SessionRepository) InitSchema() error {
-	query := `
-	CREATE TABLE IF NOT EXISTS sessions (
-		id TEXT PRIMARY KEY,
-		patient_id TEXT NOT NULL,
-		date DATETIME NOT NULL,
-		summary TEXT,
-		created_at DATETIME NOT NULL,
-		updated_at DATETIME NOT NULL,
-		FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
-	)
-	`
-	_, err := r.db.DB.Exec(query)
-	return err
+	// Schema creation is now handled by migrations
+	// This method exists only for interface compatibility during transition
+	return nil
 }

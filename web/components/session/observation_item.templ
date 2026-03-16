@@ -1,7 +1,5 @@
 package session
 
-import "github.com/a-h/templ"
-
 type ObservationItemData struct {
 	ID        string
 	Content   string
@@ -19,7 +17,18 @@ templ ObservationItem(obs ObservationItemData) {
 			<div style="font-size: 0.75rem; color: var(--neutral-500);">
 				<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ obs.CreatedAt }
 			</div>
-			<div class="badge badge-primary">Observação</div>
+			<div style="display: flex; gap: var(--space-xs); align-items: center;">
+				<div class="badge badge-primary">Observação</div>
+				<button 
+					class="btn btn-icon btn-sm"
+					hx-get={ templ.URL("/observations/" + obs.ID + "/edit") }
+					hx-target={ "#observation-" + obs.ID }
+					hx-swap="outerHTML"
+					title="Editar observação"
+				>
+					<i class="fas fa-edit"></i>
+				</button>
+			</div>
 		</div>
 	</div>
 }

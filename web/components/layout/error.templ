@@ -1,0 +1,33 @@
+package layout
+
+type ErrorData struct {
+	Error    string
+	IsHTMX   bool
+	Title    string
+}
+
+templ ErrorFragment(data ErrorData) {
+	if data.IsHTMX {
+		<div class="alert alert-error">
+			<i class="fas fa-exclamation-circle"></i>
+			<p>{ data.Error }</p>
+		</div>
+	} else {
+		<div class="content-header">
+			<div class="header-title">
+				<div>
+					<h1>Erro</h1>
+					<p class="header-subtitle">{ data.Error }</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card">
+			<div class="alert alert-error">
+				<i class="fas fa-exclamation-circle"></i>
+				<p>{ data.Error }</p>
+				<a href="/dashboard" class="mt-4 btn btn-outline btn-sm">Voltar para o Dashboard</a>
+			</div>
+		</div>
+	}
+}

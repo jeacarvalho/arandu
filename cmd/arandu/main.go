@@ -12,42 +12,47 @@ import (
 )
 
 func main() {
-	// Use test database for now
-	dbPath := "test.db"
-	log.Printf("Using test database: %s", dbPath)
+	// Use production database
+	dbPath := "arandu.db"
+	log.Printf("Using database: %s", dbPath)
 	db, err := sqlite.NewDB(dbPath)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
-	// Database already has schema from test setup
-	log.Printf("Using pre-initialized test database")
+	// Initialize database schema
+	log.Printf("Initializing database schema...")
 
 	patientRepo := sqlite.NewPatientRepository(db)
 	sessionRepo := sqlite.NewSessionRepository(db)
 	observationRepo := sqlite.NewObservationRepository(db)
-	// interventionRepo := sqlite.NewInterventionRepository(db) // TODO: Migrate later
+	interventionRepo := sqlite.NewInterventionRepository(db)
 	insightRepo := sqlite.NewInsightRepository(db)
+
+	// Apply database migrations
+	if err := db.Migrate(); err != nil {
+		log.Printf("Warning: Failed to apply database migrations: %v", err)
+	}
 
 	patientService := services.NewPatientService(patientRepo)
 	sessionService := services.NewSessionService(sessionRepo)
 	observationService := services.NewObservationService(observationRepo)
-	// interventionService := services.NewInterventionService(interventionRepo) // TODO: Migrate later
+	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-
-	// Create dummy template renderer for compatibility
-	templateRenderer := web.NewDummyRenderer()
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
 	insightServiceAdapter := web.NewInsightServiceAdapter(insightService)
 	patientServiceAdapter := web.NewPatientServiceAdapter(patientService)
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
+	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
 
 	// Create new handlers with dependency injection
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, templateRenderer)
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, templateRenderer)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter)
+	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
+	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
 
 	mux := http.NewServeMux()
@@ -61,8 +66,8 @@ func main() {
 	// Patient routes - using the actual method names from the new handlers
 	mux.HandleFunc("/patients", patientHandler.ListPatients)
 	// TODO: Migrate to templ
-	// mux.HandleFunc("/patients/new", patientHandler.NewPatient)
-	// mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
+	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
+	mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
 
 	// Session routes - using the actual method names from the new handlers
 	mux.HandleFunc("/session/", sessionHandler.Show)
@@ -72,6 +77,34 @@ func main() {
 	mux.HandleFunc("/sessions/", func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasSuffix(r.URL.Path, "/observations") && r.Method == "POST" {
 			sessionHandler.CreateObservation(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/interventions") && r.Method == "POST" {
+			sessionHandler.CreateIntervention(w, r)
+		} else {
+			http.NotFound(w, r)
+		}
+	})
+
+	// Observation routes
+	mux.HandleFunc("/observations/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/edit") && r.Method == "GET" {
+			observationHandler.GetObservationEditForm(w, r)
+		} else if r.Method == "GET" {
+			observationHandler.GetObservation(w, r)
+		} else if r.Method == "PUT" {
+			observationHandler.UpdateObservation(w, r)
+		} else {
+			http.NotFound(w, r)
+		}
+	})
+
+	// Intervention routes
+	mux.HandleFunc("/interventions/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/edit") && r.Method == "GET" {
+			interventionHandler.GetInterventionEditForm(w, r)
+		} else if r.Method == "GET" {
+			interventionHandler.GetIntervention(w, r)
+		} else if r.Method == "PUT" {
+			interventionHandler.UpdateIntervention(w, r)
 		} else {
 			http.NotFound(w, r)
 		}

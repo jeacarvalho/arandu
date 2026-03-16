@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/intervention"
+	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
 )
@@ -108,4 +110,54 @@ func (a *ObservationServiceAdapter) GetObservationsBySession(ctx context.Context
 		result[i] = obs
 	}
 	return result, nil
+}
+
+// GetObservation implements handlers.ObservationHandlerServiceInterface
+func (a *ObservationServiceAdapter) GetObservation(ctx context.Context, id string) (*observation.Observation, error) {
+	return a.service.GetObservation(id)
+}
+
+// UpdateObservation implements handlers.ObservationHandlerServiceInterface
+func (a *ObservationServiceAdapter) UpdateObservation(ctx context.Context, id, content string) error {
+	return a.service.UpdateObservation(id, content)
+}
+
+// InterventionServiceAdapter adapts services.InterventionService to handlers.InterventionServiceInterface
+type InterventionServiceAdapter struct {
+	service *services.InterventionService
+}
+
+// NewInterventionServiceAdapter creates a new adapter
+func NewInterventionServiceAdapter(service *services.InterventionService) *InterventionServiceAdapter {
+	return &InterventionServiceAdapter{service: service}
+}
+
+// CreateIntervention implements handlers.InterventionServiceInterface
+func (a *InterventionServiceAdapter) CreateIntervention(ctx context.Context, sessionID, content string) (interface{}, error) {
+	return a.service.CreateIntervention(sessionID, content)
+}
+
+// GetInterventionsBySession implements handlers.InterventionServiceInterface
+func (a *InterventionServiceAdapter) GetInterventionsBySession(ctx context.Context, sessionID string) ([]interface{}, error) {
+	interventions, err := a.service.ListInterventionsBySession(sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to []interface{}
+	result := make([]interface{}, len(interventions))
+	for i, intv := range interventions {
+		result[i] = intv
+	}
+	return result, nil
+}
+
+// GetIntervention implements handlers.InterventionHandlerServiceInterface
+func (a *InterventionServiceAdapter) GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error) {
+	return a.service.GetIntervention(id)
+}
+
+// UpdateIntervention implements handlers.InterventionHandlerServiceInterface
+func (a *InterventionServiceAdapter) UpdateIntervention(ctx context.Context, id, content string) error {
+	return a.service.UpdateIntervention(id, content)
 }

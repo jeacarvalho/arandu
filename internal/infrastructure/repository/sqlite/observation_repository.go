@@ -22,28 +22,32 @@ func (r *ObservationRepository) Save(o *observation.Observation) error {
 	}
 	o.CreatedAt = time.Now()
 
-	query := `INSERT INTO observations (id, session_id, content, created_at) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO observations (id, session_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, NULL)`
 	_, err := r.db.Exec(query, o.ID, o.SessionID, o.Content, o.CreatedAt)
 	return err
 }
 
 func (r *ObservationRepository) FindByID(id string) (*observation.Observation, error) {
-	query := `SELECT id, session_id, content, created_at FROM observations WHERE id = ?`
+	query := `SELECT id, session_id, content, created_at, updated_at FROM observations WHERE id = ?`
 	row := r.db.QueryRow(query, id)
 
 	var o observation.Observation
-	err := row.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt)
+	var updatedAt sql.NullTime
+	err := row.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt, &updatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, err
 	}
+	if updatedAt.Valid {
+		o.UpdatedAt = updatedAt.Time
+	}
 	return &o, nil
 }
 
 func (r *ObservationRepository) FindBySessionID(sessionID string) ([]*observation.Observation, error) {
-	query := `SELECT id, session_id, content, created_at FROM observations WHERE session_id = ? ORDER BY created_at DESC`
+	query := `SELECT id, session_id, content, created_at, updated_at FROM observations WHERE session_id = ? ORDER BY created_at DESC`
 	rows, err := r.db.Query(query, sessionID)
 	if err != nil {
 		return nil, err
@@ -53,8 +57,12 @@ func (r *ObservationRepository) FindBySessionID(sessionID string) ([]*observatio
 	var observations []*observation.Observation
 	for rows.Next() {
 		var o observation.Observation
-		if err := rows.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt); err != nil {
+		var updatedAt sql.NullTime
+		if err := rows.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt, &updatedAt); err != nil {
 			return nil, err
+		}
+		if updatedAt.Valid {
+			o.UpdatedAt = updatedAt.Time
 		}
 		observations = append(observations, &o)
 	}
@@ -62,7 +70,7 @@ func (r *ObservationRepository) FindBySessionID(sessionID string) ([]*observatio
 }
 
 func (r *ObservationRepository) FindAll() ([]*observation.Observation, error) {
-	query := `SELECT id, session_id, content, created_at FROM observations ORDER BY created_at DESC`
+	query := `SELECT id, session_id, content, created_at, updated_at FROM observations ORDER BY created_at DESC`
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -72,8 +80,12 @@ func (r *ObservationRepository) FindAll() ([]*observation.Observation, error) {
 	var observations []*observation.Observation
 	for rows.Next() {
 		var o observation.Observation
-		if err := rows.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt); err != nil {
+		var updatedAt sql.NullTime
+		if err := rows.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt, &updatedAt); err != nil {
 			return nil, err
+		}
+		if updatedAt.Valid {
+			o.UpdatedAt = updatedAt.Time
 		}
 		observations = append(observations, &o)
 	}
@@ -81,8 +93,8 @@ func (r *ObservationRepository) FindAll() ([]*observation.Observation, error) {
 }
 
 func (r *ObservationRepository) Update(o *observation.Observation) error {
-	query := `UPDATE observations SET content = ? WHERE id = ?`
-	_, err := r.db.Exec(query, o.Content, o.ID)
+	query := `UPDATE observations SET content = ?, updated_at = ? WHERE id = ?`
+	_, err := r.db.Exec(query, o.Content, time.Now(), o.ID)
 	return err
 }
 
@@ -92,16 +104,9 @@ func (r *ObservationRepository) Delete(id string) error {
 	return err
 }
 
+// InitSchema is deprecated - use migrations instead
 func (r *ObservationRepository) InitSchema() error {
-	query := `
-	CREATE TABLE IF NOT EXISTS observations (
-		id TEXT PRIMARY KEY,
-		session_id TEXT NOT NULL,
-		content TEXT NOT NULL,
-		created_at DATETIME NOT NULL,
-		FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
-	)
-	`
-	_, err := r.db.Exec(query)
-	return err
+	// Schema creation is now handled by migrations
+	// This method exists only for interface compatibility during transition
+	return nil
 }

@@ -74,20 +74,6 @@ type PatientHandler struct {
 	patientService PatientService
 	sessionService SessionService
 	insightService InsightService
-	templates      TemplateRenderer
-}
-
-// TemplateRenderer defines the interface for template rendering (deprecated - use templ components)
-type TemplateRenderer interface {
-	ExecuteTemplate(w http.ResponseWriter, name string, data interface{}) error
-}
-
-// Render handles HTMX vs full page rendering automatically
-func (h *PatientHandler) Render(w http.ResponseWriter, r *http.Request, pageTemplate string, data interface{}) {
-	// This method is deprecated - use templ components directly
-	// For now, do nothing
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Render method deprecated - use templ components"))
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -95,13 +81,11 @@ func NewPatientHandler(
 	patientService PatientService,
 	sessionService SessionService,
 	insightService InsightService,
-	templates TemplateRenderer,
 ) *PatientHandler {
 	return &PatientHandler{
 		patientService: patientService,
 		sessionService: sessionService,
 		insightService: insightService,
-		templates:      templates,
 	}
 }
 
@@ -140,16 +124,21 @@ func (h *PatientHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(statusCode)
 
-	data := PatientViewData{
-		Error: message,
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	errorData := layoutComponents.ErrorData{
+		Error:  message,
+		IsHTMX: isHTMX,
+		Title:  "Erro",
 	}
 
-	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "error-fragment", data)
+	if isHTMX {
+		layoutComponents.ErrorFragment(errorData).Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data)
+	// Render full page with layout
+	errorComponent := layoutComponents.ErrorFragment(errorData)
+	layoutComponents.BaseWithContent("Erro", errorComponent).Render(r.Context(), w)
 }
 
 // getInsights retrieves insights for the sidebar (mock implementation)
@@ -206,13 +195,6 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// HTMX-aware rendering
-	if r.Header.Get("HX-Request") == "true" {
-		// Render just the patient list fragment
-		patientComponents.PatientList(patientItems, "").Render(r.Context(), w)
-		return
-	}
 
 	// Render with layout using templ
 	patientList := patientComponents.PatientList(patientItems, "")
@@ -279,20 +261,33 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// HTMX-aware rendering
-	if r.Header.Get("HX-Request") == "true" {
-		patientComponents.PatientDetail(patientDetail, sessionItems).Render(r.Context(), w)
-		return
-	}
-
 	detail := patientComponents.PatientDetail(patientDetail, sessionItems)
 	layoutComponents.BaseWithContent(patient.Name, detail).Render(r.Context(), w)
 }
 
 // NewPatient handles GET /patients/new - shows new patient form
 func (h *PatientHandler) NewPatient(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement with templ components
-	http.Error(w, "Not implemented - use templ components", http.StatusNotImplemented)
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	formData := patientComponents.NewPatientFormData{
+		FormData: &patientComponents.PatientFormValues{},
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// HTMX-aware rendering
+	if r.Header.Get("HX-Request") == "true" {
+		// Render just the form fragment
+		patientComponents.NewPatientForm(formData).Render(r.Context(), w)
+		return
+	}
+
+	// Render with layout using templ
+	form := patientComponents.NewPatientForm(formData)
+	layoutComponents.BaseWithContent("Novo Paciente", form).Render(r.Context(), w)
 }
 
 // NewPatientViewData is a ViewModel for the new patient form
@@ -308,10 +303,42 @@ type PatientFormValues struct {
 	Notes string
 }
 
-// CreatePatient handles POST /patients - creates a new patient
+// CreatePatient handles POST /patient/create - creates a new patient
 func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement with templ components
-	http.Error(w, "Not implemented - use templ components", http.StatusNotImplemented)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Failed to parse form", http.StatusBadRequest)
+		return
+	}
+
+	name := r.FormValue("name")
+	notes := r.FormValue("notes")
+
+	if name == "" {
+		h.renderError(w, r, "Nome do paciente é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	// Create patient using service
+	input := services.CreatePatientInput{
+		Name:  name,
+		Notes: notes,
+	}
+
+	patient, err := h.patientService.CreatePatient(ctx, input)
+	if err != nil {
+		h.renderError(w, r, "Erro ao criar paciente: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect to patient detail page
+	http.Redirect(w, r, "/patient/"+patient.ID, http.StatusSeeOther)
 }
 
 // Helper function to convert interface{} insights to InsightViewModel

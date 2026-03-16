@@ -2,12 +2,16 @@ package migrations
 
 import (
 	"database/sql"
+	"embed"
 	"fmt"
 	"io/fs"
 	"os"
 	"sort"
 	"strings"
 )
+
+//go:embed *.sql
+var migrationsFS embed.FS
 
 // Migration represents a database migration
 type Migration struct {
@@ -24,12 +28,12 @@ type MigrationManager struct {
 }
 
 // NewMigrationManager creates a new migration manager
-func NewMigrationManager(db *sql.DB, migrationsFS fs.FS) (*MigrationManager, error) {
+func NewMigrationManager(db *sql.DB) (*MigrationManager, error) {
 	manager := &MigrationManager{
 		db: db,
 	}
 
-	// Load migrations from filesystem
+	// Load migrations from embedded filesystem
 	if err := manager.loadMigrations(migrationsFS); err != nil {
 		return nil, err
 	}
@@ -320,9 +324,25 @@ func (m *MigrationManager) Status() (map[string]string, error) {
 	return status, nil
 }
 
-// NewMigrationManagerFromDir creates a migration manager from a directory path
+// NewMigrationManagerFromDir is kept for backward compatibility with tests
+// In production, use NewMigrationManager instead
 func NewMigrationManagerFromDir(db *sql.DB, migrationsDir string) (*MigrationManager, error) {
-	// Use os.DirFS to get an fs.FS from directory
+	// For tests, still use directory-based approach
 	migrationsFS := os.DirFS(migrationsDir)
-	return NewMigrationManager(db, migrationsFS)
+
+	manager := &MigrationManager{
+		db: db,
+	}
+
+	// Load migrations from filesystem
+	if err := manager.loadMigrations(migrationsFS); err != nil {
+		return nil, err
+	}
+
+	// Ensure schema_migrations table exists
+	if err := manager.createMigrationsTable(); err != nil {
+		return nil, err
+	}
+
+	return manager, nil
 }

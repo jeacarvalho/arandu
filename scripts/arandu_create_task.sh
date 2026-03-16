@@ -70,6 +70,14 @@ Tarefa criada sem requirement específico.
 - Esta seção "Instruções para o Agente" deve ter sido removida/replaceada pelo usuário
 - O arquivo deve conter uma descrição detalhada da tarefa fornecida pelo usuário
 - O status deve ter sido atualizado para "PRONTO_PARA_IMPLEMENTACAO" ou similar
+
+## Checklist de Integridade (OBRIGATÓRIO)
+- [ ] O componente usa .templ e herda de Layout?
+- [ ] A tipografia Source Serif 4 foi aplicada ao conteúdo clínico?
+- [ ] Executei 'templ generate' e o código Go compilou?
+- [ ] Testei a rota atual e as rotas vizinhas (Regressão)?
+- [ ] O banco de dados foi atualizado via migration .up.sql?
+
 EOF
 fi
 

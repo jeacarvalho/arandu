@@ -1,0 +1,43 @@
+package session
+
+templ InterventionForm(sessionID string) {
+	<form 
+		hx-post={ templ.URL("/sessions/" + sessionID + "/interventions") }
+		hx-target="#interventions-list"
+		hx-swap="afterbegin"
+		hx-on::after-request="this.reset()"
+		style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);"
+	>
+		<div style="margin-bottom: var(--space-md);">
+			<label 
+				for="intervention-content" 
+				style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);"
+			>
+				<i class="fas fa-hands-helping" style="margin-right: var(--space-xs);"></i>
+				Nova Intervenção Terapêutica
+			</label>
+			<textarea 
+				id="intervention-content" 
+				name="content" 
+				placeholder="Descreva a técnica ou intervenção realizada..."
+				rows="4"
+				style="width: 100%; background: var(--neutral-50); border: none; border-radius: var(--radius-lg); padding: var(--space-8); font-family: var(--font-clinical); font-size: 1.125rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; transition: background-color 0.2s ease, box-shadow 0.2s ease;"
+				onfocus="this.style.background='white'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05)'; this.style.outline='none';"
+				onblur="this.style.background='var(--neutral-50)'; this.style.boxShadow='none';"
+				required
+			></textarea>
+			<div style="font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs); font-style: italic;">
+				<i class="fas fa-info-circle"></i>
+				Registre a conduta técnica aplicada para análise posterior da evolução.
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-secondary">
+				<i class="fas fa-plus btn-icon"></i>Adicionar Intervenção
+			</button>
+			<button type="button" class="btn btn-outline" onclick="this.closest('form').querySelector('textarea').value = ''">
+				<i class="fas fa-times btn-icon"></i>Limpar
+			</button>
+		</div>
+	</form>
+}

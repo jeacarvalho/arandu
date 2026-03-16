@@ -10,11 +10,13 @@ type SessionDetail struct {
 }
 
 type Observation struct {
+	ID        string
 	Content   string
 	CreatedAt string
 }
 
 type Intervention struct {
+	ID        string
 	Content   string
 	CreatedAt string
 }
@@ -55,40 +57,14 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p class="card-subtitle">Registros e anotações da sessão</p>
 					</div>
 				</div>
-				if len(observations) > 0 {
-					<div style="max-height: 300px; overflow-y: auto;">
-						<div style="display: flex; flex-direction: column; gap: var(--space-md);">
-							for _, o := range observations {
-								<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--primary-500); background: var(--neutral-50);">
-									<div class="clinical-content">{ o.Content }</div>
-									<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
-										<div style="font-size: 0.75rem; color: var(--neutral-500);">
-											<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ o.CreatedAt }
-										</div>
-										<div class="badge badge-primary">Observação</div>
-									</div>
-								</div>
-							}
-						</div>
-					</div>
-				} else {
-					<div style="text-align: center; padding: var(--space-xl); color: var(--neutral-400);">
-						<i class="fas fa-sticky-note" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
-						<p style="font-style: italic;">Nenhuma observação registrada</p>
-					</div>
-				}
-				<div id="observations-list" style="margin-top: var(--space-lg);">
+			<div id="observations-list" style="margin-top: var(--space-lg);">
 					if len(observations) > 0 {
 						for _, o := range observations {
-							<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--primary-500); background: var(--neutral-50); margin-bottom: var(--space-md);">
-								<div class="clinical-content source-serif">{ o.Content }</div>
-								<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
-									<div style="font-size: 0.75rem; color: var(--neutral-500);">
-										<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ o.CreatedAt }
-									</div>
-									<div class="badge badge-primary">Observação</div>
-								</div>
-							</div>
+							@ObservationItem(ObservationItemData{
+								ID:        o.ID,
+								Content:   o.Content,
+								CreatedAt: o.CreatedAt,
+							})
 						}
 					}
 				</div>
@@ -107,32 +83,19 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p class="card-subtitle">Ações e técnicas aplicadas</p>
 					</div>
 				</div>
-				if len(interventions) > 0 {
-					<div style="max-height: 300px; overflow-y: auto;">
-						<div style="display: flex; flex-direction: column; gap: var(--space-md);">
-							for _, i := range interventions {
-								<div class="card-hover" style="padding: var(--space-md); border-left: 3px solid var(--secondary-500); background: var(--neutral-50);">
-									<div class="clinical-content">{ i.Content }</div>
-									<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
-										<div style="font-size: 0.75rem; color: var(--neutral-500);">
-											<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ i.CreatedAt }
-										</div>
-										<div class="badge badge-secondary">Intervenção</div>
-									</div>
-								</div>
-							}
-						</div>
-					</div>
-				} else {
-					<div style="text-align: center; padding: var(--space-xl); color: var(--neutral-400);">
-						<i class="fas fa-hands-helping" style="font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
-						<p style="font-style: italic;">Nenhuma intervenção registrada</p>
-					</div>
-				}
+				<div id="interventions-list" style="margin-top: var(--space-lg);">
+					if len(interventions) > 0 {
+						for _, i := range interventions {
+							@InterventionItem(InterventionItemData{
+								ID:        i.ID,
+								Content:   i.Content,
+								CreatedAt: i.CreatedAt,
+							})
+						}
+					}
+				</div>
 				<div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);">
-					<button class="btn btn-secondary btn-full">
-						<i class="fas fa-plus btn-icon"></i>Adicionar Intervenção
-					</button>
+					@InterventionForm(session.ID)
 				</div>
 			</div>
 		</div>

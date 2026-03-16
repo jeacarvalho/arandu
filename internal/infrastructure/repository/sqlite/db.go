@@ -36,8 +36,8 @@ func (db *DB) Close() error {
 }
 
 // Migrate applies all pending database migrations
-func (db *DB) Migrate(migrationsDir string) error {
-	manager, err := migrations.NewMigrationManagerFromDir(db.DB, migrationsDir)
+func (db *DB) Migrate() error {
+	manager, err := migrations.NewMigrationManager(db.DB)
 	if err != nil {
 		return fmt.Errorf("failed to create migration manager: %w", err)
 	}
@@ -46,8 +46,8 @@ func (db *DB) Migrate(migrationsDir string) error {
 }
 
 // MigrationStatus returns the current migration status
-func (db *DB) MigrationStatus(migrationsDir string) (map[string]string, error) {
-	manager, err := migrations.NewMigrationManagerFromDir(db.DB, migrationsDir)
+func (db *DB) MigrationStatus() (map[string]string, error) {
+	manager, err := migrations.NewMigrationManager(db.DB)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create migration manager: %w", err)
 	}

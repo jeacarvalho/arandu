@@ -285,10 +285,9 @@ func (r *PatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient
 	return patients, nil
 }
 
-// InitSchema is kept for compatibility with the old schema system
-// Actual schema creation is now handled by migrations
+// InitSchema is deprecated - use migrations instead
 func (r *PatientRepository) InitSchema() error {
-	// Schema is now created by migrations
-	// This method exists only for interface compatibility
+	// Schema creation is now handled by migrations
+	// This method exists only for interface compatibility during transition
 	return nil
 }

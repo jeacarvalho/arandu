@@ -160,6 +160,30 @@ if r.Header.Get("HX-Request") == "true" {
 }
 ```
 
+### Pilares Arquiteturais SOTA
+
+- A. Persistência Declarativa (Migrations)
+
+Regra: NUNCA crie tabelas via código Go hardcoded ou manualmente.
+
+Padrão: Use arquivos .up.sql numerados em internal/infrastructure/repository/sqlite/migrations/.
+
+Mecanismo: O sistema utiliza go:embed e um Migrator transacional no startup.
+
+- B. Type-Safe UI (templ + HTMX)
+
+Regra: Proibido o uso de arquivos .html soltos para lógica de página.
+
+Padrão: Use componentes .templ. O compilador do Go deve validar a UI.
+
+Dualidade Tipográfica:
+
+Interface (UI): Fonte Inter (Sans-serif).
+
+Conteúdo Clínico: Fonte Source Serif 4 (Serif).
+
+
+
 ### Templates (`web/templates`)
 - **layout.html**: Esqueleto base com sidebar e painel de insights (contém `{{block "content" .}}`)
 - **patient.html**: Define `{{define "content"}}` (full-page) e `{{define "patient-content"}}` (fragmento HTMX)

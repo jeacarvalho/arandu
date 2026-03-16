@@ -1,18 +1,8 @@
 package sqlite
 
+// InitSchema is deprecated - use Migrate() instead
+// Kept for backward compatibility during transition
 func (db *DB) InitSchema() error {
-	repos := []interface{ InitSchema() error }{
-		NewPatientRepository(db),
-		NewSessionRepository(db),
-		NewObservationRepository(db),
-		NewInterventionRepository(db),
-		NewInsightRepository(db),
-	}
-
-	for _, repo := range repos {
-		if err := repo.InitSchema(); err != nil {
-			return err
-		}
-	}
-	return nil
+	// Simply call Migrate() which now handles schema creation
+	return db.Migrate()
 }

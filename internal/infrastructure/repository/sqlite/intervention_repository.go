@@ -94,17 +94,9 @@ func (r *InterventionRepository) Delete(id string) error {
 	return err
 }
 
+// InitSchema is deprecated - use migrations instead
 func (r *InterventionRepository) InitSchema() error {
-	query := `
-	CREATE TABLE IF NOT EXISTS interventions (
-		id TEXT PRIMARY KEY,
-		session_id TEXT NOT NULL,
-		content TEXT NOT NULL,
-		created_at DATETIME NOT NULL,
-		updated_at DATETIME NOT NULL,
-		FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
-	)
-	`
-	_, err := r.db.Exec(query)
-	return err
+	// Schema creation is now handled by migrations
+	// This method exists only for interface compatibility during transition
+	return nil
 }

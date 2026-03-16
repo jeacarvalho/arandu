@@ -195,6 +195,102 @@ func TestObservationService_ListObservationsBySession(t *testing.T) {
 	}
 }
 
+func TestObservationService_UpdateObservation(t *testing.T) {
+	tests := []struct {
+		name        string
+		id          string
+		content     string
+		wantErr     bool
+		errContains string
+	}{
+		{
+			name:    "valid update",
+			id:      "obs-1",
+			content: "Conteúdo atualizado da observação",
+			wantErr: false,
+		},
+		{
+			name:        "empty content",
+			id:          "obs-1",
+			content:     "",
+			wantErr:     true,
+			errContains: "cannot be empty",
+		},
+		{
+			name:        "content too long",
+			id:          "obs-1",
+			content:     string(make([]byte, 5001)),
+			wantErr:     true,
+			errContains: "cannot exceed 5000 characters",
+		},
+		{
+			name:        "observation not found",
+			id:          "non-existent",
+			content:     "Conteúdo válido",
+			wantErr:     true,
+			errContains: "observation not found",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := &mockObservationRepository{
+				observations: map[string]*observation.Observation{
+					"obs-1": {
+						ID:        "obs-1",
+						SessionID: "session-123",
+						Content:   "Conteúdo original",
+						CreatedAt: time.Now(),
+					},
+				},
+			}
+			service := NewObservationService(repo)
+
+			err := service.UpdateObservation(tt.id, tt.content)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("UpdateObservation() expected error, got nil")
+				}
+				if tt.errContains != "" && err != nil && err.Error() != tt.errContains && !contains(err.Error(), tt.errContains) {
+					t.Errorf("UpdateObservation() error = %v, want error containing %v", err, tt.errContains)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("UpdateObservation() unexpected error: %v", err)
+				return
+			}
+
+			// Verify the observation was updated
+			updated, err := repo.FindByID(tt.id)
+			if err != nil {
+				t.Errorf("FindByID() error: %v", err)
+				return
+			}
+
+			if updated == nil {
+				t.Errorf("Observation was not found after update")
+				return
+			}
+
+			if updated.Content != tt.content {
+				t.Errorf("UpdateObservation() Content = %v, want %v", updated.Content, tt.content)
+			}
+
+			// Verify other fields remain unchanged
+			if updated.SessionID != "session-123" {
+				t.Errorf("UpdateObservation() changed SessionID = %v, want %v", updated.SessionID, "session-123")
+			}
+
+			if updated.ID != "obs-1" {
+				t.Errorf("UpdateObservation() changed ID = %v, want %v", updated.ID, "obs-1")
+			}
+		})
+	}
+}
+
 func contains(s, substr string) bool {
 	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && (s[:len(substr)] == substr || contains(s[1:], substr)))
 }

@@ -20,32 +20,9 @@ func setupSessionTestDB(t *testing.T) (*DB, func()) {
 		t.Fatalf("Failed to create database: %v", err)
 	}
 
-	// Create tables
-	patientQuery := `
-	CREATE TABLE IF NOT EXISTS patients (
-		id TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		notes TEXT,
-		created_at DATETIME NOT NULL,
-		updated_at DATETIME NOT NULL
-	)
-	`
-	if _, err := db.Exec(patientQuery); err != nil {
-		t.Fatalf("Failed to create patients table: %v", err)
-	}
-	sessionQuery := `
-	CREATE TABLE IF NOT EXISTS sessions (
-		id TEXT PRIMARY KEY,
-		patient_id TEXT NOT NULL,
-		date DATETIME NOT NULL,
-		summary TEXT,
-		created_at DATETIME NOT NULL,
-		updated_at DATETIME NOT NULL,
-		FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
-	)
-	`
-	if _, err := db.Exec(sessionQuery); err != nil {
-		t.Fatalf("Failed to create sessions table: %v", err)
+	// Run migrations to create all tables
+	if err := db.Migrate(); err != nil {
+		t.Fatalf("Failed to run migrations: %v", err)
 	}
 
 	cleanup := func() {

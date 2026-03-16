@@ -1,0 +1,70 @@
+package patient
+
+type NewPatientFormData struct {
+	Error       string
+	FormData    *PatientFormValues
+	ServerError string
+}
+
+type PatientFormValues struct {
+	Name  string
+	Notes string
+}
+
+templ NewPatientForm(data NewPatientFormData) {
+	<div class="content-header" style="margin-bottom: var(--space-xl);">
+		<div class="header-title">
+			<div>
+				<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Novo Paciente</h1>
+				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+			</div>
+		</div>
+	</div>
+
+	<div style="max-width: 42rem; margin: 0 auto;">
+		<form action="/patient/create" method="POST" style="background: transparent;">
+			if data.Error != "" {
+				<div class="alert alert-error">
+					{ data.Error }
+				</div>
+			}
+
+			if data.ServerError != "" {
+				<div class="alert alert-error">
+					{ data.ServerError }
+				</div>
+			}
+
+			<div style="margin-bottom: var(--space-2xl);">
+				<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);">Nome Completo</label>
+				<input 
+					type="text" 
+					name="name" 
+					required 
+					placeholder="Nome do paciente"
+					value={ data.FormData.Name }
+					style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--neutral-200); padding: var(--space-md) 0; font-family: var(--font-sans); font-size: 1.125rem; color: var(--neutral-900); transition: border-color 0.2s ease;"
+					onfocus="this.style.borderColor='var(--primary-500)'; this.style.outline='none';"
+					onblur="this.style.borderColor='var(--neutral-200)';"
+				>
+			</div>
+
+			<div style="margin-bottom: var(--space-2xl);">
+				<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);">Observações Iniciais</label>
+				<textarea 
+					name="notes" 
+					rows="8" 
+					placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)"
+					style="width: 100%; background: var(--neutral-50); border: none; border-radius: var(--radius-lg); padding: var(--space-8); font-family: var(--font-clinical); font-size: 1.125rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; transition: background-color 0.2s ease, box-shadow 0.2s ease;"
+					onfocus="this.style.background='white'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05)'; this.style.outline='none';"
+					onblur="this.style.background='var(--neutral-50)'; this.style.boxShadow='none';"
+				>{ data.FormData.Notes }</textarea>
+			</div>
+
+			<div class="form-actions" style="gap: var(--space-md);">
+				<a href="/patients" class="btn btn-outline">Cancelar</a>
+				<button type="submit" class="btn btn-primary">Salvar Paciente</button>
+			</div>
+		</form>
+	</div>
+}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/intervention"
 	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
@@ -78,12 +79,17 @@ type ObservationServiceInterface interface {
 	GetObservationsBySession(ctx context.Context, sessionID string) ([]interface{}, error)
 }
 
+type InterventionServiceInterface interface {
+	CreateIntervention(ctx context.Context, sessionID, content string) (interface{}, error)
+	GetInterventionsBySession(ctx context.Context, sessionID string) ([]interface{}, error)
+}
+
 // SessionHandler handles HTTP requests related to sessions
 type SessionHandler struct {
-	sessionService     SessionServiceInterface
-	patientService     PatientServiceInterface
-	observationService ObservationServiceInterface
-	templates          TemplateRenderer
+	sessionService      SessionServiceInterface
+	patientService      PatientServiceInterface
+	observationService  ObservationServiceInterface
+	interventionService InterventionServiceInterface
 }
 
 // NewSessionHandler creates a new SessionHandler with dependency injection
@@ -91,13 +97,13 @@ func NewSessionHandler(
 	sessionService SessionServiceInterface,
 	patientService PatientServiceInterface,
 	observationService ObservationServiceInterface,
-	templates TemplateRenderer,
+	interventionService InterventionServiceInterface,
 ) *SessionHandler {
 	return &SessionHandler{
-		sessionService:     sessionService,
-		patientService:     patientService,
-		observationService: observationService,
-		templates:          templates,
+		sessionService:      sessionService,
+		patientService:      patientService,
+		observationService:  observationService,
+		interventionService: interventionService,
 	}
 }
 
@@ -123,16 +129,21 @@ func (h *SessionHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(statusCode)
 
-	data := SessionViewData{
-		Error: message,
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	errorData := layoutComponents.ErrorData{
+		Error:  message,
+		IsHTMX: isHTMX,
+		Title:  "Erro",
 	}
 
-	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "error-fragment", data)
+	if isHTMX {
+		layoutComponents.ErrorFragment(errorData).Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data)
+	// Render full page with layout
+	errorComponent := layoutComponents.ErrorFragment(errorData)
+	layoutComponents.BaseWithContent("Erro", errorComponent).Render(r.Context(), w)
 }
 
 // Show handles GET /session/{id} - shows session details
@@ -173,17 +184,45 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   sess.CreatedAt.Format("02/01/2006 às 15:04"),
 	}
 
-	// Empty observations and interventions for now (can be expanded later)
+	// Fetch observations from service
+	obsList, err := h.observationService.GetObservationsBySession(r.Context(), sess.ID)
+	if err != nil {
+		log.Printf("Error fetching observations: %v", err)
+	}
+
+	// Convert to component observations
 	observations := []sessionComponents.Observation{}
+	for _, obs := range obsList {
+		if o, ok := obs.(*observation.Observation); ok {
+			observations = append(observations, sessionComponents.Observation{
+				ID:        o.ID,
+				Content:   o.Content,
+				CreatedAt: o.CreatedAt.Format("02/01/2006 às 15:04"),
+			})
+		}
+	}
+
+	// Empty interventions for now (can be expanded later)
 	interventions := []sessionComponents.Intervention{}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// HTMX-aware rendering
-	if r.Header.Get("HX-Request") == "true" {
-		sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "").Render(r.Context(), w)
-		return
+	// Fetch interventions from service
+	intervList, err := h.interventionService.GetInterventionsBySession(r.Context(), sess.ID)
+	if err != nil {
+		log.Printf("Error fetching interventions: %v", err)
 	}
+
+	// Convert to component interventions
+	for _, intv := range intervList {
+		if i, ok := intv.(*intervention.Intervention); ok {
+			interventions = append(interventions, sessionComponents.Intervention{
+				ID:        i.ID,
+				Content:   i.Content,
+				CreatedAt: i.CreatedAt.Format("02/01/2006 às 15:04"),
+			})
+		}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	detail := sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "")
 	layoutComponents.BaseWithContent("Sessão "+sessionDetail.Date, detail).Render(r.Context(), w)
@@ -214,28 +253,26 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Found patient: %s", patient.Name)
 
-	data := SessionViewData{
-		Patient: mapPatientToViewModel(patient),
-		FormData: &SessionFormValues{
+	formData := sessionComponents.NewSessionFormData{
+		PatientName: patient.Name,
+		FormData: &sessionComponents.SessionFormValues{
 			PatientID: patientID,
 			Date:      time.Now().Format("2006-01-02"),
 		},
-		Insights: []InsightViewModel{},
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		templateErr := h.templates.ExecuteTemplate(w, "new-session-form", data)
-		if templateErr != nil {
-			http.Error(w, "Error rendering template: "+templateErr.Error(), http.StatusInternalServerError)
-		}
+		// Render just the form fragment
+		sessionComponents.NewSessionForm(formData).Render(r.Context(), w)
 		return
 	}
 
-	templateErr := h.templates.ExecuteTemplate(w, "session-new.html", data)
-	if templateErr != nil {
-		http.Error(w, "Error rendering template: "+templateErr.Error(), http.StatusInternalServerError)
-	}
+	// Render with layout using templ
+	form := sessionComponents.NewSessionForm(formData)
+	layoutComponents.BaseWithContent("Nova Sessão", form).Render(r.Context(), w)
 }
 
 // CreateSession handles POST /sessions - creates a new session
@@ -275,17 +312,17 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		// For HTMX requests, return form with error
 		if r.Header.Get("HX-Request") == "true" {
 			patient, _ := h.patientService.GetPatientByID(r.Context(), patientID)
-			data := SessionViewData{
-				Error:   err.Error(),
-				Patient: mapPatientToViewModel(patient),
-				FormData: &SessionFormValues{
+			formData := sessionComponents.NewSessionFormData{
+				Error:       err.Error(),
+				PatientName: patient.Name,
+				FormData: &sessionComponents.SessionFormValues{
 					PatientID: patientID,
 					Date:      dateStr,
 					Summary:   summary,
 				},
 			}
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			h.templates.ExecuteTemplate(w, "new-session-form", data)
+			sessionComponents.NewSessionForm(formData).Render(r.Context(), w)
 			return
 		}
 
@@ -325,24 +362,28 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := SessionViewData{
-		Session: mapSessionToDetailViewModel(sess),
-		Patient: mapPatientToViewModel(patient),
-		FormData: &SessionFormValues{
+	formData := sessionComponents.EditSessionFormData{
+		SessionID:   sessionID,
+		PatientName: patient.Name,
+		FormData: &sessionComponents.SessionFormValues{
 			PatientID: sess.PatientID,
 			Date:      sess.Date.Format("2006-01-02"),
 			Summary:   sess.Summary,
 		},
-		Insights: []InsightViewModel{},
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		h.templates.ExecuteTemplate(w, "edit-session-form", data)
+		// Render just the form fragment
+		sessionComponents.EditSessionForm(formData).Render(r.Context(), w)
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "layout", data)
+	// Render with layout using templ
+	form := sessionComponents.EditSessionForm(formData)
+	layoutComponents.BaseWithContent("Editar Sessão", form).Render(r.Context(), w)
 }
 
 // UpdateSession handles POST /sessions/update - updates an existing session
@@ -394,17 +435,18 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("HX-Request") == "true" {
 			sess, _ := h.sessionService.GetSession(r.Context(), sessionID)
 			patient, _ := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
-			data := SessionViewData{
-				Error:   err.Error(),
-				Patient: mapPatientToViewModel(patient),
-				FormData: &SessionFormValues{
+			formData := sessionComponents.EditSessionFormData{
+				Error:       err.Error(),
+				SessionID:   sessionID,
+				PatientName: patient.Name,
+				FormData: &sessionComponents.SessionFormValues{
 					PatientID: sess.PatientID,
 					Date:      dateStr,
 					Summary:   summary,
 				},
 			}
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			h.templates.ExecuteTemplate(w, "edit-session-form", data)
+			sessionComponents.EditSessionForm(formData).Render(r.Context(), w)
 			return
 		}
 
@@ -533,6 +575,58 @@ func (h *SessionHandler) CreateObservation(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "text/html")
 	if err := component.Render(ctx, w); err != nil {
 		log.Printf("Error rendering observation item: %v", err)
+		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	}
+}
+
+// CreateIntervention handles POST /sessions/{id}/interventions
+func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// Extract session ID from URL
+	sessionID := extractSessionID(r.URL.Path, "/sessions/", "/interventions")
+	if sessionID == "" {
+		h.renderError(w, r, "ID da sessão não encontrado", http.StatusBadRequest)
+		return
+	}
+
+	// Parse form
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	content := r.FormValue("content")
+	if content == "" {
+		h.renderError(w, r, "Conteúdo da intervenção não pode ser vazio", http.StatusBadRequest)
+		return
+	}
+
+	// Create intervention
+	intv, err := h.interventionService.CreateIntervention(ctx, sessionID, content)
+	if err != nil {
+		h.renderError(w, r, "Erro ao criar intervenção: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Convert to domain intervention
+	intervention, ok := intv.(*intervention.Intervention)
+	if !ok {
+		h.renderError(w, r, "Erro ao converter intervenção", http.StatusInternalServerError)
+		return
+	}
+
+	// Render intervention item component
+	component := sessionComponents.InterventionItem(sessionComponents.InterventionItemData{
+		ID:        intervention.ID,
+		Content:   intervention.Content,
+		CreatedAt: intervention.CreatedAt.Format("02/01/2006 15:04"),
+	})
+
+	// Render HTMX fragment
+	w.Header().Set("Content-Type", "text/html")
+	if err := component.Render(ctx, w); err != nil {
+		log.Printf("Error rendering intervention item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
 	}
 }

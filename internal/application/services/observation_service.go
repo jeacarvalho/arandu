@@ -45,12 +45,20 @@ func (s *ObservationService) ListObservationsBySession(sessionID string) ([]*obs
 }
 
 func (s *ObservationService) UpdateObservation(id, content string) error {
+	if content == "" {
+		return fmt.Errorf("observation content cannot be empty")
+	}
+
+	if len(content) > 5000 {
+		return fmt.Errorf("observation content cannot exceed 5000 characters")
+	}
+
 	obs, err := s.repo.FindByID(id)
 	if err != nil {
 		return err
 	}
 	if obs == nil {
-		return nil
+		return fmt.Errorf("observation not found")
 	}
 
 	obs.Content = content

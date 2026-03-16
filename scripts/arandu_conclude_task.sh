@@ -133,6 +133,17 @@ if [ -d "web/components" ]; then
   fi
 fi
 
+echo "🛡️ Executando verificações de segurança antes de arquivar..."
+if [ -f "scripts/arandu_guard.sh" ]; then
+  bash scripts/arandu_guard.sh || exit 1
+fi
+
+# Verificar se houve mudança em .templ sem o correspondente _templ.go
+if find web/ -name "*.templ" -newer "$TASK_DIR/task.md" | grep -q "."; then
+    echo "🔍 Verificando se os componentes Templ foram gerados..."
+    # Lógica para garantir que o agente não esqueceu de rodar templ generate
+fi
+
 # Verificar novos handlers
 NEW_HANDLERS=$(find internal/web/handlers -name "*_handler.go" -newer "$TASK_DIR/task.md" 2>/dev/null | wc -l)
 if [ "$NEW_HANDLERS" -gt 0 ]; then

@@ -127,8 +127,8 @@ func TestMigrationManager(t *testing.T) {
 			t.Fatalf("Failed to get current version: %v", err)
 		}
 
-		if version != "0001_create_patients_table" {
-			t.Errorf("Expected version 0001_create_patients_table, got %q", version)
+		if version != "0001_initial_schema" {
+			t.Errorf("Expected version 0001_initial_schema, got %q", version)
 		}
 
 		// Check pending migrations (should be empty)
@@ -173,7 +173,7 @@ func TestMigrationManager(t *testing.T) {
 		}
 
 		// Rollback the migration
-		if err := manager.Rollback("0001_create_patients_table"); err != nil {
+		if err := manager.Rollback("0001_initial_schema"); err != nil {
 			t.Fatalf("Failed to rollback migration: %v", err)
 		}
 
@@ -273,7 +273,7 @@ func TestMigrationManager_ErrorCases(t *testing.T) {
 
 	t.Run("Rollback not-applied migration", func(t *testing.T) {
 		// Don't apply migrations first
-		err := manager.Rollback("0001_create_patients_table")
+		err := manager.Rollback("0001_initial_schema")
 		if err == nil {
 			t.Error("Expected error when rolling back not-applied migration")
 		}

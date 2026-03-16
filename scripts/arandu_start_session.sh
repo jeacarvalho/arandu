@@ -29,6 +29,20 @@ Antes de qualquer implementação leia:
 4 docs/requirements/
 5 docs/learnings/
 
+# CONTEXTO CRÍTICO — ARANDU SOTA
+
+## 🛡️ LEIS DE PROTEÇÃO (NÃO NEGOCIÁVEIS)
+1. NUNCA crie arquivos .html soltos. Use componentes .templ.
+2. TODA página deve herdar de templates.Layout().
+3. CONTEÚDO CLÍNICO deve usar obrigatoriamente .font-clinical (Source Serif 4).
+4. ROTAS EXISTENTES não podem quebrar. Verifique /patients e /sessions antes de concluir.
+
+## PASSOS OBRIGATÓRIOS
+Leia antes de qualquer código:
+- architecture_sota.md (Padrões de backend e DB)
+- interface_patterns_sota.md (Padrões de UI e UX)
+- docs/requirements/ (O requirement da tarefa)
+
 ## ARQUITETURA WEB (PR #1 INTEGRADO)
 
 Para implementações na camada web, CONSULTE OBRIGATORIAMENTE:

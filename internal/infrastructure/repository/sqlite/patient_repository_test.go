@@ -29,20 +29,9 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 	// Create repository
 	repo := NewPatientRepository(db)
 
-	// Initialize schema
-	// Note: In production, use db.Migrate() with the correct migrations directory
-	// For unit tests, we create the table directly to avoid path issues
-	query := `
-	CREATE TABLE IF NOT EXISTS patients (
-		id TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		notes TEXT,
-		created_at DATETIME NOT NULL,
-		updated_at DATETIME NOT NULL
-	)
-	`
-	if _, err := db.Exec(query); err != nil {
-		t.Fatalf("Failed to create patients table: %v", err)
+	// Run migrations to create all tables
+	if err := db.Migrate(); err != nil {
+		t.Fatalf("Failed to run migrations: %v", err)
 	}
 
 	t.Run("Create and retrieve patient", func(t *testing.T) {

@@ -67,15 +67,9 @@ func (r *InsightRepository) Delete(id string) error {
 	return err
 }
 
+// InitSchema is deprecated - use migrations instead
 func (r *InsightRepository) InitSchema() error {
-	query := `
-	CREATE TABLE IF NOT EXISTS insights (
-		id TEXT PRIMARY KEY,
-		content TEXT NOT NULL,
-		source TEXT NOT NULL,
-		created_at DATETIME NOT NULL
-	)
-	`
-	_, err := r.db.Exec(query)
-	return err
+	// Schema creation is now handled by migrations
+	// This method exists only for interface compatibility during transition
+	return nil
 }

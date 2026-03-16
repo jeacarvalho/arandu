@@ -17,94 +17,139 @@ type SessionItem struct {
 }
 
 templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
-	<div class="content-header">
-		<div class="header-title">
-			<div>
-				<h1>{ patient.Name }</h1>
-				<p class="header-subtitle">Perfil clínico do paciente</p>
-			</div>
-			<div class="header-actions">
-				<a href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } class="btn btn-primary">
-					<i class="fas fa-calendar-plus btn-icon"></i>Nova Sessão
+	<div style="padding: var(--space-lg); max-width: 72rem; margin: 0 auto;">
+		<!-- Header -->
+		<div style="margin-bottom: var(--space-xl);">
+			<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+				<a href="/patients" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;">
+					<i class="fas fa-arrow-left"></i>
 				</a>
-				<a href="/patients" class="btn btn-outline">
-					<i class="fas fa-arrow-left btn-icon"></i>Voltar
+				<div style="flex: 1;">
+					<h1 style="font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">
+						{ patient.Name }
+					</h1>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;">
+						Perfil clínico do paciente
+					</p>
+				</div>
+				<a 
+					href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } 
+					style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--primary-600); color: white; border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; transition: all 0.15s ease;"
+					onmouseover="this.style.background='var(--primary-700)';"
+					onmouseout="this.style.background='var(--primary-600)';"
+				>
+					<i class="fas fa-calendar-plus"></i>
+					Nova Sessão
 				</a>
 			</div>
 		</div>
-	</div>
 
-	<div class="form-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: var(--space-2xl);">
-		<div class="card">
-			<div class="card-header">
-				<div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
-					<i class="fas fa-user"></i>
+		<!-- Main Grid -->
+		<div style="display: grid; grid-template-columns: 1fr; gap: var(--space-lg); margin-bottom: var(--space-xl); md:grid-template-columns: 2fr 1fr;">
+			<!-- Info Card -->
+			<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;">
+				<div style="padding: var(--space-lg); border-bottom: 1px solid var(--neutral-100); display: flex; align-items: center; gap: var(--space-md);">
+					<div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
+						<i class="fas fa-user"></i>
+					</div>
+					<div>
+						<h2 style="font-family: var(--font-sans); font-size: 1.125rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Informações do Paciente</h2>
+					</div>
 				</div>
-				<div><h2 class="card-title">Informações do Paciente</h2></div>
+				<div style="padding: var(--space-lg);">
+					<div style="margin-bottom: var(--space-lg);">
+						<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">Notas Clínicas</label>
+						if patient.Notes != "" {
+							<div style="font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); background: var(--neutral-50); padding: var(--space-lg); border-radius: var(--radius-lg); border-left: 3px solid var(--primary-500);">
+								{ patient.Notes }
+							</div>
+						} else {
+							<div style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-400); font-style: italic; padding: var(--space-lg); background: var(--neutral-50); border-radius: var(--radius-lg);">
+								Nenhuma nota clínica registrada
+							</div>
+						}
+					</div>
+					<div>
+						<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">Cadastrado em</label>
+						<div style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-600);">
+							{ patient.CreatedAt }
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="form-section">
-				<div class="form-group">
-					<label class="form-label">ID do Paciente</label>
-					<div class="form-control" style="background: var(--neutral-50); font-family: var(--font-mono);">{ patient.ID }</div>
-				</div>
-				<div class="form-group">
-					<label class="form-label">Notas Clínicas</label>
-					if patient.Notes != "" {
-						<div class="clinical-content" style="background: var(--neutral-50); padding: var(--space-lg); border-radius: var(--radius-md); border-left: 3px solid var(--primary-500);">{ patient.Notes }</div>
-					} else {
-						<div class="form-help">Nenhuma nota clínica registrada</div>
-					}
-				</div>
-				<div class="form-group">
-					<label class="form-label">Data de Cadastro</label>
-					<div class="form-control" style="background: var(--neutral-50);">{ patient.CreatedAt }</div>
-				</div>
-			</div>
-		</div>
-		<div class="card">
-			<div class="card-header">
-				<div class="card-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;">
-					<i class="fas fa-bolt"></i>
-				</div>
-				<div><h2 class="card-title">Ações Rápidas</h2></div>
-			</div>
-			<div style="display: flex; flex-direction: column; gap: var(--space-sm);">
-				<a href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } class="btn btn-primary btn-full" style="justify-content: flex-start;">
-					<i class="fas fa-calendar-plus btn-icon"></i>Nova Sessão
-				</a>
-			</div>
-		</div>
-	</div>
 
-	<div class="card">
-		<div class="card-header">
-			<div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
-				<i class="fas fa-calendar-alt"></i>
+			<!-- Quick Actions -->
+			<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); padding: var(--space-lg);">
+				<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+					<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+						<i class="fas fa-bolt"></i>
+					</div>
+					<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Ações Rápidas</h2>
+				</div>
+				<div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+					<a 
+						href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } 
+						style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-lg); text-decoration: none; color: var(--neutral-700); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; transition: all 0.15s ease;"
+						onmouseover="this.style.background='var(--primary-50)'; this.style.color='var(--primary-700)';"
+						onmouseout="this.style.background='var(--neutral-50)'; this.style.color='var(--neutral-700)';"
+					>
+						<i class="fas fa-calendar-plus" style="width: 20px; color: var(--primary-600);"></i>
+						Nova Sessão
+					</a>
+				</div>
 			</div>
-			<div><h2 class="card-title">Sessões Clínicas</h2></div>
-			<div class="badge badge-primary">{ strconv.Itoa(len(sessions)) } sessões</div>
 		</div>
-		if len(sessions) > 0 {
-			<div style="max-height: 400px; overflow-y: auto;">
-				for _, s := range sessions {
-					<a href={ templ.URL("/session/" + s.ID) } class="patient-card card-hover" style="display: block; margin-bottom: var(--space-sm);">
-						<div style="display: flex; justify-content: space-between;">
-							<div>
-								<div style="font-weight: 600;">Sessão { strconv.Itoa(s.SessionNumber) }</div>
-								<div style="font-size: 0.75rem; color: var(--neutral-500);">{ s.Date }</div>
+
+		<!-- Sessions -->
+		<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;">
+			<div style="padding: var(--space-lg); border-bottom: 1px solid var(--neutral-100); display: flex; align-items: center; justify-content: space-between;">
+				<div style="display: flex; align-items: center; gap: var(--space-md);">
+					<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+						<i class="fas fa-calendar-alt"></i>
+					</div>
+					<div>
+						<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Sessões Clínicas</h2>
+					</div>
+				</div>
+				<div style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); background: var(--primary-50); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full);">
+					{ strconv.Itoa(len(sessions)) } sessões
+				</div>
+			</div>
+			if len(sessions) > 0 {
+				<div style="max-height: 400px; overflow-y: auto;">
+					for _, s := range sessions {
+						<a 
+							href={ templ.URL("/session/" + s.ID) } 
+							style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--space-lg); text-decoration: none; border-bottom: 1px solid var(--neutral-50); transition: background-color 0.15s ease;"
+							onmouseover="this.style.backgroundColor='var(--neutral-50)';"
+							onmouseout="this.style.backgroundColor='transparent';"
+						>
+							<div style="flex: 1; min-width: 0;">
+								<div style="font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; color: var(--neutral-800);">Sessão { strconv.Itoa(s.SessionNumber) }</div>
+								<div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">{ s.Date }</div>
 							</div>
 							if s.Summary != "" {
-								<p style="font-size: 0.875rem; color: var(--neutral-600);">{ s.Summary }</p>
+								<div style="font-family: var(--font-clinical); font-size: 0.875rem; color: var(--neutral-600); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
+									{ s.Summary }
+								</div>
 							}
-						</div>
+							<i class="fas fa-chevron-right" style="color: var(--neutral-300); font-size: 0.75rem; margin-left: var(--space-md);"></i>
+						</a>
+					}
+				</div>
+			} else {
+				<div style="text-align: center; padding: var(--space-2xl); color: var(--neutral-400);">
+					<i class="fas fa-calendar-alt" style="font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;"></i>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; margin-bottom: var(--space-md);">Nenhuma sessão registrada</p>
+					<a 
+						href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } 
+						style="display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--primary-600); color: white; border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem;"
+					>
+						<i class="fas fa-plus"></i>
+						Registrar Primeira Sessão
 					</a>
-				}
-			</div>
-		} else {
-			<div style="text-align: center; padding: var(--space-2xl); color: var(--neutral-400);">
-				<p>Nenhuma sessão registrada</p>
-				<a href={ templ.URL("/patient/" + patient.ID + "/sessions/new") } class="btn btn-success" style="margin-top: var(--space-md);">Registrar Primeira Sessão</a>
-			</div>
-		}
+				</div>
+			}
+		</div>
 	</div>
 }
