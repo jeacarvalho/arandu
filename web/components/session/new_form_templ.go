@@ -42,32 +42,32 @@ func NewSessionForm(data NewSessionFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mb-8\"><div><h1 class=\"text-2xl font-semibold text-slate-800\">Nova Sessão</h1><p class=\"text-sm text-slate-500 mt-1\">Cadastre uma nova sessão para ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"content-header\" style=\"margin-bottom: var(--space-xl);\"><div class=\"header-title\"><div><h1 style=\"font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);\">Nova Sessão</h1><p class=\"header-subtitle\" style=\"font-size: 0.875rem; color: var(--neutral-500);\">Cadastre uma nova sessão para ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 20, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 21, Col: 136}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div></div><div class=\"max-w-2xl mx-auto\"><form action=\"/sessions\" method=\"POST\" class=\"bg-transparent\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div></div></div><div style=\"max-width: 42rem; margin: 0 auto;\"><form action=\"/sessions\" method=\"POST\" style=\"background: transparent;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"alert alert-error\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 28, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 30, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -79,14 +79,14 @@ func NewSessionForm(data NewSessionFormData) templ.Component {
 			}
 		}
 		if data.ServerError != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"alert alert-error\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.ServerError)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 34, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 36, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -104,52 +104,52 @@ func NewSessionForm(data NewSessionFormData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.PatientID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 38, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 40, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><div class=\"mb-10\"><label class=\"block font-sans text-xs font-medium text-slate-500 uppercase tracking-wider mb-3\">Data da Sessão</label> <input type=\"date\" name=\"date\" required value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><div style=\"margin-bottom: var(--space-2xl);\"><label style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);\">Data da Sessão</label> <input type=\"date\" name=\"date\" required value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Date)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 46, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 48, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"w-full bg-transparent border-0 border-b border-gray-200 pb-4 pt-2 font-sans text-lg text-slate-900 focus:border-arandu-primary focus:outline-none focus:bg-white transition-colors duration-200\"></div><div class=\"mb-10\"><label class=\"block font-sans text-xs font-medium text-slate-500 uppercase tracking-wider mb-3\">Resumo da Sessão</label> <textarea name=\"summary\" rows=\"8\" placeholder=\"Resumo da sessão (o que foi discutido, intervenções realizadas, progresso, etc.)\" class=\"w-full bg-gray-50 border-0 rounded-xl p-8 font-serif text-lg leading-relaxed text-slate-800 resize-y focus:bg-white focus:shadow-inner focus:outline-none transition-all duration-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" style=\"width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--neutral-200); padding: var(--space-md) 0; font-family: var(--font-sans); font-size: 1.125rem; color: var(--neutral-900); transition: border-color 0.2s ease;\" onfocus=\"this.style.borderColor='var(--primary-500)'; this.style.outline='none';\" onblur=\"this.style.borderColor='var(--neutral-200)';\"></div><div style=\"margin-bottom: var(--space-2xl);\"><label style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);\">Resumo da Sessão</label> <textarea name=\"summary\" rows=\"8\" placeholder=\"Resumo da sessão (o que foi discutido, intervenções realizadas, progresso, etc.)\" style=\"width: 100%; background: var(--neutral-50); border: none; border-radius: var(--radius-lg); padding: var(--space-8); font-family: var(--font-clinical); font-size: 1.125rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; transition: background-color 0.2s ease, box-shadow 0.2s ease;\" onfocus=\"this.style.background='white'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05)'; this.style.outline='none';\" onblur=\"this.style.background='var(--neutral-50)'; this.style.boxShadow='none';\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Summary)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 58, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 64, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</textarea></div><div class=\"flex gap-4 mt-12\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</textarea></div><div class=\"form-actions\" style=\"gap: var(--space-md);\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 templ.SafeURL
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patient/" + data.FormData.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 62, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 68, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"px-6 py-3 border border-gray-300 rounded-lg font-sans text-sm font-medium text-slate-700 hover:bg-gray-50 transition-colors\">Cancelar</a> <button type=\"submit\" class=\"px-6 py-3 bg-arandu-primary text-white font-sans text-sm font-medium rounded-lg hover:bg-arandu-primary/90 transition-colors\">Salvar Sessão</button></div></form></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"btn btn-outline\">Cancelar</a> <button type=\"submit\" class=\"btn btn-primary\">Salvar Sessão</button></div></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
