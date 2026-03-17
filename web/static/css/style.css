@@ -1852,32 +1852,47 @@ header {
     min-height: 100vh;
 }
 
-/* Desktop styles - Sidebar always visible */
+/* Desktop styles - Sidebar still hidden by default, triggered by hamburger */
 @media (min-width: 768px) {
     .sidebar-drawer {
-        transform: translateX(0);
         top: 0;
         height: 100vh;
+        /* Still starts hidden */
+        transform: translateX(-100%);
+    }
+    
+    .sidebar-drawer.sidebar-open {
+        transform: translateX(0);
     }
     
     .sidebar-overlay {
-        display: none !important;
+        top: 0;
     }
     
+    /* Hamburger menu still visible on desktop */
     .hamburger-menu {
-        display: none;
+        display: flex;
     }
     
+    /* Close button still visible */
     .sidebar-close-btn {
-        display: none;
+        display: flex;
     }
     
+    /* Main content doesn't have margin when sidebar is hidden */
     .main-content {
-        margin-left: 280px;
-        padding-top: 0;
+        margin-left: 0;
+        padding-top: 64px;
     }
     
     .top-bar {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* When sidebar is open on desktop */
+    .sidebar-drawer.sidebar-open ~ .main-content,
+    .sidebar-drawer.sidebar-open ~ .top-bar {
         margin-left: 280px;
         width: calc(100% - 280px);
     }
