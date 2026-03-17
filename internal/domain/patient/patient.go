@@ -56,4 +56,13 @@ type Repository interface {
 	Search(ctx context.Context, query string, limit, offset int) ([]*Patient, error)
 	CountAll() (int, error)
 	FindPaginated(limit, offset int) ([]*Patient, error)
+
+	// Theme analysis
+	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
+}
+
+// Theme represents a theme with its frequency
+type Theme struct {
+	Term  string
+	Count int
 }

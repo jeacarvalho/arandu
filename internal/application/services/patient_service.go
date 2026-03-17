@@ -431,3 +431,25 @@ func (s *PatientService) ListPatientsPaginated(ctx context.Context, page, pageSi
 
 	return patients, total, nil
 }
+
+// GetThemeFrequency retrieves the most common terms from a patient's records
+func (s *PatientService) GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error) {
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
+	if patientID == "" {
+		return nil, fmt.Errorf("%w: patient ID cannot be empty", ErrInvalidInput)
+	}
+
+	if limit <= 0 || limit > 50 {
+		limit = 10
+	}
+
+	themes, err := s.repo.GetThemeFrequency(ctx, patientID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
+	}
+
+	return themes, nil
+}

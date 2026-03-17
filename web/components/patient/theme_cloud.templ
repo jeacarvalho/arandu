@@ -1,0 +1,17 @@
+package patient
+
+import "strconv"
+
+templ ThemeCloud(vm ThemeCloudViewModel) {
+	<div class="theme-cloud-container">
+		<h3>Temas Recorrentes no Prontuário</h3>
+		if len(vm.Themes) > 0 {
+			<div id="theme-cloud-canvas" class="theme-cloud-canvas" data-themes={ vm.ThemesJSON() } data-patient-id={ vm.PatientID }></div>
+			<div class="theme-cloud-legend">
+				<span class="theme-total">Total: { strconv.Itoa(vm.TotalCount) } menções</span>
+			</div>
+		} else {
+			<p class="theme-empty">Nenhum tema identificado ainda. Continue registrando sessões.</p>
+		}
+	</div>
+}

@@ -5,12 +5,12 @@ package patient
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
 import (
 	"arandu/internal/domain/timeline"
-	templruntime "github.com/a-h/templ/runtime"
 )
-
-import "github.com/a-h/templ"
 
 type TimelinePageData struct {
 	PatientID string
