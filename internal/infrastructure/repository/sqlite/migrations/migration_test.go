@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 func setupTestDB(t *testing.T) (*sql.DB, string) {
@@ -19,7 +19,7 @@ func setupTestDB(t *testing.T) (*sql.DB, string) {
 	}
 	tmpfile.Close()
 
-	db, err := sql.Open("sqlite3", tmpfile.Name())
+	db, err := sql.Open("sqlite", tmpfile.Name())
 	if err != nil {
 		os.Remove(tmpfile.Name())
 		t.Fatalf("Failed to open database: %v", err)
