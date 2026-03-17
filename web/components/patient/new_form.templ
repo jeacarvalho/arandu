@@ -21,8 +21,8 @@ templ NewPatientForm(data NewPatientFormData) {
 		</div>
 	</div>
 
-	<div style="max-width: 42rem; margin: 0 auto;">
-		<form action="/patient/create" method="POST" style="background: transparent;">
+	<div class="form-container">
+		<form action="/patient/create" method="POST">
 			if data.Error != "" {
 				<div class="alert alert-error">
 					{ data.Error }
@@ -35,33 +35,29 @@ templ NewPatientForm(data NewPatientFormData) {
 				</div>
 			}
 
-			<div style="margin-bottom: var(--space-2xl);">
-				<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);">Nome Completo</label>
+			<div class="silent-form-group">
+				<label class="silent-label">Nome Completo</label>
 				<input 
 					type="text" 
 					name="name" 
 					required 
 					placeholder="Nome do paciente"
 					value={ data.FormData.Name }
-					style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--neutral-200); padding: var(--space-md) 0; font-family: var(--font-sans); font-size: 1.125rem; color: var(--neutral-900); transition: border-color 0.2s ease;"
-					onfocus="this.style.borderColor='var(--primary-500)'; this.style.outline='none';"
-					onblur="this.style.borderColor='var(--neutral-200)';"
+					class="silent-input"
 				>
 			</div>
 
-			<div style="margin-bottom: var(--space-2xl);">
-				<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);">Observações Iniciais</label>
+			<div class="silent-form-group">
+				<label class="silent-label">Observações Iniciais</label>
 				<textarea 
 					name="notes" 
 					rows="8" 
 					placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)"
-					style="width: 100%; background: var(--neutral-50); border: none; border-radius: var(--radius-lg); padding: var(--space-8); font-family: var(--font-clinical); font-size: 1.125rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; transition: background-color 0.2s ease, box-shadow 0.2s ease;"
-					onfocus="this.style.background='white'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05)'; this.style.outline='none';"
-					onblur="this.style.background='var(--neutral-50)'; this.style.boxShadow='none';"
+					class="silent-textarea"
 				>{ data.FormData.Notes }</textarea>
 			</div>
 
-			<div class="form-actions" style="gap: var(--space-md);">
+			<div class="form-actions">
 				<a href="/patients" class="btn btn-outline">Cancelar</a>
 				<button type="submit" class="btn btn-primary">Salvar Paciente</button>
 			</div>

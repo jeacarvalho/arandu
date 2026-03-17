@@ -10,18 +10,16 @@ templ InterventionEditForm(interv InterventionEditData) {
 			hx-put={ templ.URL("/interventions/" + interv.ID) }
 			hx-target={ "#intervention-" + interv.ID }
 			hx-swap="outerHTML"
-			style="width: 100%;"
+			class="inline-edit-form"
 		>
 			<textarea 
 				id={ "intervention-edit-" + interv.ID }
 				name="content" 
 				rows="4"
-				style="width: 100%; background: white; border: none; border-radius: var(--radius-lg); padding: var(--space-6); font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;"
-				onfocus="this.style.boxShadow='inset 0 2px 8px rgba(0,0,0,0.08)'; this.style.outline='none';"
-				onblur="this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.04)';"
+				class="silent-textarea"
 				required
 			>{ interv.Content }</textarea>
-			<div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+			<div class="form-actions">
 				<button type="submit" class="btn btn-secondary btn-sm">
 					<i class="fas fa-check btn-icon"></i>Salvar
 				</button>

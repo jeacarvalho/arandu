@@ -53,7 +53,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div style=\"padding: var(--space-lg); max-width: 72rem; margin: 0 auto;\"><!-- Header --><div style=\"margin-bottom: var(--space-2xl);\"><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: var(--space-xs);\">Dashboard Clínico</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);\">Visão geral para reflexão terapêutica e acompanhamento</p></div><!-- Stats Grid - Responsive --><div style=\"display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); margin-bottom: var(--space-2xl); md:grid-template-columns: repeat(4, 1fr);\"><div style=\"background: white; border-radius: var(--radius-xl); padding: var(--space-lg); border: 1px solid var(--neutral-100); text-align: center;\"><div style=\"font-family: var(--font-sans); font-size: 2.5rem; font-weight: 700; color: var(--primary-600); line-height: 1; margin-bottom: var(--space-xs);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"dashboard-container\"><!-- Header --><div class=\"dashboard-header\"><h1 class=\"dashboard-title\">Dashboard Clínico</h1><p class=\"dashboard-subtitle\">Visão geral para reflexão terapêutica e acompanhamento</p></div><!-- Stats Grid - Responsive --><div class=\"stats-grid\"><div class=\"stat-card\"><div class=\"stat-value text-arandu-primary\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -66,7 +66,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;\"><i class=\"fas fa-users\" style=\"margin-right: var(--space-xs);\"></i>Pacientes</div></div><div style=\"background: white; border-radius: var(--radius-xl); padding: var(--space-lg); border: 1px solid var(--neutral-100); text-align: center;\"><div style=\"font-family: var(--font-sans); font-size: 2.5rem; font-weight: 700; color: var(--secondary-600); line-height: 1; margin-bottom: var(--space-xs);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"stat-label\"><i class=\"fas fa-users stat-icon\"></i>Pacientes</div></div><div class=\"stat-card\"><div class=\"stat-value text-arandu-secondary\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,12 +79,12 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;\"><i class=\"fas fa-calendar-check\" style=\"margin-right: var(--space-xs);\"></i>Sessões</div></div><div style=\"background: white; border-radius: var(--radius-xl); padding: var(--space-lg); border: 1px solid var(--neutral-100); text-align: center;\"><div style=\"font-family: var(--font-sans); font-size: 2.5rem; font-weight: 700; color: var(--accent-600); line-height: 1; margin-bottom: var(--space-xs);\">0</div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;\"><i class=\"fas fa-lightbulb\" style=\"margin-right: var(--space-xs);\"></i>Insights</div></div><div style=\"background: white; border-radius: var(--radius-xl); padding: var(--space-lg); border: 1px solid var(--neutral-100); text-align: center;\"><div style=\"font-family: var(--font-sans); font-size: 2.5rem; font-weight: 700; color: var(--clinical-purple); line-height: 1; margin-bottom: var(--space-xs);\">0</div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;\"><i class=\"fas fa-chart-bar\" style=\"margin-right: var(--space-xs);\"></i>Análises</div></div></div><!-- Main Content Grid --><div style=\"display: grid; grid-template-columns: 1fr; gap: var(--space-xl); md:grid-template-columns: 2fr 1fr;\"><!-- Pacientes Ativos --><div style=\"background: white; border-radius: var(--radius-xl); border: 1px solid var(--neutral-100); overflow: hidden;\"><div style=\"padding: var(--space-lg); border-bottom: 1px solid var(--neutral-100); display: flex; align-items: center; justify-content: space-between;\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-user-friends\"></i></div><div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800);\">Pacientes Ativos</h2><p style=\"font-size: 0.75rem; color: var(--neutral-500);\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--primary-600); text-decoration: none; font-weight: 500;\">Ver Todos</a></div><div style=\"max-height: 400px; overflow-y: auto;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label\"><i class=\"fas fa-calendar-check stat-icon\"></i>Sessões</div></div><div class=\"stat-card\"><div class=\"stat-value text-arandu-insight\">0</div><div class=\"stat-label\"><i class=\"fas fa-lightbulb stat-icon\"></i>Insights</div></div><div class=\"stat-card\"><div class=\"stat-value text-purple-600\">0</div><div class=\"stat-label\"><i class=\"fas fa-chart-bar stat-icon\"></i>Análises</div></div></div><!-- Main Content Grid --><div class=\"content-grid\"><!-- Pacientes Ativos --><div class=\"patients-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(patients) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div style=\"display: flex; flex-direction: column;\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"patients-list-container\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -102,33 +102,33 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-lg); text-decoration: none; border-bottom: 1px solid var(--neutral-50); transition: background-color 0.15s ease;\" onmouseover=\"this.style.backgroundColor='var(--neutral-50)';\" onmouseout=\"this.style.backgroundColor='transparent';\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;\"><i class=\"fas fa-user\"></i></div><div style=\"flex: 1; min-width: 0;\"><div style=\"font-family: var(--font-clinical); font-size: 1rem; font-weight: 600; color: var(--neutral-900);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"patient-item\"><div class=\"patient-avatar\"><i class=\"fas fa-user\"></i></div><div class=\"patient-info\"><div class=\"patient-name\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 105, Col: 128}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 103, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">Desde ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"patient-since\">Desde ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.CreatedAt)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 106, Col: 120}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 104, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div style=\"width: 8px; height: 8px; background: var(--success-500); border-radius: var(--radius-full); flex-shrink: 0;\"></div></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"patient-status\"></div></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -138,12 +138,12 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div style=\"text-align: center; padding: var(--space-2xl); color: var(--neutral-400);\"><i class=\"fas fa-user-friends\" style=\"font-size: 2.5rem; margin-bottom: var(--space-md); opacity: 0.5;\"></i><p style=\"font-family: var(--font-sans); font-size: 0.875rem;\">Nenhum paciente ativo</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"patients-empty\"><i class=\"fas fa-user-friends\"></i><p>Nenhum paciente ativo</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><!-- Sidebar --><div style=\"display: flex; flex-direction: column; gap: var(--space-lg);\"><!-- Insights de IA --><div style=\"background: linear-gradient(135deg, var(--accent-50) 0%, var(--accent-100) 100%); border: 1px solid var(--accent-200); border-radius: var(--radius-xl); padding: var(--space-lg);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-brain\"></i></div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--accent-800);\">Insights de IA</h2></div><div style=\"text-align: center; padding: var(--space-lg); color: var(--neutral-500);\"><i class=\"fas fa-code\" style=\"font-size: 2rem; margin-bottom: var(--space-sm); opacity: 0.5;\"></i><p style=\"font-family: var(--font-sans); font-size: 0.875rem;\">Em desenvolvimento</p></div></div><!-- Ações Rápidas --><div style=\"background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); padding: var(--space-lg);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-teal) 0%, #0d9488 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-bolt\"></i></div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800);\">Ações Rápidas</h2></div><div style=\"display: flex; flex-direction: column; gap: var(--space-sm);\"><a href=\"/patients/new\" style=\"display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md); background: var(--neutral-50); border-radius: var(--radius-lg); text-decoration: none; color: var(--neutral-700); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; transition: all 0.15s ease;\" onmouseover=\"this.style.background='var(--primary-50)'; this.style.color='var(--primary-700)';\" onmouseout=\"this.style.background='var(--neutral-50)'; this.style.color='var(--neutral-700)';\"><i class=\"fas fa-user-plus\" style=\"width: 20px; color: var(--primary-600);\"></i> Novo Paciente</a></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><!-- Sidebar --><div class=\"dashboard-sidebar\"><!-- Insights de IA --><div class=\"insights-card\"><div class=\"insights-header\"><div class=\"insights-icon\"><i class=\"fas fa-brain\"></i></div><h2 class=\"insights-title\">Insights de IA</h2></div><div class=\"insights-content\"><i class=\"fas fa-code\"></i><p>Em desenvolvimento</p></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/sessions/new\" class=\"quick-action\"><i class=\"fas fa-calendar-plus\"></i> Nova Sessão</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

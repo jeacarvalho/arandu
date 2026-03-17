@@ -29,20 +29,20 @@ func InterventionForm(sessionID string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form class=\"inline-form\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/sessions/" + sessionID + "/interventions"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_form.templ`, Line: 5, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_form.templ`, Line: 6, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#interventions-list\" hx-swap=\"afterbegin\" hx-on::after-request=\"this.reset()\" style=\"margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);\"><div style=\"margin-bottom: var(--space-md);\"><label for=\"intervention-content\" style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm);\"><i class=\"fas fa-hands-helping\" style=\"margin-right: var(--space-xs);\"></i> Nova Intervenção Terapêutica</label> <textarea id=\"intervention-content\" name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"4\" style=\"width: 100%; background: var(--neutral-50); border: none; border-radius: var(--radius-lg); padding: var(--space-8); font-family: var(--font-clinical); font-size: 1.125rem; line-height: 1.75; color: var(--neutral-800); resize: vertical; transition: background-color 0.2s ease, box-shadow 0.2s ease;\" onfocus=\"this.style.background='white'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.05)'; this.style.outline='none';\" onblur=\"this.style.background='var(--neutral-50)'; this.style.boxShadow='none';\" required></textarea><div style=\"font-size: 0.75rem; color: var(--neutral-400); margin-top: var(--space-xs); font-style: italic;\"><i class=\"fas fa-info-circle\"></i> Registre a conduta técnica aplicada para análise posterior da evolução.</div></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-secondary\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar Intervenção</button> <button type=\"button\" class=\"btn btn-outline\" onclick=\"this.closest('form').querySelector('textarea').value = ''\"><i class=\"fas fa-times btn-icon\"></i>Limpar</button></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#interventions-list\" hx-swap=\"afterbegin\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label for=\"intervention-content\" class=\"silent-label\"><i class=\"fas fa-hands-helping\"></i> Nova Intervenção Terapêutica</label> <textarea id=\"intervention-content\" name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"4\" class=\"silent-textarea\" required></textarea><div class=\"form-help\"><i class=\"fas fa-info-circle\"></i> Registre a conduta técnica aplicada para análise posterior da evolução.</div></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-secondary\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar Intervenção</button> <button type=\"button\" class=\"btn btn-outline\" onclick=\"this.closest('form').querySelector('textarea').value = ''\"><i class=\"fas fa-times btn-icon\"></i>Limpar</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

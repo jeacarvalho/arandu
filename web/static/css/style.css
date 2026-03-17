@@ -68,15 +68,15 @@
     --error: var(--clinical-red);
     --info: var(--clinical-blue);
     
-    /* Background & Text */
-    --bg-primary: #ffffff;
-    --bg-secondary: var(--arandu-bg);
+    /* Background & Text - Clinical Notebook Style */
+    --bg-primary: #FDFDF6;           /* Soft paper white - reduces snow blindness */
+    --bg-secondary: var(--arandu-bg); /* Paper Gray #F7F8FA */
     --bg-sidebar: linear-gradient(180deg, var(--arandu-primary) 0%, #152642 100%);
-    --bg-card: #ffffff;
+    --bg-card: #FFFFFF;              /* Pure white only for cards/surfaces */
     --bg-hover: var(--neutral-50);
-    --text-primary: var(--neutral-900);
-    --text-secondary: var(--neutral-600);
-    --text-tertiary: var(--neutral-400);
+    --text-primary: var(--neutral-900); /* Restore original for better contrast on soft background */
+    --text-secondary: var(--neutral-700);
+    --text-tertiary: var(--neutral-500);
     --text-inverse: #ffffff;
     --text-clinical: var(--arandu-primary);
     
@@ -210,7 +210,7 @@ p {
 .app-container {
     display: flex;
     min-height: 100vh;
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
 }
 
 /* Sidebar - Retractable */
@@ -394,7 +394,7 @@ p {
     flex: 1;
     padding: var(--space-2xl);
     overflow-y: auto;
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
     transition: margin-left var(--sidebar-transition);
     margin-left: 0;
 }
@@ -632,7 +632,7 @@ p {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 4px rgba(45, 125, 229, 0.1);
-    background-color: white;
+    background-color: var(--bg-card);
 }
 
 .form-control:hover:not(:focus) {
@@ -730,6 +730,104 @@ p {
     margin-bottom: 0;
 }
 
+/* Form Containers */
+.form-container {
+    max-width: 42rem;
+    margin: 0 auto;
+}
+
+.inline-form {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--neutral-100);
+}
+
+.inline-edit-form {
+    width: 100%;
+}
+
+/* Silent Input Forms - Clinical Notebook Style */
+.silent-form-group {
+    margin-bottom: var(--space-2xl);
+}
+
+.silent-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+}
+
+.silent-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--neutral-200);
+    padding: var(--space-md) 0;
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    color: var(--neutral-900);
+    transition: border-color var(--transition-fast);
+}
+
+.silent-input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+}
+
+.silent-input:hover:not(:focus) {
+    border-color: var(--neutral-300);
+}
+
+.silent-input::placeholder {
+    color: var(--neutral-400);
+    font-weight: 400;
+}
+
+.silent-textarea {
+    width: 100%;
+    background: var(--neutral-50);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    font-family: var(--font-clinical);
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--neutral-800);
+    resize: vertical;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+    min-height: 140px;
+}
+
+.silent-textarea:focus {
+    outline: none;
+    background: var(--bg-card);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.silent-textarea:hover:not(:focus) {
+    background: var(--neutral-100);
+}
+
+.silent-textarea::placeholder {
+    color: var(--neutral-400);
+    font-weight: 400;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--neutral-100);
+}
+
 /* Buttons */
 .btn {
     display: inline-flex;
@@ -814,7 +912,7 @@ p {
 }
 
 .btn-secondary {
-    background: white;
+    background: var(--bg-card);
     color: var(--arandu-secondary);
     border: 2px solid var(--arandu-secondary);
     box-shadow: var(--shadow-sm);
@@ -927,7 +1025,7 @@ p {
 
 /* Patient Cards */
 .patient-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     border: 1px solid var(--neutral-200);
@@ -1050,7 +1148,7 @@ p {
 }
 
 .insight-item {
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     padding: 1rem;
     margin-bottom: 1rem;
@@ -1659,7 +1757,7 @@ header {
     left: 0;
     right: 0;
     height: 64px;
-    background: white;
+    background: var(--bg-card);
     border-bottom: 1px solid var(--neutral-200);
     z-index: 100;
     display: flex;
@@ -1846,11 +1944,7 @@ header {
     font-weight: 500;
 }
 
-/* Main Content Area */
-.main-content {
-    padding-top: 64px;
-    min-height: 100vh;
-}
+
 
 /* Desktop styles - Sidebar still hidden by default, triggered by hamburger */
 @media (min-width: 768px) {
@@ -1895,6 +1989,362 @@ header {
     .sidebar-drawer.sidebar-open ~ .top-bar {
         margin-left: 280px;
         width: calc(100% - 280px);
+    }
+}
+
+/* ===== DASHBOARD STYLES ===== */
+
+.dashboard-container {
+    padding: var(--space-lg);
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    margin-bottom: var(--space-2xl);
+}
+
+.dashboard-title {
+    font-family: var(--font-clinical);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin-bottom: var(--space-xs);
+}
+
+.dashboard-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--neutral-500);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    border: 1px solid var(--neutral-100);
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+    font-family: var(--font-sans);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-icon {
+    margin-right: var(--space-xs);
+}
+
+.text-purple-600 {
+    color: var(--clinical-purple);
+}
+
+/* Content Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+}
+
+/* Patients Card */
+.patients-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-100);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.patients-card-header {
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.patients-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.patients-card-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.patients-card-heading {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin: 0;
+}
+
+.patients-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    margin: 0;
+}
+
+.patients-card-link {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--primary-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.patients-card-link:hover {
+    color: var(--primary-700);
+}
+
+.patients-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.patients-list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.patient-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--neutral-50);
+    transition: background-color 0.15s ease;
+}
+
+.patient-item:hover {
+    background-color: var(--neutral-50);
+}
+
+.patient-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-600);
+    flex-shrink: 0;
+}
+
+.patient-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.patient-name {
+    font-family: var(--font-clinical);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.patient-since {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+}
+
+.patient-status {
+    width: 8px;
+    height: 8px;
+    background: var(--success-500);
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.patients-empty {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--neutral-400);
+}
+
+.patients-empty i {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+    opacity: 0.5;
+}
+
+.patients-empty p {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+}
+
+/* Dashboard Sidebar */
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.insights-card {
+    background: linear-gradient(135deg, var(--accent-50) 0%, var(--accent-100) 100%);
+    border: 1px solid var(--accent-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+}
+
+.insights-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.insights-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.insights-title {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-800);
+    margin: 0;
+}
+
+.insights-content {
+    text-align: center;
+    padding: var(--space-lg);
+    color: var(--neutral-500);
+}
+
+.insights-content i {
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+    opacity: 0.5;
+}
+
+.insights-content p {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.quick-actions-card {
+    background: var(--bg-card);
+    border: 1px solid var(--neutral-100);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.quick-actions-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.quick-actions-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--clinical-teal) 0%, #0d9488 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.quick-actions-title {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin: 0;
+}
+
+.quick-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--neutral-700);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.quick-action:hover {
+    background: var(--primary-50);
+    color: var(--primary-700);
+}
+
+.quick-action i {
+    width: 20px;
+    color: var(--primary-600);
+}
+
+/* Desktop styles for dashboard */
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .content-grid {
+        grid-template-columns: 2fr 1fr;
     }
 }
 
