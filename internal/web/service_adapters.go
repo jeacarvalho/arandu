@@ -9,6 +9,7 @@ import (
 	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+	"arandu/internal/domain/timeline"
 )
 
 // SessionServiceAdapter adapts services.SessionService to both handlers.SessionService and handlers.SessionServiceInterface
@@ -125,6 +126,21 @@ func (a *ObservationServiceAdapter) UpdateObservation(ctx context.Context, id, c
 // InterventionServiceAdapter adapts services.InterventionService to handlers.InterventionServiceInterface
 type InterventionServiceAdapter struct {
 	service *services.InterventionService
+}
+
+// TimelineServiceAdapter adapts services.TimelineService to handlers.TimelineService interface
+type TimelineServiceAdapter struct {
+	service *services.TimelineService
+}
+
+// NewTimelineServiceAdapter creates a new adapter
+func NewTimelineServiceAdapter(service *services.TimelineService) *TimelineServiceAdapter {
+	return &TimelineServiceAdapter{service: service}
+}
+
+// GetPatientTimeline implements handlers.TimelineService interface
+func (a *TimelineServiceAdapter) GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType) (timeline.Timeline, error) {
+	return a.service.GetPatientTimeline(ctx, patientID, filterType)
 }
 
 // NewInterventionServiceAdapter creates a new adapter

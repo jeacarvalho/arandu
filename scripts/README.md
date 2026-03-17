@@ -75,7 +75,7 @@ Scripts utilizados para gerenciar sessões, tarefas e aprendizados no projeto Ar
 **Exemplos:**
 ```bash
 # Concluir com sucesso
-./scripts/arandu_conclude_task.sh 20260313_215938 "Entidade Patient implementada com validação" --success
+./scripts/arandu_conclude_task.sh tid "" --success
 
 # Concluir com falha
 ./scripts/arandu_conclude_task.sh 20260313_215938 "Erro na implementação da validação" --failure

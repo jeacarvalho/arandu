@@ -1,0 +1,139 @@
+package patient
+
+import (
+	"arandu/internal/domain/timeline"
+	"github.com/a-h/templ"
+)
+
+type TimelinePageData struct {
+	PatientID string
+	Events    timeline.Timeline
+	Filter    *timeline.EventType
+}
+
+templ TimelineContainer(data TimelinePageData) {
+	<div style="padding: var(--space-lg); max-width: 72rem; margin: 0 auto;">
+		<!-- Header -->
+		<div style="margin-bottom: var(--space-xl);">
+			<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+				<a href="/patients" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;">
+					<i class="fas fa-arrow-left"></i>
+				</a>
+				<div style="flex: 1;">
+					<h1 style="font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">
+						Prontuário do Paciente
+					</h1>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;">
+						Histórico clínico longitudinal organizado cronologicamente
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Filters -->
+		<div style="margin-bottom: var(--space-xl);">
+			<div style="display: flex; gap: var(--space-sm);">
+				<button
+					hx-get={ "/patients/" + data.PatientID + "/history?filter=all" }
+					hx-target="#timeline-content"
+					hx-swap="innerHTML"
+					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
+					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				>
+					Todos
+				</button>
+				<button
+					hx-get={ "/patients/" + data.PatientID + "/history?filter=session" }
+					hx-target="#timeline-content"
+					hx-swap="innerHTML"
+					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
+					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				>
+					Sessões
+				</button>
+				<button
+					hx-get={ "/patients/" + data.PatientID + "/history?filter=observation" }
+					hx-target="#timeline-content"
+					hx-swap="innerHTML"
+					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
+					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				>
+					Observações
+				</button>
+				<button
+					hx-get={ "/patients/" + data.PatientID + "/history?filter=intervention" }
+					hx-target="#timeline-content"
+					hx-swap="innerHTML"
+					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
+					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				>
+					Intervenções
+				</button>
+			</div>
+		</div>
+
+		<!-- Timeline -->
+		<div style="position: relative;">
+			<div style="position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);"></div>
+			
+			<div id="timeline-content" style="display: flex; flex-direction: column; gap: var(--space-xl);">
+				if len(data.Events) == 0 {
+					<div style="text-align: center; padding: var(--space-2xl) 0;">
+						<div style="color: var(--neutral-400); margin-bottom: var(--space-md);">
+							<i class="fas fa-calendar-day" style="font-size: 3rem;"></i>
+						</div>
+						<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);">
+							Nenhum evento clínico registrado ainda.
+						</p>
+					</div>
+				} else {
+					for _, event := range data.Events {
+						<div style="position: relative;">
+							<div style="position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; background: var(--clinical-blue);"></div>
+							
+							<div style="border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; border-left: 4px solid var(--clinical-blue);">
+								<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);">
+									<div style="display: flex; align-items: center;">
+										<span style="display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; background: var(--primary-50); color: var(--primary-800);">
+											<i class="fas fa-calendar-check" style="margin-right: var(--space-xs);"></i>
+											Sessão
+										</span>
+										<span style="margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+											{ event.Date.Format("15:04") }
+										</span>
+									</div>
+									
+									if event.Metadata["session_id"] != "" {
+										<a 
+											href={ "/session/" + event.Metadata["session_id"] }
+											style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;"
+											onmouseover="this.style.color='var(--primary-800)';"
+											onmouseout="this.style.color='var(--primary-600)';"
+										>
+											<i class="fas fa-external-link-alt" style="margin-right: 2px;"></i>
+											Ver sessão
+										</a>
+									}
+								</div>
+								
+								<div style="font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;">
+									{ event.Content }
+								</div>
+								
+								<div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);">
+									<div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+										Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}

@@ -49,7 +49,8 @@ Para implementações na camada web, CONSULTE OBRIGATORIAMENTE:
 
 6 docs/architecture/WEB_LAYER_PATTERN.md
 7 docs/architecture/system_structure.md
-8 docs/architecture/AGENT_GUIDE.md (guia prático para agentes)
+8 docs/architecture/ROUTE_CONVENTIONS.md
+9 docs/architecture/AGENT_GUIDE.md (guia prático para agentes)
 
 Referências de código modelo:
 - internal/web/handlers/patient_handler.go

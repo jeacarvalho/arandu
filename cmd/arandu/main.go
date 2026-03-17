@@ -40,6 +40,8 @@ func main() {
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
+	timelineRepo := sqlite.NewTimelineRepository(db)
+	timelineService := services.NewTimelineService(timelineRepo)
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
@@ -47,6 +49,7 @@ func main() {
 	patientServiceAdapter := web.NewPatientServiceAdapter(patientService)
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
+	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter)
@@ -54,6 +57,7 @@ func main() {
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
+	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
 
 	mux := http.NewServeMux()
 
@@ -68,28 +72,24 @@ func main() {
 	// TODO: Migrate to templ
 	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
 	mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
-	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(r.URL.Path, "/sessions") && r.Method == "GET" {
-			patientHandler.ListSessions(w, r)
-		} else {
-			http.NotFound(w, r)
-		}
-	})
 
 	// Session routes - using the actual method names from the new handlers
-	mux.HandleFunc("/session/", sessionHandler.Show)
-	mux.HandleFunc("/sessions", sessionHandler.CreateSession)
-	mux.HandleFunc("/sessions/edit/", sessionHandler.EditSession)
-	mux.HandleFunc("/sessions/update/", sessionHandler.UpdateSession)
-	mux.HandleFunc("/sessions/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(r.URL.Path, "/observations") && r.Method == "POST" {
+	mux.HandleFunc("/session/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/edit") && r.Method == "GET" {
+			sessionHandler.EditSession(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/update") && r.Method == "POST" {
+			sessionHandler.UpdateSession(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/observations") && r.Method == "POST" {
 			sessionHandler.CreateObservation(w, r)
 		} else if strings.HasSuffix(r.URL.Path, "/interventions") && r.Method == "POST" {
 			sessionHandler.CreateIntervention(w, r)
+		} else if r.Method == "GET" {
+			sessionHandler.Show(w, r)
 		} else {
 			http.NotFound(w, r)
 		}
 	})
+	mux.HandleFunc("/session", sessionHandler.CreateSession)
 
 	// Observation routes
 	mux.HandleFunc("/observations/", func(w http.ResponseWriter, r *http.Request) {
@@ -126,6 +126,17 @@ func main() {
 		} else {
 			log.Printf("  -> Routing to patientHandler.Show")
 			patientHandler.Show(w, r)
+		}
+	})
+
+	// Combined patient routes (plural)
+	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "/history") && r.Method == "GET" {
+			timelineHandler.ShowPatientHistory(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/sessions") && r.Method == "GET" {
+			patientHandler.ListSessions(w, r)
+		} else {
+			http.NotFound(w, r)
 		}
 	})
 
