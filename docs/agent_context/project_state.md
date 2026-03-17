@@ -1,6 +1,8 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** seg 16 mar 2026 17:42:34 -03
+**Gerado em:** seg 16 mar 2026 20:52:38 -03
+
+> 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
 ## 🌳 Estrutura de Visões
 
@@ -30,6 +32,7 @@
 - cap-06-01-comparacao-casos.md
 - cap-07-01-gestao-agenda.md
 - cap-07-02-gestao-atendimentos.md
+- cap-07-03-gestao-acesso-multi-tenancy.md
 - cap-08-01-evolucao-base-clinica.md
 - cap-09-01-analise-clinica.md
 - cap-10-01-base-clinica-coletiva.md
@@ -52,32 +55,41 @@
 - req-06-01-01-comparar-casos.md
 - req-07-01-01-gerenciar-agenda.md
 - req-07-02-01-registrar-atendimento.md
+- req-07-03-01-autenticacao-usuario.md
+- req-07-03-02-orquestracao-conexao-db.md
+- req-07-03-03-migracao-multi-tenant.md
 - req-08-01-01-evolucao-base.md
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 19
+**Total de requirements:** 22
 
 ## 🛠️ Tarefas recentes
 
+- task_20260316_175916
 - task_20260316_153842
 - task_20260316_092337
 - task_20260315_201217
 - task_20260315_194932
-- task_20260315_191104
 
 ## 📚 Aprendizados recentes
 
+- REQ-01-01-03.md
 - REQ-01-03-01.md
 - REQ-01-02-02.md
 - task_20260316_092337.md
 - REQ-01-02-01.md
-- task_20260315_194932.md
 
 ## 📊 Status do Sistema
 
 - Visions: 10
-- Capabilities: 16
-- Requirements: 19
-- Learnings: 20
+- Capabilities: 17
+- Requirements: 22
+- Learnings: 21
+
+## 📈 Progresso do Projeto
+
+- **Tarefas concluídas:** 3
+- **Requirements implementados:** 3
+- **Última atualização permanente:** ** seg 16 mar 2026 20:52:37 -03
 

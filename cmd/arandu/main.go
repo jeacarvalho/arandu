@@ -68,6 +68,13 @@ func main() {
 	// TODO: Migrate to templ
 	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
 	mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
+	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/sessions") && r.Method == "GET" {
+			patientHandler.ListSessions(w, r)
+		} else {
+			http.NotFound(w, r)
+		}
+	})
 
 	// Session routes - using the actual method names from the new handlers
 	mux.HandleFunc("/session/", sessionHandler.Show)

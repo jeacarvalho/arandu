@@ -13,6 +13,7 @@ import (
 
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
+	sessionComponents "arandu/web/components/session"
 )
 
 // PatientViewData is a ViewModel that protects the domain from template concerns
@@ -375,4 +376,43 @@ func extractIDFromPath(path, prefix string) string {
 		}
 	}
 	return id
+}
+
+// ListSessions handles GET /patients/{id}/sessions - returns session list fragment via HTMX
+func (h *PatientHandler) ListSessions(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract patient ID from path
+	id := extractIDFromPath(r.URL.Path, "/patients/")
+	if id == "" {
+		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	// Get sessions for the patient
+	sessions, err := h.sessionService.ListSessionsByPatient(ctx, id)
+	if err != nil {
+		// Return empty list on error
+		sessions = []*session.Session{}
+	}
+
+	// Map to view models
+	sessionItems := make([]sessionComponents.SessionItem, len(sessions))
+	for i, s := range sessions {
+		sessionItems[i] = sessionComponents.SessionItem{
+			ID:      s.ID,
+			Date:    s.Date.Format("02/01/2006"),
+			Summary: s.Summary,
+		}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// Render just the session list fragment for HTMX
+	sessionComponents.SessionList(id, sessionItems).Render(ctx, w)
 }
