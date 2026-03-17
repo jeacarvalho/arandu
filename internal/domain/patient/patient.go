@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -52,6 +53,7 @@ type Repository interface {
 
 	// Additional queries for enhanced functionality
 	FindByName(name string) ([]*Patient, error)
+	Search(ctx context.Context, query string, limit, offset int) ([]*Patient, error)
 	CountAll() (int, error)
 	FindPaginated(limit, offset int) ([]*Patient, error)
 }

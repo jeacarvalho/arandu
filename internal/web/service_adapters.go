@@ -83,6 +83,11 @@ func (a *PatientServiceAdapter) CreatePatient(ctx context.Context, input service
 	return a.service.CreatePatient(ctx, input)
 }
 
+// SearchPatients implements handlers.PatientServiceInterface
+func (a *PatientServiceAdapter) SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
+	return a.service.SearchPatients(ctx, query, limit, offset)
+}
+
 // ObservationServiceAdapter adapts services.ObservationService to handlers.ObservationServiceInterface
 type ObservationServiceAdapter struct {
 	service *services.ObservationService

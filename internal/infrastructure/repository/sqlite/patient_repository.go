@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -18,6 +19,7 @@ type patientQueries struct {
 
 	// Additional useful queries
 	findByName    string
+	search        string
 	countAll      string
 	findPaginated string
 }
@@ -37,6 +39,9 @@ func newPatientQueries() *patientQueries {
 
 		// Search patients by name (case-insensitive, partial match)
 		findByName: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
+
+		// Search with pagination
+		search: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
 
 		// Count all patients
 		countAll: `SELECT COUNT(*) FROM patients`,
@@ -227,6 +232,41 @@ func (r *PatientRepository) FindByName(name string) ([]*patient.Patient, error) 
 	searchTerm := "%" + name + "%"
 
 	rows, err := r.db.Query(r.queries.findByName, searchTerm)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var patients []*patient.Patient
+	for rows.Next() {
+		var p patient.Patient
+		if err := rows.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+			return nil, err
+		}
+		patients = append(patients, &p)
+	}
+	return patients, nil
+}
+
+// Search retrieves patients matching the given query with pagination
+// Uses LOWER for case-insensitive search and LIMIT/OFFSET for pagination
+// Returns empty slice if no patients found (not an error)
+func (r *PatientRepository) Search(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
+	if query == "" {
+		return []*patient.Patient{}, nil
+	}
+
+	if limit < 1 || limit > 100 {
+		limit = 15
+	}
+
+	if offset < 0 {
+		offset = 0
+	}
+
+	searchTerm := "%" + query + "%"
+
+	rows, err := r.db.QueryContext(ctx, r.queries.search, searchTerm, limit, offset)
 	if err != nil {
 		return nil, err
 	}

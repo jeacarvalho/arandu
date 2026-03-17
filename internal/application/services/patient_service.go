@@ -346,6 +346,42 @@ func (s *PatientService) SearchPatientsByName(ctx context.Context, name string) 
 	return patients, nil
 }
 
+// SearchPatients searches for patients with pagination
+// Returns a slice of patients and the total count
+func (s *PatientService) SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
+	// Check context cancellation
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
+	// Empty query returns empty slice
+	query = strings.TrimSpace(query)
+	if query == "" {
+		return []*patient.Patient{}, nil
+	}
+
+	if len(query) > 100 {
+		return nil, fmt.Errorf("%w: search query cannot exceed 100 characters", ErrInvalidInput)
+	}
+
+	// Default limit
+	if limit < 1 || limit > 100 {
+		limit = 15
+	}
+
+	if offset < 0 {
+		offset = 0
+	}
+
+	// Search in repository with pagination
+	patients, err := s.repo.Search(ctx, query, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
+	}
+
+	return patients, nil
+}
+
 // GetPatientCount returns the total number of patients
 func (s *PatientService) GetPatientCount(ctx context.Context) (int, error) {
 	// Check context cancellation

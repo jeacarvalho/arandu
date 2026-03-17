@@ -55,6 +55,7 @@ type PatientService interface {
 	GetPatientByID(ctx context.Context, id string) (*patient.Patient, error)
 	ListPatients(ctx context.Context) ([]*patient.Patient, error)
 	CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error)
+	SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
 }
 
 // SessionService defines the interface for session operations
@@ -415,4 +416,44 @@ func (h *PatientHandler) ListSessions(w http.ResponseWriter, r *http.Request) {
 
 	// Render just the session list fragment for HTMX
 	sessionComponents.SessionList(id, sessionItems).Render(ctx, w)
+}
+
+// Search handles GET /patients/search - returns search results fragment via HTMX
+func (h *PatientHandler) Search(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract query parameter
+	query := r.URL.Query().Get("q")
+	if query == "" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		patientComponents.SearchResults([]patientComponents.SearchResultItem{}).Render(r.Context(), w)
+		return
+	}
+
+	ctx := r.Context()
+
+	// Search patients with default limit of 15
+	patients, err := h.patientService.SearchPatients(ctx, query, 15, 0)
+	if err != nil {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		patientComponents.SearchResults([]patientComponents.SearchResultItem{}).Render(r.Context(), w)
+		return
+	}
+
+	// Map to view models
+	results := make([]patientComponents.SearchResultItem, len(patients))
+	for i, p := range patients {
+		results[i] = patientComponents.SearchResultItem{
+			ID:   p.ID,
+			Name: p.Name,
+		}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// Render search results fragment for HTMX
+	patientComponents.SearchResults(results).Render(ctx, w)
 }

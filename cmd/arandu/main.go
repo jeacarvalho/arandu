@@ -71,6 +71,7 @@ func main() {
 	mux.HandleFunc("/patients", patientHandler.ListPatients)
 	// TODO: Migrate to templ
 	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
+	mux.HandleFunc("/patients/search", patientHandler.Search)
 	mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
 
 	// Session routes - using the actual method names from the new handlers
