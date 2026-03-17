@@ -12,7 +12,14 @@ Scripts utilizados para gerenciar sessões, tarefas e aprendizados no projeto Ar
 
 **Saída:**
 - Sessão criada com timestamp
-- Contexto do projeto atualizado em `docs/agent_context/project_state.md`
+- Contexto do projeto atualizado em `docs/agent_context/project_state.mTask: Implementação de Infraestrutura FTS5 para Análise Clínica
+ID da Tarefa: task_20260317_infra_fts5
+
+Requirement Relacionado: REQ-04-01-01
+
+Stack Técnica: SQLite (FTS5), Go, Migrations SQL.
+
+🎯 Objetivod`
 
 ---
 
@@ -89,6 +96,9 @@ Scripts utilizados para gerenciar sessões, tarefas e aprendizados no projeto Ar
 ---
 
 ### 5. **Finalizar Sessão**
+run ./scripts/arandu_checkpoint.sh; run ./scripts/arandu_guard.sh ; run ./scripts/arandu_validate_handlers.sh; run ./scripts/arandu_update_context.sh
+
+
 ```bash
 ./scripts/arandu_end_session.sh
 ```

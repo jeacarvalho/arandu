@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** ter 17 mar 2026 15:17:10 -03
+**Gerado em:** ter 17 mar 2026 16:12:07 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -40,6 +40,8 @@
 ## 📋 Requirements
 
 - req-01-00-01-criar-paciente.md
+- req-01-00-02-editar-paciente.md
+- req-01-00-03-buscar-localizar-pacientes.md
 - req-01-01-01-criar-sessao.md
 - req-01-01-02-editar-sessao.md
 - req-01-01-03-listar-sessoes.md
@@ -62,34 +64,34 @@
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 22
+**Total de requirements:** 24
 
 ## 🛠️ Tarefas recentes
 
+- task_20260317_153710
 - task_20260317_140558
 - task_20260317_094000
 - task_20260316_175916
 - task_20260316_153842
-- task_20260316_092337
 
 ## 📚 Aprendizados recentes
 
+- REQ-01-00-03.md
 - SEED_DATA_MASSIVE_20260317.md
 - task_20260317_140558.md
 - SEED_DATA_20260317.md
 - REQ-02-01-01.md
-- REQ-01-01-03.md
 
 ## 📊 Status do Sistema
 
 - Visions: 10
 - Capabilities: 17
-- Requirements: 22
-- Learnings: 25
+- Requirements: 24
+- Learnings: 26
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 4
-- **Requirements implementados:** 4
-- **Última atualização permanente:** ** ter 17 mar 2026 15:17:10 -03
+- **Tarefas concluídas:** 5
+- **Requirements implementados:** 5
+- **Última atualização permanente:** ** ter 17 mar 2026 16:12:07 -03
 

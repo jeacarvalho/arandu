@@ -1,180 +1,55 @@
-# Arquitetura do Sistema Arandu
+Arquitetura do Sistema Arandu (SOTA)
 
-## Visão Geral
+IMPORTANTE: Este é o documento mestre de arquitetura. Qualquer agente deve seguir estes padrões para garantir a "Tecnologia Silenciosa", a integridade do sistema em larga escala e a privacidade absoluta dos dados.
 
-O Arandu é um sistema de inteligência clínica para profissionais de saúde mental, construído com uma arquitetura baseada em Domain-Driven Design (DDD) e Clean Architecture.
+1. Visão Geral
 
-## Estrutura do Projeto
+O Arandu é um sistema de inteligência clínica para profissionais de saúde mental, construído com uma arquitetura baseada em Domain-Driven Design (DDD), Clean Architecture e renderização Type-Safe. O sistema é projetado para ser resiliente a grandes massas de dados (Big Data Clínico).
 
-```
+2. Estrutura do Projeto (Consolidada)
+
 arandu/
 ├── cmd/arandu/
 │   └── main.go                 # Ponto de entrada da aplicação
 ├── internal/
-│   ├── domain/                 # Camada de domínio (core business)
-│   │   ├── patient/           # Entidade Paciente
+│   ├── domain/                 # Camada de domínio (Core Business - Puro)
+│   │   ├── patient/           # Entidade Paciente (Agregado Raiz)
 │   │   ├── session/           # Entidade Sessão
 │   │   ├── observation/       # Entidade Observação
 │   │   ├── intervention/      # Entidade Intervenção
-│   │   └── insight/           # Entidade Insight
-│   ├── application/           # Camada de aplicação
-│   │   └── services/          # Serviços de aplicação
+│   │   └── timeline/          # Agregadores de visualização longitudinal
+│   ├── application/           # Camada de aplicação (Services)
+│   │   └── services/          # Orquestração de casos de uso
 │   └── infrastructure/        # Camada de infraestrutura
 │       └── repository/
-│           └── sqlite/        # Implementações de repositório SQLite
-├── web/                       # Camada web
-│   ├── handlers/              # Handlers HTTP
-│   ├── templates/             # Templates HTML
-│   └── static/                # Arquivos estáticos
-│       ├── css/
-│       └── js/
-└── docs/                      # Documentação
-```
+│           └── sqlite/        # Implementações SQLite (FTS5 habilitado)
+│               ├── migrations/ # Arquivos .up.sql (Versionamento)
+│               └── migrator.go # Runner de migrações com go:embed
+├── web/                       # Camada Web SOTA
+│   ├── handlers/              # Handlers HTTP (Consciência HTMX)
+│   ├── templates/             # Componentes .templ (Substituem .html)
+│   └── static/                # Arquivos estáticos (Tailwind, Inter, Serif)
+├── scripts/                   # Automação, Seed e Guard (Cão de Guarda)
+└── docs/                      # Requisitos, Visões e Estratégias
 
-## Princípios Arquiteturais
 
-### 1. Domain-Driven Design (DDD)
-- **Domínio Rico**: Entidades com comportamento e regras de negócio
-- **Agregados**: Paciente como agregado raiz, Sessão como agregado filho
-- **Repositórios**: Interfaces definidas no domínio, implementadas na infraestrutura
+3. Pilares Arquiteturais SOTA
 
-### 2. Clean Architecture
-- **Independência de Camadas**: Domínio não depende de outras camadas
-- **Inversão de Dependência**: Interfaces apontam para dentro
-- **Testabilidade**: Domínio puro pode ser testado sem infraestrutura
+A. Persistência Declarativa e Isolamento (Multi-tenancy)
 
-### 3. SOLID
+Regra: NUNCA crie tabelas via código Go hardcoded. Use migrations em internal/infrastructure/repository/sqlite/migrations/.
 
-- **Single Responsibility**: Handlers apenas orquestram, services têm lógica de negócio, templates apenas renderizam
-- **Open/Closed**: ViewModels permitem estender dados da view sem modificar domínio
-- **Liskov Substitution**: Interfaces de serviço permitem trocar implementações (ex: SQLite → PostgreSQL)
-- **Interface Segregation**: Cada handler define interfaces específicas com apenas métodos que usa
-- **Dependency Inversion**: Handlers dependem de abstrações (interfaces), não de implementações concretas
+Arquitetura Multi-tenant: Database-per-tenant.
 
-### 4. Regras de Ouro da Camada Web
+Control Plane: Banco central gerencia users e tenants.
 
-#### Independência de Domínio
-Handlers não contêm lógica de negócio. Eles apenas:
-1. Decodificam o Request
-2. Chamam o Application Service
-3. Mapeiam o resultado para um ViewModel
-4. Renderizam o Template
+Data Plane: Um arquivo SQLite individual por terapeuta (clinical_uuid.db).
 
-#### Consciência de Contexto HTMX
-Cada Handler verifica se a requisição é HTMX (`HX-Request`):
-- **Se for HTMX**: Renderiza apenas o fragmento (bloco específico)
-- **Se não for**: Renderiza a página completa com o `layout.html`
+Migrações: O Migrator utiliza go:embed e aplica os schemas em lote para todos os tenants no startup.
 
-#### Tipagem Forte (ViewModels)
-Nunca passe entidades de domínio diretamente para o template. Crie structs específicas de "ViewData" dentro do handler para garantir que o template tenha exatamente o que precisa e nada mais.
+B. Type-Safe UI (templ + HTMX)
 
-## Modelo de Domínio
-
-### Entidades Principais
-
-#### 1. Paciente (`domain/patient`)
-- Representa um paciente em tratamento
-- Atributos: ID, Nome, Notas, Datas de criação/atualização
-- Agregado raiz para sessões
-
-#### 2. Sessão (`domain/session`)
-- Representa uma sessão terapêutica
-- Atributos: ID, PacienteID, Data, Notas, Datas de criação/atualização
-- Pertence a um paciente
-
-#### 3. Observação (`domain/observation`)
-- Observação clínica feita durante uma sessão
-- Atributos: ID, SessãoID, Conteúdo, Data de criação
-- Pertence a uma sessão
-
-#### 4. Intervenção (`domain/intervention`)
-- Intervenção terapêutica realizada
-- Atributos: ID, SessãoID, Conteúdo, Datas de criação/atualização
-- Pertence a uma sessão
-
-#### 5. Insight (`domain/insight`)
-- Insight gerado por IA ou terapeuta
-- Atributos: ID, Conteúdo, Fonte ("ai" ou "therapist"), Data de criação
-
-## Camada de Aplicação
-
-### Serviços de Aplicação (`application/services`)
-- **PatientService**: Gerencia operações com pacientes
-- **SessionService**: Gerencia operações com sessões
-- **ObservationService**: Gerencia operações com observações
-- **InterventionService**: Gerencia operações com intervenções
-- **InsightService**: Gerencia operações com insights
-
-Cada serviço:
-- Orquestra operações de domínio
-- Não contém lógica de persistência
-- Implementa casos de uso específicos
-
-## Camada de Infraestrutura
-
-### Repositórios SQLite (`infrastructure/repository/sqlite`)
-- **PatientRepository**: Implementação SQLite para repositório de pacientes
-- **SessionRepository**: Implementação SQLite para repositório de sessões
-- **ObservationRepository**: Implementação SQLite para repositório de observações
-- **InterventionRepository**: Implementação SQLite para repositório de intervenções
-- **InsightRepository**: Implementação SQLite para repositório de insights
-
-Princípios de implementação:
-- Sem ORM (usa `database/sql` diretamente)
-- SQL explícito e simples
-- Transações quando necessário
-- Migrações manuais
-
-## Camada Web
-
-### Handlers HTTP (`web/handlers`)
-- **PatientHandler**: Gerencia operações com pacientes (listar, mostrar detalhes, criar)
-- **SessionHandler**: Gerencia operações com sessões (mostrar, criar, editar, atualizar)
-
-Características arquiteturais:
-- **Injeção de Dependência**: Handlers recebem serviços via interfaces (Clean Architecture)
-- **Handlers Finos**: Apenas orquestram (recebem request → chamam service → retornam response)
-- **ViewModels Fortemente Tipados**: Entidades de domínio nunca são passadas diretamente para templates
-- **Consciência HTMX**: Verificam header `HX-Request` para decidir entre fragmento ou página completa
-- **Tratamento de Erros Contextual**: Retornam fragmentos de erro amigáveis para requisições HTMX
-
-Padrão de implementação:
-```go
-// 1. Extração de Parâmetros
-id := chi.URLParam(r, "id")
-
-// 2. Chamada ao Serviço (DDD Application Layer)
-patient, err := h.service.GetPatient(r.Context(), id)
-
-// 3. Mapeamento para ViewModel (Protege o Domínio)
-data := PatientViewData{
-    Patient: patient,
-    Insights: h.getInsights(r.Context(), id),
-}
-
-// 4. Renderização Inteligente (Full Page vs HTMX Fragment)
-if r.Header.Get("HX-Request") == "true" {
-    h.templates.ExecuteTemplate(w, "patient-content", data) // Só o miolo
-} else {
-    h.templates.ExecuteTemplate(w, "layout", data) // Layout completo + miolo
-}
-```
-
-### Pilares Arquiteturais SOTA
-
-- A. Persistência Declarativa (Migrations)
-
-Regra: NUNCA crie tabelas via código Go hardcoded ou manualmente.
-
-Padrão: Use arquivos .up.sql numerados em internal/infrastructure/repository/sqlite/migrations/.
-
-Mecanismo: O sistema utiliza go:embed e um Migrator transacional no startup.
-
-- B. Type-Safe UI (templ + HTMX)
-
-Regra: Proibido o uso de arquivos .html soltos para lógica de página.
-
-Padrão: Use componentes .templ. O compilador do Go deve validar a UI.
+Regra: Proibido o uso de arquivos .html soltos. Use componentes .templ.
 
 Dualidade Tipográfica:
 
@@ -182,31 +57,22 @@ Interface (UI): Fonte Inter (Sans-serif).
 
 Conteúdo Clínico: Fonte Source Serif 4 (Serif).
 
+Consciência de Contexto: Handlers retornam fragmentos específicos para HX-Request ou a página completa via templates.Layout().
 
+C. Performance e Recuperação (Big Data Clínico)
 
-### Templates (`web/templates`)
-- **layout.html**: Esqueleto base com sidebar e painel de insights (contém `{{block "content" .}}`)
-- **patient.html**: Define `{{define "content"}}` (full-page) e `{{define "patient-content"}}` (fragmento HTMX)
-- **patients.html**: Define `{{define "content"}}` e `{{define "patients-content"}}`
-- **session.html**: Define `{{define "content"}}` e `{{define "session-content"}}`
-- **session_new.html**: Define `{{define "content"}}` e `{{define "new-session-form"}}`
+SQLite FTS5: Implementação de busca textual completa para localização instantânea em milhares de notas.
 
-Princípios:
-- **DRY (Don't Repeat Yourself)**: Uso de `{{template}}` para evitar duplicação
-- **Nomes Únicos**: Fragmentos com nomes específicos para evitar conflitos
-- **Separação Clara**: Layout é esqueleto, fragments são conteúdo injetável
+Paginação / Infinite Scroll: Uso de hx-trigger="revealed" para carregar dados sob demanda, evitando sobrecarga do DOM.
 
-## Persistência
+Search Delay: Uso de delay:500ms em buscas ativas para reduzir IO no banco.
 
-### Banco de Dados SQLite
-- **Um arquivo por profissional**: Privacidade e portabilidade
-- **Schema simples**: Tabelas normalizadas com relações
-- **Backup fácil**: Copiar arquivo .db
+4. Modelo de Domínio e Schema
 
-### Schema do Banco
-```sql
--- Tabela de pacientes
-CREATE TABLE patients (
+O banco de dados utiliza UUIDs e relações estritas com ON DELETE CASCADE.
+
+-- Patients: Agregado Raiz
+CREATE TABLE IF NOT EXISTS patients (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     notes TEXT,
@@ -214,28 +80,19 @@ CREATE TABLE patients (
     updated_at DATETIME NOT NULL
 );
 
--- Tabela de sessões
-CREATE TABLE sessions (
+-- Sessions: Dependente de Patient
+CREATE TABLE IF NOT EXISTS sessions (
     id TEXT PRIMARY KEY,
     patient_id TEXT NOT NULL,
     date DATETIME NOT NULL,
-    notes TEXT,
+    summary TEXT,
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL,
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 );
 
--- Tabela de observações
-CREATE TABLE observations (
-    id TEXT PRIMARY KEY,
-    session_id TEXT NOT NULL,
-    content TEXT NOT NULL,
-    created_at DATETIME NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
-);
-
--- Tabela de intervenções
-CREATE TABLE interventions (
+-- Observations & Interventions: Unidades Atômicas
+CREATE TABLE IF NOT EXISTS observations (
     id TEXT PRIMARY KEY,
     session_id TEXT NOT NULL,
     content TEXT NOT NULL,
@@ -244,72 +101,58 @@ CREATE TABLE interventions (
     FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
 );
 
--- Tabela de insights
-CREATE TABLE insights (
-    id TEXT PRIMARY KEY,
-    content TEXT NOT NULL,
-    source TEXT NOT NULL,
-    created_at DATETIME NOT NULL
-);
-```
+-- FTS5 Virtual Table (Exemplo para busca rápida)
+CREATE VIRTUAL TABLE IF NOT EXISTS observations_fts USING fts5(content, content='observations', content_rowid='id');
 
-## Fluxo de Dados
 
-```
-Request HTTP → Handler → Service → Repository → SQLite
-                                     ↓
-Response HTTP ← Template ← Service ← Domain
-```
+5. Regras de Ouro da Camada Web
 
-## Dependências Externas
+Independência de Domínio
 
-### Go Modules
-- `github.com/mattn/go-sqlite3`: Driver SQLite
-- `github.com/google/uuid`: Geração de UUIDs
+Handlers apenas orquestram:
 
-### Frontend
-- **HTMX**: Interatividade sem JavaScript complexo
-- **Alpine.js**: Interatividade mínima quando necessário
-- **Tailwind CSS**: Utilitários CSS
-- **CSS Custom**: Sistema de design Arandu
+Extração/Decodificação de Parâmetros.
 
-## Decisões de Design
+Chamada ao Serviço de Aplicação (DDD).
 
-### 1. Simplicidade Tecnológica
-- Go puro (sem frameworks web pesados)
-- SQLite (sem servidor de banco de dados)
-- HTMX (SPA-like sem complexidade de frontend)
+Mapeamento para ViewModels (Protege o domínio de tags de template).
 
-### 2. Privacidade por Design
-- Banco local (dados nunca saem da máquina)
-- Sem nuvem obrigatória
-- Backup controlado pelo usuário
+Renderização via templ.
 
-### 3. Extensibilidade
-- Domínio independente (pode trocar infraestrutura)
-- Interfaces claras (pode adicionar novos repositórios)
-- Arquitetura em camadas (pode adicionar novas funcionalidades)
+Estética "Silent UI" (Anti-Fadiga)
 
-## Próximos Passos Arquiteturais
+Fundo Global: bg-[#F7F8FA] (Cinza papel).
 
-### Fase 1: Consolidação Web (Concluída)
-- ✅ Handlers com injeção de dependência via interfaces
-- ✅ ViewModels fortemente tipados protegendo o domínio
-- ✅ Consciência HTMX em todos handlers
-- ✅ Templates modulares com fragments nomeados especificamente
-- ✅ Tratamento de erros contextual (full-page vs HTMX fragment)
+Silent Input: Inputs sem bordas pesadas, focando na escrita fluida.
 
-### Fase 2: Inteligência Assistida
-- Serviço de IA como camada de aplicação
-- Integração com modelos de linguagem
-- Cache de embeddings locais
+Hierarquia: Texto clínico sempre em Source Serif 4, text-xl, leading-relaxed.
 
-### Fase 3: Analytics
-- Camada de queries complexas
-- Indexação full-text
-- Análise temporal
+6. Protocolo Anti-Regressão (Segurança)
 
-### Fase 4: Multi-usuário
-- Autenticação e autorização
-- Isolamento de dados por profissional
-- Compartilhamento seguro (opcional)
+Para impedir falhas de estilo ou rotas em novas implementações:
+
+Check de Layout: Toda página completa DEVE herdar de templates.Layout().
+
+Check de Compilação: Executar templ generate antes de qualquer teste.
+
+Arandu Guard: Validar rotas principais via scripts/arandu_guard.sh.
+
+E2E Testing: Toda funcionalidade crítica deve possuir um teste Playwright que valide o fluxo HTMX.
+
+7. Decisões de Design
+
+Simplicidade: Go puro e SQLite.
+
+Privacidade: Isolamento físico de bancos de dados por usuário.
+
+Soberania do Dado: Facilidade de exportação do arquivo .db individual.
+
+8. Evolução (Fases)
+
+Fase 1: Consolidação Web e DDD (Concluída).
+
+Fase 2: Multi-tenancy e Gestão de Acesso (Em andamento).
+
+Fase 3: Escalabilidade, FTS5 e Navegação em Larga Escala (Próximo).
+
+Fase 4: Inteligência Assistida (Vision-05).
