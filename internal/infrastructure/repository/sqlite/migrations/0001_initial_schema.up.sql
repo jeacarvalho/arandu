@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS patients (
     name TEXT NOT NULL,
     notes TEXT,
     created_at DATETIME NOT NULL,
-    updated_at DATETIME
+    updated_at DATETIME NOT NULL
 );
 
 -- Sessions table

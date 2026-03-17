@@ -22,6 +22,7 @@ type patientQueries struct {
 	// Additional useful queries
 	findByName    string
 	search        string
+	searchFTS     string
 	countAll      string
 	findPaginated string
 }
@@ -42,8 +43,16 @@ func newPatientQueries() *patientQueries {
 		// Search patients by name (case-insensitive, partial match)
 		findByName: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
 
-		// Search with pagination
+		// Search with pagination (using LIKE for backward compatibility)
 		search: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
+
+		// FTS5 search with pagination (simple version without content=)
+		searchFTS: `SELECT p.id, p.name, p.notes, p.created_at, p.updated_at 
+			FROM patients p 
+			INNER JOIN patients_fts f ON p.id = f.patient_id 
+			WHERE patients_fts MATCH ? 
+			ORDER BY rank 
+			LIMIT ? OFFSET ?`,
 
 		// Count all patients
 		countAll: `SELECT COUNT(*) FROM patients`,
@@ -148,7 +157,13 @@ func (r *PatientRepository) Save(p *patient.Patient) error {
 		return err
 	}
 
-	_, err := r.db.Exec(r.queries.save, p.ID, p.Name, p.Notes, p.CreatedAt, p.UpdatedAt)
+	// Use sql.NullTime for updated_at
+	updatedAt := sql.NullTime{
+		Time:  p.UpdatedAt,
+		Valid: !p.UpdatedAt.IsZero(),
+	}
+
+	_, err := r.db.Exec(r.queries.save, p.ID, p.Name, p.Notes, p.CreatedAt, updatedAt)
 	return err
 }
 
@@ -251,7 +266,7 @@ func (r *PatientRepository) FindByName(name string) ([]*patient.Patient, error) 
 }
 
 // Search retrieves patients matching the given query with pagination
-// Uses LOWER for case-insensitive search and LIMIT/OFFSET for pagination
+// Uses FTS5 for full-text search when available, falls back to LIKE for backward compatibility
 // Returns empty slice if no patients found (not an error)
 func (r *PatientRepository) Search(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
 	if query == "" {
@@ -266,9 +281,23 @@ func (r *PatientRepository) Search(ctx context.Context, query string, limit, off
 		offset = 0
 	}
 
-	searchTerm := "%" + query + "%"
+	// Try to use FTS5 if available
+	fts5Available, err := r.isFTS5Available(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check FTS5 availability: %w", err)
+	}
 
-	rows, err := r.db.QueryContext(ctx, r.queries.search, searchTerm, limit, offset)
+	var rows *sql.Rows
+	if fts5Available {
+		// Format query for FTS5: "name:query* OR notes:query*"
+		ftsQuery := fmt.Sprintf("name:%s* OR notes:%s*", query, query)
+		rows, err = r.db.QueryContext(ctx, r.queries.searchFTS, ftsQuery, limit, offset)
+	} else {
+		// Fallback to LIKE search
+		searchTerm := "%" + query + "%"
+		rows, err = r.db.QueryContext(ctx, r.queries.search, searchTerm, limit, offset)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -499,6 +528,20 @@ func isStopWord(word string) bool {
 		"terceira": true, "terceiro": true, "última": true, "último": true,
 	}
 	return stopWords[word]
+}
+
+// isFTS5Available checks if the FTS5 extension is available and the patients_fts table exists
+func (r *PatientRepository) isFTS5Available(ctx context.Context) (bool, error) {
+	// Check if patients_fts table exists
+	var tableExists int
+	err := r.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='patients_fts'`).Scan(&tableExists)
+
+	if err != nil {
+		return false, fmt.Errorf("failed to check FTS5 table existence: %w", err)
+	}
+
+	return tableExists > 0, nil
 }
 
 // InitSchema is deprecated - use migrations instead

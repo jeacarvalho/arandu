@@ -10,7 +10,7 @@ import (
 	"arandu/internal/domain/observation"
 	"arandu/internal/infrastructure/repository/sqlite"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 
 	// 1. Configurar banco de dados em memória para teste
 	fmt.Println("1. Configurando ambiente de teste...")
-	db, err := sql.Open("sqlite3", ":memory:")
+	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		log.Fatal(err)
 	}
