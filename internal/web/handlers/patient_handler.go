@@ -56,6 +56,7 @@ type PatientService interface {
 	ListPatients(ctx context.Context) ([]*patient.Patient, error)
 	CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error)
 	SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
+	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
 }
 
 // SessionService defines the interface for session operations
@@ -243,12 +244,42 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		sessions = []*session.Session{}
 	}
 
+	// Get theme frequency for the patient
+	themes, err := h.patientService.GetThemeFrequency(r.Context(), id, 10)
+	var totalCount int
+	themeVM := patientComponents.ThemeCloudViewModel{
+		PatientID: id,
+		Themes:    []patientComponents.ThemeItem{},
+	}
+	if err == nil && len(themes) > 0 {
+		// Calculate max count for weight normalization
+		maxCount := 0
+		for _, t := range themes {
+			if c, ok := t["count"].(int); ok && c > maxCount {
+				maxCount = c
+			}
+		}
+		for _, t := range themes {
+			term, _ := t["term"].(string)
+			count, _ := t["count"].(int)
+			weightClass := patientComponents.CalculateWeightClass(count, maxCount)
+			themeVM.Themes = append(themeVM.Themes, patientComponents.ThemeItem{
+				Name:        term,
+				Count:       count,
+				WeightClass: weightClass,
+			})
+			totalCount += count
+		}
+		themeVM.TotalCount = totalCount
+	}
+
 	// Map to templ components
 	patientDetail := patientComponents.PatientDetailItem{
 		ID:        patient.ID,
 		Name:      patient.Name,
 		Notes:     patient.Notes,
 		CreatedAt: patient.CreatedAt.Format("02/01/2006 às 15:04"),
+		Themes:    themeVM,
 	}
 
 	sessionItems := make([]patientComponents.SessionItem, len(sessions))

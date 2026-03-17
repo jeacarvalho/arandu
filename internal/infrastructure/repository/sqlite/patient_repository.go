@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"sort"
+	"strings"
 
 	"arandu/internal/domain/patient"
 )
@@ -323,6 +325,180 @@ func (r *PatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient
 		patients = append(patients, &p)
 	}
 	return patients, nil
+}
+
+// GetThemeFrequency extracts the most common terms from a patient's observations and interventions
+// This is a simplified implementation that counts word occurrences and filters stop words
+func (r *PatientRepository) GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error) {
+	if limit <= 0 || limit > 50 {
+		limit = 10
+	}
+
+	// Query to extract themes from observations
+	obsQuery := `
+		SELECT o.content 
+		FROM observations o
+		JOIN sessions s ON s.id = o.session_id
+		WHERE s.patient_id = ?
+	`
+
+	rows, err := r.db.QueryContext(ctx, obsQuery, patientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Count word occurrences
+	wordCount := make(map[string]int)
+
+	for rows.Next() {
+		var content string
+		if err := rows.Scan(&content); err != nil {
+			return nil, err
+		}
+		// Simple word extraction (split by space and punctuation)
+		words := extractWords(content)
+		for _, word := range words {
+			wordLower := strings.ToLower(word)
+			if len(wordLower) > 3 && !isStopWord(wordLower) {
+				wordCount[wordLower]++
+			}
+		}
+	}
+
+	// Also get from interventions
+	intQuery := `
+		SELECT i.content 
+		FROM interventions i
+		JOIN sessions s ON s.id = i.session_id
+		WHERE s.patient_id = ?
+	`
+
+	rows2, err := r.db.QueryContext(ctx, intQuery, patientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows2.Close()
+
+	for rows2.Next() {
+		var content string
+		if err := rows2.Scan(&content); err != nil {
+			return nil, err
+		}
+		words := extractWords(content)
+		for _, word := range words {
+			wordLower := strings.ToLower(word)
+			if len(wordLower) > 3 && !isStopWord(wordLower) {
+				wordCount[wordLower]++
+			}
+		}
+	}
+
+	// Sort by count and take top N
+	type wordFreq struct {
+		term  string
+		count int
+	}
+
+	var sorted []wordFreq
+	for term, count := range wordCount {
+		sorted = append(sorted, wordFreq{term, count})
+	}
+
+	// Sort descending
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].count > sorted[j].count
+	})
+
+	// Take top N
+	if len(sorted) > limit {
+		sorted = sorted[:limit]
+	}
+
+	// Convert to result format
+	result := make([]map[string]interface{}, len(sorted))
+	for i, wf := range sorted {
+		result[i] = map[string]interface{}{
+			"term":  wf.term,
+			"count": wf.count,
+		}
+	}
+
+	return result, nil
+}
+
+// extractWords splits text into words
+func extractWords(text string) []string {
+	// Simple split - in production, use proper tokenization
+	text = strings.ReplaceAll(text, ".", " ")
+	text = strings.ReplaceAll(text, ",", " ")
+	text = strings.ReplaceAll(text, "!", " ")
+	text = strings.ReplaceAll(text, "?", " ")
+	text = strings.ReplaceAll(text, ";", " ")
+	text = strings.ReplaceAll(text, ":", " ")
+	text = strings.ReplaceAll(text, "\n", " ")
+	text = strings.ReplaceAll(text, "\t", " ")
+
+	words := strings.Split(text, " ")
+	var result []string
+	for _, w := range words {
+		w = strings.TrimSpace(w)
+		if w != "" {
+			result = append(result, w)
+		}
+	}
+	return result
+}
+
+// isStopWord checks if a word is a common Portuguese stop word
+func isStopWord(word string) bool {
+	stopWords := map[string]bool{
+		// Conjunções e preposições
+		"porque": true, "quanto": true, "quando": true, "onde": true, "quem": true,
+		"como": true, "desde": true, "entre": true, "sobre": true, "também": true,
+		"assim": true, "ainda": true, "muito": true, "pouco": true, "todos": true,
+		"todas": true, "alguns": true, "algumas": true, "outros": true, "outras": true,
+		"mesmo": true, "mesma": true, "outro": true, "outra": true, "cada": true,
+		"qual": true, "quais": true, "qualquer": true, "nenhum": true, "nenhuma": true,
+		"todo": true, "toda": true, "ser": true, "são": true, "está": true, "esto": true,
+		"essa": true, "esse": true, "isso": true, "isto": true, "uma": true, "umas": true,
+		"uns": true, "foi": true, "será": true, "seria": true, "poderia": true,
+		"deveria": true, "teria": true, "haver": true, "haveria": true, "podem": true,
+		"devem": true, "serem": true, "estarem": true, "têm": true,
+		"tinha": true, "tinham": true, "terão": true, "teriam": true, "havia": true,
+		"haviam": true, "existia": true, "existem": true, "existi": true, "existiu": true,
+		// Preposições muito comuns
+		"para": true, "por": true, "com": true, "sem": true, "sob": true, "ante": true,
+		"após": true, "antes": true, "até": true, "mediante": true, "durante": true,
+		"embaixo": true, "através": true,
+		// Verbos muito comuns
+		"ter": true, "teve": true,
+		"fazer": true, "fez": true, "faz": true, "feito": true,
+		"dizer": true, "disse": true, "diz": true, "dito": true,
+		"ver": true, "viu": true, "vê": true, "visto": true,
+		"dar": true, "deu": true, "dá": true, "dado": true,
+		"saber": true, "sabia": true, "sabe": true, "soube": true,
+		"querer": true, "queria": true, "quer": true, "quis": true,
+		"poder": true, "pode": true, "pôde": true,
+		// Advérbios muito comuns
+		"mais": true, "menos": true, "bem": true, "mal": true,
+		"já": true, "sempre": true, "nunca": true, "quase": true, "só": true,
+		// Artigos
+		"o": true, "a": true, "os": true, "as": true, "um": true,
+		// Pronomes
+		"ele": true, "ela": true, "eles": true, "elas": true, "seu": true, "sua": true,
+		"seus": true, "suas": true, "se": true, "lhe": true, "lhes": true,
+		// Diversos
+		"vez": true, "vezes": true, "apenas": true, "então": true,
+		"portanto": true, "dessa": true, "desse": true,
+		"daquela": true, "daquele": true, "nesta": true, "neste": true, "nessa": true,
+		"nesse": true, "àquela": true, "àquele": true, "àquilo": true,
+		"aqui": true, "aí": true, "ali": true, "lá": true, "cá": true,
+		"dentro": true, "fora": true, "longe": true, "perto": true,
+		"primeira": true, "primeiro": true, "segunda": true, "segundo": true,
+		"terceira": true, "terceiro": true, "última": true, "último": true,
+	}
+	return stopWords[word]
 }
 
 // InitSchema is deprecated - use migrations instead

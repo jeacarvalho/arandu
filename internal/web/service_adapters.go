@@ -88,6 +88,11 @@ func (a *PatientServiceAdapter) SearchPatients(ctx context.Context, query string
 	return a.service.SearchPatients(ctx, query, limit, offset)
 }
 
+// GetThemeFrequency implements handlers.PatientServiceInterface
+func (a *PatientServiceAdapter) GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error) {
+	return a.service.GetThemeFrequency(ctx, patientID, limit)
+}
+
 // ObservationServiceAdapter adapts services.ObservationService to handlers.ObservationServiceInterface
 type ObservationServiceAdapter struct {
 	service *services.ObservationService

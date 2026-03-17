@@ -2371,3 +2371,103 @@ header {
 .border-arandu-primary {
     border-color: var(--arandu-primary) !important;
 }
+/* ===== THEME CLOUD STYLES ===== */
+
+.theme-cloud-container {
+    position: relative;
+    background: var(--bg-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.theme-cloud-container h3 {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-600);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.theme-cloud-float {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-md);
+    min-height: 120px;
+}
+
+.theme-float-word {
+    display: inline-block;
+    font-family: var(--font-clinical);
+    color: var(--neutral-600);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    line-height: 1.4;
+    opacity: 0.75;
+}
+
+.theme-float-word:hover {
+    color: var(--primary-600);
+    opacity: 1;
+}
+
+/* Weight classes - font size based on frequency */
+.theme-lv1 {
+    font-size: 0.875rem;
+    font-weight: 400;
+    opacity: 0.5;
+}
+
+.theme-lv2 {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.6;
+}
+
+.theme-lv3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+.theme-lv4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.theme-lv5 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    opacity: 0.9;
+    color: var(--neutral-800);
+}
+
+.theme-cloud-legend {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--neutral-100);
+    text-align: center;
+}
+
+.theme-total {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+}
+
+.theme-empty {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--neutral-400);
+    font-style: italic;
+    padding: var(--space-lg);
+    text-align: center;
+}

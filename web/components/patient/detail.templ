@@ -7,6 +7,7 @@ type PatientDetailItem struct {
 	Name     string
 	Notes    string
 	CreatedAt string
+	Themes    ThemeCloudViewModel
 }
 
 type SessionItem struct {
@@ -77,6 +78,25 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 					</div>
 				</div>
 			</div>
+
+			<!-- Theme Cloud Panel -->
+			if len(patient.Themes.Themes) > 0 {
+				<div id="theme-insights">
+					<div class="theme-cloud-container">
+						<h3>Temas Recorrentes no Prontuário</h3>
+						<div class="theme-cloud-float">
+							for _, theme := range patient.Themes.Themes {
+								<a href={ templ.URL("/patient/" + patient.ID + "?q=" + theme.Name) } class={ "theme-float-word", theme.WeightClass }>
+									{ theme.Name }
+								</a>{ " " }
+							}
+						</div>
+						<div class="theme-cloud-legend">
+							<span class="theme-total">Total: { strconv.Itoa(patient.Themes.TotalCount) } menções</span>
+						</div>
+					</div>
+				</div>
+			}
 
 			<!-- Quick Actions -->
 			<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); padding: var(--space-lg);">
