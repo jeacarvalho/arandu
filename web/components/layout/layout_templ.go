@@ -53,27 +53,15 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: false }\"><!-- Simple Header with Hamburger --><header class=\"top-bar\"><div class=\"top-bar-content\"><button class=\"menu-toggle\" @click=\"sidebarOpen = !sidebarOpen\"><i class=\"fas fa-bars\"></i></button><div class=\"logo\"><i class=\"fas fa-brain\"></i> <span>Arandu</span></div><h1 class=\"page-title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if pageTitle != "" {
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 40, Col: 18}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "Dashboard")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		templ_7745c5c3_Err = TopBar().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h1></div></header><!-- Simple Sidebar --><div class=\"sidebar-overlay\" x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" x-transition></div><aside class=\"sidebar\" :class=\"{ 'sidebar-open': sidebarOpen }\"><nav class=\"sidebar-nav\"><a href=\"/dashboard\" class=\"nav-item\"><i class=\"fas fa-chart-line\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"nav-item\"><i class=\"fas fa-users\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"nav-item\"><i class=\"fas fa-user-plus\"></i> <span>Novo Paciente</span></a></nav></aside><main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<main class=\"main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,7 +69,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,31 +93,31 @@ func Base(pageTitle string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 84, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 61, Col: 19}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all-min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all-min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -137,7 +125,7 @@ func Base(pageTitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -161,12 +149,12 @@ func Layout() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"app-container\" x-data=\"{ sidebarOpen: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"app-container\" x-data=\"{ sidebarOpen: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -174,15 +162,15 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<main class=\"main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ_7745c5c3_Var6.Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ_7745c5c3_Var5.Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</main></div><script>\n\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</main></div><script>\n\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -206,12 +194,12 @@ func TopBar() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" style=\"position: fixed; inset: 0; top: 64px; background: rgba(0,0,0,0.5); z-index: 40; backdrop-filter: blur(2px);\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\"></div><!-- Sidebar Drawer --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'open' : ''\"><!-- Sidebar Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; justify-content: space-between;\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><div style=\"width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-brain\" style=\"font-size: 1.25rem;\"></i></div><span style=\"font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; color: white;\">Arandu</span></div><button @click=\"sidebarOpen = false\" style=\"width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border: none; border-radius: var(--radius-lg); color: white; cursor: pointer;\"><i class=\"fas fa-times\"></i></button></div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: var(--space-xs);\">Inteligência Clínica</div></div><!-- Navigation --><nav style=\"display: flex; flex-direction: column; gap: var(--space-xs); flex: 1;\"><a href=\"/dashboard\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-chart-line\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Dashboard</span></a> <a href=\"/patients\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-users\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Pacientes</span></a> <a href=\"/patients/new\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-user-plus\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Novo Paciente</span></a></nav></aside><!-- Top Bar --><header style=\"position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid var(--neutral-100); z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-lg);\"><!-- Left: Menu Toggle & Logo --><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><!-- Hamburger Menu --><button @click=\"sidebarOpen = !sidebarOpen\" style=\"width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; border-radius: var(--radius-lg); color: var(--neutral-700); cursor: pointer; transition: background-color 0.15s ease;\" onmouseover=\"this.style.backgroundColor='var(--neutral-100)';\" onmouseout=\"this.style.backgroundColor='transparent';\"><i class=\"fas fa-bars\" style=\"font-size: 1.25rem;\"></i></button><!-- Logo --><a href=\"/dashboard\" style=\"display: flex; align-items: center; gap: var(--space-sm); text-decoration: none;\"><div style=\"width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-brain\" style=\"font-size: 1rem;\"></i></div><span style=\"font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; color: var(--neutral-800);\">Arandu</span></a></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" style=\"position: fixed; inset: 0; top: 64px; background: rgba(0,0,0,0.5); z-index: 40; backdrop-filter: blur(2px);\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\"></div><!-- Sidebar Drawer --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'open' : ''\"><!-- Sidebar Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; justify-content: space-between;\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><div style=\"width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-brain\" style=\"font-size: 1.25rem;\"></i></div><span style=\"font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; color: white;\">Arandu</span></div><button @click=\"sidebarOpen = false\" style=\"width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border: none; border-radius: var(--radius-lg); color: white; cursor: pointer;\"><i class=\"fas fa-times\"></i></button></div><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: var(--space-xs);\">Inteligência Clínica</div></div><!-- Navigation --><nav style=\"display: flex; flex-direction: column; gap: var(--space-xs); flex: 1;\"><a href=\"/dashboard\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-chart-line\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Dashboard</span></a> <a href=\"/patients\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-users\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Pacientes</span></a> <a href=\"/patients/new\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-md); color: rgba(255,255,255,0.8); text-decoration: none; border-radius: var(--radius-lg); transition: all 0.15s ease;\" onmouseover=\"this.style.background='rgba(255,255,255,0.1)'; this.style.color='white';\" onmouseout=\"this.style.background='transparent'; this.style.color='rgba(255,255,255,0.8)';\"><i class=\"fas fa-user-plus\" style=\"width: 20px;\"></i> <span style=\"font-family: var(--font-sans); font-weight: 500;\">Novo Paciente</span></a></nav></aside><!-- Top Bar --><header style=\"position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid var(--neutral-100); z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-lg);\"><!-- Left: Menu Toggle & Logo --><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><!-- Hamburger Menu --><button @click=\"sidebarOpen = !sidebarOpen\" style=\"width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; border-radius: var(--radius-lg); color: var(--neutral-700); cursor: pointer; transition: background-color 0.15s ease;\" onmouseover=\"this.style.backgroundColor='var(--neutral-100)';\" onmouseout=\"this.style.backgroundColor='transparent';\"><i class=\"fas fa-bars\" style=\"font-size: 1.25rem;\"></i></button><!-- Logo --><a href=\"/dashboard\" style=\"display: flex; align-items: center; gap: var(--space-sm); text-decoration: none;\"><div style=\"width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-brain\" style=\"font-size: 1rem;\"></i></div><span style=\"font-family: var(--font-sans); font-size: 1.25rem; font-weight: 700; color: var(--neutral-800);\">Arandu</span></a></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -25,49 +25,26 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 	</head>
 	<body>
 		<div class="app-container" x-data="{ sidebarOpen: false }">
-			<!-- Simple Header with Hamburger -->
-			<header class="top-bar">
-				<div class="top-bar-content">
-					<button class="menu-toggle" @click="sidebarOpen = !sidebarOpen">
-						<i class="fas fa-bars"></i>
-					</button>
-					<div class="logo">
-						<i class="fas fa-brain"></i>
-						<span>Arandu</span>
-					</div>
-					<h1 class="page-title">
-						if pageTitle != "" {
-							{ pageTitle }
-						} else {
-							Dashboard
-						}
-					</h1>
-				</div>
-			</header>
-
-			<!-- Simple Sidebar -->
-			<div class="sidebar-overlay" x-show="sidebarOpen" @click="sidebarOpen = false" x-transition></div>
-			<aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
-				<nav class="sidebar-nav">
-					<a href="/dashboard" class="nav-item">
-						<i class="fas fa-chart-line"></i>
-						<span>Dashboard</span>
-					</a>
-					<a href="/patients" class="nav-item">
-						<i class="fas fa-users"></i>
-						<span>Pacientes</span>
-					</a>
-					<a href="/patients/new" class="nav-item">
-						<i class="fas fa-user-plus"></i>
-						<span>Novo Paciente</span>
-					</a>
-				</nav>
-			</aside>
-
+			@TopBar()
 			<main class="main-content">
 				@content
 			</main>
 		</div>
+		<script>
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
+				}
+				
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+		</script>
 	</body>
 	</html>
 }
