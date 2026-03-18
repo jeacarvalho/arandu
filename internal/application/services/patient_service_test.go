@@ -11,14 +11,16 @@ import (
 
 // mockPatientRepository is a mock implementation of patient.Repository for testing
 type mockPatientRepository struct {
-	saveFunc          func(p *patient.Patient) error
-	findByIDFunc      func(id string) (*patient.Patient, error)
-	findAllFunc       func() ([]*patient.Patient, error)
-	updateFunc        func(p *patient.Patient) error
-	deleteFunc        func(id string) error
-	findByNameFunc    func(name string) ([]*patient.Patient, error)
-	countAllFunc      func() (int, error)
-	findPaginatedFunc func(limit, offset int) ([]*patient.Patient, error)
+	saveFunc              func(p *patient.Patient) error
+	findByIDFunc          func(id string) (*patient.Patient, error)
+	findAllFunc           func() ([]*patient.Patient, error)
+	updateFunc            func(p *patient.Patient) error
+	deleteFunc            func(id string) error
+	findByNameFunc        func(name string) ([]*patient.Patient, error)
+	searchFunc            func(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
+	countAllFunc          func() (int, error)
+	findPaginatedFunc     func(limit, offset int) ([]*patient.Patient, error)
+	getThemeFrequencyFunc func(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
 }
 
 func (m *mockPatientRepository) Save(p *patient.Patient) error {
@@ -63,6 +65,13 @@ func (m *mockPatientRepository) FindByName(name string) ([]*patient.Patient, err
 	return nil, nil
 }
 
+func (m *mockPatientRepository) Search(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
+	if m.searchFunc != nil {
+		return m.searchFunc(ctx, query, limit, offset)
+	}
+	return nil, nil
+}
+
 func (m *mockPatientRepository) CountAll() (int, error) {
 	if m.countAllFunc != nil {
 		return m.countAllFunc()
@@ -73,6 +82,13 @@ func (m *mockPatientRepository) CountAll() (int, error) {
 func (m *mockPatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient, error) {
 	if m.findPaginatedFunc != nil {
 		return m.findPaginatedFunc(limit, offset)
+	}
+	return nil, nil
+}
+
+func (m *mockPatientRepository) GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error) {
+	if m.getThemeFrequencyFunc != nil {
+		return m.getThemeFrequencyFunc(ctx, patientID, limit)
 	}
 	return nil, nil
 }

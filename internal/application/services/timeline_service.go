@@ -15,8 +15,8 @@ func NewTimelineService(repo *sqlite.TimelineRepository) *TimelineService {
 	return &TimelineService{repo: repo}
 }
 
-func (s *TimelineService) GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType) (timeline.Timeline, error) {
-	events, err := s.repo.GetTimelineByPatientID(ctx, patientID, filterType)
+func (s *TimelineService) GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error) {
+	events, err := s.repo.GetTimelineByPatientID(ctx, patientID, filterType, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -25,12 +25,12 @@ func (s *TimelineService) GetPatientTimeline(ctx context.Context, patientID stri
 	return events, nil
 }
 
-func (s *TimelineService) GetPatientTimelineWithFilter(ctx context.Context, patientID string, filterType timeline.EventType) (timeline.Timeline, error) {
-	return s.GetPatientTimeline(ctx, patientID, &filterType)
+func (s *TimelineService) GetPatientTimelineWithFilter(ctx context.Context, patientID string, filterType timeline.EventType, limit, offset int) (timeline.Timeline, error) {
+	return s.GetPatientTimeline(ctx, patientID, &filterType, limit, offset)
 }
 
-func (s *TimelineService) GetPatientTimelineGroupedByDate(ctx context.Context, patientID string, filterType *timeline.EventType) (map[string]timeline.Timeline, error) {
-	events, err := s.GetPatientTimeline(ctx, patientID, filterType)
+func (s *TimelineService) GetPatientTimelineGroupedByDate(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (map[string]timeline.Timeline, error) {
+	events, err := s.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
 	if err != nil {
 		return nil, err
 	}

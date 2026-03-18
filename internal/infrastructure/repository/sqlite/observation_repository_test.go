@@ -12,7 +12,7 @@ func setupTestDB(t *testing.T) *DB {
 	t.Helper()
 
 	// Create in-memory database
-	db, err := sql.Open("sqlite3", ":memory:")
+	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to open database: %v", err)
 	}

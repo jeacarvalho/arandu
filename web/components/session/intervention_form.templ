@@ -3,7 +3,7 @@ package session
 templ InterventionForm(sessionID string) {
 	<form 
 		class="inline-form"
-		hx-post={ templ.URL("/sessions/" + sessionID + "/interventions") }
+		hx-post={ templ.URL("/session/" + sessionID + "/interventions") }
 		hx-target="#interventions-list"
 		hx-swap="afterbegin"
 		hx-on::after-request="this.reset()"

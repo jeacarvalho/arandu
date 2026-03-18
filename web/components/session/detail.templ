@@ -36,7 +36,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 					<p class="header-subtitle">Detalhes da sessão terapêutica</p>
 				</div>
 				<div class="header-actions">
-					<a href={ templ.URL("/session/edit/" + session.ID) } class="btn btn-outline">
+					<a href={ templ.URL("/session/" + session.ID + "/edit") } class="btn btn-outline">
 						<i class="fas fa-edit btn-icon"></i>Editar
 					</a>
 					<button class="btn btn-primary">

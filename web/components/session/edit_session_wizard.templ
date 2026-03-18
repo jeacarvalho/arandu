@@ -1,24 +1,46 @@
 package session
 
-type EditSessionFormData struct {
-	Error         string
-	FormData      *SessionFormValues
-	ServerError   string
-	PatientName   string
-	SessionID     string
-	Observations  []Observation
-	Interventions []Intervention
+type EditSessionWizardData struct {
+	SessionID       string
+	PatientID       string
+	PatientName     string
+	Date            string
+	Summary         string
+	Error           string
+	ServerError     string
+	Observations    []Observation
+	Interventions   []Intervention
 }
 
-templ EditSessionForm(data EditSessionFormData) {
+templ EditSessionWizard(data EditSessionWizardData) {
 	<div class="content-header" style="margin-bottom: var(--space-xl);">
 		<div class="header-title">
 			<div>
-				<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Editar Sessão</h1>
-				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Edite os detalhes da sessão para { data.PatientName }</p>
+				<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Completar Sessão</h1>
+				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Adicione detalhes da sessão para { data.PatientName }</p>
+			</div>
+			<div class="header-actions">
+				<a href={ templ.URL("/patient/" + data.PatientID) } class="btn btn-outline">
+					<i class="fas fa-times btn-icon"></i>Cancelar
+				</a>
+				<button type="submit" form="session-form" class="btn btn-primary">
+					<i class="fas fa-save btn-icon"></i>Salvar Sessão
+				</button>
 			</div>
 		</div>
 	</div>
+
+	if data.Error != "" {
+		<div class="alert alert-error">
+			{ data.Error }
+		</div>
+	}
+
+	if data.ServerError != "" {
+		<div class="alert alert-error">
+			{ data.ServerError }
+		</div>
+	}
 
 	<div class="form-grid" style="margin-bottom: var(--space-2xl);">
 		<div class="card">
@@ -33,20 +55,8 @@ templ EditSessionForm(data EditSessionFormData) {
 			</div>
 			<div style="padding: var(--space-xl);">
 				<form id="session-form" action={ templ.URL("/session/" + data.SessionID + "/update") } method="POST">
-					if data.Error != "" {
-						<div class="alert alert-error">
-							{ data.Error }
-						</div>
-					}
-
-					if data.ServerError != "" {
-						<div class="alert alert-error">
-							{ data.ServerError }
-						</div>
-					}
-
 					<input type="hidden" name="session_id" value={ data.SessionID }>
-					<input type="hidden" name="patient_id" value={ data.FormData.PatientID }>
+					<input type="hidden" name="patient_id" value={ data.PatientID }>
 
 					<div class="silent-form-group">
 						<label class="silent-label">Data da Sessão</label>
@@ -54,7 +64,7 @@ templ EditSessionForm(data EditSessionFormData) {
 							type="date" 
 							name="date" 
 							required 
-							value={ data.FormData.Date }
+							value={ data.Date }
 							class="silent-input"
 						>
 					</div>
@@ -66,7 +76,7 @@ templ EditSessionForm(data EditSessionFormData) {
 							rows="6" 
 							placeholder="Resumo da sessão (o que foi discutido, intervenções realizadas, progresso, etc.)"
 							class="silent-textarea"
-						>{ data.FormData.Summary }</textarea>
+						>{ data.Summary }</textarea>
 					</div>
 				</form>
 			</div>
@@ -138,7 +148,11 @@ templ EditSessionForm(data EditSessionFormData) {
 	</div>
 
 	<div class="form-actions" style="margin-top: var(--space-2xl); padding-top: var(--space-xl); border-top: 1px solid var(--neutral-200);">
-		<a href={ templ.URL("/patient/" + data.FormData.PatientID) } class="btn btn-outline">Cancelar</a>
-		<button type="submit" form="session-form" class="btn btn-primary">Salvar Sessão</button>
+		<a href={ templ.URL("/patient/" + data.PatientID) } class="btn btn-outline">
+			<i class="fas fa-times btn-icon"></i>Cancelar
+		</a>
+		<button type="submit" form="session-form" class="btn btn-primary">
+			<i class="fas fa-save btn-icon"></i>Salvar Sessão
+		</button>
 	</div>
 }

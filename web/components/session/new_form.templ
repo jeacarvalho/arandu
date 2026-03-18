@@ -24,7 +24,7 @@ templ NewSessionForm(data NewSessionFormData) {
 	</div>
 
 	<div class="form-container">
-		<form action="/sessions" method="POST">
+		<form action="/session" method="POST">
 			if data.Error != "" {
 				<div class="alert alert-error">
 					{ data.Error }
