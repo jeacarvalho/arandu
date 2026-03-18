@@ -1,11 +1,6 @@
 package patient
 
-import (
-	"strconv"
-	
-	"arandu/internal/domain/timeline"
-	"github.com/a-h/templ"
-)
+import "arandu/internal/domain/timeline"
 
 type TimelinePageData struct {
 	PatientID string
@@ -13,6 +8,128 @@ type TimelinePageData struct {
 	Filter    *timeline.EventType
 	Limit     int
 	Offset    int
+}
+
+templ TimelineContent(data TimelinePageData) {
+	<!-- Timeline -->
+	<div style="position: relative;">
+		<div style="position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);"></div>
+		
+		<div id="timeline-content" style="display: flex; flex-direction: column; gap: var(--space-xl);">
+			if len(data.Events) == 0 {
+				<div style="text-align: center; padding: var(--space-2xl) 0;">
+					<div style="color: var(--neutral-400); margin-bottom: var(--space-md);">
+						<i class="fas fa-calendar-day" style="font-size: 3rem;"></i>
+					</div>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);">
+						Nenhum evento clínico registrado ainda.
+					</p>
+				</div>
+			} else {
+				for _, event := range data.Events {
+					<div style="position: relative;">
+						<div style="position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }"></div>
+						
+						<div 
+							style="border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }"
+						>
+							<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);">
+								<div style="display: flex; align-items: center;">
+									<span style="display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }">
+										<i class="{ getEventIcon(event.Type) }" style="margin-right: var(--space-xs);"></i>
+										{ getEventTypeLabel(event.Type) }
+									</span>
+									<span style="margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+										{ event.Date.Format("15:04") }
+									</span>
+								</div>
+								
+								if event.Metadata["session_id"] != "" {
+									<a 
+										href={ "/session/" + event.Metadata["session_id"] }
+										style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;"
+										onmouseover="this.style.color='var(--primary-800)';"
+										onmouseout="this.style.color='var(--primary-600)';"
+									>
+										<i class="fas fa-external-link-alt" style="margin-right: 2px;"></i>
+										Ver sessão
+									</a>
+								}
+							</div>
+							
+							<div style="font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;">
+								{ event.Content }
+							</div>
+							
+							<div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);">
+								<div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+									Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				
+				<!-- Loading Indicator -->
+				if len(data.Events) == data.Limit {
+					<div id="loading-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-xl);">
+						<div style="color: var(--neutral-400);">
+							<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+						</div>
+						<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
+							A carregar mais registros...
+						</p>
+					</div>
+				} else if len(data.Events) > 0 && len(data.Events) < data.Limit {
+					<div style="text-align: center; padding: var(--space-xl);">
+						<p style="font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);">
+							Fim dos registros históricos
+						</p>
+					</div>
+				}
+			}
+		</div>
+	</div>
+}
+
+templ FiltersAndContent(data TimelinePageData) {
+	<!-- Filters -->
+	<div style="margin-bottom: var(--space-xl);">
+		<div style="display: flex; gap: var(--space-sm);">
+			<button
+				hx-get={ "/patients/" + data.PatientID + "/history?filter=all" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter == nil) }"
+				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+			>
+				Todos
+			</button>
+			<button
+				hx-get={ "/patients/" + data.PatientID + "/history?filter=observation" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }"
+				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+			>
+				Observações
+			</button>
+			<button
+				hx-get={ "/patients/" + data.PatientID + "/history?filter=intervention" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }"
+				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
+				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+			>
+				Intervenções
+			</button>
+		</div>
+	</div>
+
+	@TimelineContent(data)
 }
 
 templ TimelineContainer(data TimelinePageData) {
@@ -34,136 +151,48 @@ templ TimelineContainer(data TimelinePageData) {
 			</div>
 		</div>
 
-		<!-- Filters -->
+		<!-- Search -->
 		<div style="margin-bottom: var(--space-xl);">
-			<div style="display: flex; gap: var(--space-sm);">
-				<button
-					hx-get={ "/patients/" + data.PatientID + "/history?filter=all" }
-					hx-target="#timeline-content"
-					hx-swap="innerHTML"
-					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
-					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+			<div style="position: relative;">
+				<input 
+					type="text" 
+					name="q" 
+					placeholder="Buscar no histórico clínico (ex: transferência, luto, ansiedade...)" 
+					hx-get={ "/patients/" + data.PatientID + "/history/search" }
+					hx-trigger="keyup changed delay:500ms, search" 
+					hx-target="#timeline-content" 
+					hx-swap="innerHTML" 
+					hx-indicator="#search-loading"
+					style="
+						width: 100%;
+						padding: var(--space-lg);
+						padding-left: 3rem;
+						font-family: var(--font-sans);
+						font-size: 1rem;
+						border: 1px solid var(--neutral-200);
+						border-radius: var(--radius-lg);
+						background: white;
+						color: var(--neutral-800);
+						box-shadow: var(--shadow-sm);
+						transition: all var(--transition-fast);
+					"
+					onfocus="this.style.borderColor='var(--primary-400)'; this.style.boxShadow='var(--shadow-md)';"
+					onblur="this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='var(--shadow-sm)';"
 				>
-					Todos
-				</button>
-				<button
-					hx-get={ "/patients/" + data.PatientID + "/history?filter=session" }
-					hx-target="#timeline-content"
-					hx-swap="innerHTML"
-					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
-					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
-				>
-					Sessões
-				</button>
-				<button
-					hx-get={ "/patients/" + data.PatientID + "/history?filter=observation" }
-					hx-target="#timeline-content"
-					hx-swap="innerHTML"
-					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
-					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
-				>
-					Observações
-				</button>
-				<button
-					hx-get={ "/patients/" + data.PatientID + "/history?filter=intervention" }
-					hx-target="#timeline-content"
-					hx-swap="innerHTML"
-					style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
-					onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-					onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
-				>
-					Intervenções
-				</button>
+				<div style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neutral-400);">
+					<i class="fas fa-search"></i>
+				</div>
+				<div id="search-loading" class="htmx-indicator" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);">
+					<i class="fas fa-spinner fa-spin" style="color: var(--neutral-400);"></i>
+				</div>
 			</div>
+			<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
+				Pesquise por termos específicos em todas as observações e intervenções deste paciente.
+			</p>
 		</div>
 
-		<!-- Timeline -->
-		<div style="position: relative;">
-			<div style="position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);"></div>
-			
-			<div id="timeline-content" style="display: flex; flex-direction: column; gap: var(--space-xl);">
-				if len(data.Events) == 0 {
-					<div style="text-align: center; padding: var(--space-2xl) 0;">
-						<div style="color: var(--neutral-400); margin-bottom: var(--space-md);">
-							<i class="fas fa-calendar-day" style="font-size: 3rem;"></i>
-						</div>
-						<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);">
-							Nenhum evento clínico registrado ainda.
-						</p>
-					</div>
-				} else {
-					for i, event := range data.Events {
-						<div style="position: relative;">
-							<div style="position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }"></div>
-							
-							<div 
-								style="border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }"
-								if i == len(data.Events) - 1 && len(data.Events) == data.Limit {
-									hx-get={ "/patients/" + data.PatientID + "/history?filter=" + getFilterParam(data.Filter) + "&offset=" + strconv.Itoa(data.Offset + data.Limit) }
-									hx-trigger="revealed"
-									hx-swap="afterend"
-									hx-indicator="#loading-indicator"
-								}
-							>
-								<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);">
-									<div style="display: flex; align-items: center;">
-										<span style="display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }">
-											<i class="{ getEventIcon(event.Type) }" style="margin-right: var(--space-xs);"></i>
-											{ getEventTypeLabel(event.Type) }
-										</span>
-										<span style="margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
-											{ event.Date.Format("15:04") }
-										</span>
-									</div>
-									
-									if event.Metadata["session_id"] != "" {
-										<a 
-											href={ "/session/" + event.Metadata["session_id"] }
-											style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;"
-											onmouseover="this.style.color='var(--primary-800)';"
-											onmouseout="this.style.color='var(--primary-600)';"
-										>
-											<i class="fas fa-external-link-alt" style="margin-right: 2px;"></i>
-											Ver sessão
-										</a>
-									}
-								</div>
-								
-								<div style="font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;">
-									{ event.Content }
-								</div>
-								
-								<div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);">
-									<div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
-										Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
-									</div>
-								</div>
-							</div>
-						</div>
-					}
-					
-					<!-- Loading Indicator -->
-					if len(data.Events) == data.Limit {
-						<div id="loading-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-xl);">
-							<div style="color: var(--neutral-400);">
-								<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
-							</div>
-							<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
-								A carregar mais registros...
-							</p>
-						</div>
-					} else if len(data.Events) > 0 && len(data.Events) < data.Limit {
-						<div style="text-align: center; padding: var(--space-xl);">
-							<p style="font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);">
-								Fim dos registros históricos
-							</p>
-						</div>
-					}
-				}
-			</div>
+		<div id="filters-and-content">
+			@FiltersAndContent(data)
 		</div>
 	</div>
 }
@@ -173,14 +202,20 @@ func getFilterParam(filter *timeline.EventType) string {
 		return "all"
 	}
 	switch *filter {
-	case timeline.EventTypeSession:
-		return "session"
 	case timeline.EventTypeObservation:
 		return "observation"
 	case timeline.EventTypeIntervention:
 		return "intervention"
 	default:
 		return "all"
+	}
+}
+
+func getButtonStyle(isActive bool) string {
+	if isActive {
+		return "background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
+	} else {
+		return "background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
 	}
 }
 

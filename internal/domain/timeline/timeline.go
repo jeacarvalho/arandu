@@ -52,6 +52,17 @@ func (t Timeline) GroupByDate() map[string]Timeline {
 	return groups
 }
 
+type SearchResult struct {
+	ID        string
+	Type      EventType
+	Date      time.Time
+	Content   string
+	Snippet   string
+	SessionID string
+	PatientID string
+}
+
 type Repository interface {
 	GetTimelineByPatientID(ctx context.Context, patientID string, filterType *EventType, limit, offset int) (Timeline, error)
+	SearchInHistory(ctx context.Context, patientID, query string) ([]*SearchResult, error)
 }

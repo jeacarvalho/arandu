@@ -8,11 +8,7 @@ package patient
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"strconv"
-
-	"arandu/internal/domain/timeline"
-)
+import "arandu/internal/domain/timeline"
 
 type TimelinePageData struct {
 	PatientID string
@@ -22,7 +18,7 @@ type TimelinePageData struct {
 	Offset    int
 }
 
-func TimelineContainer(data TimelinePageData) templ.Component {
+func TimelineContent(data TimelinePageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,189 +39,236 @@ func TimelineContainer(data TimelinePageData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div style=\"padding: var(--space-lg); max-width: 72rem; margin: 0 auto;\"><!-- Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><a href=\"/patients\" style=\"width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;\"><i class=\"fas fa-arrow-left\"></i></a><div style=\"flex: 1;\"><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Prontuário do Paciente</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;\">Histórico clínico longitudinal organizado cronologicamente</p></div></div></div><!-- Filters --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; gap: var(--space-sm);\"><button hx-get=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=all")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 41, Col: 67}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: var(--primary-600); color: white; border: 1px solid var(--primary-600);\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Todos</button> <button hx-get=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=session")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 51, Col: 71}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Sessões</button> <button hx-get=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=observation")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 61, Col: 75}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Observações</button> <button hx-get=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=intervention")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 71, Col: 76}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Intervenções</button></div></div><!-- Timeline --><div style=\"position: relative;\"><div style=\"position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);\"></div><div id=\"timeline-content\" style=\"display: flex; flex-direction: column; gap: var(--space-xl);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Timeline --><div style=\"position: relative;\"><div style=\"position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);\"></div><div id=\"timeline-content\" style=\"display: flex; flex-direction: column; gap: var(--space-xl);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(data.Events) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div style=\"text-align: center; padding: var(--space-2xl) 0;\"><div style=\"color: var(--neutral-400); margin-bottom: var(--space-md);\"><i class=\"fas fa-calendar-day\" style=\"font-size: 3rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);\">Nenhum evento clínico registrado ainda.</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div style=\"text-align: center; padding: var(--space-2xl) 0;\"><div style=\"color: var(--neutral-400); margin-bottom: var(--space-md);\"><i class=\"fas fa-calendar-day\" style=\"font-size: 3rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);\">Nenhum evento clínico registrado ainda.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			for i, event := range data.Events {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div style=\"position: relative;\"><div style=\"position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }\"></div><div style=\"border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }\"")
+			for _, event := range data.Events {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div style=\"position: relative;\"><div style=\"position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }\"></div><div style=\"border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }\"><div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);\"><div style=\"display: flex; align-items: center;\"><span style=\"display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }\"><i class=\"{ getEventIcon(event.Type) }\" style=\"margin-right: var(--space-xs);\"></i> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if i == len(data.Events)-1 && len(data.Events) == data.Limit {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " hx-get=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var6 string
-					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=" + getFilterParam(data.Filter) + "&offset=" + strconv.Itoa(data.Offset+data.Limit))
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 105, Col: 152}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-trigger=\"revealed\" hx-swap=\"afterend\" hx-indicator=\"#loading-indicator\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
+				var templ_7745c5c3_Var2 string
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getEventTypeLabel(event.Type))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 40, Col: 41}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "><div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);\"><div style=\"display: flex; align-items: center;\"><span style=\"display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }\"><i class=\"{ getEventIcon(event.Type) }\" style=\"margin-right: var(--space-xs);\"></i> ")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(getEventTypeLabel(event.Type))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 115, Col: 42}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span> <span style=\"margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span> <span style=\"margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">")
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(event.Date.Format("15:04"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 43, Col: 38}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(event.Date.Format("15:04"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 118, Col: 39}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if event.Metadata["session_id"] != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<a href=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<a href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 templ.SafeURL
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + event.Metadata["session_id"])
+					var templ_7745c5c3_Var4 templ.SafeURL
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + event.Metadata["session_id"])
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 124, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 49, Col: 59}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" style=\"font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;\" onmouseover=\"this.style.color='var(--primary-800)';\" onmouseout=\"this.style.color='var(--primary-600)';\"><i class=\"fas fa-external-link-alt\" style=\"margin-right: 2px;\"></i> Ver sessão</a>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" style=\"font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;\" onmouseover=\"this.style.color='var(--primary-800)';\" onmouseout=\"this.style.color='var(--primary-600)';\"><i class=\"fas fa-external-link-alt\" style=\"margin-right: 2px;\"></i> Ver sessão</a>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div style=\"font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div style=\"font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(event.Content)
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(event.Content)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 136, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 61, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div style=\"margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);\"><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">Registrado em ")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(event.CreatedAt.Format("02/01/2006 às 15:04"))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 141, Col: 72}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div style=\"margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);\"><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">Registrado em ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div></div></div>")
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(event.CreatedAt.Format("02/01/2006 às 15:04"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 66, Col: 71}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " <!-- Loading Indicator --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " <!-- Loading Indicator --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(data.Events) == data.Limit {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div id=\"loading-indicator\" class=\"htmx-indicator\" style=\"text-align: center; padding: var(--space-xl);\"><div style=\"color: var(--neutral-400);\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">A carregar mais registros...</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"loading-indicator\" class=\"htmx-indicator\" style=\"text-align: center; padding: var(--space-xl);\"><div style=\"color: var(--neutral-400);\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">A carregar mais registros...</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else if len(data.Events) > 0 && len(data.Events) < data.Limit {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div style=\"text-align: center; padding: var(--space-xl);\"><p style=\"font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);\">Fim dos registros históricos</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div style=\"text-align: center; padding: var(--space-xl);\"><p style=\"font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);\">Fim dos registros históricos</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func FiltersAndContent(data TimelinePageData) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<!-- Filters --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; gap: var(--space-sm);\"><button hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=all")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 100, Col: 66}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter == nil) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Todos</button> <button hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=observation")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 110, Col: 74}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Observações</button> <button hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=intervention")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 120, Col: 75}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Intervenções</button></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = TimelineContent(data).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func TimelineContainer(data TimelinePageData) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div style=\"padding: var(--space-lg); max-width: 72rem; margin: 0 auto;\"><!-- Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><a href=\"/patients\" style=\"width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;\"><i class=\"fas fa-arrow-left\"></i></a><div style=\"flex: 1;\"><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Prontuário do Paciente</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;\">Histórico clínico longitudinal organizado cronologicamente</p></div></div></div><!-- Search --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"position: relative;\"><input type=\"text\" name=\"q\" placeholder=\"Buscar no histórico clínico (ex: transferência, luto, ansiedade...)\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history/search")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 161, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" hx-trigger=\"keyup changed delay:500ms, search\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" hx-indicator=\"#search-loading\" style=\"\n\t\t\t\t\t\twidth: 100%;\n\t\t\t\t\t\tpadding: var(--space-lg);\n\t\t\t\t\t\tpadding-left: 3rem;\n\t\t\t\t\t\tfont-family: var(--font-sans);\n\t\t\t\t\t\tfont-size: 1rem;\n\t\t\t\t\t\tborder: 1px solid var(--neutral-200);\n\t\t\t\t\t\tborder-radius: var(--radius-lg);\n\t\t\t\t\t\tbackground: white;\n\t\t\t\t\t\tcolor: var(--neutral-800);\n\t\t\t\t\t\tbox-shadow: var(--shadow-sm);\n\t\t\t\t\t\ttransition: all var(--transition-fast);\n\t\t\t\t\t\" onfocus=\"this.style.borderColor='var(--primary-400)'; this.style.boxShadow='var(--shadow-md)';\" onblur=\"this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='var(--shadow-sm)';\"><div style=\"position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neutral-400);\"><i class=\"fas fa-search\"></i></div><div id=\"search-loading\" class=\"htmx-indicator\" style=\"position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);\"><i class=\"fas fa-spinner fa-spin\" style=\"color: var(--neutral-400);\"></i></div></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">Pesquise por termos específicos em todas as observações e intervenções deste paciente.</p></div><div id=\"filters-and-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = FiltersAndContent(data).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -238,14 +281,20 @@ func getFilterParam(filter *timeline.EventType) string {
 		return "all"
 	}
 	switch *filter {
-	case timeline.EventTypeSession:
-		return "session"
 	case timeline.EventTypeObservation:
 		return "observation"
 	case timeline.EventTypeIntervention:
 		return "intervention"
 	default:
 		return "all"
+	}
+}
+
+func getButtonStyle(isActive bool) string {
+	if isActive {
+		return "background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
+	} else {
+		return "background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
 	}
 }
 
