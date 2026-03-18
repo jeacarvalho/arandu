@@ -15,7 +15,7 @@ func NewTimelineRepository(db *DB) *TimelineRepository {
 	return &TimelineRepository{db: db}
 }
 
-func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patientID string, filterType *timeline.EventType) (timeline.Timeline, error) {
+func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error) {
 	var events timeline.Timeline
 
 	query := `
@@ -56,9 +56,10 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 		WHERE s.patient_id = ?
 		
 		ORDER BY event_date DESC
+		LIMIT ? OFFSET ?
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, patientID, patientID, patientID)
+	rows, err := r.db.QueryContext(ctx, query, patientID, patientID, patientID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +105,8 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 	return events, nil
 }
 
-func (r *TimelineRepository) GetTimelineByPatientIDWithFilter(ctx context.Context, patientID string, filterType timeline.EventType) (timeline.Timeline, error) {
-	return r.GetTimelineByPatientID(ctx, patientID, &filterType)
+func (r *TimelineRepository) GetTimelineByPatientIDWithFilter(ctx context.Context, patientID string, filterType timeline.EventType, limit, offset int) (timeline.Timeline, error) {
+	return r.GetTimelineByPatientID(ctx, patientID, &filterType, limit, offset)
 }
 
 func parseMetadataJSON(jsonStr string) map[string]string {

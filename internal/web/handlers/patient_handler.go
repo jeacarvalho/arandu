@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"arandu/internal/application/services"
@@ -54,6 +55,7 @@ type InsightViewModel struct {
 type PatientService interface {
 	GetPatientByID(ctx context.Context, id string) (*patient.Patient, error)
 	ListPatients(ctx context.Context) ([]*patient.Patient, error)
+	ListPatientsPaginated(ctx context.Context, page, pageSize int) ([]*patient.Patient, int, error)
 	CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error)
 	SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
 	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
@@ -180,7 +182,28 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	patients, err := h.patientService.ListPatients(ctx)
+
+	// Parse pagination parameters
+	page := 1
+	pageSize := 20 // Default batch size
+
+	if pageStr := r.URL.Query().Get("page"); pageStr != "" {
+		if parsedPage, err := strconv.Atoi(pageStr); err == nil && parsedPage > 0 {
+			page = parsedPage
+		}
+	}
+
+	// For HTMX requests, we might want to use offset instead of page
+	offset := 0
+	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
+		if parsedOffset, err := strconv.Atoi(offsetStr); err == nil && parsedOffset >= 0 {
+			offset = parsedOffset
+			// Calculate page from offset
+			page = (offset / pageSize) + 1
+		}
+	}
+
+	patients, _, err := h.patientService.ListPatientsPaginated(ctx, page, pageSize)
 	if err != nil {
 		h.renderError(w, r, "Erro ao listar pacientes", http.StatusInternalServerError)
 		return
@@ -199,9 +222,24 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// Render with layout using templ
-	patientList := patientComponents.PatientList(patientItems, "")
-	layoutComponents.BaseWithContent("Pacientes", patientList).Render(r.Context(), w)
+	// Check if this is an HTMX request for infinite scroll
+	isHTMXRequest := r.Header.Get("HX-Request") == "true"
+
+	listData := patientComponents.PatientListData{
+		Patients: patientItems,
+		ErrorMsg: "",
+		PageSize: pageSize,
+		Offset:   offset,
+	}
+
+	if isHTMXRequest {
+		// For HTMX requests, render just the patient list fragment
+		patientComponents.PatientList(listData).Render(r.Context(), w)
+	} else {
+		// For full page requests, render with layout
+		patientList := patientComponents.PatientList(listData)
+		layoutComponents.BaseWithContent("Pacientes", patientList).Render(r.Context(), w)
+	}
 }
 
 // PatientsViewData is a ViewModel for the patients list page

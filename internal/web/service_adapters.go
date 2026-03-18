@@ -78,6 +78,11 @@ func (a *PatientServiceAdapter) ListPatients(ctx context.Context) ([]*patient.Pa
 	return a.service.ListPatients(ctx)
 }
 
+// ListPatientsPaginated implements handlers.PatientServiceInterface
+func (a *PatientServiceAdapter) ListPatientsPaginated(ctx context.Context, page, pageSize int) ([]*patient.Patient, int, error) {
+	return a.service.ListPatientsPaginated(ctx, page, pageSize)
+}
+
 // CreatePatient implements handlers.PatientServiceInterface
 func (a *PatientServiceAdapter) CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error) {
 	return a.service.CreatePatient(ctx, input)
@@ -149,8 +154,8 @@ func NewTimelineServiceAdapter(service *services.TimelineService) *TimelineServi
 }
 
 // GetPatientTimeline implements handlers.TimelineService interface
-func (a *TimelineServiceAdapter) GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType) (timeline.Timeline, error) {
-	return a.service.GetPatientTimeline(ctx, patientID, filterType)
+func (a *TimelineServiceAdapter) GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error) {
+	return a.service.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
 }
 
 // NewInterventionServiceAdapter creates a new adapter

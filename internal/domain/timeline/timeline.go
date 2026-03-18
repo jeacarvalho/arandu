@@ -1,6 +1,7 @@
 package timeline
 
 import (
+	"context"
 	"sort"
 	"time"
 )
@@ -49,4 +50,8 @@ func (t Timeline) GroupByDate() map[string]Timeline {
 	}
 
 	return groups
+}
+
+type Repository interface {
+	GetTimelineByPatientID(ctx context.Context, patientID string, filterType *EventType, limit, offset int) (Timeline, error)
 }

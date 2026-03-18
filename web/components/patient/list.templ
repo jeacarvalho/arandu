@@ -1,5 +1,7 @@
 package patient
 
+import "strconv"
+
 type PatientListItem struct {
 	ID        string
 	Name      string
@@ -7,7 +9,14 @@ type PatientListItem struct {
 	CreatedAt string
 }
 
-templ PatientList(patients []PatientListItem, errorMsg string) {
+type PatientListData struct {
+	Patients []PatientListItem
+	ErrorMsg string
+	PageSize int
+	Offset   int
+}
+
+templ PatientList(data PatientListData) {
 	<div class="content-header" style="margin-bottom: var(--space-xl);">
 		<div class="header-title">
 			<div>
@@ -22,21 +31,27 @@ templ PatientList(patients []PatientListItem, errorMsg string) {
 		</div>
 	</div>
 
-	if errorMsg != "" {
+	if data.ErrorMsg != "" {
 		<div class="form-error">
 			<i class="fas fa-exclamation-circle"></i>
-			<p>{ errorMsg }</p>
+			<p>{ data.ErrorMsg }</p>
 		</div>
 	}
 
-	if len(patients) > 0 {
+	if len(data.Patients) > 0 {
 		<div style="display: flex; flex-direction: column; gap: var(--space-sm); max-width: 56rem; margin: 0 auto;">
-			for _, p := range patients {
+			for i, p := range data.Patients {
 				<a 
 					href={ templ.URL("/patient/" + p.ID) } 
 					style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-lg) var(--space-xl); background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); text-decoration: none; transition: all 0.2s ease;"
 					onmouseover="this.style.borderColor='var(--primary-200)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)';"
 					onmouseout="this.style.borderColor='var(--neutral-100)'; this.style.boxShadow='none';"
+					if i == len(data.Patients) - 1 && len(data.Patients) == data.PageSize {
+						hx-get={ "/patients?offset=" + strconv.Itoa(data.Offset + data.PageSize) }
+						hx-trigger="revealed"
+						hx-swap="afterend"
+						hx-indicator="#loading-indicator-patients"
+					}
 				>
 					<div style="display: flex; align-items: center; gap: var(--space-lg);">
 						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;">
@@ -57,6 +72,24 @@ templ PatientList(patients []PatientListItem, errorMsg string) {
 					</div>
 				</a>
 			}
+			
+			<!-- Loading Indicator -->
+			if len(data.Patients) == data.PageSize {
+				<div id="loading-indicator-patients" class="htmx-indicator" style="text-align: center; padding: var(--space-xl);">
+					<div style="color: var(--neutral-400);">
+						<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+					</div>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
+						A carregar mais pacientes...
+					</p>
+				</div>
+			} else if len(data.Patients) > 0 && len(data.Patients) < data.PageSize {
+				<div style="text-align: center; padding: var(--space-xl);">
+					<p style="font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);">
+						Fim da lista de pacientes
+					</p>
+				</div>
+			}
 		</div>
 	} else {
 		<div class="empty-state">
@@ -72,5 +105,20 @@ templ PatientList(patients []PatientListItem, errorMsg string) {
 
 // HTMX fragment version (without layout)
 templ PatientListFragment(patients []PatientListItem, errorMsg string) {
-	@PatientList(patients, errorMsg)
+	@PatientList(PatientListData{
+		Patients: patients,
+		ErrorMsg: errorMsg,
+		PageSize: 20,
+		Offset:   0,
+	})
+}
+
+// Backward compatibility function
+templ PatientListLegacy(patients []PatientListItem, errorMsg string) {
+	@PatientList(PatientListData{
+		Patients: patients,
+		ErrorMsg: errorMsg,
+		PageSize: 20,
+		Offset:   0,
+	})
 }

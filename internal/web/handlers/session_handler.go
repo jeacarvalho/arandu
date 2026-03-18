@@ -330,19 +330,54 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect on success
-	http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
+	// Instead of redirecting, render the edit page directly for the wizard flow
+	// This avoids any client-side JavaScript interference with redirects
+
+	// Get patient info
+	patient, err := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
+	if err != nil {
+		log.Printf("Error getting patient for wizard: %v", err)
+		http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
+		return
+	}
+
+	// Create form data for the edit page
+	formData := sessionComponents.EditSessionFormData{
+		SessionID:   sess.ID,
+		PatientName: patient.Name,
+		FormData: &sessionComponents.SessionFormValues{
+			PatientID: sess.PatientID,
+			Date:      sess.Date.Format("2006-01-02"),
+			Summary:   sess.Summary,
+		},
+		Observations:  []sessionComponents.Observation{},
+		Interventions: []sessionComponents.Intervention{},
+	}
+
+	// Render the edit page directly
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	form := sessionComponents.EditSessionForm(formData)
+	layoutComponents.BaseWithContent("Completar Sessão", form).Render(r.Context(), w)
 }
 
 // EditSession handles GET /sessions/edit/{id} - shows edit session form
 func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
+	log.Printf("EditSession called: %s %s", r.Method, r.URL.Path)
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Extract session ID from URL path
-	sessionID := extractSessionIDFromPath(r.URL.Path, "/sessions/edit/")
+	// Extract session ID from URL path /session/{id}/edit
+	// Remove "/edit" suffix first
+	pathWithoutEdit := strings.TrimSuffix(r.URL.Path, "/edit")
+	log.Printf("Path without edit: %s", pathWithoutEdit)
+
+	// Extract ID from /session/{id}
+	sessionID := extractSessionIDFromPath(pathWithoutEdit, "/session/")
+	log.Printf("Extracted sessionID: %s", sessionID)
+
 	if sessionID == "" {
 		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
 		return
@@ -362,6 +397,43 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get observations and interventions for this session
+	obsList, err := h.observationService.GetObservationsBySession(r.Context(), sessionID)
+	if err != nil {
+		log.Printf("Error getting observations: %v", err)
+		obsList = []interface{}{}
+	}
+
+	intList, err := h.interventionService.GetInterventionsBySession(r.Context(), sessionID)
+	if err != nil {
+		log.Printf("Error getting interventions: %v", err)
+		intList = []interface{}{}
+	}
+
+	// Convert to component observations
+	observations := []sessionComponents.Observation{}
+	for _, obs := range obsList {
+		if o, ok := obs.(*observation.Observation); ok {
+			observations = append(observations, sessionComponents.Observation{
+				ID:        o.ID,
+				Content:   o.Content,
+				CreatedAt: o.CreatedAt.Format("02/01/2006 15:04"),
+			})
+		}
+	}
+
+	// Convert to component interventions
+	interventions := []sessionComponents.Intervention{}
+	for _, interv := range intList {
+		if i, ok := interv.(*intervention.Intervention); ok {
+			interventions = append(interventions, sessionComponents.Intervention{
+				ID:        i.ID,
+				Content:   i.Content,
+				CreatedAt: i.CreatedAt.Format("02/01/2006 15:04"),
+			})
+		}
+	}
+
 	formData := sessionComponents.EditSessionFormData{
 		SessionID:   sessionID,
 		PatientName: patient.Name,
@@ -370,6 +442,8 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 			Date:      sess.Date.Format("2006-01-02"),
 			Summary:   sess.Summary,
 		},
+		Observations:  observations,
+		Interventions: interventions,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -383,11 +457,13 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContent("Editar Sessão", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContent("Completar Sessão", form).Render(r.Context(), w)
 }
 
 // UpdateSession handles POST /sessions/update - updates an existing session
 func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
+	log.Printf("UpdateSession called: %s %s", r.Method, r.URL.Path)
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -398,7 +474,11 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Debug: log all form values
+	log.Printf("Form values: %v", r.Form)
+
 	sessionID := r.FormValue("session_id")
+	log.Printf("Extracted session_id: %s", sessionID)
 	if sessionID == "" {
 		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
 		return
@@ -454,14 +534,9 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get session to redirect to patient page
-	sess, err := h.sessionService.GetSession(r.Context(), sessionID)
-	if err != nil {
-		http.Redirect(w, r, "/patients", http.StatusSeeOther)
-		return
-	}
-
-	http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
+	// Redirect back to session edit page to continue adding observations/interventions
+	log.Printf("Redirecting to: /session/%s/edit", sessionID)
+	http.Redirect(w, r, "/session/"+sessionID+"/edit", http.StatusSeeOther)
 }
 
 // extractPatientIDFromPath extracts patient ID from URL path like /patient/{id}/sessions/new

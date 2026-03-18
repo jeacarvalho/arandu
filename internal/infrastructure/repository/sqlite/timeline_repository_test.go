@@ -84,7 +84,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test getting timeline without filter
-		events, err := timelineRepo.GetTimelineByPatientID(ctx, p.ID, nil)
+		events, err := timelineRepo.GetTimelineByPatientID(ctx, p.ID, nil, 100, 0)
 		if err != nil {
 			t.Fatalf("Failed to get timeline: %v", err)
 		}
@@ -140,7 +140,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 		// Test filtering by observation type
 		obsFilter := timeline.EventTypeObservation
-		obsEvents, err := timelineRepo.GetTimelineByPatientID(ctx, p.ID, &obsFilter)
+		obsEvents, err := timelineRepo.GetTimelineByPatientID(ctx, p.ID, &obsFilter, 100, 0)
 		if err != nil {
 			t.Fatalf("Failed to get filtered timeline: %v", err)
 		}
@@ -155,7 +155,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 	})
 
 	t.Run("Get timeline for non-existent patient", func(t *testing.T) {
-		emptyEvents, err := timelineRepo.GetTimelineByPatientID(ctx, "non-existent-patient", nil)
+		emptyEvents, err := timelineRepo.GetTimelineByPatientID(ctx, "non-existent-patient", nil, 100, 0)
 		if err != nil {
 			t.Fatalf("Failed to get timeline for non-existent patient: %v", err)
 		}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"arandu/internal/domain/timeline"
@@ -12,7 +13,7 @@ import (
 )
 
 type TimelineService interface {
-	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType) (timeline.Timeline, error)
+	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error)
 }
 
 type TimelineHandler struct {
@@ -36,7 +37,16 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 
 	filterType := parseFilterType(r.URL.Query().Get("filter"))
 
-	events, err := h.timelineService.GetPatientTimeline(ctx, patientID, filterType)
+	limit := 20
+	offset := 0
+
+	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
+		if parsedOffset, err := strconv.Atoi(offsetStr); err == nil && parsedOffset >= 0 {
+			offset = parsedOffset
+		}
+	}
+
+	events, err := h.timelineService.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
 	if err != nil {
 		log.Printf("Error getting patient timeline: %v", err)
 		http.Error(w, "Failed to load patient history", http.StatusInternalServerError)
@@ -47,6 +57,8 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 		PatientID: patientID,
 		Events:    events,
 		Filter:    filterType,
+		Limit:     limit,
+		Offset:    offset,
 	}
 
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"

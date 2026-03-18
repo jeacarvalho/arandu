@@ -8,7 +8,7 @@ package session
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func InterventionForm(sessionID string) templ.Component {
+func ObservationFormInline(sessionID string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,15 +34,15 @@ func InterventionForm(sessionID string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + sessionID + "/interventions"))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + sessionID + "/observations"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_form.templ`, Line: 6, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_form_inline.templ`, Line: 6, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#interventions-list\" hx-swap=\"afterbegin\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label for=\"intervention-content\" class=\"silent-label\"><i class=\"fas fa-hands-helping\"></i> Nova Intervenção Terapêutica</label> <textarea id=\"intervention-content\" name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"4\" class=\"silent-textarea\" required></textarea><div class=\"form-help\"><i class=\"fas fa-info-circle\"></i> Registre a conduta técnica aplicada para análise posterior da evolução.</div></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-secondary\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar Intervenção</button> <button type=\"button\" class=\"btn btn-outline\" onclick=\"this.closest('form').querySelector('textarea').value = ''\"><i class=\"fas fa-times btn-icon\"></i>Limpar</button></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#observations-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions\" style=\"margin-top: var(--space-md);\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
