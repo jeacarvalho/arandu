@@ -18,48 +18,113 @@ func NewTimelineRepository(db *DB) *TimelineRepository {
 func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error) {
 	var events timeline.Timeline
 
-	query := `
-		SELECT 
-			'session' as type,
-			id,
-			date as event_date,
-			summary as content,
-			created_at,
-			json_object('session_id', id, 'patient_id', patient_id) as metadata
-		FROM sessions 
-		WHERE patient_id = ?
-		
-		UNION ALL
-		
-		SELECT 
-			'observation' as type,
-			o.id,
-			o.created_at as event_date,
-			o.content,
-			o.created_at,
-			json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
-		FROM observations o
-		INNER JOIN sessions s ON o.session_id = s.id
-		WHERE s.patient_id = ?
-		
-		UNION ALL
-		
-		SELECT 
-			'intervention' as type,
-			i.id,
-			i.created_at as event_date,
-			i.content,
-			i.created_at,
-			json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
-		FROM interventions i
-		INNER JOIN sessions s ON i.session_id = s.id
-		WHERE s.patient_id = ?
-		
-		ORDER BY event_date DESC
-		LIMIT ? OFFSET ?
-	`
+	// Construir query dinamicamente baseada no filtro
+	var query string
+	var args []interface{}
 
-	rows, err := r.db.QueryContext(ctx, query, patientID, patientID, patientID, limit, offset)
+	if filterType == nil {
+		// Sem filtro - buscar observações e intervenções (não inclui sessões)
+		query = `
+			SELECT 
+				'observation' as type,
+				o.id,
+				o.created_at as event_date,
+				o.content,
+				o.created_at,
+				json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
+			FROM observations o
+			INNER JOIN sessions s ON o.session_id = s.id
+			WHERE s.patient_id = ?
+			
+			UNION ALL
+			
+			SELECT 
+				'intervention' as type,
+				i.id,
+				i.created_at as event_date,
+				i.content,
+				i.created_at,
+				json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
+			FROM interventions i
+			INNER JOIN sessions s ON i.session_id = s.id
+			WHERE s.patient_id = ?
+			
+			ORDER BY event_date DESC
+			LIMIT ? OFFSET ?
+		`
+		args = []interface{}{patientID, patientID, limit, offset}
+	} else {
+		// Com filtro - buscar apenas um tipo
+		switch *filterType {
+		case timeline.EventTypeObservation:
+			query = `
+				SELECT 
+					'observation' as type,
+					o.id,
+					o.created_at as event_date,
+					o.content,
+					o.created_at,
+					json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
+				FROM observations o
+				INNER JOIN sessions s ON o.session_id = s.id
+				WHERE s.patient_id = ?
+				ORDER BY o.created_at DESC
+				LIMIT ? OFFSET ?
+			`
+			args = []interface{}{patientID, limit, offset}
+
+		case timeline.EventTypeIntervention:
+			query = `
+				SELECT 
+					'intervention' as type,
+					i.id,
+					i.created_at as event_date,
+					i.content,
+					i.created_at,
+					json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
+				FROM interventions i
+				INNER JOIN sessions s ON i.session_id = s.id
+				WHERE s.patient_id = ?
+				ORDER BY i.created_at DESC
+				LIMIT ? OFFSET ?
+			`
+			args = []interface{}{patientID, limit, offset}
+
+		default:
+			// Fallback para sem filtro (apenas observações e intervenções)
+			query = `
+				SELECT 
+					'observation' as type,
+					o.id,
+					o.created_at as event_date,
+					o.content,
+					o.created_at,
+					json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
+				FROM observations o
+				INNER JOIN sessions s ON o.session_id = s.id
+				WHERE s.patient_id = ?
+				
+				UNION ALL
+				
+				SELECT 
+					'intervention' as type,
+					i.id,
+					i.created_at as event_date,
+					i.content,
+					i.created_at,
+					json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
+				FROM interventions i
+				INNER JOIN sessions s ON i.session_id = s.id
+				WHERE s.patient_id = ?
+				
+				ORDER BY event_date DESC
+				LIMIT ? OFFSET ?
+			`
+			args = []interface{}{patientID, patientID, limit, offset}
+		}
+	}
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +141,6 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 		}
 
 		eventType := timeline.EventType(eventTypeStr)
-
-		if filterType != nil && eventType != *filterType {
-			continue
-		}
 
 		metadata := make(map[string]string)
 		if metadataJSON != "" {
@@ -107,6 +168,70 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 
 func (r *TimelineRepository) GetTimelineByPatientIDWithFilter(ctx context.Context, patientID string, filterType timeline.EventType, limit, offset int) (timeline.Timeline, error) {
 	return r.GetTimelineByPatientID(ctx, patientID, &filterType, limit, offset)
+}
+
+func (r *TimelineRepository) SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error) {
+	if query == "" {
+		return nil, nil
+	}
+
+	searchQuery := `
+		SELECT 
+			'observation' as type,
+			o.id,
+			o.created_at as date,
+			o.content,
+			snippet(observations_fts, 1, '<b>', '</b>', '...', 64) as snippet,
+			s.id as session_id,
+			s.patient_id
+		FROM observations_fts fts
+		JOIN observations o ON fts.source_id = o.id
+		JOIN sessions s ON o.session_id = s.id
+		WHERE fts.content MATCH ? AND s.patient_id = ?
+		
+		UNION ALL
+		
+		SELECT 
+			'intervention' as type,
+			i.id,
+			i.created_at as date,
+			i.content,
+			snippet(interventions_fts, 1, '<b>', '</b>', '...', 64) as snippet,
+			s.id as session_id,
+			s.patient_id
+		FROM interventions_fts fts
+		JOIN interventions i ON fts.source_id = i.id
+		JOIN sessions s ON i.session_id = s.id
+		WHERE fts.content MATCH ? AND s.patient_id = ?
+		
+		ORDER BY date DESC
+	`
+
+	rows, err := r.db.QueryContext(ctx, searchQuery, query, patientID, query, patientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []*timeline.SearchResult
+	for rows.Next() {
+		var result timeline.SearchResult
+		var eventTypeStr string
+
+		err := rows.Scan(&eventTypeStr, &result.ID, &result.Date, &result.Content, &result.Snippet, &result.SessionID, &result.PatientID)
+		if err != nil {
+			return nil, err
+		}
+
+		result.Type = timeline.EventType(eventTypeStr)
+		results = append(results, &result)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 func parseMetadataJSON(jsonStr string) map[string]string {

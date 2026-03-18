@@ -132,7 +132,9 @@ func main() {
 
 	// Combined patient routes (plural)
 	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.Path, "/history") && r.Method == "GET" {
+		if strings.Contains(r.URL.Path, "/history/search") && r.Method == "GET" {
+			timelineHandler.SearchPatientHistory(w, r)
+		} else if strings.Contains(r.URL.Path, "/history") && r.Method == "GET" {
 			timelineHandler.ShowPatientHistory(w, r)
 		} else if strings.HasSuffix(r.URL.Path, "/sessions") && r.Method == "GET" {
 			patientHandler.ListSessions(w, r)

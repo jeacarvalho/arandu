@@ -158,6 +158,11 @@ func (a *TimelineServiceAdapter) GetPatientTimeline(ctx context.Context, patient
 	return a.service.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
 }
 
+// SearchInHistory implements handlers.TimelineService interface
+func (a *TimelineServiceAdapter) SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error) {
+	return a.service.SearchInHistory(ctx, patientID, query)
+}
+
 // NewInterventionServiceAdapter creates a new adapter
 func NewInterventionServiceAdapter(service *services.InterventionService) *InterventionServiceAdapter {
 	return &InterventionServiceAdapter{service: service}

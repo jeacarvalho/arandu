@@ -80,4 +80,5 @@ coverage.xml
 *.temp
 *.bak
 *~
-```
+```arandu
+arandu.db

@@ -37,3 +37,7 @@ func (s *TimelineService) GetPatientTimelineGroupedByDate(ctx context.Context, p
 
 	return events.GroupByDate(), nil
 }
+
+func (s *TimelineService) SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error) {
+	return s.repo.SearchInHistory(ctx, patientID, query)
+}

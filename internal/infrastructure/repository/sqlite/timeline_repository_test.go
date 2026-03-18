@@ -164,4 +164,85 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			t.Errorf("Expected 0 events for non-existent patient, got %d", len(emptyEvents))
 		}
 	})
+
+	t.Run("Search in patient history", func(t *testing.T) {
+		// Create a patient
+		p, err := patient.NewPatient("Search Test Patient", "Test Notes")
+		if err != nil {
+			t.Fatalf("Failed to create patient: %v", err)
+		}
+		if err := patientRepo.Save(p); err != nil {
+			t.Fatalf("Failed to save patient: %v", err)
+		}
+
+		// Create a session
+		sess := session.NewSession(p.ID, time.Now(), "Test session with transferência theme")
+		if err := sessionRepo.Create(ctx, sess); err != nil {
+			t.Fatalf("Failed to save session: %v", err)
+		}
+
+		// Create an observation with searchable content
+		obs := &observation.Observation{
+			ID:        "test-observation-search",
+			SessionID: sess.ID,
+			Content:   "Paciente demonstrou sinais de transferência durante a sessão. Relatou sentimentos de luto pela perda recente.",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		if err := observationRepo.Save(obs); err != nil {
+			t.Fatalf("Failed to save observation: %v", err)
+		}
+
+		// Create an intervention with searchable content
+		intv := &intervention.Intervention{
+			ID:        "test-intervention-search",
+			SessionID: sess.ID,
+			Content:   "Intervenção focada em processar o luto e trabalhar a transferência de forma terapêutica.",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		if err := interventionRepo.Save(intv); err != nil {
+			t.Fatalf("Failed to save intervention: %v", err)
+		}
+
+		// Test search for "transferência"
+		results, err := timelineRepo.SearchInHistory(ctx, p.ID, "transferência")
+		if err != nil {
+			t.Fatalf("Failed to search in history: %v", err)
+		}
+
+		if len(results) != 2 {
+			t.Errorf("Expected 2 search results for 'transferência', got %d", len(results))
+		}
+
+		// Test search for "luto"
+		results, err = timelineRepo.SearchInHistory(ctx, p.ID, "luto")
+		if err != nil {
+			t.Fatalf("Failed to search in history: %v", err)
+		}
+
+		if len(results) != 2 {
+			t.Errorf("Expected 2 search results for 'luto', got %d", len(results))
+		}
+
+		// Test search for non-existent term
+		results, err = timelineRepo.SearchInHistory(ctx, p.ID, "inexistente")
+		if err != nil {
+			t.Fatalf("Failed to search in history: %v", err)
+		}
+
+		if len(results) != 0 {
+			t.Errorf("Expected 0 search results for 'inexistente', got %d", len(results))
+		}
+
+		// Test empty query
+		results, err = timelineRepo.SearchInHistory(ctx, p.ID, "")
+		if err != nil {
+			t.Fatalf("Failed to search in history with empty query: %v", err)
+		}
+
+		if results != nil {
+			t.Errorf("Expected nil results for empty query, got %v", results)
+		}
+	})
 }
