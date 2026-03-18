@@ -1,0 +1,116 @@
+package patient
+
+import "strconv"
+import "time"
+
+templ BiopsychosocialPanel(data BiopsychosocialPanelViewModel) {
+	<div class="bio-panel" id="biopsychosocial-panel" x-data="{ medOpen: true, vitalsOpen: true }">
+		<div class="bio-panel-header">
+			<h3 class="bio-panel-title">Contexto Biológico</h3>
+			<button 
+				type="button" 
+				class="bio-panel-close"
+				@click="$dispatch('bio-panel-closed'); document.getElementById('biopsychosocial-panel-container').innerHTML = ''"
+				title="Fechar"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		
+		<div class="bio-panel-content">
+			<div class="bio-section">
+				<button 
+					type="button" 
+					class="bio-section-header bio-section-toggle"
+					@click="medOpen = !medOpen"
+				>
+					<div class="bio-section-header-left">
+						<h4 class="bio-section-title">Medicação</h4>
+						<span class="bio-section-badge">{ strconv.Itoa(len(data.Medications)) }</span>
+					</div>
+					<i class="fas fa-chevron-down bio-section-chevron" :class="{ 'rotated': !medOpen }"></i>
+				</button>
+				
+				<div class="bio-section-content" :class="{ 'collapsed': !medOpen }">
+					<div id="medication-list">
+						@MedicationList(MedicationListViewModel{
+							Medications: data.Medications,
+							PatientID: data.PatientID,
+						})
+					</div>
+					
+					<form 
+						hx-post={ "/patients/" + data.PatientID + "/medications" }
+						hx-target="#medication-list"
+						hx-swap="innerHTML"
+						class="bio-form"
+					>
+						<div class="bio-input-row">
+							<input 
+								type="text" 
+								name="name" 
+								placeholder="Nome do medicamento"
+								class="bio-input"
+								required
+							/>
+							<input 
+								type="text" 
+								name="dosage" 
+								placeholder="Dosagem"
+								class="bio-input bio-input-sm"
+							/>
+						</div>
+						<div class="bio-input-row">
+							<input 
+								type="text" 
+								name="frequency" 
+								placeholder="Frequência"
+								class="bio-input"
+							/>
+							<input 
+								type="text" 
+								name="prescriber" 
+								placeholder="Prescritor"
+								class="bio-input bio-input-sm"
+							/>
+						</div>
+						<div class="bio-input-row single">
+							<input 
+								type="date" 
+								name="started_at" 
+								class="bio-input"
+								value={ time.Now().Format("2006-01-02") }
+							/>
+						</div>
+						<button type="submit" class="bio-submit">
+							<i class="fas fa-plus"></i> Adicionar
+						</button>
+					</form>
+				</div>
+			</div>
+			
+			<div class="bio-section">
+				<button 
+					type="button" 
+					class="bio-section-header bio-section-toggle"
+					@click="vitalsOpen = !vitalsOpen"
+				>
+					<div class="bio-section-header-left">
+						<h4 class="bio-section-title">Sinais Vitais</h4>
+					</div>
+					<i class="fas fa-chevron-down bio-section-chevron" :class="{ 'rotated': !vitalsOpen }"></i>
+				</button>
+				
+				<div class="bio-section-content" :class="{ 'collapsed': !vitalsOpen }">
+					<div id="vitals-widget">
+						@VitalsWidget(VitalsWidgetViewModel{
+							PatientID: data.PatientID,
+							LatestVitals: data.LatestVitals,
+							VitalsAverage: data.VitalsAverage,
+						})
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}

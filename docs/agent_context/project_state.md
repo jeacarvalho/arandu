@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** qua 18 mar 2026 14:54:14 -03
+**Gerado em:** qua 18 mar 2026 18:12:20 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -23,6 +23,7 @@
 - cap-01-01-registro-sessoes.md
 - cap-01-02-observacoes-clinicas.md
 - cap-01-03-intervencoes-terapeuticas.md
+- cap-01-04-contexto-biopsicossocial-farmacologico.md
 - cap-02-01-historico-paciente.md
 - cap-02-02-linha-tempo-clinica.md
 - cap-03-01-organizacao-observacoes.md
@@ -49,6 +50,7 @@
 - req-01-02-01-adicionar-observacao.md
 - req-01-02-02-editar-observacao.md
 - req-01-03-01-registrar-intervencao.md
+- req-01-04-01-registro-historico-farmacologico-sinais-vitais.md
 - req-02-01-01-visualizar-historico.md
 - req-02-02-01-linha-tempo.md
 - req-03-01-01-classificar-observacao.md
@@ -67,34 +69,34 @@
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 26
+**Total de requirements:** 27
 
 ## 🛠️ Tarefas recentes
 
+- task_20260318_150801
 - task_20260318_104646
 - task_20260317_220659
 - task_20260317_214109
 - task_20260317_175418
-- task_20260317_163805
 
 ## 📚 Aprendizados recentes
 
+- task_20260318_150801.md
 - REQ-07-04-02.md
 - REQ-07-04-01.md
 - task_20260317_214109.md
 - task_20260317_175418.md
-- task_20260317_163805.md
 
 ## 📊 Status do Sistema
 
 - Visions: 10
-- Capabilities: 18
-- Requirements: 26
-- Learnings: 32
+- Capabilities: 19
+- Requirements: 27
+- Learnings: 33
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 7
-- **Requirements implementados:** 7
-- **Última atualização permanente:** ** qua 18 mar 2026 14:54:14 -03
+- **Tarefas concluídas:** 8
+- **Requirements implementados:** 8
+- **Última atualização permanente:** ** qua 18 mar 2026 18:12:20 -03
 

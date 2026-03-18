@@ -1,0 +1,156 @@
+package patient
+
+import "time"
+
+templ VitalsWidget(data VitalsWidgetViewModel) {
+	if data.Error != "" {
+		<div class="bio-error">{ data.Error }</div>
+	}
+	
+	<div class="bio-vitals-summary">
+		if data.LatestVitals != nil && data.LatestVitals.HasData {
+			<div class="bio-vitals-card">
+				<div class="bio-vitals-header">
+					<span class="bio-vitals-label">Último registro</span>
+					<span class="bio-vitals-date">{ data.LatestVitals.Date }</span>
+				</div>
+				<div class="bio-vitals-grid">
+					if data.LatestVitals.SleepHours != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-moon"></i>
+							<span class="bio-vital-value">{ data.LatestVitals.SleepHours }h</span>
+							<span class="bio-vital-label">Sono</span>
+						</div>
+					}
+					if data.LatestVitals.AppetiteLevel != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-utensils"></i>
+							<span class="bio-vital-value">{ data.LatestVitals.AppetiteLevel }</span>
+							<span class="bio-vital-label">Apetite</span>
+						</div>
+					}
+					if data.LatestVitals.Weight != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-weight"></i>
+							<span class="bio-vital-value">{ data.LatestVitals.Weight }kg</span>
+							<span class="bio-vital-label">Peso</span>
+						</div>
+					}
+					if data.LatestVitals.PhysicalActivity != "" && data.LatestVitals.PhysicalActivity != "0" {
+						<div class="bio-vital-item">
+							<i class="fas fa-running"></i>
+							<span class="bio-vital-value">{ data.LatestVitals.PhysicalActivity }x</span>
+							<span class="bio-vital-label">Ativ./sem</span>
+						</div>
+					}
+				</div>
+			</div>
+		}
+		
+		if data.VitalsAverage != nil && data.VitalsAverage.HasData {
+			<div class="bio-vitals-card">
+				<div class="bio-vitals-header">
+					<span class="bio-vitals-label">Média (30 dias)</span>
+					<span class="bio-vitals-count">{ data.VitalsAverage.RecordCount } registros</span>
+				</div>
+				<div class="bio-vitals-grid">
+					if data.VitalsAverage.AvgSleepHours != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-moon"></i>
+							<span class="bio-vital-value">{ data.VitalsAverage.AvgSleepHours }h</span>
+							<span class="bio-vital-label">Sono</span>
+						</div>
+					}
+					if data.VitalsAverage.AvgAppetiteLevel != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-utensils"></i>
+							<span class="bio-vital-value">{ data.VitalsAverage.AvgAppetiteLevel }</span>
+							<span class="bio-vital-label">Apetite</span>
+						</div>
+					}
+					if data.VitalsAverage.AvgWeight != "" {
+						<div class="bio-vital-item">
+							<i class="fas fa-weight"></i>
+							<span class="bio-vital-value">{ data.VitalsAverage.AvgWeight }kg</span>
+							<span class="bio-vital-label">Peso</span>
+						</div>
+					}
+					if data.VitalsAverage.AvgPhysicalActivity != "" && data.VitalsAverage.AvgPhysicalActivity != "0" {
+						<div class="bio-vital-item">
+							<i class="fas fa-running"></i>
+							<span class="bio-vital-value">{ data.VitalsAverage.AvgPhysicalActivity }x</span>
+							<span class="bio-vital-label">Ativ./sem</span>
+						</div>
+					}
+				</div>
+			</div>
+		}
+		
+		if (data.LatestVitals == nil || !data.LatestVitals.HasData) && (data.VitalsAverage == nil || !data.VitalsAverage.HasData) {
+			<div class="bio-empty">
+				<i class="fas fa-heartbeat"></i>
+				<p>Nenhum registro de vitais</p>
+			</div>
+		}
+	</div>
+	
+	<form 
+		hx-post={ "/patients/" + data.PatientID + "/vitals" }
+		hx-target="#vitals-widget"
+		hx-swap="innerHTML"
+		class="bio-form"
+	>
+		<div class="bio-input-row">
+			<div class="bio-input-group">
+				<label class="bio-label">Sono (horas)</label>
+				<input 
+					type="number" 
+					name="sleep_hours" 
+					step="0.5" 
+					min="0" 
+					max="24"
+					placeholder="0-24"
+					class="bio-input"
+				/>
+			</div>
+			<div class="bio-input-group">
+				<label class="bio-label">Apetite (1-10)</label>
+				<input 
+					type="number" 
+					name="appetite_level" 
+					min="1" 
+					max="10"
+					placeholder="1-10"
+					class="bio-input"
+				/>
+			</div>
+		</div>
+		<div class="bio-input-row">
+			<div class="bio-input-group">
+				<label class="bio-label">Peso (kg)</label>
+				<input 
+					type="number" 
+					name="weight" 
+					step="0.1"
+					placeholder="kg"
+					class="bio-input"
+				/>
+			</div>
+			<div class="bio-input-group">
+				<label class="bio-label">Atividade/sem</label>
+				<input 
+					type="number" 
+					name="physical_activity" 
+					min="0"
+					max="7"
+					placeholder="0-7"
+					class="bio-input"
+				/>
+			</div>
+		</div>
+		<input type="hidden" name="date" value={ time.Now().Format("2006-01-02") }/>
+		<button type="submit" class="bio-submit">
+			<i class="fas fa-save"></i> Registrar
+		</button>
+	</form>
+}

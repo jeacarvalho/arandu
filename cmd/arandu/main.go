@@ -29,6 +29,8 @@ func main() {
 	observationRepo := sqlite.NewObservationRepository(db)
 	interventionRepo := sqlite.NewInterventionRepository(db)
 	insightRepo := sqlite.NewInsightRepository(db)
+	medicationRepo := sqlite.NewMedicationRepository(db)
+	vitalsRepo := sqlite.NewVitalsRepository(db)
 
 	// Apply database migrations
 	if err := db.Migrate(); err != nil {
@@ -42,6 +44,7 @@ func main() {
 	insightService := services.NewInsightService(insightRepo)
 	timelineRepo := sqlite.NewTimelineRepository(db)
 	timelineService := services.NewTimelineService(timelineRepo)
+	biopsychosocialService := services.NewBiopsychosocialService(medicationRepo, vitalsRepo)
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
@@ -58,6 +61,7 @@ func main() {
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
 	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
+	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 
 	mux := http.NewServeMux()
 
@@ -138,6 +142,14 @@ func main() {
 			timelineHandler.ShowPatientHistory(w, r)
 		} else if strings.HasSuffix(r.URL.Path, "/sessions") && r.Method == "GET" {
 			patientHandler.ListSessions(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/context") && r.Method == "GET" {
+			biopsychosocialHandler.GetContextPanel(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/medications") && r.Method == "POST" {
+			biopsychosocialHandler.AddMedication(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/vitals") && r.Method == "POST" {
+			biopsychosocialHandler.RecordVitals(w, r)
+		} else if strings.Contains(r.URL.Path, "/medications/") && r.Method == "PUT" {
+			biopsychosocialHandler.UpdateMedicationStatus(w, r)
 		} else {
 			http.NotFound(w, r)
 		}

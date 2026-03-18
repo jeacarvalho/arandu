@@ -539,11 +539,11 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/session/"+sessionID+"/edit", http.StatusSeeOther)
 }
 
-// extractPatientIDFromPath extracts patient ID from URL path like /patient/{id}/sessions/new
+// extractPatientIDFromPath extracts patient ID from URL path like /patient/{id}/sessions/new or /patients/{id}/context
 func extractPatientIDFromPath(path string) string {
 	parts := splitPath(path)
 	for i, part := range parts {
-		if part == "patient" && i+1 < len(parts) {
+		if (part == "patient" || part == "patients") && i+1 < len(parts) {
 			return parts[i+1]
 		}
 	}
