@@ -131,15 +131,23 @@ create_session_context() {
     fi
     echo "" >> "$SESSION_FILE"
 
-    # Aprendizados recentes
-    echo "## 📚 Aprendizados recentes" >> "$SESSION_FILE"
+    # Aprendizados consolidados
+    echo "## 📚 Sistema de Aprendizados" >> "$SESSION_FILE"
     echo "" >> "$SESSION_FILE"
-    if [ -d "docs/learnings" ]; then
-        ls -t docs/learnings | head -5 | while read FILE; do
-            echo "- $FILE" >> "$SESSION_FILE"
-        done
+    if [ -f "docs/learnings/MASTER_LEARNINGS.md" ]; then
+        echo "✅ **Sistema consolidado ativo**" >> "$SESSION_FILE"
+        echo "" >> "$SESSION_FILE"
+        echo "Arquivos principais:" >> "$SESSION_FILE"
+        echo "- MASTER_LEARNINGS.md (aprendizados consolidados)" >> "$SESSION_FILE"
+        echo "- ARCHITECTURE_PATTERNS.md (padrões arquiteturais)" >> "$SESSION_FILE"
+        echo "- TEMPL_GUIDE.md (guia Templ)" >> "$SESSION_FILE"
+        echo "- SQLITE_BEST_PRACTICES.md (práticas SQLite)" >> "$SESSION_FILE"
+        echo "" >> "$SESSION_FILE"
+        echo "📊 **Estatísticas:**" >> "$SESSION_FILE"
+        echo "- Arquivos consolidados: 4 principais" >> "$SESSION_FILE"
+        echo "- Arquivos em archive: $(ls docs/learnings/archive/*.md 2>/dev/null | wc -l)" >> "$SESSION_FILE"
     else
-        echo "Nenhum aprendizado registrado." >> "$SESSION_FILE"
+        echo "⚠️ Sistema de aprendizados não configurado." >> "$SESSION_FILE"
     fi
     echo "" >> "$SESSION_FILE"
 
@@ -149,7 +157,7 @@ create_session_context() {
     echo "- Visions: $(ls docs/vision 2>/dev/null | wc -l)" >> "$SESSION_FILE"
     echo "- Capabilities: $(ls docs/capabilities 2>/dev/null | wc -l)" >> "$SESSION_FILE"
     echo "- Requirements: $(ls docs/requirements 2>/dev/null | wc -l)" >> "$SESSION_FILE"
-    echo "- Learnings: $(ls docs/learnings 2>/dev/null | wc -l)" >> "$SESSION_FILE"
+    echo "- Learnings: Sistema consolidado (4 arquivos principais + archive)" >> "$SESSION_FILE"
     echo "" >> "$SESSION_FILE"
 
     # Progresso do projeto

@@ -1,0 +1,67 @@
+package patient
+
+templ MedicationList(data MedicationListViewModel) {
+	if data.Error != "" {
+		<div class="bio-error">{ data.Error }</div>
+	}
+	
+	if len(data.Medications) == 0 {
+		<div class="bio-empty">
+			<i class="fas fa-pills"></i>
+			<p>Nenhum medicamento registrado</p>
+		</div>
+	} else {
+		<ul class="bio-med-list">
+			for _, med := range data.Medications {
+				<li class={ "bio-med-item", templ.KV("is-suspended", med.IsSuspended), templ.KV("is-finished", med.IsFinished) }>
+					<div class="bio-med-content">
+						<div class="bio-med-name">{ med.Name }</div>
+						if med.Dosage != "" {
+							<div class="bio-med-details">
+								<span class="bio-med-dosage">{ med.Dosage }</span>
+								if med.Frequency != "" {
+									<span class="bio-med-frequency"> • { med.Frequency }</span>
+								}
+							</div>
+						}
+						if med.Prescriber != "" {
+							<div class="bio-med-prescriber">
+								<i class="fas fa-user-md"></i> { med.Prescriber }
+							</div>
+						}
+						<div class="bio-med-meta">
+							<span class={ "bio-med-status", "status-" + med.StatusKey }>{ med.StatusLabel }</span>
+							<span class="bio-med-date">Desde { med.StartedAt }</span>
+						</div>
+					</div>
+					<div class="bio-med-actions">
+						if med.IsActive {
+							<button 
+								type="button"
+								class="bio-med-action action-suspend"
+								title="Suspender medicação"
+								hx-put={ "/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=suspend" }
+								hx-target="#medication-list"
+								hx-swap="innerHTML"
+							>
+								<i class="fas fa-pause"></i>
+							</button>
+						}
+						if med.IsSuspended {
+							<button 
+								type="button"
+								class="bio-med-action action-activate"
+								title="Reativar medicação"
+								hx-put={ "/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=activate" }
+								hx-target="#medication-list"
+								hx-swap="innerHTML"
+							>
+								<i class="fas fa-play"></i>
+							</button>
+						}
+					</div>
+				</li>
+			}
+		</ul>
+	}
+}

@@ -14,20 +14,38 @@ arandu/
 ├── internal/
 │   ├── domain/                 # Camada de domínio (Core Business - Puro)
 │   │   ├── patient/           # Entidade Paciente (Agregado Raiz)
+│   │   │   ├── patient.go     # Domínio Patient
+│   │   │   ├── context.go     # Domínio Contexto Biopsicossocial (SOTA)
+│   │   │   ├── medication.go  # Domínio Medication (REQ-01-04-01)
+│   │   │   └── vitals.go      # Domínio Vitals (REQ-01-04-01)
 │   │   ├── session/           # Entidade Sessão
 │   │   ├── observation/       # Entidade Observação
 │   │   ├── intervention/      # Entidade Intervenção
 │   │   └── timeline/          # Agregadores de visualização longitudinal
 │   ├── application/           # Camada de aplicação (Services)
 │   │   └── services/          # Orquestração de casos de uso
+│   │       ├── patient_service.go
+│   │       ├── session_service.go
+│   │       ├── biopsychosocial_service.go  # REQ-01-04-01
+│   │       └── ...
 │   └── infrastructure/        # Camada de infraestrutura
 │       └── repository/
 │           └── sqlite/        # Implementações SQLite (FTS5 habilitado)
-│               ├── migrations/ # Arquivos .up.sql (Versionamento)
-│               └── migrator.go # Runner de migrações com go:embed
+│               ├── medication_repository.go
+│               ├── vitals_repository.go
+│               ├── migrations/
+│               │   ├── 0001_initial_schema.up.sql
+│               │   ├── 0002_enable_fts5.up.sql
+│               │   ├── 0003_add_biopsychosocial_tables.up.sql
+│               │   └── migrator.go
 ├── web/                       # Camada Web SOTA
 │   ├── handlers/              # Handlers HTTP (Consciência HTMX)
-│   ├── templates/             # Componentes .templ (Substituem .html)
+│   │   ├── biopsychosocial_handler.go
+│   │   └── ...
+│   ├── components/patient/    # Componentes .templ (Atómicos)
+│   │   ├── biopsychosocial_panel.templ
+│   │   ├── medication_list.templ
+│   │   └── vitals_widget.templ
 │   └── static/                # Arquivos estáticos (Tailwind, Inter, Serif)
 ├── scripts/                   # Automação, Seed e Guard (Cão de Guarda)
 └── docs/                      # Requisitos, Visões e Estratégias
@@ -67,17 +85,28 @@ Paginação / Infinite Scroll: Uso de hx-trigger="revealed" para carregar dados 
 
 Search Delay: Uso de delay:500ms em buscas ativas para reduzir IO no banco.
 
-4. Modelo de Domínio e Schema
+4. Modelo de Domínio e Schema (Actualizado)
 
 O banco de dados utiliza UUIDs e relações estritas com ON DELETE CASCADE.
 
--- Patients: Agregado Raiz
+-- Patients: Agregado Raiz (Administrativo)
 CREATE TABLE IF NOT EXISTS patients (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    notes TEXT,
+    notes TEXT, -- Notas narrativas em Source Serif 4
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL
+);
+
+-- Patient Context: Identidade Biopsicossocial (SOTA - CAP-01-04)
+CREATE TABLE IF NOT EXISTS patient_context (
+    patient_id TEXT PRIMARY KEY,
+    ethnicity TEXT,                -- IBGE / Padrão Saúde
+    gender_identity TEXT,
+    sexual_orientation TEXT,
+    occupation TEXT,
+    education_level TEXT,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 );
 
 -- Sessions: Dependente de Patient
@@ -91,7 +120,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 );
 
--- Observations & Interventions: Unidades Atômicas
+-- Observations & Interventions: Unidades Atómicas (FTS5 Indexed)
 CREATE TABLE IF NOT EXISTS observations (
     id TEXT PRIMARY KEY,
     session_id TEXT NOT NULL,
@@ -101,15 +130,46 @@ CREATE TABLE IF NOT EXISTS observations (
     FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
 );
 
--- FTS5 Virtual Table (Exemplo para busca rápida)
+-- FTS5 Virtual Table (Busca Instantânea)
 CREATE VIRTUAL TABLE IF NOT EXISTS observations_fts USING fts5(content, content='observations', content_rowid='id');
+
+-- Patient Medications: Histórico Farmacológico (REQ-01-04-01)
+CREATE TABLE IF NOT EXISTS patient_medications (
+    id TEXT PRIMARY KEY,
+    patient_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    dosage TEXT,
+    frequency TEXT,
+    prescriber TEXT,
+    status TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'finished')),
+    started_at DATETIME NOT NULL,
+    ended_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
+);
+
+-- Patient Vitals: Sinais Vitais e Hábitos (REQ-01-04-01)
+CREATE TABLE IF NOT EXISTS patient_vitals (
+    id TEXT PRIMARY KEY,
+    patient_id TEXT NOT NULL,
+    date DATE NOT NULL,
+    sleep_hours REAL CHECK(sleep_hours >= 0 AND sleep_hours <= 24),
+    appetite_level INTEGER CHECK(appetite_level >= 1 AND appetite_level <= 10),
+    weight REAL,
+    physical_activity INTEGER DEFAULT 0,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
+);
 
 
 5. Regras de Ouro da Camada Web
 
 Independência de Domínio
 
-Handlers apenas orquestram:
+Os Handlers apenas orquestram:
 
 Extração/Decodificação de Parâmetros.
 
@@ -129,8 +189,6 @@ Hierarquia: Texto clínico sempre em Source Serif 4, text-xl, leading-relaxed.
 
 6. Protocolo Anti-Regressão (Segurança)
 
-Para impedir falhas de estilo ou rotas em novas implementações:
-
 Check de Layout: Toda página completa DEVE herdar de templates.Layout().
 
 Check de Compilação: Executar templ generate antes de qualquer teste.
@@ -143,7 +201,7 @@ E2E Testing: Toda funcionalidade crítica deve possuir um teste Playwright que v
 
 Simplicidade: Go puro e SQLite.
 
-Privacidade: Isolamento físico de bancos de dados por usuário.
+Privacidade: Isolamento físico de bancos de dados por utilizador.
 
 Soberania do Dado: Facilidade de exportação do arquivo .db individual.
 
@@ -153,6 +211,8 @@ Fase 1: Consolidação Web e DDD (Concluída).
 
 Fase 2: Multi-tenancy e Gestão de Acesso (Em andamento).
 
-Fase 3: Escalabilidade, FTS5 e Navegação em Larga Escala (Próximo).
+Fase 3: Escalabilidade, FTS5 e Navegação em Larga Escala (Concluindo).
 
-Fase 4: Inteligência Assistida (Vision-05).
+Fase 4: Contexto Biopsicossocial e Identidade SOTA (Em implementação).
+
+Fase 5: Inteligência Assistida (Vision-05).

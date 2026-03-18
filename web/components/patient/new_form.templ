@@ -12,55 +12,116 @@ type PatientFormValues struct {
 }
 
 templ NewPatientForm(data NewPatientFormData) {
-	<div class="content-header" style="margin-bottom: var(--space-xl);">
-		<div class="header-title">
-			<div>
-				<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Novo Paciente</h1>
-				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
+	<div style="padding: var(--space-lg); max-width: 56rem; margin: 0 auto;">
+		<!-- Header -->
+		<div style="margin-bottom: var(--space-xl);">
+			<div style="display: flex; align-items: center; gap: var(--space-md);">
+				<a href="/patients" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;">
+					<i class="fas fa-arrow-left"></i>
+				</a>
+				<div>
+					<h1 style="font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">
+						Novo Paciente
+					</h1>
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;">
+						Cadastre um novo paciente para iniciar o acompanhamento clínico
+					</p>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="form-container">
-		<form action="/patient/create" method="POST">
+		<!-- Form Card -->
+		<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;">
 			if data.Error != "" {
-				<div class="alert alert-error">
-					{ data.Error }
+				<div style="padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);">
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;">
+						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+						{ data.Error }
+					</p>
 				</div>
 			}
 
 			if data.ServerError != "" {
-				<div class="alert alert-error">
-					{ data.ServerError }
+				<div style="padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);">
+					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;">
+						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+						{ data.ServerError }
+					</p>
 				</div>
 			}
 
-			<div class="silent-form-group">
-				<label class="silent-label">Nome Completo</label>
-				<input 
-					type="text" 
-					name="name" 
-					required 
-					placeholder="Nome do paciente"
-					value={ data.FormData.Name }
-					class="silent-input"
-				>
-			</div>
+			<form action="/patient/create" method="POST" style="padding: var(--space-xl);">
+				<div style="margin-bottom: var(--space-xl);">
+					<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+							<i class="fas fa-user-plus"></i>
+						</div>
+						<div>
+							<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Dados Pessoais</h2>
+						</div>
+					</div>
 
-			<div class="silent-form-group">
-				<label class="silent-label">Observações Iniciais</label>
-				<textarea 
-					name="notes" 
-					rows="8" 
-					placeholder="Observações relevantes sobre o paciente (histórico, queixa principal, contexto clínico, etc.)"
-					class="silent-textarea"
-				>{ data.FormData.Notes }</textarea>
-			</div>
+					<div style="background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);">
+						<div style="margin-bottom: var(--space-lg);">
+							<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">
+								Nome Completo *
+							</label>
+							<input 
+								type="text" 
+								name="name" 
+								required 
+								placeholder="Ex: Maria da Silva"
+								value={ data.FormData.Name }
+								style="width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 1rem; color: var(--neutral-800); outline: none; transition: all 0.15s ease;"
+								onfocus="this.style.borderColor='var(--primary-400)'; this.style.boxShadow='0 0 0 3px var(--primary-100)';"
+								onblur="this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='none';"
+							>
+						</div>
+					</div>
+				</div>
 
-			<div class="form-actions">
-				<a href="/patients" class="btn btn-outline">Cancelar</a>
-				<button type="submit" class="btn btn-primary">Salvar Paciente</button>
-			</div>
-		</form>
+				<div style="margin-bottom: var(--space-xl);">
+					<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+							<i class="fas fa-sticky-note"></i>
+						</div>
+						<div>
+							<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Notas Clínicas</h2>
+						</div>
+					</div>
+
+					<div style="background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);">
+						<div style="margin-bottom: var(--space-md);">
+							<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">
+								Observações Iniciais
+							</label>
+							<textarea 
+								name="notes" 
+								rows="6" 
+								placeholder="Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores"
+								style="width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); outline: none; resize: vertical; transition: all 0.15s ease;"
+								onfocus="this.style.borderColor='var(--primary-400)'; this.style.boxShadow='0 0 0 3px var(--primary-100)';"
+								onblur="this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='none';"
+							>{ data.FormData.Notes }</textarea>
+						</div>
+						<p style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-400); margin: 0;">
+							<i class="fas fa-info-circle" style="margin-right: var(--space-xs);"></i>
+							Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.
+						</p>
+					</div>
+				</div>
+
+				<div style="display: flex; justify-content: flex-end; gap: var(--space-md); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);">
+					<a href="/patients" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: var(--neutral-600); transition: all 0.15s ease;">
+						<i class="fas fa-times"></i>
+						Cancelar
+					</a>
+					<button type="submit" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: var(--primary-600); border: none; border-radius: var(--radius-lg); font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: white; cursor: pointer; transition: all 0.15s ease;">
+						<i class="fas fa-user-plus"></i>
+						Cadastrar Paciente
+					</button>
+				</div>
+			</form>
+		</div>
 	</div>
 }

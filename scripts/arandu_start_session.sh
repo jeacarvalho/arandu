@@ -27,7 +27,7 @@ Antes de qualquer implementação leia:
 2 docs/vision/
 3 docs/capabilities/
 4 docs/requirements/
-5 docs/learnings/
+ 5 docs/learnings/MASTER_LEARNINGS.md (sistema consolidado)
 
 # CONTEXTO CRÍTICO — ARANDU SOTA
 
