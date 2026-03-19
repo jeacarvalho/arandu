@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
@@ -174,6 +175,46 @@ func (r *ObservationRepository) GetTopTerms(limit int) ([]map[string]interface{}
 		})
 	}
 	return result, nil
+}
+
+// FindByPatientIDAndTimeframe busca observações de um paciente dentro de um período
+func (r *ObservationRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*observation.Observation, error) {
+	query := `
+		SELECT o.id, o.session_id, o.content, o.created_at, o.updated_at 
+		FROM observations o
+		JOIN sessions s ON o.session_id = s.id
+		WHERE s.patient_id = ?
+	`
+
+	var args []interface{}
+	args = append(args, patientID)
+
+	if !startTime.IsZero() {
+		query += " AND o.created_at >= ?"
+		args = append(args, startTime)
+	}
+
+	query += " ORDER BY o.created_at DESC"
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var observations []*observation.Observation
+	for rows.Next() {
+		var o observation.Observation
+		var updatedAt sql.NullTime
+		if err := rows.Scan(&o.ID, &o.SessionID, &o.Content, &o.CreatedAt, &updatedAt); err != nil {
+			return nil, err
+		}
+		if updatedAt.Valid {
+			o.UpdatedAt = updatedAt.Time
+		}
+		observations = append(observations, &o)
+	}
+	return observations, nil
 }
 
 // InitSchema is deprecated - use migrations instead

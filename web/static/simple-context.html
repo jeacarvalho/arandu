@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contexto Biológico Simples</title>
+    <link href="/static/css/style.css?v=20260319_grid" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>Demonstração: Contexto Biológico sem JavaScript</h1>
+        
+        <div class="demo-card">
+            <h2>Problema Atual</h2>
+            <p>Atualmente, o contexto biológico é carregado via JavaScript (fetch), o que causa:</p>
+            <ul>
+                <li>❌ Erros na console do navegador</li>
+                <li>❌ Atraso no carregamento (tempo de fetch + renderização)</li>
+                <li>❌ Dependência de JavaScript funcionando corretamente</li>
+                <li>❌ Conteúdo invisível para crawlers (SEO)</li>
+            </ul>
+        </div>
+        
+        <div class="demo-card">
+            <h2>Solução Proposta</h2>
+            <p>Carregar o contexto biológico <strong>diretamente no servidor</strong>, assim como os outros dados do paciente:</p>
+            
+            <div class="code-block">
+                // NO HANDLER DO PACIENTE (patient_handler.go)<br>
+                func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {<br>
+                &nbsp;&nbsp;// 1. Carregar dados básicos do paciente<br>
+                &nbsp;&nbsp;patient, err := h.patientService.GetPatientByID(r.Context(), id)<br>
+                &nbsp;&nbsp;<br>
+                &nbsp;&nbsp;// 2. Carregar temas recorrentes<br>
+                &nbsp;&nbsp;themes, err := h.patientService.GetThemeFrequency(r.Context(), id, 10)<br>
+                &nbsp;&nbsp;<br>
+                &nbsp;&nbsp;// 3. Carregar contexto biológico (AGORA NO SERVIDOR!)<br>
+                &nbsp;&nbsp;medications, _ := h.biopsychosocialService.GetMedications(id)<br>
+                &nbsp;&nbsp;latestVitals, _ := h.biopsychosocialService.GetLatestVitals(id)<br>
+                &nbsp;&nbsp;avgVitals, _ := h.biopsychosocialService.GetAverageVitals(id, 30)<br>
+                &nbsp;&nbsp;<br>
+                &nbsp;&nbsp;// 4. Renderizar TUDO de uma vez<br>
+                &nbsp;&nbsp;detail := patientComponents.PatientDetail(patientDetail, sessionItems, bioContext)<br>
+                }<br>
+            </div>
+            
+            <div class="code-block">
+                // NO TEMPLATE (detail.templ)<br>
+                templ PatientDetail(patient PatientDetailItem, sessions []SessionItem, bioContext *BiopsychosocialPanelViewModel) {<br>
+                &nbsp;&nbsp;&lt;div class="grid-2x2-card grid-card-1"&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;h2&gt;Contexto Biológico&lt;/h2&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;@BiopsychosocialPanel(*bioContext, true)<br>
+                &nbsp;&nbsp;&lt;/div&gt;<br>
+                }<br>
+            </div>
+        </div>
+        
+        <div class="demo-card">
+            <h2>Benefícios</h2>
+            <ul>
+                <li>✅ <strong>Sem JavaScript necessário</strong> para carregamento inicial</li>
+                <li>✅ <strong>Carregamento instantâneo</strong> (já vem no HTML)</li>
+                <li>✅ <strong>Sem erros na console</strong> (não há fetch falhando)</li>
+                <li>✅ <strong>Melhor SEO</strong> (conteúdo visível para crawlers)</li>
+                <li>✅ <strong>Experiência mais robusta</strong> (funciona mesmo com JS desabilitado)</li>
+                <li>✅ <strong>Código mais simples</strong> (menos complexidade no frontend)</li>
+            </ul>
+        </div>
+        
+        <div class="demo-card">
+            <h2>Próximos Passos</h2>
+            <ol>
+                <li>Corrigir erros de compilação do Go (problemas de importação)</li>
+                <li>Atualizar handler do paciente para carregar contexto biológico</li>
+                <li>Atualizar template para renderizar contexto diretamente</li>
+                <li>Manter funcionalidade de edição via modal (ainda com JavaScript)</li>
+                <li>Testar página do paciente sem erros na console</li>
+            </ol>
+            
+            <p style="margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px;">
+                <strong>Conclusão:</strong> A abordagem atual (carregar via JavaScript) é desnecessariamente complexa. 
+                Podemos simplificar drasticamente carregando tudo no servidor, como já fazemos com os outros dados do paciente.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

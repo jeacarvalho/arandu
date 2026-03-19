@@ -2,7 +2,7 @@ package patient
 
 import "time"
 
-templ VitalsWidget(data VitalsWidgetViewModel) {
+templ VitalsWidget(data VitalsWidgetViewModel, readOnly bool) {
 	if data.Error != "" {
 		<div class="bio-error">{ data.Error }</div>
 	}
@@ -94,63 +94,65 @@ templ VitalsWidget(data VitalsWidgetViewModel) {
 		}
 	</div>
 	
-	<form 
-		hx-post={ "/patients/" + data.PatientID + "/vitals" }
-		hx-target="#vitals-widget"
-		hx-swap="innerHTML"
-		class="bio-form"
-	>
-		<div class="bio-input-row">
-			<div class="bio-input-group">
-				<label class="bio-label">Sono (horas)</label>
-				<input 
-					type="number" 
-					name="sleep_hours" 
-					step="0.5" 
-					min="0" 
-					max="24"
-					placeholder="0-24"
-					class="bio-input"
-				/>
+	if !readOnly {
+		<form 
+			hx-post={ "/patients/" + data.PatientID + "/vitals" }
+			hx-target="#vitals-widget"
+			hx-swap="innerHTML"
+			class="bio-form"
+		>
+			<div class="bio-input-row">
+				<div class="bio-input-group">
+					<label class="bio-label">Sono (horas)</label>
+					<input 
+						type="number" 
+						name="sleep_hours" 
+						step="0.5" 
+						min="0" 
+						max="24"
+						placeholder="0-24"
+						class="bio-input"
+					/>
+				</div>
+				<div class="bio-input-group">
+					<label class="bio-label">Apetite (1-10)</label>
+					<input 
+						type="number" 
+						name="appetite_level" 
+						min="1" 
+						max="10"
+						placeholder="1-10"
+						class="bio-input"
+					/>
+				</div>
 			</div>
-			<div class="bio-input-group">
-				<label class="bio-label">Apetite (1-10)</label>
-				<input 
-					type="number" 
-					name="appetite_level" 
-					min="1" 
-					max="10"
-					placeholder="1-10"
-					class="bio-input"
-				/>
+			<div class="bio-input-row">
+				<div class="bio-input-group">
+					<label class="bio-label">Peso (kg)</label>
+					<input 
+						type="number" 
+						name="weight" 
+						step="0.1"
+						placeholder="kg"
+						class="bio-input"
+					/>
+				</div>
+				<div class="bio-input-group">
+					<label class="bio-label">Atividade/sem</label>
+					<input 
+						type="number" 
+						name="physical_activity" 
+						min="0"
+						max="7"
+						placeholder="0-7"
+						class="bio-input"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="bio-input-row">
-			<div class="bio-input-group">
-				<label class="bio-label">Peso (kg)</label>
-				<input 
-					type="number" 
-					name="weight" 
-					step="0.1"
-					placeholder="kg"
-					class="bio-input"
-				/>
-			</div>
-			<div class="bio-input-group">
-				<label class="bio-label">Atividade/sem</label>
-				<input 
-					type="number" 
-					name="physical_activity" 
-					min="0"
-					max="7"
-					placeholder="0-7"
-					class="bio-input"
-				/>
-			</div>
-		</div>
-		<input type="hidden" name="date" value={ time.Now().Format("2006-01-02") }/>
-		<button type="submit" class="bio-submit">
-			<i class="fas fa-save"></i> Registrar
-		</button>
-	</form>
+			<input type="hidden" name="date" value={ time.Now().Format("2006-01-02") }/>
+			<button type="submit" class="bio-submit">
+				<i class="fas fa-save"></i> Registrar
+			</button>
+		</form>
+	}
 }

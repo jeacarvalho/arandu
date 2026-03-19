@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
@@ -160,6 +161,42 @@ func (r *InterventionRepository) GetTopTerms(limit int) ([]map[string]interface{
 		})
 	}
 	return result, nil
+}
+
+// FindByPatientIDAndTimeframe busca intervenções de um paciente dentro de um período
+func (r *InterventionRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*intervention.Intervention, error) {
+	query := `
+		SELECT i.id, i.session_id, i.content, i.created_at, i.updated_at 
+		FROM interventions i
+		JOIN sessions s ON i.session_id = s.id
+		WHERE s.patient_id = ?
+	`
+
+	var args []interface{}
+	args = append(args, patientID)
+
+	if !startTime.IsZero() {
+		query += " AND i.created_at >= ?"
+		args = append(args, startTime)
+	}
+
+	query += " ORDER BY i.created_at DESC"
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var interventions []*intervention.Intervention
+	for rows.Next() {
+		var i intervention.Intervention
+		if err := rows.Scan(&i.ID, &i.SessionID, &i.Content, &i.CreatedAt, &i.UpdatedAt); err != nil {
+			return nil, err
+		}
+		interventions = append(interventions, &i)
+	}
+	return interventions, nil
 }
 
 // InitSchema is deprecated - use migrations instead

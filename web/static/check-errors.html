@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificar Erros</title>
+    <script>
+        // Capturar erros
+        window.onerror = function(msg, url, line, col, error) {
+            console.log('ERRO CAPTURADO:', msg, 'na linha', line);
+            document.getElementById('errors').innerHTML += 
+                `<div style="color: red; margin: 10px 0; padding: 10px; background: #fee;">
+                    <strong>Erro na linha ${line}:</strong> ${msg}
+                </div>`;
+            return false;
+        };
+        
+        // Capturar warnings
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            if (args[0] && args[0].includes && args[0].includes('Alpine')) {
+                document.getElementById('warnings').innerHTML += 
+                    `<div style="color: orange; margin: 10px 0; padding: 10px; background: #fff3cd;">
+                        <strong>Warning do Alpine.js:</strong> ${args[0]}
+                    </div>`;
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Verificador de Erros</h1>
+    
+    <div style="margin: 20px 0;">
+        <h2>Testar Página do Paciente:</h2>
+        <a href="/patient/p0141" target="_blank" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            Abrir /patient/p0141
+        </a>
+        <p>Abra o console do navegador (F12) para ver erros.</p>
+    </div>
+    
+    <div id="warnings" style="border: 2px solid orange; padding: 15px; margin: 20px 0;">
+        <h3 style="color: orange;">Warnings aparecerão aqui:</h3>
+        <p>Aguardando warnings...</p>
+    </div>
+    
+    <div id="errors" style="border: 2px solid red; padding: 15px; margin: 20px 0;">
+        <h3 style="color: red;">Erros aparecerão aqui:</h3>
+        <p>Aguardando erros...</p>
+    </div>
+    
+    <div style="margin: 20px 0;">
+        <h2>Testar Endpoints:</h2>
+        <button onclick="testEndpoint()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Testar /patients/p0141/context?readonly=true
+        </button>
+        <div id="endpoint-result" style="margin-top: 10px;"></div>
+    </div>
+    
+    <script>
+        function testEndpoint() {
+            const resultDiv = document.getElementById('endpoint-result');
+            resultDiv.innerHTML = '<p style="color: blue;">Testando endpoint...</p>';
+            
+            fetch('/patients/p0141/context?readonly=true')
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.text();
+                })
+                .then(html => {
+                    const hasAverages = html.includes('Média (30 dias)');
+                    const hasNoForms = !html.includes('bio-form');
+                    const hasDefer = html.includes('defer');
+                    
+                    resultDiv.innerHTML = `
+                        <div style="background: #d4edda; padding: 15px; border-radius: 5px;">
+                            <h4>✅ Endpoint funcionando!</h4>
+                            <p>Médias: ${hasAverages ? '✅' : '❌'}</p>
+                            <p>Sem formulários (read-only): ${hasNoForms ? '✅' : '❌'}</p>
+                            <p>Tem "defer": ${hasDefer ? '✅' : '❌'}</p>
+                            <p>Tamanho: ${html.length} caracteres</p>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<div style="background: #f8d7da; padding: 15px; border-radius: 5px; color: #721c24;">
+                        <h4>❌ Erro no endpoint</h4>
+                        <p>${error.message}</p>
+                    </div>`;
+                });
+        }
+        
+        // Testar automaticamente após carregar
+        setTimeout(testEndpoint, 1000);
+    </script>
+</body>
+</html>

@@ -17,9 +17,8 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css" rel="stylesheet">
+		<link href="/static/css/style.css?v=20260319_grid" rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
@@ -44,6 +43,30 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 					}
 				});
 			});
+			
+			// Carregar Alpine.js dinamicamente após DOM estar pronto
+			document.addEventListener('DOMContentLoaded', function() {
+				// Verificar se já foi carregado
+				if (typeof Alpine !== 'undefined') {
+					console.log('Alpine.js já carregado');
+					return;
+				}
+				
+				// Carregar Alpine.js
+				console.log('Carregando Alpine.js dinamicamente...');
+				const script = document.createElement('script');
+				script.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';
+				script.defer = true;
+				script.onload = function() {
+					console.log('Alpine.js carregado com sucesso');
+					// Alpine.js se auto-inicializa quando carregado
+					// Não é necessário chamar Alpine.initTree() explicitamente
+				};
+				script.onerror = function() {
+					console.error('Falha ao carregar Alpine.js');
+				};
+				document.head.appendChild(script);
+			});
 		</script>
 	</body>
 	</html>
@@ -61,14 +84,38 @@ templ Base(pageTitle string) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css" rel="stylesheet">
+		<link href="/static/css/style.css?v=20260319_grid" rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all-min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		@Layout()
+		<script>
+			// Carregar Alpine.js dinamicamente após DOM estar pronto
+			document.addEventListener('DOMContentLoaded', function() {
+				// Verificar se já foi carregado
+				if (typeof Alpine !== 'undefined') {
+					console.log('Alpine.js já carregado');
+					return;
+				}
+				
+				// Carregar Alpine.js
+				console.log('Carregando Alpine.js dinamicamente...');
+				const script = document.createElement('script');
+				script.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';
+				script.defer = true;
+				script.onload = function() {
+					console.log('Alpine.js carregado com sucesso');
+					// Alpine.js se auto-inicializa quando carregado
+					// Não é necessário chamar Alpine.initTree() explicitamente
+				};
+				script.onerror = function() {
+					console.error('Falha ao carregar Alpine.js');
+				};
+				document.head.appendChild(script);
+			});
+		</script>
 	</body>
 	</html>
 }

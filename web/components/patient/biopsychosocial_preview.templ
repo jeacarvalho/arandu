@@ -1,0 +1,138 @@
+package patient
+
+import "strconv"
+
+templ BiopsychosocialPreview(data BiopsychosocialPanelViewModel) {
+	<div class="bio-preview">
+		<!-- Seção de Medicação (sempre expandida na visualização) -->
+		<div class="bio-preview-section">
+			<div class="bio-preview-section-header">
+				<h4 class="bio-preview-section-title">Medicação</h4>
+				<span class="bio-preview-section-badge">{ strconv.Itoa(len(data.Medications)) }</span>
+			</div>
+			
+			<div class="bio-preview-section-content">
+				if len(data.Medications) > 0 {
+					<ul class="bio-preview-med-list">
+						for _, med := range data.Medications {
+							<li class="bio-preview-med-item">
+								<div class="bio-preview-med-content">
+									<div class="bio-preview-med-name">{ med.Name }</div>
+									<div class="bio-preview-med-details">
+										<span class="bio-preview-med-dosage">{ med.Dosage }</span>
+										if med.Frequency != "" {
+											<span class="bio-preview-med-frequency">• { med.Frequency }</span>
+										}
+									</div>
+									<div class="bio-preview-med-meta">
+										<span class={ "bio-preview-med-status", "status-" + med.StatusKey }>{ med.StatusLabel }</span>
+										if med.StartedAt != "" {
+											<span class="bio-preview-med-date">Desde { med.StartedAt }</span>
+										}
+									</div>
+								</div>
+							</li>
+						}
+					</ul>
+				} else {
+					<div class="bio-preview-empty">
+						<i class="fas fa-pills"></i>
+						<p>Nenhum medicamento registrado</p>
+					</div>
+				}
+			</div>
+		</div>
+		
+		<!-- Seção de Sinais Vitais (sempre expandida na visualização) -->
+		<div class="bio-preview-section">
+			<div class="bio-preview-section-header">
+				<h4 class="bio-preview-section-title">Sinais Vitais</h4>
+			</div>
+			
+			<div class="bio-preview-section-content">
+				@VitalsWidgetPreview(data)
+			</div>
+		</div>
+	</div>
+}
+
+templ VitalsWidgetPreview(data BiopsychosocialPanelViewModel) {
+	if data.LatestVitals != nil && data.LatestVitals.HasData {
+		<div class="bio-preview-vitals">
+			<!-- Último registro -->
+			<div class="bio-preview-vitals-card">
+				<div class="bio-preview-vitals-header">
+					<span class="bio-preview-vitals-label">Último registro</span>
+					<span class="bio-preview-vitals-date">{ data.LatestVitals.Date }</span>
+				</div>
+				<div class="bio-preview-vitals-grid">
+					if data.LatestVitals.SleepHours != "" {
+						<div class="bio-preview-vital-item">
+							<span class="bio-preview-vital-value">{ data.LatestVitals.SleepHours }</span>
+							<span class="bio-preview-vital-label">Sono</span>
+						</div>
+					}
+					if data.LatestVitals.AppetiteLevel != "" {
+						<div class="bio-preview-vital-item">
+							<span class="bio-preview-vital-value">{ data.LatestVitals.AppetiteLevel }</span>
+							<span class="bio-preview-vital-label">Apetite</span>
+						</div>
+					}
+					if data.LatestVitals.Weight != "" {
+						<div class="bio-preview-vital-item">
+							<span class="bio-preview-vital-value">{ data.LatestVitals.Weight }</span>
+							<span class="bio-preview-vital-label">Peso</span>
+						</div>
+					}
+					if data.LatestVitals.PhysicalActivity != "" {
+						<div class="bio-preview-vital-item">
+							<span class="bio-preview-vital-value">{ data.LatestVitals.PhysicalActivity }</span>
+							<span class="bio-preview-vital-label">Ativ./sem</span>
+						</div>
+					}
+				</div>
+			</div>
+			
+			<!-- Médias (se disponível) -->
+			if data.VitalsAverage != nil && data.VitalsAverage.HasData {
+				<div class="bio-preview-vitals-card">
+					<div class="bio-preview-vitals-header">
+						<span class="bio-preview-vitals-label">Média (30 dias)</span>
+						<span class="bio-preview-vitals-count">{ strconv.Itoa(data.VitalsAverage.RecordCount) } registros</span>
+					</div>
+					<div class="bio-preview-vitals-grid">
+						if data.VitalsAverage.AvgSleepHours != "" {
+							<div class="bio-preview-vital-item">
+								<span class="bio-preview-vital-value">{ data.VitalsAverage.AvgSleepHours }</span>
+								<span class="bio-preview-vital-label">Sono</span>
+							</div>
+						}
+						if data.VitalsAverage.AvgAppetiteLevel != "" {
+							<div class="bio-preview-vital-item">
+								<span class="bio-preview-vital-value">{ data.VitalsAverage.AvgAppetiteLevel }</span>
+								<span class="bio-preview-vital-label">Apetite</span>
+							</div>
+						}
+						if data.VitalsAverage.AvgWeight != "" {
+							<div class="bio-preview-vital-item">
+								<span class="bio-preview-vital-value">{ data.VitalsAverage.AvgWeight }</span>
+								<span class="bio-preview-vital-label">Peso</span>
+							</div>
+						}
+						if data.VitalsAverage.AvgPhysicalActivity != "" {
+							<div class="bio-preview-vital-item">
+								<span class="bio-preview-vital-value">{ data.VitalsAverage.AvgPhysicalActivity }</span>
+								<span class="bio-preview-vital-label">Ativ./sem</span>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	} else {
+		<div class="bio-preview-empty">
+			<i class="fas fa-heartbeat"></i>
+			<p>Nenhum registro de vitais</p>
+		</div>
+	}
+}

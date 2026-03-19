@@ -1,84 +1,80 @@
-/* Arandu Design System - Clinical Intelligence Platform */
+/* Arandu Design System - Identidade Botânica e Tecnologia Silenciosa */
 :root {
-    /* Arandu Brand Colors (from prompt) */
-    --arandu-primary: #1E3A5F;
-    --arandu-secondary: #3A7D6B;
-    --arandu-insight: #D4A84F;
-    --arandu-bg: #F7F8FA;
+    /* Nova Paleta Botânica (Identidade Botânica) */
+    --arandu-primary: #0F6E56;       /* Verde Base */
+    --arandu-active: #1D9E75;        /* Destaque/Interação */
+    --arandu-soft: #9FE1CB;          /* Acentos Suaves */
+    --arandu-bg: #E1F5EE;            /* Fundo Papel de Seda - Anti-fadiga */
+    --arandu-dark: #085041;          /* Texto Principal - Verde Floresta Escuro */
+    --arandu-paper: #FFFFFF;         /* Superfícies de Trabalho/Cards */
     
-    /* Primary Colors - Deep Clinical Blue */
-    --primary-50: #f0f7ff;
-    --primary-100: #e0effe;
-    --primary-200: #b9d6f8;
-    --primary-300: #8abcf2;
-    --primary-400: #5a9feb;
-    --primary-500: #2d7de5;
-    --primary-600: #1a5dc0;
-    --primary-700: #0f4099;
-    --primary-800: #092a73;
-    --primary-900: #04194d;
+    /* Cores derivadas da paleta botânica */
+    --primary-50: #E1F5EE;
+    --primary-100: #C8EADE;
+    --primary-200: #9FE1CB;
+    --primary-300: #76D8B8;
+    --primary-400: #4DCFA5;
+    --primary-500: #1D9E75;
+    --primary-600: #0F6E56;
+    --primary-700: #085041;
+    --primary-800: #043228;
+    --primary-900: #021C15;
     
-    /* Secondary Colors - Healing Green */
-    --secondary-50: #f0f9f3;
-    --secondary-100: #dcf0e1;
-    --secondary-200: #b8e0c3;
-    --secondary-300: #8fd0a3;
-    --secondary-400: #65c083;
-    --secondary-500: #3db063;
-    --secondary-600: #2a8c4a;
-    --secondary-700: #1c6834;
-    --secondary-800: #114521;
-    --secondary-900: #092a14;
+    /* Cores secundárias (tons de verde) */
+    --secondary-50: #F0F9F5;
+    --secondary-100: #DCF0E8;
+    --secondary-200: #B8E0D1;
+    --secondary-300: #8FD0B9;
+    --secondary-400: #65C0A2;
+    --secondary-500: #3DB08B;
+    --secondary-600: #2A8C6D;
+    --secondary-700: #1C684F;
+    --secondary-800: #114536;
+    --secondary-900: #092A20;
     
-    /* Accent Colors - Insight Amber */
-    --accent-50: #fff9f0;
-    --accent-100: #ffefd6;
-    --accent-200: #ffd9a8;
-    --accent-300: #ffc279;
-    --accent-400: #ffab4b;
-    --accent-500: #ff951d;
-    --accent-600: #d97706;
-    --accent-700: #b35900;
-    --accent-800: #8c3d00;
-    --accent-900: #662900;
+    /* Cores de destaque (âmbar para IA) */
+    --accent-50: #FFFBEB;
+    --accent-100: #FEF3C7;
+    --accent-200: #FDE68A;
+    --accent-300: #FCD34D;
+    --accent-400: #FBBF24;
+    --accent-500: #F59E0B;
+    --accent-600: #D97706;
+    --accent-700: #B45309;
+    --accent-800: #92400E;
+    --accent-900: #78350F;
     
-    /* Neutral Colors - Professional Grays */
-    --neutral-50: #fafbfc;
-    --neutral-100: #f2f4f7;
-    --neutral-200: #e4e7ec;
-    --neutral-300: #d0d5dd;
-    --neutral-400: #98a2b3;
+    /* Cores neutras (tons de cinza suaves) */
+    --neutral-50: #FAFBFC;
+    --neutral-100: #F2F4F7;
+    --neutral-200: #E4E7EC;
+    --neutral-300: #D0D5DD;
+    --neutral-400: #98A2B3;
     --neutral-500: #667085;
     --neutral-600: #475467;
     --neutral-700: #344054;
-    --neutral-800: #1d2939;
+    --neutral-800: #1D2939;
     --neutral-900: #101828;
     
-    /* Clinical Colors */
-    --clinical-blue: #2d7de5;
-    --clinical-green: #3db063;
-    --clinical-amber: #ff951d;
-    --clinical-red: #f04438;
-    --clinical-purple: #9e77ed;
-    --clinical-teal: #12b981;
+    /* Cores semânticas */
+    --success: #0F6E56;
+    --warning: #F59E0B;
+    --error: #DC2626;
+    --info: #1D9E75;
     
-    /* Semantic Colors */
-    --success: var(--clinical-green);
-    --warning: var(--clinical-amber);
-    --error: var(--clinical-red);
-    --info: var(--clinical-blue);
-    
-    /* Background & Text - Clinical Notebook Style */
-    --bg-primary: #FDFDF6;           /* Soft paper white - reduces snow blindness */
-    --bg-secondary: var(--arandu-bg); /* Paper Gray #F7F8FA */
-    --bg-sidebar: linear-gradient(180deg, var(--arandu-primary) 0%, #152642 100%);
-    --bg-card: #FFFFFF;              /* Pure white only for cards/surfaces */
-    --bg-hover: var(--neutral-50);
-    --text-primary: var(--neutral-900); /* Restore original for better contrast on soft background */
-    --text-secondary: var(--neutral-700);
-    --text-tertiary: var(--neutral-500);
-    --text-inverse: #ffffff;
-    --text-clinical: var(--arandu-primary);
+    /* Cores de fundo e texto */
+    --bg-primary: var(--arandu-bg);      /* Papel de Seda (#E1F5EE) */
+    --bg-secondary: #D4EDE4;
+    --bg-sidebar: linear-gradient(180deg, var(--arandu-primary) 0%, #085041 100%);
+    --bg-card: var(--arandu-paper);      /* Branco puro para cards */
+    --bg-hover: rgba(15, 110, 86, 0.05);
+    --text-primary: var(--arandu-dark);  /* Verde Floresta Escuro (#085041) */
+    --text-secondary: #2A8C6D;
+    --text-tertiary: #667085;
+    --text-quaternary: #475467; /* Texto mais escuro para melhor contraste */
+    --text-inverse: #FFFFFF;
+    --text-clinical: var(--arandu-dark);
+    --clinical-teal: #0d9488; /* Cor teal para elementos clínicos */
     
     /* Shadows */
     --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
@@ -132,7 +128,7 @@
 
 body {
     font-family: var(--font-sans);
-    background: var(--arandu-bg);
+    background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
@@ -156,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+    background: linear-gradient(135deg, var(--arandu-primary) 0%, var(--arandu-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -166,7 +162,7 @@ h1 {
 h2 {
     font-size: 2rem;
     margin-bottom: var(--space-md);
-    color: var(--text-clinical);
+    color: var(--arandu-dark); /* Verde Floresta Escuro */
 }
 
 h3 {
@@ -195,7 +191,7 @@ p {
 
 .small {
     font-size: 0.875rem;
-    color: var(--text-tertiary);
+    color: var(--text-quaternary);
 }
 
 .label {
@@ -203,14 +199,14 @@ p {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-tertiary);
+    color: var(--text-quaternary);
 }
 
 /* Layout Components */
 .app-container {
     display: flex;
     min-height: 100vh;
-    background: var(--bg-primary);
+    background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */
 }
 
 /* Sidebar - Retractable */
@@ -394,7 +390,7 @@ p {
     flex: 1;
     padding: var(--space-2xl);
     overflow-y: auto;
-    background: var(--bg-primary);
+    background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */
     transition: margin-left var(--sidebar-transition);
     margin-left: 0;
 }
@@ -407,7 +403,7 @@ p {
     margin-bottom: var(--space-2xl);
     padding-bottom: var(--space-lg);
     border-bottom: 1px solid var(--neutral-200);
-    background: var(--bg-primary);
+    background: var(--arandu-paper); /* Branco para cards */
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
     box-shadow: var(--shadow-sm);
@@ -439,32 +435,53 @@ p {
     max-width: 800px;
 }
 
-/* Cards - Enhanced with card-hover pattern */
+/* Cards - Design "Tecnologia Silenciosa" */
 .card {
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
+    background: var(--arandu-paper);
+    border-radius: var(--radius-xl); /* 24px */
     padding: var(--space-xl);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
     border: 1px solid var(--neutral-200);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
 }
 
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--arandu-primary), transparent);
+/* Clinical Card - Para conteúdo clínico */
+.clinical-card {
+    background: var(--arandu-paper);
+    border-radius: var(--radius-xl); /* 24px */
+    padding: var(--space-xl);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    border: 1px solid var(--neutral-200);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-clinical);
+    color: var(--arandu-dark);
+}
+
+/* Stat Card - Para estatísticas e métricas */
+.stat-card {
+    background: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid var(--neutral-200);
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: var(--arandu-soft);
 }
 
 .card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-4px);
-    border-color: var(--arandu-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    border-color: var(--arandu-soft);
 }
 
 .card-header {
@@ -537,8 +554,8 @@ p {
 
 /* Clinical Content Typography */
 .clinical-content {
-    font-family: var(--font-serif);
-    color: var(--text-clinical);
+    font-family: var(--font-clinical);
+    color: var(--arandu-dark); /* Verde Floresta Escuro */
     line-height: 1.8;
 }
 
@@ -547,7 +564,7 @@ p {
 .clinical-content h3,
 .clinical-content h4 {
     font-family: var(--font-sans);
-    color: var(--arandu-primary);
+    color: var(--arandu-dark); /* Verde Floresta Escuro */
 }
 
 .clinical-content p {
@@ -620,9 +637,9 @@ p {
     padding: var(--space-md) var(--space-lg);
     font-size: 1rem;
     line-height: 1.5;
-    color: var(--neutral-900);
-    background-color: var(--bg-primary);
-    border: 2px solid var(--neutral-300);
+    color: var(--arandu-dark);
+    background-color: var(--arandu-paper);
+    border: 1px solid var(--neutral-300);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
     font-family: var(--font-sans);
@@ -630,9 +647,9 @@ p {
 
 .form-control:focus {
     outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 4px rgba(45, 125, 229, 0.1);
-    background-color: var(--bg-card);
+    border-color: var(--arandu-active);
+    box-shadow: 0 0 0 2px rgba(29, 158, 117, 0.1);
+    background-color: var(--arandu-paper);
 }
 
 .form-control:hover:not(:focus) {
@@ -768,21 +785,22 @@ p {
     width: 100%;
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--neutral-200);
+    border-bottom: 1px solid var(--neutral-300);
     padding: var(--space-md) 0;
     font-family: var(--font-sans);
     font-size: 1.125rem;
-    color: var(--neutral-900);
+    color: var(--arandu-dark);
     transition: border-color var(--transition-fast);
 }
 
 .silent-input:focus {
     outline: none;
-    border-color: var(--primary-500);
+    border-color: var(--arandu-active);
+    border-bottom-width: 2px;
 }
 
 .silent-input:hover:not(:focus) {
-    border-color: var(--neutral-300);
+    border-color: var(--arandu-soft);
 }
 
 .silent-input::placeholder {
@@ -895,15 +913,15 @@ p {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--arandu-primary) 0%, #152642 100%);
+    background: linear-gradient(135deg, var(--arandu-primary) 0%, var(--arandu-dark) 100%);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 2px 4px rgba(15, 110, 86, 0.2);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #152642 0%, #0d1a2f 100%);
+    background: linear-gradient(135deg, var(--arandu-active) 0%, var(--arandu-primary) 100%);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 8px rgba(15, 110, 86, 0.3);
 }
 
 .btn-primary:active {
@@ -912,18 +930,18 @@ p {
 }
 
 .btn-secondary {
-    background: var(--bg-card);
-    color: var(--arandu-secondary);
-    border: 2px solid var(--arandu-secondary);
-    box-shadow: var(--shadow-sm);
+    background: var(--arandu-paper);
+    color: var(--arandu-primary);
+    border: 2px solid var(--arandu-soft);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .btn-secondary:hover {
-    background: var(--arandu-secondary);
-    color: white;
-    border-color: var(--arandu-secondary);
+    background: var(--arandu-soft);
+    color: var(--arandu-dark);
+    border-color: var(--arandu-active);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .btn-secondary:active {
@@ -932,15 +950,15 @@ p {
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--arandu-secondary) 0%, #2d6b5a 100%);
+    background: linear-gradient(135deg, var(--arandu-active) 0%, #1A8C6A 100%);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 2px 4px rgba(29, 158, 117, 0.2);
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #2d6b5a 0%, #1f4a3e 100%);
+    background: linear-gradient(135deg, #1A8C6A 0%, var(--arandu-primary) 100%);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 8px rgba(29, 158, 117, 0.3);
 }
 
 .btn-success:active {
@@ -1666,86 +1684,106 @@ header {
     }
 }
 
-/* Arandu color utility classes */
+/* Arandu color utility classes - Identidade Botânica */
 .bg-arandu-primary {
-    background-color: #1E3A5F;
+    background-color: #0F6E56;
 }
 
 .text-arandu-primary {
-    color: #1E3A5F;
+    color: #0F6E56;
 }
 
-.bg-arandu-secondary {
-    background-color: #3A7D6B;
+.bg-arandu-active {
+    background-color: #1D9E75;
 }
 
-.text-arandu-secondary {
-    color: #3A7D6B;
+.text-arandu-active {
+    color: #1D9E75;
 }
 
-.bg-arandu-insight {
-    background-color: #D4A84F;
+.bg-arandu-soft {
+    background-color: #9FE1CB;
 }
 
-.text-arandu-insight {
-    color: #D4A84F;
+.text-arandu-soft {
+    color: #9FE1CB;
 }
 
-.bg-arandu-background {
-    background-color: #F7F8FA;
+.bg-arandu-bg {
+    background-color: #E1F5EE;
+}
+
+.text-arandu-bg {
+    color: #E1F5EE;
+}
+
+.bg-arandu-dark {
+    background-color: #085041;
+}
+
+.text-arandu-dark {
+    color: #085041;
+}
+
+.bg-arandu-paper {
+    background-color: #FFFFFF;
+}
+
+.text-arandu-paper {
+    color: #FFFFFF;
 }
 
 /* Hover states with opacity */
 .hover-bg-arandu-primary-10:hover {
-    background-color: rgba(30, 58, 95, 0.1);
+    background-color: rgba(15, 110, 86, 0.1);
 }
 
 .hover-text-arandu-primary:hover {
-    color: #1E3A5F;
+    color: #0F6E56;
 }
 
-.hover-bg-arandu-secondary-10:hover {
-    background-color: rgba(58, 125, 107, 0.1);
+.hover-bg-arandu-active-10:hover {
+    background-color: rgba(29, 158, 117, 0.1);
 }
 
-.hover-text-arandu-secondary:hover {
-    color: #3A7D6B;
+.hover-text-arandu-active:hover {
+    color: #1D9E75;
 }
 
-.hover-bg-arandu-insight-10:hover {
-    background-color: rgba(212, 168, 79, 0.1);
+.hover-bg-arandu-soft-10:hover {
+    background-color: rgba(159, 225, 203, 0.1);
 }
 
-.hover-text-arandu-insight:hover {
-    color: #D4A84F;
+.hover-text-arandu-soft:hover {
+    color: #9FE1CB;
 }
 
 /* Background with opacity */
 .bg-arandu-primary-10 {
-    background-color: rgba(30, 58, 95, 0.1);
+    background-color: rgba(15, 110, 86, 0.1);
 }
 
-.bg-arandu-secondary-10 {
-    background-color: rgba(58, 125, 107, 0.1);
+.bg-arandu-active-10 {
+    background-color: rgba(29, 158, 117, 0.1);
 }
 
-.bg-arandu-insight-10 {
-    background-color: rgba(212, 168, 79, 0.1);
+.bg-arandu-soft-10 {
+    background-color: rgba(159, 225, 203, 0.1);
 }
 
 /* Border colors */
 .border-arandu-primary {
-    border-color: #1E3A5F;
+    border-color: #0F6E56;
 }
 
 .focus-border-arandu-primary:focus {
-    border-color: #1E3A5F;
+    border-color: #0F6E56;
     outline: none;
 }
 
 /* Darker hover for buttons */
 .hover-bg-arandu-primary-90:hover {
-    background-color: #1a3254;
+    background-color: #085041;
 }
 
 /* ===== MOBILE-FIRST LAYOUT STYLES ===== */
@@ -1757,7 +1795,7 @@ header {
     left: 0;
     right: 0;
     height: 64px;
-    background: var(--bg-card);
+    background: var(--arandu-paper);
     border-bottom: 1px solid var(--neutral-200);
     z-index: 100;
     display: flex;
@@ -1804,7 +1842,7 @@ header {
 .top-bar-logo-icon {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+    background: linear-gradient(135deg, var(--arandu-primary) 0%, var(--arandu-dark) 100%);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
@@ -1817,10 +1855,11 @@ header {
 }
 
 .top-bar-logo-text {
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
+    font-family: var(--font-clinical);
+    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--neutral-800);
+    font-style: italic;
+    color: var(--arandu-dark);
 }
 
 /* Sidebar Overlay */
@@ -1840,7 +1879,7 @@ header {
     top: 64px;
     height: calc(100vh - 64px);
     width: 280px;
-    background: linear-gradient(180deg, var(--arandu-primary) 0%, #152642 100%);
+    background: linear-gradient(180deg, var(--arandu-primary) 0%, var(--arandu-dark) 100%);
     z-index: 95;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
@@ -2458,7 +2497,7 @@ header {
 }
 
 .theme-total {
-    font-family: var(--font-sans);
+    font-family: var(--font-clinical); /* Soberania Serif */
     font-size: 0.75rem;
     color: var(--neutral-500);
 }
@@ -3030,3 +3069,1149 @@ header {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ============================================================================
+   LAYOUT REFATORADO - TopBar Fixa e Sidebar como Drawer
+   ============================================================================ */
+
+/* Container principal */
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--arandu-bg);
+}
+
+/* TopBar fixa */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background-color: var(--arandu-paper);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-lg);
+    z-index: 1000;
+    box-shadow: var(--shadow-sm);
+}
+
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.hamburger-menu {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--neutral-200);
+    background-color: transparent;
+    color: var(--arandu-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.hamburger-menu:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--arandu-soft);
+}
+
+.top-bar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--arandu-dark);
+}
+
+.top-bar-logo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--arandu-primary), var(--arandu-dark));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.top-bar-logo-text {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--arandu-dark);
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+/* Sidebar Drawer */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    display: none;
+}
+
+.sidebar-drawer {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100vh;
+    background: var(--bg-sidebar);
+    z-index: 1200;
+    transition: left var(--transition-normal);
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+}
+
+.sidebar-drawer.sidebar-open {
+    left: 0;
+}
+
+.sidebar-header {
+    padding: var(--space-xl) var(--space-lg) var(--space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.sidebar-logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.sidebar-logo-text {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.sidebar-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.sidebar-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: var(--space-xs);
+}
+
+.sidebar-nav {
+    padding: var(--space-lg);
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-xs);
+    transition: all var(--transition-fast);
+}
+
+.sidebar-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.sidebar-nav-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Conteúdo principal */
+.main-content {
+    margin-top: 64px;
+    padding: var(--space-xl);
+    flex: 1;
+    background-color: var(--arandu-bg); /* Fundo Papel de Seda unificado */
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    margin-bottom: var(--space-xl);
+}
+
+.dashboard-title {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--arandu-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.dashboard-subtitle {
+    font-family: var(--font-clinical); /* Soberania Serif */
+    font-size: 1rem;
+    color: var(--text-tertiary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+    border: 1px solid var(--neutral-100);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-family: 'Source Serif 4', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+.text-arandu-primary {
+    color: var(--arandu-primary);
+}
+
+.text-arandu-secondary {
+    color: var(--arandu-secondary);
+}
+
+.text-arandu-insight {
+    color: var(--accent-500);
+}
+
+.stat-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.stat-icon {
+    color: var(--text-quaternary);
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-xl);
+}
+
+.patients-card {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-100);
+}
+
+.patients-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.patients-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.patients-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background-color: var(--primary-50);
+    color: var(--arandu-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.patients-card-heading {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--arandu-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.patients-card-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.patients-card-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--arandu-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.patients-card-link:hover {
+    color: var(--arandu-dark);
+}
+
+.patients-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.patient-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.patient-item:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--neutral-200);
+}
+
+.patient-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary-100);
+    color: var(--arandu-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.patient-info {
+    flex: 1;
+}
+
+.patient-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.patient-since {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.patients-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.patients-empty i {
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+    color: var(--neutral-300);
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.insights-card, .quick-actions-card {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-100);
+}
+
+.insights-header, .quick-actions-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.insights-icon, .quick-actions-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.insights-icon {
+    background-color: var(--accent-50);
+    color: var(--accent-500);
+}
+
+.quick-actions-icon {
+    background-color: var(--primary-50);
+    color: var(--arandu-primary);
+}
+
+.insights-title, .quick-actions-title {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--arandu-dark);
+}
+
+.insights-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.insights-content i {
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+    color: var(--neutral-300);
+}
+
+.quick-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.quick-action:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--neutral-200);
+}
+
+.quick-action i {
+    width: 20px;
+    text-align: center;
+    color: var(--arandu-primary);
+}
+
+/* Responsividade Mobile-First */
+@media (max-width: 768px) {
+    .top-bar {
+        height: 56px;
+        padding: 0 var(--space-md);
+    }
+    
+    .main-content {
+        margin-top: 56px;
+        padding: var(--space-md);
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: var(--space-md);
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .patients-card, .insights-card, .quick-actions-card {
+        padding: var(--space-lg);
+    }
+    
+    .sidebar-drawer {
+        width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-bar-logo-text {
+        display: none;
+    }
+    
+    .hamburger-menu {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* ============================================================================
+   ESTRUTURA SOTA - Layout de Duas Colunas e Componentes de Informação
+   ============================================================================ */
+
+/* Container principal SOTA */
+.sota-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+}
+
+/* Sistema de Grid Unificado - Baseado no grid 2x2 inicial */
+.sota-grid-system {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+/* Cards no grid - ocupam 1 ou 2 colunas */
+.grid-card-1 {
+    grid-column: span 1;
+}
+
+.grid-card-2 {
+    grid-column: span 2;
+}
+
+/* Estrutura de duas colunas (mantida para compatibilidade) */
+.sota-two-columns {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+}
+
+/* Coluna esquerda - Fluxo narrativo */
+.sota-narrative-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md); /* Padronizado com grid inicial */
+}
+
+/* Coluna direita - Métricas e cronologia */
+.sota-metrics-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md); /* Padronizado com grid inicial */
+}
+
+/* Grid de evolução (4 indicadores) */
+.evolution-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+}
+
+/* Card de estatística SOTA - Padrão unificado */
+.stat-card-sota {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    border: 1px solid var(--arandu-soft);
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+    width: 100%; /* Garante que ocupa largura disponível */
+    box-sizing: border-box; /* Inclui padding na largura total */
+}
+
+.stat-card-sota:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+/* Card no grid 2x2 - Largura padrão baseada no grid inicial */
+.grid-2x2-card {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    border: 1px solid var(--arandu-soft);
+    box-shadow: var(--shadow-xs);
+    transition: all var(--transition-fast);
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 0; /* Permite que cards se ajustem ao grid */
+}
+
+.grid-2x2-card:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.stat-value-sota {
+    font-family: var(--font-sans);
+    font-size: 2.25rem; /* text-4xl equivalente */
+    font-weight: 600;
+    color: var(--arandu-primary);
+    margin-bottom: var(--space-xs);
+    line-height: 1;
+}
+
+.stat-label-sota {
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: var(--text-quaternary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Linha do tempo vertical */
+.timeline-container {
+    position: relative;
+    padding-left: var(--space-xl);
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--arandu-soft);
+}
+
+.timeline-event {
+    position: relative;
+    margin-bottom: var(--space-xl);
+    padding-left: var(--space-lg);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background-color: var(--arandu-active);
+    border: 2px solid var(--arandu-paper);
+}
+
+.timeline-event-content {
+    font-family: var(--font-sans); /* Dados Administrativos */
+    color: var(--arandu-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.timeline-event-date {
+    font-family: var(--font-sans); /* Dados Administrativos */
+    font-size: 0.75rem;
+    color: var(--text-quaternary);
+}
+
+/* Card de sessão no estilo "Caderno" */
+.session-notebook-card {
+    background-color: var(--arandu-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    border-left: 4px solid var(--arandu-active);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.session-badge {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    background-color: var(--arandu-bg);
+    color: var(--arandu-active);
+    font-family: var(--font-sans); /* Dados Administrativos */
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
+}
+
+.session-clinical-report {
+    font-family: var(--font-clinical);
+    font-style: italic;
+    font-size: 1.25rem; /* text-xl equivalente */
+    line-height: 1.75;
+    color: var(--arandu-dark);
+    margin-bottom: var(--space-md);
+}
+
+.session-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.session-tag {
+    padding: var(--space-xs) var(--space-sm);
+    background-color: var(--arandu-bg);
+    color: var(--arandu-primary);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.session-tag:hover {
+    background-color: var(--arandu-soft);
+}
+
+/* Botão de contexto biológico */
+.bio-btn-trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: var(--arandu-bg);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.bio-btn-trigger:hover {
+    background: var(--arandu-soft);
+    color: var(--arandu-primary);
+}
+
+.bio-btn-trigger i {
+    width: 20px;
+    color: var(--arandu-primary);
+}
+
+/* Painel de insights (IA) */
+.insights-panel {
+    background-color: var(--arandu-bg);
+    border-top: 1px solid var(--arandu-soft);
+    padding: var(--space-lg);
+    margin-top: var(--space-xl);
+}
+
+.insights-content-sota {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-family: var(--font-clinical);
+    font-style: italic;
+    color: var(--arandu-dark);
+    opacity: 0.7;
+}
+
+.insights-icon-sota {
+    color: var(--accent-500);
+    font-size: 1.25rem;
+}
+
+/* Responsividade SOTA - Sistema Unificado */
+@media (max-width: 1024px) {
+    .sota-two-columns {
+        grid-template-columns: 1fr;
+        gap: var(--space-md); /* Padronizado com grid inicial */
+    }
+    
+    .sota-grid-system {
+        grid-template-columns: repeat(2, 1fr); /* Mantém 2x2 */
+        gap: var(--space-md);
+    }
+    
+    .evolution-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .sota-grid-system {
+        grid-template-columns: repeat(2, 1fr); /* Mantém 2x2 mesmo no mobile */
+        gap: var(--space-md);
+    }
+    
+    .evolution-grid {
+        grid-template-columns: repeat(2, 1fr); /* Mantém 2x2 mesmo no mobile */
+    }
+    
+    .sota-container {
+        padding: var(--space-lg);
+    }
+    
+    .session-notebook-card {
+        padding: var(--space-lg);
+    }
+    
+    .stat-value-sota {
+        font-size: 2rem;
+    }
+    
+    /* Cards ocupam largura total em mobile muito pequeno */
+    .grid-card-2 {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .sota-grid-system {
+        grid-template-columns: 1fr; /* 1 coluna em mobile muito pequeno */
+        gap: var(--space-md);
+    }
+    
+    .evolution-grid {
+        grid-template-columns: repeat(2, 1fr); /* Mas mantém 2x2 para estatísticas */
+    }
+    
+    .grid-card-1,
+    .grid-card-2 {
+        grid-column: span 1; /* Todos os cards ocupam 1 coluna */
+    }
+    
+    .sota-container {
+        padding: var(--space-md);
+    }
+    
+    .session-clinical-report {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sota-container {
+        padding: var(--space-md);
+    }
+    
+    .session-clinical-report {
+        font-size: 1rem;
+    }
+}
+
+/* ===== BIOPSICOSSOCIAL PREVIEW (Visualização Simplificada) ===== */
+.bio-preview {
+    font-family: var(--font-sans);
+}
+
+.bio-preview-section {
+    margin-bottom: var(--space-lg);
+}
+
+.bio-preview-section:last-child {
+    margin-bottom: 0;
+}
+
+.bio-preview-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.bio-preview-section-title {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--arandu-dark);
+    margin: 0;
+}
+
+.bio-preview-section-badge {
+    background: var(--clinical-teal);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.bio-preview-section-content {
+    padding: var(--space-xs) 0;
+}
+
+/* Lista de medicamentos preview */
+.bio-preview-med-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bio-preview-med-item {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--neutral-50);
+}
+
+.bio-preview-med-item:last-child {
+    border-bottom: none;
+}
+
+.bio-preview-med-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bio-preview-med-name {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--arandu-dark);
+}
+
+.bio-preview-med-details {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.bio-preview-med-dosage {
+    font-weight: 500;
+}
+
+.bio-preview-med-frequency {
+    opacity: 0.7;
+}
+
+.bio-preview-med-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+}
+
+.bio-preview-med-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.bio-preview-med-status.status-active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.bio-preview-med-status.status-suspended {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.bio-preview-med-status.status-finished {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+}
+
+.bio-preview-med-date {
+    color: var(--text-tertiary);
+}
+
+/* Sinais vitais preview */
+.bio-preview-vitals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.bio-preview-vitals-card {
+    background: var(--neutral-50);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.bio-preview-vitals-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+}
+
+.bio-preview-vitals-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.bio-preview-vitals-date,
+.bio-preview-vitals-count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.bio-preview-vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+}
+
+.bio-preview-vital-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-sm);
+    background: white;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--neutral-100);
+}
+
+.bio-preview-vital-value {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--arandu-dark);
+    margin-bottom: 2px;
+}
+
+.bio-preview-vital-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Estados vazios */
+.bio-preview-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl) var(--space-lg);
+    color: var(--text-quaternary);
+    text-align: center;
+}
+
+.bio-preview-empty i {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+    opacity: 0.5;
+}
+
+.bio-preview-empty p {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .bio-preview-vitals-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .bio-preview-vitals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .bio-preview-med-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+

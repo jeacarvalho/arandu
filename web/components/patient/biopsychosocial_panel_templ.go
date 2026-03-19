@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "strconv"
 import "time"
 
-func BiopsychosocialPanel(data BiopsychosocialPanelViewModel) templ.Component {
+func BiopsychosocialPanel(data BiopsychosocialPanelViewModel, readOnly bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -32,20 +32,30 @@ func BiopsychosocialPanel(data BiopsychosocialPanelViewModel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bio-panel\" id=\"biopsychosocial-panel\" x-data=\"{ medOpen: true, vitalsOpen: true }\"><div class=\"bio-panel-header\"><h3 class=\"bio-panel-title\">Contexto Biológico</h3><button type=\"button\" class=\"bio-panel-close\" @click=\"$dispatch('bio-panel-closed'); document.getElementById('biopsychosocial-panel-container').innerHTML = ''\" title=\"Fechar\"><i class=\"fas fa-times\"></i></button></div><div class=\"bio-panel-content\"><div class=\"bio-section\"><button type=\"button\" class=\"bio-section-header bio-section-toggle\" @click=\"medOpen = !medOpen\"><div class=\"bio-section-header-left\"><h4 class=\"bio-section-title\">Medicação</h4><span class=\"bio-section-badge\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bio-panel\" id=\"biopsychosocial-panel\" x-data=\"{ medOpen: true, vitalsOpen: true }\"><div class=\"bio-panel-header\"><h3 class=\"bio-panel-title\">Contexto Biológico</h3>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !readOnly {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button type=\"button\" class=\"bio-panel-close\" @click=\"$dispatch('bio-panel-closed'); document.getElementById('biopsychosocial-panel-container').innerHTML = ''\" title=\"Fechar\"><i class=\"fas fa-times\"></i></button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"bio-panel-content\"><div class=\"bio-section\"><button type=\"button\" class=\"bio-section-header bio-section-toggle\" @click=\"medOpen = !medOpen\"><div class=\"bio-section-header-left\"><h4 class=\"bio-section-title\">Medicação</h4><span class=\"bio-section-badge\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(data.Medications)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 29, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 31, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span></div><i class=\"fas fa-chevron-down bio-section-chevron\" :class=\"{ 'rotated': !medOpen }\"></i></button><div class=\"bio-section-content\" :class=\"{ 'collapsed': !medOpen }\"><div id=\"medication-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></div><i class=\"fas fa-chevron-down bio-section-chevron\" :class=\"{ 'rotated': !medOpen }\"></i></button><div class=\"bio-section-content\" :class=\"{ 'collapsed': !medOpen }\"><div id=\"medication-list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -56,33 +66,43 @@ func BiopsychosocialPanel(data BiopsychosocialPanelViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><form hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/medications")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 43, Col: 62}
+		if !readOnly {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form hx-post=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/medications")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 46, Col: 63}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\" class=\"bio-form\"><div class=\"bio-input-row\"><input type=\"text\" name=\"name\" placeholder=\"Nome do medicamento\" class=\"bio-input\" required> <input type=\"text\" name=\"dosage\" placeholder=\"Dosagem\" class=\"bio-input bio-input-sm\"></div><div class=\"bio-input-row\"><input type=\"text\" name=\"frequency\" placeholder=\"Frequência\" class=\"bio-input\"> <input type=\"text\" name=\"prescriber\" placeholder=\"Prescritor\" class=\"bio-input bio-input-sm\"></div><div class=\"bio-input-row single\"><input type=\"date\" name=\"started_at\" class=\"bio-input\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 85, Col: 48}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></div><button type=\"submit\" class=\"bio-submit\"><i class=\"fas fa-plus\"></i> Adicionar</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\" class=\"bio-form\"><div class=\"bio-input-row\"><input type=\"text\" name=\"name\" placeholder=\"Nome do medicamento\" class=\"bio-input\" required> <input type=\"text\" name=\"dosage\" placeholder=\"Dosagem\" class=\"bio-input bio-input-sm\"></div><div class=\"bio-input-row\"><input type=\"text\" name=\"frequency\" placeholder=\"Frequência\" class=\"bio-input\"> <input type=\"text\" name=\"prescriber\" placeholder=\"Prescritor\" class=\"bio-input bio-input-sm\"></div><div class=\"bio-input-row single\"><input type=\"date\" name=\"started_at\" class=\"bio-input\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/biopsychosocial_panel.templ`, Line: 82, Col: 47}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></div><button type=\"submit\" class=\"bio-submit\"><i class=\"fas fa-plus\"></i> Adicionar</button></form></div></div><div class=\"bio-section\"><button type=\"button\" class=\"bio-section-header bio-section-toggle\" @click=\"vitalsOpen = !vitalsOpen\"><div class=\"bio-section-header-left\"><h4 class=\"bio-section-title\">Sinais Vitais</h4></div><i class=\"fas fa-chevron-down bio-section-chevron\" :class=\"{ 'rotated': !vitalsOpen }\"></i></button><div class=\"bio-section-content\" :class=\"{ 'collapsed': !vitalsOpen }\"><div id=\"vitals-widget\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div><div class=\"bio-section\"><button type=\"button\" class=\"bio-section-header bio-section-toggle\" @click=\"vitalsOpen = !vitalsOpen\"><div class=\"bio-section-header-left\"><h4 class=\"bio-section-title\">Sinais Vitais</h4></div><i class=\"fas fa-chevron-down bio-section-chevron\" :class=\"{ 'rotated': !vitalsOpen }\"></i></button><div class=\"bio-section-content\" :class=\"{ 'collapsed': !vitalsOpen }\"><div id=\"vitals-widget\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,11 +110,11 @@ func BiopsychosocialPanel(data BiopsychosocialPanelViewModel) templ.Component {
 			PatientID:     data.PatientID,
 			LatestVitals:  data.LatestVitals,
 			VitalsAverage: data.VitalsAverage,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		}, readOnly).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

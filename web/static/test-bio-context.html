@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Bio Context Loading</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bio-panel {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            margin: 20px;
+        }
+        .bio-vitals-card {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .bio-vitals-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .bio-vitals-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .bio-vitals-count {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .bio-vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .bio-vital-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .bio-vital-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 4px 0;
+        }
+        .bio-vital-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste de Carregamento do Contexto Biológico</h1>
+    
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h2>Teste 1: Carregamento via JavaScript</h2>
+        <div id="test-container" style="border: 2px solid #ccc; padding: 20px; border-radius: 8px; min-height: 300px;">
+            <p>Este conteúdo será substituído pelo contexto biológico...</p>
+        </div>
+        
+        <button onclick="testLoad()" style="margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Testar Carregamento
+        </button>
+        
+        <div style="margin-top: 40px;">
+            <h2>Debug Info:</h2>
+            <div id="debug-info" style="background: #f3f4f6; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 14px;">
+                Clique no botão para ver informações de debug...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function testLoad() {
+            const debug = document.getElementById('debug-info');
+            const container = document.getElementById('test-container');
+            
+            debug.innerHTML = 'Iniciando carregamento...<br>';
+            container.innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Carregando...</div>';
+            
+            // Testar se Alpine.js está disponível
+            debug.innerHTML += 'Alpine.js disponível: ' + (typeof Alpine !== 'undefined') + '<br>';
+            
+            // Testar fetch
+            fetch('/patients/p0141/context?readonly=true')
+                .then(response => {
+                    debug.innerHTML += 'Status da resposta: ' + response.status + '<br>';
+                    if (!response.ok) throw new Error('HTTP error ' + response.status);
+                    return response.text();
+                })
+                .then(html => {
+                    debug.innerHTML += 'HTML recebido: ' + html.length + ' caracteres<br>';
+                    debug.innerHTML += 'Contém "Média (30 dias)": ' + html.includes('Média (30 dias)') + '<br>';
+                    
+                    // Inserir HTML
+                    container.innerHTML = html;
+                    debug.innerHTML += 'HTML inserido no container<br>';
+                    
+                    // Inicializar Alpine.js
+                    if (typeof Alpine !== 'undefined') {
+                        Alpine.initTree(container);
+                        debug.innerHTML += 'Alpine.js inicializado no container<br>';
+                    } else {
+                        debug.innerHTML += 'Alpine.js NÃO disponível para initTree<br>';
+                    }
+                    
+                    debug.innerHTML += '<strong style="color: green;">✅ Carregamento concluído com sucesso!</strong>';
+                })
+                .catch(error => {
+                    debug.innerHTML += '<strong style="color: red;">❌ Erro: ' + error.message + '</strong><br>';
+                    container.innerHTML = '<div style="color: red; text-align: center; padding: 40px;">Erro: ' + error.message + '</div>';
+                });
+        }
+        
+        // Testar automaticamente após 1 segundo
+        setTimeout(() => {
+            document.getElementById('debug-info').innerHTML = 'Página carregada. Clique no botão "Testar Carregamento" para testar.';
+        }, 100);
+    </script>
+</body>
+</html>

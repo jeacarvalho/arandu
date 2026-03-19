@@ -12,27 +12,36 @@ Princípios:
 
 ---
 
-## Paleta
+## Paleta Botânica (Identidade Botânica)
 
-Primária
+### Cores Principais
 
-#1E3A5F
+**Verde Base (Primary)**
+- `#0F6E56` - Verde Base (Arandu Primary)
+- `#1D9E75` - Destaque/Interação (Arandu Active)
+- `#9FE1CB` - Acentos Suaves (Arandu Soft)
+- `#085041` - Texto Principal - Verde Floresta Escuro (Arandu Dark)
 
-Secundária
+**Fundo e Superfícies**
+- `#E1F5EE` - Fundo Papel de Seda - Anti-fadiga (Arandu BG)
+- `#FFFFFF` - Superfícies de Trabalho/Cards (Arandu Paper)
 
-#3A7D6B
+**Cores Derivadas**
+- `#E1F5EE` → `#021C15` (Primary-50 a Primary-900)
+- `#F0F9F5` → `#092A20` (Secondary-50 a Secondary-900)
 
-Insight / IA
+**Cores de Destaque (IA)**
+- `#F59E0B` - Âmbar para Insights de IA (Accent-500)
+- `#FFFBEB` → `#78350F` (Accent-50 a Accent-900)
 
-#D4A84F
+**Cores Neutras**
+- `#FAFBFC` → `#101828` (Neutral-50 a Neutral-900)
 
-Fundo
-
-#F7F8FA
-
-Texto
-
-#1F2937
+### Cores Semânticas
+- `#0F6E56` - Sucesso (Success)
+- `#F59E0B` - Aviso (Warning)
+- `#DC2626` - Erro (Error)
+- `#1D9E75` - Informação (Info)
 
 ---
 
@@ -69,7 +78,7 @@ Insight IA
 
 Go  
 HTMX  
-TailwindCSS  
+CSS Puro (Sem Tailwind)  
 AlpineJS (mínimo)
 
 ---

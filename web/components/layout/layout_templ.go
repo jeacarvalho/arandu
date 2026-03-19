@@ -53,7 +53,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css?v=20260319_grid\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -69,7 +69,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t\t\n\t\t\t// Carregar Alpine.js dinamicamente após DOM estar pronto\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Verificar se já foi carregado\n\t\t\t\tif (typeof Alpine !== 'undefined') {\n\t\t\t\t\tconsole.log('Alpine.js já carregado');\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Carregar Alpine.js\n\t\t\t\tconsole.log('Carregando Alpine.js dinamicamente...');\n\t\t\t\tconst script = document.createElement('script');\n\t\t\t\tscript.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';\n\t\t\t\tscript.defer = true;\n\t\t\t\tscript.onload = function() {\n\t\t\t\t\tconsole.log('Alpine.js carregado com sucesso');\n\t\t\t\t\t// Alpine.js se auto-inicializa quando carregado\n\t\t\t\t\t// Não é necessário chamar Alpine.initTree() explicitamente\n\t\t\t\t};\n\t\t\t\tscript.onerror = function() {\n\t\t\t\t\tconsole.error('Falha ao carregar Alpine.js');\n\t\t\t\t};\n\t\t\t\tdocument.head.appendChild(script);\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,14 +110,14 @@ func Base(pageTitle string) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 61, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 84, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"/static/css/style.css\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all-min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"/static/css/style.css?v=20260319_grid\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,7 +125,7 @@ func Base(pageTitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<script>\n\t\t\t// Carregar Alpine.js dinamicamente após DOM estar pronto\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Verificar se já foi carregado\n\t\t\t\tif (typeof Alpine !== 'undefined') {\n\t\t\t\t\tconsole.log('Alpine.js já carregado');\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Carregar Alpine.js\n\t\t\t\tconsole.log('Carregando Alpine.js dinamicamente...');\n\t\t\t\tconst script = document.createElement('script');\n\t\t\t\tscript.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';\n\t\t\t\tscript.defer = true;\n\t\t\t\tscript.onload = function() {\n\t\t\t\t\tconsole.log('Alpine.js carregado com sucesso');\n\t\t\t\t\t// Alpine.js se auto-inicializa quando carregado\n\t\t\t\t\t// Não é necessário chamar Alpine.initTree() explicitamente\n\t\t\t\t};\n\t\t\t\tscript.onerror = function() {\n\t\t\t\t\tconsole.error('Falha ao carregar Alpine.js');\n\t\t\t\t};\n\t\t\t\tdocument.head.appendChild(script);\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,6 +1,6 @@
 # 📚 Aprendizados Mestres do Projeto Arandu
 
-**Última atualização:** $(date +"%d de %B de %Y")
+**Última atualização:** 18 de março de 2026
 **Versão:** 1.0
 **Status:** Ativo
 
@@ -12,10 +12,11 @@
 2. [💾 Banco de Dados (SQLite, FTS5, Migrations)](#-banco-de-dados-sqlite-fts5-migrations)
 3. [🩺 Domínio Clínico e Validações](#-domínio-clínico-e-validações)
 4. [🎨 UI/UX e Design System](#-uiux-e-design-system)
-5. [🧪 Testes e Qualidade](#-testes-e-qualidade)
-6. [🔄 Fluxo de Trabalho e Scripts](#-fluxo-de-trabalho-e-scripts)
-7. [🚨 Anti-Padrões e Erros Comuns](#-anti-padrões-e-erros-comuns)
-8. [📁 Referências e Arquivos Originais](#-referências-e-arquivos-originais)
+5. [🤖 Integração com IA Generativa](#-integração-com-ia-generativa)
+6. [🧪 Testes e Qualidade](#-testes-e-qualidade)
+7. [🔄 Fluxo de Trabalho e Scripts](#-fluxo-de-trabalho-e-scripts)
+8. [🚨 Anti-Padrões e Erros Comuns](#-anti-padrões-e-erros-comuns)
+9. [📁 Referências e Arquivos Originais](#-referências-e-arquivos-originais)
 
 ---
 
@@ -364,6 +365,100 @@ div(class="clinical-note") {
 
 ---
 
+## 🤖 Integração com IA Generativa
+
+### 1. Configuração Segura de API Keys
+
+**Contexto:** Tarefa 20260318_211140 - Implementação do REQ-05-01-01
+
+**Problema:** Como integrar serviços de IA externos (Gemini) sem expor chaves de API no código.
+
+**Solução:**
+1. Usar arquivo `.env` com `GEMINI_API_KEY`
+2. Carregar via `github.com/joho/godotenv`
+3. Inicializar cliente com fallback para modo "dummy" quando chave ausente
+4. Documentar configuração em `README_GEMINI.md`
+
+```go
+// Inicialização segura
+geminiAPIKey := os.Getenv("GEMINI_API_KEY")
+if geminiAPIKey == "" {
+    log.Printf("Warning: GEMINI_API_KEY not set. AI features will be disabled.")
+    geminiAPIKey = "dummy-key-for-initialization"
+}
+```
+
+**Referência:** REQ-05-01-01, `cmd/arandu/main.go:76-80`
+
+### 2. Cache de Respostas de IA
+
+**Contexto:** Tarefa 20260318_211140 - Implementação do REQ-05-01-01
+
+**Problema:** Chamadas repetidas à API Gemini geram custos desnecessários e latência.
+
+**Solução:**
+1. Implementar cache em memória com TTL configurável (24h padrão)
+2. Usar chave SHA256(patientID:timeframe) para identificação única
+3. Integrar cache transparentemente no serviço de IA
+
+```go
+// Check cache first
+if s.cache != nil {
+    if entry, found := s.cache.Get(patientID, timeframe); found {
+        return &PatientSynthesisResponse{
+            Synthesis:   entry.Synthesis,
+            GeneratedAt: entry.GeneratedAt,
+        }, nil
+    }
+}
+```
+
+**Benefícios:** Redução de custos, respostas mais rápidas, menor dependência de rede.
+
+**Referência:** REQ-05-01-01 CA-03, `internal/infrastructure/ai/cache.go`
+
+### 3. Retry Exponencial para APIs Externas
+
+**Contexto:** Tarefa 20260318_211140 - Implementação do REQ-05-01-01
+
+**Problema:** APIs externas podem falhar temporariamente (rate limiting, timeout).
+
+**Solução:**
+1. Implementar backoff exponencial com máximo de 5 tentativas
+2. Detectar erros recuperáveis (HTTP 429, 500, timeout)
+3. Logar tentativas para debugging
+
+```go
+for i := 0; i < maxRetries; i++ {
+    if i > 0 {
+        backoff := time.Duration(1<<uint(i)) * time.Second
+        if backoff > 30*time.Second {
+            backoff = 30 * time.Second
+        }
+        time.Sleep(backoff)
+    }
+    // Tentar chamada
+}
+```
+
+**Referência:** `internal/infrastructure/ai/gemini_client.go:58-95`
+
+### 4. Interface "Tecnologia Silenciosa" para IA
+
+**Contexto:** Tarefa 20260318_211140 - Implementação do REQ-05-01-01
+
+**Problema:** Como apresentar análises de IA sem sobrecarregar o terapeuta.
+
+**Solução:**
+1. Botão discreto com seletor de período (3 meses, 6 meses, 1 ano, todo histórico)
+2. Síntese estruturada em 4 partes: Temas Dominantes, Pontos de Inflexão, Correlações Sugeridas, Provocação Clínica
+3. Estilo visual diferenciado (fundo âmbar #FFFBEB, fonte clínica)
+4. Aviso legal obrigatório: "Esta é uma análise gerada por IA para apoio à reflexão"
+
+**Referência:** REQ-05-01-01 CA-02, CA-04, `web/components/ai/`
+
+---
+
 ## 🧪 Testes e Qualidade
 
 ### 1. Estado da Cobertura de Testes
@@ -457,7 +552,9 @@ func TestPatientRepository_Create(t *testing.T) {
 
 **Referências:** `scripts/arandu_guard.sh`
 
-### 3. Sistema de Aprendizados (REFATORADO)
+
+
+### 4. Sistema de Aprendizados (REFATORADO)
 
 **Problema anterior:** Script `arandu_conclude_task.sh` gerava conteúdo repetitivo automático.
 

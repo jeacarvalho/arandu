@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Fetch Direto</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            min-height: 100px;
+            border: 1px solid #ccc;
+        }
+        .success {
+            background: #d4edda !important;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            background: #f8d7da !important;
+            border-left: 4px solid #dc3545;
+        }
+        pre {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste Fetch Direto</h1>
+    
+    <h2>Teste 1: Fetch para /patients/p0141/context</h2>
+    <button id="test1">Testar Fetch</button>
+    
+    <h2>Teste 2: HTMX direto (se disponível)</h2>
+    <button id="test2" 
+            hx-get="/patients/p0141/context" 
+            hx-target="#result">Testar HTMX</button>
+    
+    <h2>Teste 3: Verificar container</h2>
+    <button id="test3">Verificar Container</button>
+    
+    <div id="result">Resultado aparecerá aqui...</div>
+    
+    <script>
+        // Teste 1: Fetch direto
+        document.getElementById('test1').addEventListener('click', function() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>⏳ Fazendo fetch para /patients/p0141/context...</p>';
+            
+            fetch('/patients/p0141/context')
+                .then(response => {
+                    console.log('Fetch response status:', response.status);
+                    console.log('Fetch response ok:', response.ok);
+                    
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    console.log('Fetch successful, HTML length:', html.length);
+                    console.log('First 500 chars:', html.substring(0, 500));
+                    
+                    result.innerHTML = html;
+                    result.className = 'success';
+                    
+                    // Verificar se há elementos dentro do resultado
+                    const panels = result.querySelectorAll('.bio-panel, .bio-section');
+                    console.log('Painéis encontrados:', panels.length);
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    result.innerHTML = '<p class="error">❌ Erro no fetch: ' + error.message + '</p>';
+                    result.className = 'error';
+                });
+        });
+        
+        // Teste 2: HTMX (se disponível)
+        document.getElementById('test2').addEventListener('click', function() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>⏳ Testando HTMX...</p>';
+            
+            console.log('HTMX disponível:', typeof htmx !== 'undefined');
+            
+            if (typeof htmx !== 'undefined') {
+                htmx.ajax('GET', '/patients/p0141/context', {
+                    target: '#result',
+                    swap: 'innerHTML',
+                    onSuccess: function() {
+                        console.log('HTMX success');
+                        result.className = 'success';
+                    },
+                    onError: function(error) {
+                        console.error('HTMX error:', error);
+                        result.innerHTML = '<p class="error">❌ Erro HTMX: ' + error + '</p>';
+                        result.className = 'error';
+                    }
+                });
+            } else {
+                result.innerHTML = '<p class="error">❌ HTMX não está disponível</p>';
+                result.className = 'error';
+            }
+        });
+        
+        // Teste 3: Verificar container
+        document.getElementById('test3').addEventListener('click', function() {
+            const result = document.getElementById('result');
+            const container = document.getElementById('biopsychosocial-panel-container');
+            
+            let html = '<h3>Informações do Container:</h3>';
+            html += '<p>Container encontrado: ' + (container ? '✅ Sim' : '❌ Não') + '</p>';
+            
+            if (container) {
+                html += '<p>ID: ' + container.id + '</p>';
+                html += '<p>HTML interno: ' + container.innerHTML.length + ' caracteres</p>';
+                html += '<pre>' + escapeHtml(container.innerHTML.substring(0, 500)) + '...</pre>';
+            }
+            
+            // Verificar HTMX
+            html += '<h3>Informações do HTMX:</h3>';
+            html += '<p>HTMX disponível: ' + (typeof htmx !== 'undefined' ? '✅ Sim' : '❌ Não') + '</p>';
+            
+            if (typeof htmx !== 'undefined') {
+                html += '<p>Versão HTMX: ' + (htmx.version || 'Desconhecida') + '</p>';
+            }
+            
+            result.innerHTML = html;
+        });
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        console.log('Página de teste carregada');
+        console.log('HTMX disponível:', typeof htmx !== 'undefined');
+        console.log('Container existe:', !!document.getElementById('biopsychosocial-panel-container'));
+    </script>
+</body>
+</html>
