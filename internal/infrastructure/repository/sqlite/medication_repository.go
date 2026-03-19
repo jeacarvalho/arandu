@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
@@ -110,4 +111,28 @@ func (r *MedicationRepository) scanMedications(rows *sql.Rows) ([]*patient.Medic
 		medications = append(medications, &m)
 	}
 	return medications, nil
+}
+
+// FindByPatientIDAndTimeframe busca medicações de um paciente dentro de um período
+func (r *MedicationRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*patient.Medication, error) {
+	query := `SELECT id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at 
+			  FROM patient_medications WHERE patient_id = ?`
+
+	var args []interface{}
+	args = append(args, patientID)
+
+	if !startTime.IsZero() {
+		query += " AND started_at >= ?"
+		args = append(args, startTime)
+	}
+
+	query += " ORDER BY started_at DESC"
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return r.scanMedications(rows)
 }

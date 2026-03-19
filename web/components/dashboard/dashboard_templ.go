@@ -53,12 +53,12 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"dashboard-container\"><!-- Header --><div class=\"dashboard-header\"><h1 class=\"dashboard-title\">Dashboard Clínico</h1><p class=\"dashboard-subtitle\">Visão geral para reflexão terapêutica e acompanhamento</p></div><!-- Stats Grid - Responsive --><div class=\"stats-grid\"><div class=\"stat-card\"><div class=\"stat-value text-arandu-primary\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"sota-container\"><!-- Header --><div class=\"dashboard-header\"><h1 class=\"dashboard-title\">Dashboard Clínico</h1><p class=\"dashboard-subtitle\">Visão geral para reflexão terapêutica e acompanhamento</p></div><!-- Grid de Evolução (4 indicadores) --><div class=\"evolution-grid\"><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.TotalPatients))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.TotalSessions))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 43, Col: 40}
 		}
@@ -66,20 +66,20 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"stat-label\"><i class=\"fas fa-users stat-icon\"></i>Pacientes</div></div><div class=\"stat-card\"><div class=\"stat-value text-arandu-secondary\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"stat-label-sota\">Sessões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.TotalSessions))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.ActiveThisMonth))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 51, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 51, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label\"><i class=\"fas fa-calendar-check stat-icon\"></i>Sessões</div></div><div class=\"stat-card\"><div class=\"stat-value text-arandu-insight\">0</div><div class=\"stat-label\"><i class=\"fas fa-lightbulb stat-icon\"></i>Insights</div></div><div class=\"stat-card\"><div class=\"stat-value text-purple-600\">0</div><div class=\"stat-label\"><i class=\"fas fa-chart-bar stat-icon\"></i>Análises</div></div></div><!-- Main Content Grid --><div class=\"content-grid\"><!-- Pacientes Ativos --><div class=\"patients-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label-sota\">Meses</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Padrões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Hipóteses</div></div></div><!-- Estrutura de Duas Colunas --><div class=\"sota-two-columns\"><!-- Coluna Esquerda - Fluxo Narrativo --><div class=\"sota-narrative-column\"><!-- Pacientes Ativos --><div class=\"patients-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,7 +96,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				var templ_7745c5c3_Var4 templ.SafeURL
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patient/" + p.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 96, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 98, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -109,7 +109,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 103, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 105, Col: 45}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -122,7 +122,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.CreatedAt)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 104, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 106, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -143,7 +143,79 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><!-- Sidebar --><div class=\"dashboard-sidebar\"><!-- Insights de IA --><div class=\"insights-card\"><div class=\"insights-header\"><div class=\"insights-icon\"><i class=\"fas fa-brain\"></i></div><h2 class=\"insights-title\">Insights de IA</h2></div><div class=\"insights-content\"><i class=\"fas fa-code\"></i><p>Em desenvolvimento</p></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><!-- Sessões Recentes (Cards no estilo Caderno) -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(sessions) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div><h2 style=\"font-family: var(--font-clinical); font-size: 1.25rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);\">Sessões Recentes</h2><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, session := range sessions {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"session-notebook-card\"><div class=\"session-badge\">Sessão #")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(session.ID)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 131, Col: 31}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><div class=\"session-clinical-report\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(session.Summary)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 134, Col: 27}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"session-tags\"><span class=\"session-tag\">Observação</span> <span class=\"session-tag\">Reflexão</span></div><div style=\"font-family: var(--font-clinical); font-size: 0.75rem; color: var(--arandu-soft);\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(session.Date)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 141, Col: 24}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " • Paciente: ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(session.PatientName)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 141, Col: 62}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Coluna Direita - Métricas e Cronologia --><div class=\"sota-metrics-column\"><!-- Linha do Tempo --><div class=\"stat-card-sota\"><h2 style=\"font-family: var(--font-clinical); font-size: 1.125rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);\">Linha do Tempo</h2><div class=\"timeline-container\"><div class=\"timeline-marker\"></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeira consulta</div><div class=\"timeline-event-date\">15 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Início da terapia</div><div class=\"timeline-event-date\">22 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeiro insight significativo</div><div class=\"timeline-event-date\">05 Fev 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Última sessão</div><div class=\"timeline-event-date\">18 Mar 2024</div></div></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div><!-- Painel de Insights (IA) --><div class=\"insights-panel\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

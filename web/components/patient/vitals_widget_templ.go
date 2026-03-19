@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "time"
 
-func VitalsWidget(data VitalsWidgetViewModel) templ.Component {
+func VitalsWidget(data VitalsWidgetViewModel, readOnly bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -258,35 +258,41 @@ func VitalsWidget(data VitalsWidgetViewModel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><form hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/vitals")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 98, Col: 53}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" hx-target=\"#vitals-widget\" hx-swap=\"innerHTML\" class=\"bio-form\"><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Sono (horas)</label> <input type=\"number\" name=\"sleep_hours\" step=\"0.5\" min=\"0\" max=\"24\" placeholder=\"0-24\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Apetite (1-10)</label> <input type=\"number\" name=\"appetite_level\" min=\"1\" max=\"10\" placeholder=\"1-10\" class=\"bio-input\"></div></div><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Peso (kg)</label> <input type=\"number\" name=\"weight\" step=\"0.1\" placeholder=\"kg\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Atividade/sem</label> <input type=\"number\" name=\"physical_activity\" min=\"0\" max=\"7\" placeholder=\"0-7\" class=\"bio-input\"></div></div><input type=\"hidden\" name=\"date\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 151, Col: 74}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\"> <button type=\"submit\" class=\"bio-submit\"><i class=\"fas fa-save\"></i> Registrar</button></form>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if !readOnly {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<form hx-post=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/vitals")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 99, Col: 54}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#vitals-widget\" hx-swap=\"innerHTML\" class=\"bio-form\"><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Sono (horas)</label> <input type=\"number\" name=\"sleep_hours\" step=\"0.5\" min=\"0\" max=\"24\" placeholder=\"0-24\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Apetite (1-10)</label> <input type=\"number\" name=\"appetite_level\" min=\"1\" max=\"10\" placeholder=\"1-10\" class=\"bio-input\"></div></div><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Peso (kg)</label> <input type=\"number\" name=\"weight\" step=\"0.1\" placeholder=\"kg\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Atividade/sem</label> <input type=\"number\" name=\"physical_activity\" min=\"0\" max=\"7\" placeholder=\"0-7\" class=\"bio-input\"></div></div><input type=\"hidden\" name=\"date\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 152, Col: 75}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <button type=\"submit\" class=\"bio-submit\"><i class=\"fas fa-save\"></i> Registrar</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})

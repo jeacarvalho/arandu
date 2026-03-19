@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Linha 68</title>
+    <script>
+        // Testar se há erro de sintaxe
+        document.addEventListener('DOMContentLoaded', function() {
+            // Criar iframe com página do paciente
+            const iframe = document.createElement('iframe');
+            iframe.src = '/patient/p0141';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    const scripts = doc.getElementsByTagName('script');
+                    
+                    console.log('Total de scripts:', scripts.length);
+                    
+                    // Verificar cada script
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = scripts[i];
+                        if (script.textContent) {
+                            const lines = script.textContent.split('\n');
+                            console.log(`Script ${i} tem ${lines.length} linhas`);
+                            
+                            // Verificar linha 68
+                            if (lines.length >= 68) {
+                                console.log(`Linha 68 do script ${i}:`, lines[67]);
+                                
+                                // Tentar avaliar o script
+                                try {
+                                    new Function(script.textContent);
+                                    console.log(`✅ Script ${i} é válido`);
+                                } catch (e) {
+                                    console.log(`❌ Script ${i} tem erro:`, e.message);
+                                    console.log('Conteúdo problemático:', script.textContent.substring(0, 500));
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('Erro ao analisar iframe:', e);
+                }
+            };
+        });
+    </script>
+</head>
+<body>
+    <h1>Testando Linha 68</h1>
+    <p>Verifique o console do navegador (F12)</p>
+</body>
+</html>

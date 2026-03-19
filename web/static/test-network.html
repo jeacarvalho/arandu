@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Rede - Arandu</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .test-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.3s;
+        }
+        .test-button:hover {
+            background: #2980b9;
+        }
+        .test-button.success {
+            background: #27ae60;
+        }
+        .test-button.error {
+            background: #e74c3c;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: white;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        .result.success {
+            border-left-color: #27ae60;
+        }
+        .result.error {
+            border-left-color: #e74c3c;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.ok {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        .status.error {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+        .info-box {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Teste de Rede - Arandu</h1>
+        <p class="subtitle">Verifique se o servidor está acessível do seu celular</p>
+        
+        <div class="info-box">
+            <strong>Informações do servidor:</strong><br>
+            IP: <code id="server-ip">192.168.0.117</code><br>
+            Porta: <code>8080</code><br>
+            URL: <code id="server-url">http://192.168.0.117:8080</code>
+        </div>
+        
+        <div class="test-section">
+            <h3>1. Teste de Conexão Básica</h3>
+            <p>Verifica se o servidor está respondendo.</p>
+            <button class="test-button" onclick="testConnection()">Testar Conexão</button>
+            <div id="connection-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Teste de Endpoint JSON</h3>
+            <p>Testa o endpoint de API com resposta JSON.</p>
+            <button class="test-button" onclick="testEndpoint()">Testar Endpoint /test</button>
+            <div id="endpoint-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Teste de Página do Paciente</h3>
+            <p>Testa o carregamento da página principal do paciente.</p>
+            <button class="test-button" onclick="testPatientPage()">Testar Página /patient/p0079</button>
+            <div id="patient-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Teste de CORS</h3>
+            <p>Verifica se os headers CORS estão configurados corretamente.</p>
+            <button class="test-button" onclick="testCORS()">Testar CORS</button>
+            <div id="cors-result" class="result"></div>
+        </div>
+        
+        <div class="info-box">
+            <strong>Instruções para testar no celular:</strong><br>
+            1. Certifique-se que o celular está na mesma rede WiFi<br>
+            2. Abra o navegador no celular<br>
+            3. Acesse: <code>http://192.168.0.117:8080/test-network.html</code><br>
+            4. Execute os testes acima
+        </div>
+    </div>
+
+    <script>
+        const serverIP = '192.168.0.117';
+        const serverPort = '8080';
+        const baseURL = `http://${serverIP}:${serverPort}`;
+        
+        function showResult(elementId, success, message, data = null) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `
+                <div>
+                    <strong>Status: <span class="status ${success ? 'ok' : 'error'}">${success ? 'OK' : 'ERRO'}</span></strong>
+                    <p>${message}</p>
+                    ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+                </div>
+            `;
+            element.className = `result ${success ? 'success' : 'error'}`;
+            element.style.display = 'block';
+        }
+        
+        async function testConnection() {
+            try {
+                const response = await fetch(`${baseURL}/test`, { method: 'HEAD' });
+                showResult('connection-result', response.ok, 
+                    `Conexão estabelecida com sucesso! Status: ${response.status}`);
+            } catch (error) {
+                showResult('connection-result', false, 
+                    `Erro na conexão: ${error.message}. Verifique:<br>
+                    1. Se o servidor está rodando<br>
+                    2. Se o IP está correto<br>
+                    3. Se há firewall bloqueando a porta 8080`);
+            }
+        }
+        
+        async function testEndpoint() {
+            try {
+                const response = await fetch(`${baseURL}/test`);
+                const data = await response.json();
+                showResult('endpoint-result', response.ok, 
+                    `Endpoint respondendo corretamente. Status: ${response.status}`, data);
+            } catch (error) {
+                showResult('endpoint-result', false, 
+                    `Erro no endpoint: ${error.message}`);
+            }
+        }
+        
+        async function testPatientPage() {
+            try {
+                const response = await fetch(`${baseURL}/patient/p0079`);
+                const html = await response.text();
+                const hasTitle = html.includes('<title>Arandu');
+                showResult('patient-result', response.ok && hasTitle, 
+                    `Página do paciente carregada. Status: ${response.status}<br>
+                    Título encontrado: ${hasTitle ? 'Sim' : 'Não'}`);
+            } catch (error) {
+                showResult('patient-result', false, 
+                    `Erro ao carregar página: ${error.message}`);
+            }
+        }
+        
+        async function testCORS() {
+            try {
+                const response = await fetch(`${baseURL}/test`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'http://example.com',
+                        'Access-Control-Request-Method': 'GET'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+                
+                const hasCorsHeaders = corsHeaders['Access-Control-Allow-Origin'] === '*';
+                showResult('cors-result', hasCorsHeaders && response.status === 200, 
+                    `CORS configurado. Status OPTIONS: ${response.status}<br>
+                    Headers CORS encontrados: ${hasCorsHeaders ? 'Sim' : 'Não'}`, 
+                    corsHeaders);
+            } catch (error) {
+                showResult('cors-result', false, 
+                    `Erro no teste CORS: ${error.message}`);
+            }
+        }
+        
+        // Atualizar URLs com IP atual
+        document.getElementById('server-ip').textContent = serverIP;
+        document.getElementById('server-url').textContent = baseURL;
+    </script>
+</body>
+</html>

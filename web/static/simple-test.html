@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            const testDiv = document.getElementById('test');
+            if (testDiv) {
+                console.log('Test div found');
+                testDiv.innerHTML = '<p style="color: green;">✅ DOMContentLoaded funcionando!</p>';
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Teste Simples</h1>
+    <div id="test">
+        <p style="color: gray;">Aguardando DOMContentLoaded...</p>
+    </div>
+</body>
+</html>

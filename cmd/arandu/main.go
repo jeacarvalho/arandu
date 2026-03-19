@@ -3,15 +3,25 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/infrastructure/ai"
 	"arandu/internal/infrastructure/repository/sqlite"
 	"arandu/internal/web"
 	"arandu/internal/web/handlers"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load environment variables from .env file
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: No .env file found or error loading: %v", err)
+	}
+
 	// Use production database
 	dbPath := "arandu.db"
 	log.Printf("Using database: %s", dbPath)
@@ -54,14 +64,63 @@ func main() {
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
 	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 
+	// Create biopsychosocial service adapter
+	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
+		GetMedicationsFunc: func(patientID string) ([]interface{}, error) {
+			meds, err := biopsychosocialService.GetMedications(patientID)
+			if err != nil {
+				return nil, err
+			}
+			// Convert to []interface{}
+			result := make([]interface{}, len(meds))
+			for i, m := range meds {
+				result[i] = m
+			}
+			return result, nil
+		},
+		GetLatestVitalsFunc: func(patientID string) (interface{}, error) {
+			return biopsychosocialService.GetLatestVitals(patientID)
+		},
+		GetAverageVitalsFunc: func(patientID string, days int) (interface{}, error) {
+			return biopsychosocialService.GetAverageVitals(patientID, days)
+		},
+	}
+
 	// Create new handlers with dependency injection
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
 	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
+
+	// Initialize AI service
+	geminiAPIKey := os.Getenv("GEMINI_API_KEY")
+	if geminiAPIKey == "" {
+		log.Printf("Warning: GEMINI_API_KEY not set. AI features will be disabled.")
+		geminiAPIKey = "dummy-key-for-initialization" // Use dummy key to allow initialization
+	}
+
+	geminiClient, err := ai.NewGeminiClient(geminiAPIKey)
+	if err != nil {
+		log.Printf("Warning: Failed to initialize Gemini client: %v", err)
+	}
+
+	// Create cache for AI responses (24 hour TTL)
+	cache := ai.NewCache(24 * time.Hour)
+
+	// Create AI service with repository adapters
+	aiService := services.NewAIService(
+		geminiClient,
+		cache,
+		observationRepo,
+		interventionRepo,
+		vitalsRepo,
+		medicationRepo,
+	)
+
+	aiHandler := handlers.NewAIHandler(aiService)
 
 	mux := http.NewServeMux()
 
@@ -150,13 +209,47 @@ func main() {
 			biopsychosocialHandler.RecordVitals(w, r)
 		} else if strings.Contains(r.URL.Path, "/medications/") && r.Method == "PUT" {
 			biopsychosocialHandler.UpdateMedicationStatus(w, r)
+		} else if strings.Contains(r.URL.Path, "/analysis/synthesis") && r.Method == "POST" {
+			aiHandler.GeneratePatientSynthesis(w, r)
 		} else {
 			http.NotFound(w, r)
 		}
 	})
 
+	// Test endpoint for network connectivity
+	mux.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		jsonResponse := `{"status": "ok", "message": "Server is running", "timestamp": "` + time.Now().Format(time.RFC3339) + `", "client_ip": "` + r.RemoteAddr + `"}`
+		w.Write([]byte(jsonResponse))
+	})
+
+	// File server with cache control for CSS files
 	fs := http.FileServer(http.Dir("web/static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Disable cache for CSS files during development
+		if strings.HasSuffix(r.URL.Path, ".css") {
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
+		}
+		fs.ServeHTTP(w, r)
+	})))
+
+	// Create CORS middleware
+	corsHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		mux.ServeHTTP(w, r)
+	})
 
 	// Create a recovery middleware
 	recoveryHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -166,11 +259,11 @@ func main() {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
-		mux.ServeHTTP(w, r)
+		corsHandler.ServeHTTP(w, r)
 	})
 
 	port := ":8080"
-	log.Printf("Starting server on http://localhost%s", port)
+	log.Printf("Starting server on http://localhost%s (accessible from network)", port)
 	if err := http.ListenAndServe(port, recoveryHandler); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}

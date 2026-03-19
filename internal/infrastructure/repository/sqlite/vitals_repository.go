@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
@@ -155,6 +156,54 @@ func (r *VitalsRepository) Delete(id string) error {
 }
 
 func (r *VitalsRepository) scanVitals(rows *sql.Rows) ([]*patient.Vitals, error) {
+	var vitals []*patient.Vitals
+	for rows.Next() {
+		var v patient.Vitals
+		var sleepHours, weight sql.NullFloat64
+		var appetiteLevel sql.NullInt64
+		var notes sql.NullString
+		if err := rows.Scan(&v.ID, &v.PatientID, &v.Date, &sleepHours, &appetiteLevel, &weight, &v.PhysicalActivity, &notes, &v.CreatedAt, &v.UpdatedAt); err != nil {
+			return nil, err
+		}
+		if sleepHours.Valid {
+			v.SleepHours = &sleepHours.Float64
+		}
+		if appetiteLevel.Valid {
+			lvl := int(appetiteLevel.Int64)
+			v.AppetiteLevel = &lvl
+		}
+		if weight.Valid {
+			v.Weight = &weight.Float64
+		}
+		if notes.Valid {
+			v.Notes = notes.String
+		}
+		vitals = append(vitals, &v)
+	}
+	return vitals, nil
+}
+
+// FindByPatientIDAndTimeframe busca sinais vitais de um paciente dentro de um período
+func (r *VitalsRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*patient.Vitals, error) {
+	query := `SELECT id, patient_id, date, sleep_hours, appetite_level, weight, physical_activity, notes, created_at, updated_at 
+			  FROM patient_vitals WHERE patient_id = ?`
+
+	var args []interface{}
+	args = append(args, patientID)
+
+	if !startTime.IsZero() {
+		query += " AND date >= ?"
+		args = append(args, startTime)
+	}
+
+	query += " ORDER BY date DESC"
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
 	var vitals []*patient.Vitals
 	for rows.Next() {
 		var v patient.Vitals

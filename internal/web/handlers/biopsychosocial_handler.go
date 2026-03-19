@@ -56,7 +56,10 @@ func (h *BiopsychosocialHandler) GetContextPanel(w http.ResponseWriter, r *http.
 		VitalsAverage: toVitalsAverageViewModel(context.VitalsAverage),
 	}
 
-	err = patientComponents.BiopsychosocialPanel(viewModel).Render(ctx, w)
+	// Check if read-only mode is requested
+	readOnly := r.URL.Query().Get("readonly") == "true"
+
+	err = patientComponents.BiopsychosocialPanel(viewModel, readOnly).Render(ctx, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -234,7 +237,7 @@ func (h *BiopsychosocialHandler) renderVitalsWidget(w http.ResponseWriter, r *ht
 		Error:         errorMsg,
 	}
 
-	err := patientComponents.VitalsWidget(viewModel).Render(ctx, w)
+	err := patientComponents.VitalsWidget(viewModel, false).Render(ctx, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

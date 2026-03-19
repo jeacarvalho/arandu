@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste JS Error</title>
+</head>
+<body>
+    <h1>Abra o console do navegador</h1>
+    <p>Verifique se há erro de sintaxe</p>
+    
+    <!-- Simular possível erro -->
+    <script>
+        // Código correto
+        function test1() {
+            console.log('Teste 1 OK');
+        }
+        
+        // Código com possível erro - parêntese extra
+        function test2() {
+            console.log('Teste 2 OK');
+        }) // PARÊNTESE EXTRA - ERRO
+        
+        // Código correto
+        function test3() {
+            console.log('Teste 3 OK');
+        }
+    </script>
+</body>
+</html>

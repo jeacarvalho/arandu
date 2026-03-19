@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Error</title>
+    <script>
+        // Capturar erros detalhados
+        window.addEventListener('error', function(e) {
+            console.log('ERRO DETALHADO:', e);
+            document.getElementById('error-details').innerHTML = `
+                <div style="background: #fee; padding: 20px; border-radius: 5px; margin: 10px 0;">
+                    <h3>Erro JavaScript</h3>
+                    <p><strong>Mensagem:</strong> ${e.message}</p>
+                    <p><strong>Linha:</strong> ${e.lineno}</p>
+                    <p><strong>Coluna:</strong> ${e.colno}</p>
+                    <p><strong>Arquivo:</strong> ${e.filename}</p>
+                    <p><strong>Erro:</strong> ${e.error}</p>
+                </div>
+            `;
+        });
+        
+        // Capturar warnings do Alpine
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            if (args[0] && args[0].includes && args[0].includes('Alpine')) {
+                document.getElementById('alpine-warnings').innerHTML += `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <strong>Alpine Warning:</strong> ${args[0]}
+                    </div>
+                `;
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Debug de Erros</h1>
+    
+    <div style="margin: 20px 0;">
+        <h2>Testar Página do Paciente:</h2>
+        <a href="/patient/p0141" target="_blank" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            Abrir /patient/p0141
+        </a>
+        <p>Abra esta página e depois abra a página do paciente em outra aba.</p>
+    </div>
+    
+    <div id="alpine-warnings" style="border: 2px solid orange; padding: 15px; margin: 20px 0;">
+        <h3 style="color: orange;">Warnings do Alpine.js:</h3>
+        <p>Aguardando warnings...</p>
+    </div>
+    
+    <div id="error-details" style="border: 2px solid red; padding: 15px; margin: 20px 0;">
+        <h3 style="color: red;">Detalhes do Erro:</h3>
+        <p>Aguardando erros...</p>
+    </div>
+    
+    <div style="margin: 20px 0;">
+        <h2>Verificar HTML da Página:</h2>
+        <button onclick="inspectPage()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Inspecionar Linha 68
+        </button>
+        <div id="inspection-result" style="margin-top: 10px;"></div>
+    </div>
+    
+    <script>
+        function inspectPage() {
+            // Abrir página do paciente em iframe para inspecionar
+            const iframe = document.createElement('iframe');
+            iframe.src = '/patient/p0141';
+            iframe.style.width = '100%';
+            iframe.style.height = '500px';
+            iframe.style.border = '1px solid #ccc';
+            
+            document.getElementById('inspection-result').innerHTML = '';
+            document.getElementById('inspection-result').appendChild(iframe);
+            
+            iframe.onload = function() {
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    const lines = doc.body.innerHTML.split('\n');
+                    
+                    // Procurar por linha 68
+                    let result = '<h4>Conteúdo ao redor da linha 68:</h4>';
+                    for (let i = 60; i < 80; i++) {
+                        if (lines[i]) {
+                            result += `<div style="font-family: monospace; background: ${i === 67 ? '#ffd' : '#fff'}; padding: 2px 5px; margin: 1px 0; border-left: 3px solid ${i === 67 ? 'red' : '#eee'}">
+                                ${i+1}: ${lines[i].substring(0, 100)}${lines[i].length > 100 ? '...' : ''}
+                            </div>`;
+                        }
+                    }
+                    
+                    document.getElementById('inspection-result').innerHTML = result;
+                } catch (e) {
+                    document.getElementById('inspection-result').innerHTML = `<div style="color: red;">Erro ao inspecionar: ${e.message}</div>`;
+                }
+            };
+        }
+    </script>
+</body>
+</html>

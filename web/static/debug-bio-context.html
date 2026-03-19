@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Bio Context</title>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <style>
+        .bio-vitals-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e7eb;
+        }
+        .bio-vitals-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .bio-vitals-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .bio-vitals-count {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .bio-vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .bio-vital-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .bio-vital-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 4px 0;
+        }
+        .bio-vital-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Bio Context Loading</h1>
+    
+    <div id="test-container" style="max-width: 600px; margin: 20px auto;">
+        <h2>Test 1: Static HTML (should work)</h2>
+        <div id="static-test">
+            <div class="bio-vitals-card">
+                <div class="bio-vitals-header">
+                    <span class="bio-vitals-label">Média (30 dias)</span>
+                    <span class="bio-vitals-count">1 registros</span>
+                </div>
+                <div class="bio-vitals-grid">
+                    <div class="bio-vital-item">
+                        <i class="fas fa-moon"></i>
+                        <span class="bio-vital-value">7.5h</span>
+                        <span class="bio-vital-label">Sono</span>
+                    </div>
+                    <div class="bio-vital-item">
+                        <i class="fas fa-utensils"></i>
+                        <span class="bio-vital-value">8.0</span>
+                        <span class="bio-vital-label">Apetite</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Test 2: Dynamic Load (simulating our code)</h2>
+        <div id="dynamic-test" style="min-height: 200px; border: 2px dashed #ccc; padding: 20px;">
+            Loading...
+        </div>
+        
+        <button onclick="testDynamicLoad()" style="margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Test Dynamic Load
+        </button>
+    </div>
+    
+    <script>
+        async function testDynamicLoad() {
+            const container = document.getElementById('dynamic-test');
+            container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+            
+            try {
+                const response = await fetch('/patients/p0141/context');
+                if (!response.ok) throw new Error('HTTP error ' + response.status);
+                const html = await response.text();
+                
+                console.log('HTML length:', html.length);
+                console.log('Contains "Média":', html.includes('Média'));
+                console.log('Contains "1 registros":', html.includes('1 registros'));
+                
+                // Insert the HTML
+                container.innerHTML = html;
+                
+                // Initialize Alpine.js
+                if (typeof Alpine !== 'undefined') {
+                    Alpine.initTree(container);
+                    console.log('Alpine.js initialized');
+                }
+                
+                // Remove forms (simulating our code)
+                setTimeout(() => {
+                    const forms = container.querySelectorAll('form');
+                    console.log('Forms found:', forms.length);
+                    forms.forEach(form => form.remove());
+                    
+                    // Remove action buttons
+                    const actionButtons = container.querySelectorAll('.bio-submit');
+                    actionButtons.forEach(btn => btn.remove());
+                    
+                    // Remove close button
+                    const closeBtn = container.querySelector('.bio-panel-close');
+                    if (closeBtn) closeBtn.remove();
+                    
+                    console.log('Processing complete');
+                    console.log('Container HTML after processing:', container.innerHTML.substring(0, 500));
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Load Font Awesome
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(link);
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Alpine.js defer</title>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+</head>
+<body>
+    <h1>Teste Alpine.js</h1>
+    <div x-data="{ count: 0 }">
+        <button @click="count++">Incrementar: <span x-text="count"></span></button>
+    </div>
+    <script>
+        console.log('Página carregada');
+        if (typeof Alpine === 'undefined') {
+            console.error('Alpine.js não carregado!');
+        } else {
+            console.log('Alpine.js carregado com sucesso');
+        }
+    </script>
+</body>
+</html>

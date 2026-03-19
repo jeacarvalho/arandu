@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simulação Página Paciente</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos básicos do sistema */
+        :root {
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --neutral-100: #f3f4f6;
+            --text-tertiary: #6b7280;
+            --warning: #f59e0b;
+        }
+        
+        .grid-2x2-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e5e7eb;
+            padding: var(--space-lg);
+        }
+        
+        .grid-card-1 {
+            grid-column: span 1;
+        }
+        
+        #bio-context-preview {
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <h1>Simulação da Página do Paciente</h1>
+        
+        <!-- Simulação do card de Contexto Biológico -->
+        <div class="grid-2x2-card grid-card-1" 
+            data-patient-id="p0141"
+            id="bio-context-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+                <div style="display: flex; align-items: center; gap: var(--space-md);">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488 0%, #0d9488 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h2 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 0;">Contexto Biológico</h2>
+                </div>
+                <button
+                    type="button"
+                    id="bio-edit-btn"
+                    data-patient-id="p0141"
+                    style="padding: var(--space-xs) var(--space-sm); background: transparent; color: #0d9488; border: 1px solid #0d9488; border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: var(--space-xs); transition: all 0.2s ease;"
+                    onmouseover="this.style.background='#0d9488'; this.style.color='white'"
+                    onmouseout="this.style.background='transparent'; this.style.color='#0d9488'"
+                >
+                    <i class="fas fa-edit"></i>
+                    <span>Editar</span>
+                </button>
+            </div>
+            
+            <!-- Container para conteúdo do contexto biológico (carregado automaticamente) -->
+            <div id="bio-context-preview" style="min-height: 200px;">
+                <div style="text-align: center; padding: var(--space-xl); color: var(--text-tertiary);">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: var(--space-md);"></i>
+                    <p>Carregando contexto biológico...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f9fafb; border-radius: 8px;">
+            <h3>Debug Console:</h3>
+            <div id="debug-console" style="font-family: monospace; font-size: 12px; background: #1f2937; color: #d1d5db; padding: 15px; border-radius: 6px; max-height: 300px; overflow-y: auto;">
+                Console de debug aparecerá aqui...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Função para log no console de debug
+        function debugLog(message) {
+            const consoleDiv = document.getElementById('debug-console');
+            const timestamp = new Date().toLocaleTimeString();
+            consoleDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        // Configuração do Contexto Biológico (cópia do código real)
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('DOMContentLoaded disparado');
+            
+            const patientId = document.querySelector('#bio-context-card')?.getAttribute('data-patient-id');
+            if (!patientId) {
+                debugLog('❌ Patient ID não encontrado!');
+                return;
+            }
+            
+            debugLog(`✅ Patient ID encontrado: ${patientId}`);
+            debugLog(`✅ Alpine.js disponível: ${typeof Alpine !== 'undefined'}`);
+            debugLog(`✅ HTMX disponível: ${typeof htmx !== 'undefined'}`);
+            
+            // 1. Carregar visualização automaticamente
+            loadBioContextPreview(patientId);
+            
+            // 2. Configurar botão de edição
+            const editBtn = document.getElementById('bio-edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    debugLog('Botão "Editar" clicado');
+                    openBioContextEditor(patientId);
+                });
+                debugLog('✅ Listener do botão de edição configurado');
+            }
+            
+            // Função para carregar visualização (somente leitura)
+            function loadBioContextPreview(patientId) {
+                debugLog(`Iniciando loadBioContextPreview para: ${patientId}`);
+                
+                const previewContainer = document.getElementById('bio-context-preview');
+                if (!previewContainer) {
+                    debugLog('❌ Container de preview não encontrado!');
+                    return;
+                }
+                
+                debugLog(`Fazendo fetch para: /patients/${patientId}/context?readonly=true`);
+                
+                // Load read-only version
+                fetch('/patients/' + patientId + '/context?readonly=true')
+                    .then(response => {
+                        debugLog(`Resposta recebida: Status ${response.status}`);
+                        if (!response.ok) throw new Error('HTTP error ' + response.status);
+                        return response.text();
+                    })
+                    .then(html => {
+                        debugLog(`HTML recebido: ${html.length} caracteres`);
+                        debugLog(`Contém "Média (30 dias)": ${html.includes('Média (30 dias)')}`);
+                        
+                        // Insert the HTML
+                        previewContainer.innerHTML = html;
+                        debugLog('✅ HTML inserido no container');
+                        
+                        // Initialize Alpine.js on the new content
+                        // Wait a bit to ensure DOM is updated
+                        setTimeout(() => {
+                            if (typeof Alpine !== 'undefined') {
+                                debugLog('Inicializando Alpine.js no container...');
+                                Alpine.initTree(previewContainer);
+                                debugLog('✅ Alpine.js inicializado no container');
+                            } else {
+                                debugLog('❌ Alpine.js não disponível para initTree');
+                            }
+                        }, 50);
+                    })
+                    .catch(error => {
+                        debugLog(`❌ Erro no fetch: ${error.message}`);
+                        previewContainer.innerHTML = `
+                            <div style="text-align: center; padding: var(--space-xl); color: var(--text-tertiary);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; margin-bottom: var(--space-md); color: var(--warning);"></i>
+                                <p>Não foi possível carregar o contexto biológico.</p>
+                                <button onclick="loadBioContextPreview('${patientId}')" style="margin-top: var(--space-md); padding: var(--space-xs) var(--space-sm); background: var(--neutral-100); border: none; border-radius: var(--radius-sm); cursor: pointer;">
+                                    Tentar novamente
+                                </button>
+                            </div>
+                        `;
+                    });
+            }
+            
+            // Função para abrir editor completo (modal ou painel expandido)
+            function openBioContextEditor(patientId) {
+                debugLog(`Abrindo editor para: ${patientId}`);
+                alert('Modal de edição seria aberto aqui. Em produção, carrega formulários completos.');
+            }
+        });
+        
+        debugLog('Script carregado (antes do DOMContentLoaded)');
+    </script>
+</body>
+</html>

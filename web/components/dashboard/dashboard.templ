@@ -25,7 +25,7 @@ type SessionItem struct {
 }
 
 templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
-	<div class="dashboard-container">
+	<div class="sota-container">
 		<!-- Header -->
 		<div class="dashboard-header">
 			<h1 class="dashboard-title">
@@ -36,99 +36,162 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 			</p>
 		</div>
 
-		<!-- Stats Grid - Responsive -->
-		<div class="stats-grid">
-			<div class="stat-card">
-				<div class="stat-value text-arandu-primary">
-					{ strconv.Itoa(stats.TotalPatients) }
-				</div>
-				<div class="stat-label">
-					<i class="fas fa-users stat-icon"></i>Pacientes
-				</div>
-			</div>
-			<div class="stat-card">
-				<div class="stat-value text-arandu-secondary">
+		<!-- Grid de Evolução (4 indicadores) -->
+		<div class="evolution-grid">
+			<div class="stat-card-sota">
+				<div class="stat-value-sota">
 					{ strconv.Itoa(stats.TotalSessions) }
 				</div>
-				<div class="stat-label">
-					<i class="fas fa-calendar-check stat-icon"></i>Sessões
+				<div class="stat-label-sota">
+					Sessões
 				</div>
 			</div>
-			<div class="stat-card">
-				<div class="stat-value text-arandu-insight">
-					0
+			<div class="stat-card-sota">
+				<div class="stat-value-sota">
+					{ strconv.Itoa(stats.ActiveThisMonth) }
 				</div>
-				<div class="stat-label">
-					<i class="fas fa-lightbulb stat-icon"></i>Insights
+				<div class="stat-label-sota">
+					Meses
 				</div>
 			</div>
-			<div class="stat-card">
-				<div class="stat-value text-purple-600">
+			<div class="stat-card-sota">
+				<div class="stat-value-sota">
 					0
 				</div>
-				<div class="stat-label">
-					<i class="fas fa-chart-bar stat-icon"></i>Análises
+				<div class="stat-label-sota">
+					Padrões
+				</div>
+			</div>
+			<div class="stat-card-sota">
+				<div class="stat-value-sota">
+					0
+				</div>
+				<div class="stat-label-sota">
+					Hipóteses
 				</div>
 			</div>
 		</div>
 
-		<!-- Main Content Grid -->
-		<div class="content-grid">
-			<!-- Pacientes Ativos -->
-			<div class="patients-card">
-				<div class="patients-card-header">
-					<div class="patients-card-title">
-						<div class="patients-card-icon">
-							<i class="fas fa-user-friends"></i>
+		<!-- Estrutura de Duas Colunas -->
+		<div class="sota-two-columns">
+			<!-- Coluna Esquerda - Fluxo Narrativo -->
+			<div class="sota-narrative-column">
+				<!-- Pacientes Ativos -->
+				<div class="patients-card">
+					<div class="patients-card-header">
+						<div class="patients-card-title">
+							<div class="patients-card-icon">
+								<i class="fas fa-user-friends"></i>
+							</div>
+							<div>
+								<h2 class="patients-card-heading">Pacientes Ativos</h2>
+								<p class="patients-card-subtitle">Em acompanhamento clínico</p>
+							</div>
 						</div>
-						<div>
-							<h2 class="patients-card-heading">Pacientes Ativos</h2>
-							<p class="patients-card-subtitle">Em acompanhamento clínico</p>
-						</div>
+						<a href="/patients" class="patients-card-link">Ver Todos</a>
 					</div>
-					<a href="/patients" class="patients-card-link">Ver Todos</a>
+					<div class="patients-list">
+						if len(patients) > 0 {
+							<div class="patients-list-container">
+								for _, p := range patients {
+									<a 
+										href={ templ.URL("/patient/" + p.ID) } 
+										class="patient-item"
+									>
+										<div class="patient-avatar">
+											<i class="fas fa-user"></i>
+										</div>
+										<div class="patient-info">
+											<div class="patient-name">{ p.Name }</div>
+											<div class="patient-since">Desde { p.CreatedAt }</div>
+										</div>
+										<div class="patient-status"></div>
+									</a>
+								}
+							</div>
+						} else {
+							<div class="patients-empty">
+								<i class="fas fa-user-friends"></i>
+								<p>Nenhum paciente ativo</p>
+							</div>
+						}
+					</div>
 				</div>
-				<div class="patients-list">
-					if len(patients) > 0 {
-						<div class="patients-list-container">
-							for _, p := range patients {
-								<a 
-									href={ templ.URL("/patient/" + p.ID) } 
-									class="patient-item"
-								>
-									<div class="patient-avatar">
-										<i class="fas fa-user"></i>
+
+				<!-- Sessões Recentes (Cards no estilo Caderno) -->
+				if len(sessions) > 0 {
+					<div>
+						<h2 style="font-family: var(--font-clinical); font-size: 1.25rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);">
+							Sessões Recentes
+						</h2>
+						<div>
+							for _, session := range sessions {
+								<div class="session-notebook-card">
+									<div class="session-badge">
+										Sessão #{ session.ID }
 									</div>
-									<div class="patient-info">
-										<div class="patient-name">{ p.Name }</div>
-										<div class="patient-since">Desde { p.CreatedAt }</div>
+									<div class="session-clinical-report">
+										{ session.Summary }
 									</div>
-									<div class="patient-status"></div>
-								</a>
+									<div class="session-tags">
+										<span class="session-tag">Observação</span>
+										<span class="session-tag">Reflexão</span>
+									</div>
+									<div style="font-family: var(--font-clinical); font-size: 0.75rem; color: var(--arandu-soft);">
+										{ session.Date } • Paciente: { session.PatientName }
+									</div>
+								</div>
 							}
 						</div>
-					} else {
-						<div class="patients-empty">
-							<i class="fas fa-user-friends"></i>
-							<p>Nenhum paciente ativo</p>
-						</div>
-					}
-				</div>
+					</div>
+				}
 			</div>
 
-			<!-- Sidebar -->
-			<div class="dashboard-sidebar">
-				<!-- Insights de IA -->
-				<div class="insights-card">
-					<div class="insights-header">
-						<div class="insights-icon">
-							<i class="fas fa-brain"></i>
+			<!-- Coluna Direita - Métricas e Cronologia -->
+			<div class="sota-metrics-column">
+				<!-- Linha do Tempo -->
+				<div class="stat-card-sota">
+					<h2 style="font-family: var(--font-clinical); font-size: 1.125rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);">
+						Linha do Tempo
+					</h2>
+					<div class="timeline-container">
+						<div class="timeline-marker"></div>
+						<div class="timeline-event">
+							<div class="timeline-dot"></div>
+							<div class="timeline-event-content">
+								Primeira consulta
+							</div>
+							<div class="timeline-event-date">
+								15 Jan 2024
+							</div>
 						</div>
-						<h2 class="insights-title">Insights de IA</h2>
-					</div>
-					<div class="insights-content">
-						<i class="fas fa-code"></i>
-						<p>Em desenvolvimento</p>
+						<div class="timeline-event">
+							<div class="timeline-dot"></div>
+							<div class="timeline-event-content">
+								Início da terapia
+							</div>
+							<div class="timeline-event-date">
+								22 Jan 2024
+							</div>
+						</div>
+						<div class="timeline-event">
+							<div class="timeline-dot"></div>
+							<div class="timeline-event-content">
+								Primeiro insight significativo
+							</div>
+							<div class="timeline-event-date">
+								05 Fev 2024
+							</div>
+						</div>
+						<div class="timeline-event">
+							<div class="timeline-dot"></div>
+							<div class="timeline-event-content">
+								Última sessão
+							</div>
+							<div class="timeline-event-date">
+								18 Mar 2024
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -151,6 +214,16 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 							Nova Observação
 						</a>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Painel de Insights (IA) -->
+		<div class="insights-panel">
+			<div class="insights-content-sota">
+				<i class="fas fa-lightbulb insights-icon-sota"></i>
+				<div>
+					O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.
 				</div>
 			</div>
 		</div>

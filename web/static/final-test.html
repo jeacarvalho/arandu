@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Final - Contexto Biológico</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .loading {
+            color: #6b7280;
+        }
+        #test-result {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste Final do Sistema</h1>
+    
+    <div class="test-card">
+        <h2>Teste 1: Carregamento de Alpine.js</h2>
+        <div id="test-alpine">
+            <span class="loading">Testando Alpine.js...</span>
+        </div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Teste 2: Endpoint do Contexto Biológico</h2>
+        <div id="test-endpoint">
+            <span class="loading">Testando endpoint /patients/p0141/context?readonly=true...</span>
+        </div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Teste 3: Carregamento Dinâmico</h2>
+        <div id="test-dynamic">
+            <span class="loading">Aguardando teste...</span>
+        </div>
+        <button onclick="testDynamicLoad()" style="margin-top: 10px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Executar Teste 3
+        </button>
+    </div>
+    
+    <div id="test-result">
+        <strong>Resultados:</strong><br>
+        Aguardando testes...
+    </div>
+    
+    <script>
+        // Resultados dos testes
+        const results = [];
+        
+        function addResult(test, success, message) {
+            const result = {
+                test,
+                success,
+                message,
+                time: new Date().toLocaleTimeString()
+            };
+            results.push(result);
+            updateResults();
+        }
+        
+        function updateResults() {
+            const container = document.getElementById('test-result');
+            let html = '<strong>Resultados:</strong><br>';
+            results.forEach(r => {
+                html += `[${r.time}] ${r.test}: <span class="${r.success ? 'success' : 'error'}">${r.message}</span><br>`;
+            });
+            container.innerHTML = html;
+        }
+        
+        // Teste 1: Alpine.js
+        function testAlpine() {
+            const container = document.getElementById('test-alpine');
+            if (typeof Alpine === 'undefined') {
+                container.innerHTML = '<span class="error">❌ Alpine.js NÃO carregado</span>';
+                addResult('Alpine.js', false, 'Alpine.js não está disponível');
+            } else {
+                container.innerHTML = '<span class="success">✅ Alpine.js carregado com sucesso</span>';
+                addResult('Alpine.js', true, 'Alpine.js carregado');
+            }
+        }
+        
+        // Teste 2: Endpoint
+        function testEndpoint() {
+            const container = document.getElementById('test-endpoint');
+            fetch('/patients/p0141/context?readonly=true')
+                .then(response => {
+                    if (!response.ok) {
+                        container.innerHTML = `<span class="error">❌ Endpoint falhou: HTTP ${response.status}</span>`;
+                        addResult('Endpoint', false, `HTTP ${response.status}`);
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const hasAverages = html.includes('Média (30 dias)');
+                    const hasNoForms = !html.includes('bio-form');
+                    
+                    if (hasAverages && hasNoForms) {
+                        container.innerHTML = '<span class="success">✅ Endpoint funcionando (read-only com médias, sem formulários)</span>';
+                        addResult('Endpoint', true, 'Endpoint read-only OK');
+                    } else {
+                        container.innerHTML = `<span class="error">❌ Endpoint com problemas: médias=${hasAverages}, semForms=${hasNoForms}</span>`;
+                        addResult('Endpoint', false, 'Conteúdo incorreto');
+                    }
+                })
+                .catch(error => {
+                    container.innerHTML = `<span class="error">❌ Erro no endpoint: ${error.message}</span>`;
+                    addResult('Endpoint', false, error.message);
+                });
+        }
+        
+        // Teste 3: Carregamento dinâmico
+        function testDynamicLoad() {
+            const container = document.getElementById('test-dynamic');
+            container.innerHTML = '<span class="loading">Carregando contexto dinamicamente...</span>';
+            
+            // Simular o que a página do paciente faz
+            const testContainer = document.createElement('div');
+            testContainer.id = 'dynamic-test-container';
+            testContainer.style.border = '1px solid #ccc';
+            testContainer.style.padding = '20px';
+            testContainer.style.marginTop = '10px';
+            testContainer.style.minHeight = '100px';
+            testContainer.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Carregando...</div>';
+            
+            container.appendChild(testContainer);
+            
+            fetch('/patients/p0141/context?readonly=true')
+                .then(response => response.text())
+                .then(html => {
+                    testContainer.innerHTML = html;
+                    
+                    // Tentar inicializar Alpine.js
+                    setTimeout(() => {
+                        if (typeof Alpine !== 'undefined') {
+                            Alpine.initTree(testContainer);
+                            testContainer.innerHTML += '<div style="margin-top: 10px; padding: 10px; background: #d1fae5; border-radius: 6px;"><span class="success">✅ Alpine.js inicializado no conteúdo dinâmico</span></div>';
+                            addResult('Carregamento Dinâmico', true, 'Conteúdo carregado e Alpine.js inicializado');
+                        } else {
+                            testContainer.innerHTML += '<div style="margin-top: 10px; padding: 10px; background: #fee2e2; border-radius: 6px;"><span class="error">❌ Alpine.js não disponível</span></div>';
+                            addResult('Carregamento Dinâmico', false, 'Alpine.js não disponível');
+                        }
+                    }, 100);
+                })
+                .catch(error => {
+                    testContainer.innerHTML = `<div style="color: red;">Erro: ${error.message}</div>`;
+                    addResult('Carregamento Dinâmico', false, error.message);
+                });
+        }
+        
+        // Executar testes automaticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Esperar um pouco para Alpine.js carregar (tem defer)
+            setTimeout(() => {
+                testAlpine();
+                testEndpoint();
+            }, 100);
+        });
+        
+        // Verificar se há warnings no console
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            if (args[0] && args[0].includes && args[0].includes('Alpine')) {
+                addResult('Console Warning', false, 'Warning do Alpine.js detectado');
+            }
+            originalWarn.apply(console, args);
+        };
+    </script>
+</body>
+</html>

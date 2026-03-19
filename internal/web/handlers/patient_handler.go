@@ -6,11 +6,13 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+	sqliteRepo "arandu/internal/infrastructure/repository/sqlite"
 
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
@@ -74,11 +76,38 @@ type InsightService interface {
 	GetInsightsByPatient(ctx context.Context, patientID string, limit int) ([]interface{}, error)
 }
 
+// BiopsychosocialService defines the interface for biopsychosocial context operations
+type BiopsychosocialService interface {
+	GetMedications(patientID string) ([]interface{}, error)
+	GetLatestVitals(patientID string) (interface{}, error)
+	GetAverageVitals(patientID string, days int) (interface{}, error)
+}
+
+// BiopsychosocialServiceFuncs is a helper type that implements BiopsychosocialService using functions
+type BiopsychosocialServiceFuncs struct {
+	GetMedicationsFunc   func(patientID string) ([]interface{}, error)
+	GetLatestVitalsFunc  func(patientID string) (interface{}, error)
+	GetAverageVitalsFunc func(patientID string, days int) (interface{}, error)
+}
+
+func (f BiopsychosocialServiceFuncs) GetMedications(patientID string) ([]interface{}, error) {
+	return f.GetMedicationsFunc(patientID)
+}
+
+func (f BiopsychosocialServiceFuncs) GetLatestVitals(patientID string) (interface{}, error) {
+	return f.GetLatestVitalsFunc(patientID)
+}
+
+func (f BiopsychosocialServiceFuncs) GetAverageVitals(patientID string, days int) (interface{}, error) {
+	return f.GetAverageVitalsFunc(patientID, days)
+}
+
 // PatientHandler handles HTTP requests related to patients
 type PatientHandler struct {
-	patientService PatientService
-	sessionService SessionService
-	insightService InsightService
+	patientService         PatientService
+	sessionService         SessionService
+	insightService         InsightService
+	biopsychosocialService BiopsychosocialService
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -86,11 +115,13 @@ func NewPatientHandler(
 	patientService PatientService,
 	sessionService SessionService,
 	insightService InsightService,
+	biopsychosocialService BiopsychosocialService,
 ) *PatientHandler {
 	return &PatientHandler{
-		patientService: patientService,
-		sessionService: sessionService,
-		insightService: insightService,
+		patientService:         patientService,
+		sessionService:         sessionService,
+		insightService:         insightService,
+		biopsychosocialService: biopsychosocialService,
 	}
 }
 
@@ -266,7 +297,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. Chamada ao Serviço
-	patient, err := h.patientService.GetPatientByID(r.Context(), id)
+	patientData, err := h.patientService.GetPatientByID(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, services.ErrPatientNotFound) {
 			h.renderError(w, r, "Paciente não encontrado", http.StatusNotFound)
@@ -311,13 +342,230 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		themeVM.TotalCount = totalCount
 	}
 
+	// Get biopsychosocial context
+	var bioContext *patientComponents.BiopsychosocialPanelViewModel
+	if h.biopsychosocialService != nil {
+		log.Printf("DEBUG: Getting biopsychosocial context for patient %s", id)
+
+		// Get medications
+		meds, err := h.biopsychosocialService.GetMedications(id)
+		log.Printf("DEBUG: GetMedications returned - err: %v, meds count: %d", err, len(meds))
+
+		var medicationItems []patientComponents.MedicationListItemViewModel
+		if err == nil && meds != nil {
+			log.Printf("DEBUG: Processing %d medications", len(meds))
+			for i, m := range meds {
+				log.Printf("DEBUG: Medication %d - type: %T, value: %+v", i, m, m)
+
+				// Handle different types
+				switch med := m.(type) {
+				case *patient.Medication:
+					// Convert patient.Medication to viewmodel
+					statusLabel := "Desconhecido"
+					switch med.Status {
+					case patient.MedicationStatusActive:
+						statusLabel = "Ativo"
+					case patient.MedicationStatusSuspended:
+						statusLabel = "Suspenso"
+					case patient.MedicationStatusFinished:
+						statusLabel = "Finalizado"
+					}
+
+					medicationItems = append(medicationItems, patientComponents.MedicationListItemViewModel{
+						ID:          med.ID,
+						Name:        med.Name,
+						Dosage:      med.Dosage,
+						Frequency:   med.Frequency,
+						Prescriber:  med.Prescriber,
+						Status:      string(med.Status),
+						StatusKey:   string(med.Status),
+						StatusLabel: statusLabel,
+						StartedAt:   med.StartedAt.Format("02/01/2006"),
+						IsActive:    med.Status == patient.MedicationStatusActive,
+						IsSuspended: med.Status == patient.MedicationStatusSuspended,
+						IsFinished:  med.Status == patient.MedicationStatusFinished,
+					})
+					log.Printf("DEBUG: Added medication from struct: %s", med.Name)
+
+				case map[string]interface{}:
+					// Keep existing conversion for backward compatibility
+					status := "active"
+					if s, ok := med["status"].(string); ok {
+						status = s
+					}
+
+					statusLabel := "Desconhecido"
+					switch status {
+					case "active":
+						statusLabel = "Ativo"
+					case "suspended":
+						statusLabel = "Suspenso"
+					case "finished":
+						statusLabel = "Finalizado"
+					}
+
+					medicationItems = append(medicationItems, patientComponents.MedicationListItemViewModel{
+						ID:          getString(med, "id"),
+						Name:        getString(med, "name"),
+						Dosage:      getString(med, "dosage"),
+						Frequency:   getString(med, "frequency"),
+						Prescriber:  getString(med, "prescriber"),
+						Status:      status,
+						StatusKey:   status,
+						StatusLabel: statusLabel,
+						StartedAt:   getString(med, "started_at"),
+						IsActive:    status == "active",
+						IsSuspended: status == "suspended",
+						IsFinished:  status == "finished",
+					})
+					log.Printf("DEBUG: Added medication from map: %s", getString(med, "name"))
+				default:
+					log.Printf("DEBUG: Unknown medication type: %T", m)
+				}
+			}
+		}
+		log.Printf("DEBUG: Total medication items: %d", len(medicationItems))
+
+		// Get latest vitals
+		latestVitals, errVitals := h.biopsychosocialService.GetLatestVitals(id)
+		log.Printf("DEBUG: GetLatestVitals returned - err: %v, vitals: %+v", errVitals, latestVitals)
+
+		var vitalsItem *patientComponents.VitalsItemViewModel
+		if latestVitals != nil {
+			log.Printf("DEBUG: Latest vitals type: %T", latestVitals)
+
+			// Handle different types
+			switch v := latestVitals.(type) {
+			case *patient.Vitals:
+				// Convert patient.Vitals to viewmodel
+				sleepHours := ""
+				if v.SleepHours != nil {
+					sleepHours = formatFloat(*v.SleepHours, 1)
+				}
+
+				appetiteLevel := ""
+				if v.AppetiteLevel != nil {
+					appetiteLevel = strconv.Itoa(*v.AppetiteLevel)
+				}
+
+				weight := ""
+				if v.Weight != nil {
+					weight = formatFloat(*v.Weight, 1)
+				}
+
+				vitalsItem = &patientComponents.VitalsItemViewModel{
+					ID:               v.ID,
+					Date:             v.Date.Format("02/01/2006"),
+					SleepHours:       sleepHours,
+					AppetiteLevel:    appetiteLevel,
+					Weight:           weight,
+					PhysicalActivity: strconv.Itoa(v.PhysicalActivity),
+					Notes:            v.Notes,
+					HasData:          true,
+				}
+				log.Printf("DEBUG: Created vitals item from struct: %+v", vitalsItem)
+
+			case map[string]interface{}:
+				// Keep existing conversion for backward compatibility
+				log.Printf("DEBUG: Latest vitals map: %+v", v)
+				vitalsItem = &patientComponents.VitalsItemViewModel{
+					ID:               getString(v, "id"),
+					Date:             getString(v, "date"),
+					SleepHours:       getString(v, "sleep_hours"),
+					AppetiteLevel:    getString(v, "appetite_level"),
+					Weight:           getString(v, "weight"),
+					PhysicalActivity: getString(v, "physical_activity"),
+					Notes:            getString(v, "notes"),
+					HasData:          true,
+				}
+				log.Printf("DEBUG: Created vitals item from map: %+v", vitalsItem)
+			default:
+				log.Printf("DEBUG: Unknown vitals type: %T", latestVitals)
+			}
+		}
+
+		// Get average vitals
+		avgVitals, errAvg := h.biopsychosocialService.GetAverageVitals(id, 30)
+		log.Printf("DEBUG: GetAverageVitals returned - err: %v, avgVitals: %+v", errAvg, avgVitals)
+
+		var avgItem *patientComponents.VitalsAverageItemViewModel
+		if avgVitals != nil {
+			log.Printf("DEBUG: Average vitals type: %T", avgVitals)
+
+			// Handle different types
+			switch a := avgVitals.(type) {
+			case *sqliteRepo.VitalsAverage:
+				// Convert sqliteRepo.VitalsAverage to viewmodel
+				avgSleepHours := ""
+				if a.AverageSleepHours != nil {
+					avgSleepHours = formatFloat(*a.AverageSleepHours, 1)
+				}
+
+				avgAppetiteLevel := ""
+				if a.AverageAppetiteLevel != nil {
+					avgAppetiteLevel = formatFloat(*a.AverageAppetiteLevel, 1)
+				}
+
+				avgWeight := ""
+				if a.AverageWeight != nil {
+					avgWeight = formatFloat(*a.AverageWeight, 1)
+				}
+
+				avgPhysicalActivity := ""
+				if a.AveragePhysicalActivity != nil {
+					avgPhysicalActivity = formatFloat(*a.AveragePhysicalActivity, 0)
+				}
+
+				avgItem = &patientComponents.VitalsAverageItemViewModel{
+					AvgSleepHours:       avgSleepHours,
+					AvgAppetiteLevel:    avgAppetiteLevel,
+					AvgWeight:           avgWeight,
+					AvgPhysicalActivity: avgPhysicalActivity,
+					RecordCount:         a.Count,
+					HasData:             a.Count > 0,
+				}
+				log.Printf("DEBUG: Created average vitals item from struct: %+v", avgItem)
+
+			case map[string]interface{}:
+				// Keep existing conversion for backward compatibility
+				log.Printf("DEBUG: Average vitals map: %+v", a)
+				recordCount := 0
+				if rc, ok := a["record_count"].(float64); ok {
+					recordCount = int(rc)
+				}
+
+				avgItem = &patientComponents.VitalsAverageItemViewModel{
+					AvgSleepHours:       getString(a, "avg_sleep_hours"),
+					AvgAppetiteLevel:    getString(a, "avg_appetite_level"),
+					AvgWeight:           getString(a, "avg_weight"),
+					AvgPhysicalActivity: getString(a, "avg_physical_activity"),
+					RecordCount:         recordCount,
+					HasData:             recordCount > 0,
+				}
+				log.Printf("DEBUG: Created average vitals item from map: %+v", avgItem)
+			default:
+				log.Printf("DEBUG: Unknown average vitals type: %T", avgVitals)
+			}
+		}
+
+		bioContext = &patientComponents.BiopsychosocialPanelViewModel{
+			PatientID:     id,
+			Medications:   medicationItems,
+			LatestVitals:  vitalsItem,
+			VitalsAverage: avgItem,
+		}
+		log.Printf("DEBUG: Created bioContext - Medications: %d, LatestVitals: %v, VitalsAverage: %v",
+			len(medicationItems), vitalsItem != nil, avgItem != nil)
+	}
+
 	// Map to templ components
 	patientDetail := patientComponents.PatientDetailItem{
-		ID:        patient.ID,
-		Name:      patient.Name,
-		Notes:     patient.Notes,
-		CreatedAt: patient.CreatedAt.Format("02/01/2006 às 15:04"),
-		Themes:    themeVM,
+		ID:         patientData.ID,
+		Name:       patientData.Name,
+		Notes:      patientData.Notes,
+		CreatedAt:  patientData.CreatedAt.Format("02/01/2006 às 15:04"),
+		Themes:     themeVM,
+		BioContext: bioContext,
 	}
 
 	sessionItems := make([]patientComponents.SessionItem, len(sessions))
@@ -333,7 +581,21 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	detail := patientComponents.PatientDetail(patientDetail, sessionItems)
-	layoutComponents.BaseWithContent(patient.Name, detail).Render(r.Context(), w)
+	layoutComponents.BaseWithContent(patientData.Name, detail).Render(r.Context(), w)
+}
+
+// Helper functions for biopsychosocial context
+func getString(m map[string]interface{}, key string) string {
+	if val, ok := m[key]; ok {
+		if s, ok := val.(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
+func formatFloat(f float64, decimals int) string {
+	return strconv.FormatFloat(f, 'f', decimals, 64)
 }
 
 // NewPatient handles GET /patients/new - shows new patient form
@@ -433,12 +695,12 @@ func convertInsights(rawInsights []interface{}) []InsightViewModel {
 // extractIDFromPath extracts an ID from a URL path given a prefix
 // e.g., extractIDFromPath("/patient/123", "/patient/") returns "123"
 func extractIDFromPath(path, prefix string) string {
-	id := trimPrefix(path, prefix)
+	id := strings.TrimPrefix(path, prefix)
 	if id == "" {
 		return ""
 	}
 	// Handle trailing slashes and get first segment
-	id = trimSuffix(id, "/")
+	id = strings.TrimSuffix(id, "/")
 	// Get first segment if there are more path parts
 	for i, c := range id {
 		if c == '/' {

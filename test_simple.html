@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Simples - Contexto Biológico</title>
+    <style>
+        .bio-panel {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+            background: white;
+        }
+        .bio-section {
+            margin: 15px 0;
+        }
+        .medication-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .vital-item {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste: Contexto Biológico sem JavaScript</h1>
+    
+    <div class="bio-panel">
+        <h2>Contexto Biológico</h2>
+        
+        <div class="bio-section">
+            <h3>Medicação</h3>
+            <div class="medication-item">
+                <strong>Paracetamol</strong> - 500mg - 3x ao dia
+            </div>
+            <div class="medication-item">
+                <strong>Ibuprofeno</strong> - 400mg - 2x ao dia
+            </div>
+        </div>
+        
+        <div class="bio-section">
+            <h3>Sinais Vitais</h3>
+            <div class="vitals-grid">
+                <div class="vital-item">
+                    <strong>Sono:</strong> 7.5h
+                </div>
+                <div class="vital-item">
+                    <strong>Apetite:</strong> Normal
+                </div>
+                <div class="vital-item">
+                    <strong>Peso:</strong> 68kg
+                </div>
+                <div class="vital-item">
+                    <strong>Atividade:</strong> Moderada
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <p>Este é um exemplo de como o contexto biológico pode ser renderizado <strong>diretamente no servidor</strong>, sem necessidade de JavaScript para carregamento inicial.</p>
+    
+    <h2>Vantagens:</h2>
+    <ul>
+        <li>✅ Sem erros de JavaScript na console</li>
+        <li>✅ Carregamento instantâneo (sem fetch)</li>
+        <li>✅ Funciona mesmo com JS desabilitado</li>
+        <li>✅ SEO melhor (conteúdo visível para crawlers)</li>
+        <li>✅ Experiência mais rápida para o usuário</li>
+    </ul>
+</body>
+</html>
