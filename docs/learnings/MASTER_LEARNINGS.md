@@ -1,7 +1,7 @@
 # 📚 Aprendizados Mestres do Projeto Arandu
 
-**Última atualização:** 18 de março de 2026
-**Versão:** 1.0
+**Última atualização:** 20 de março de 2026
+**Versão:** 1.1
 **Status:** Ativo
 
 > ⚠️ **NOTA DE MIGRAÇÃO:** Este arquivo consolida os aprendizados valiosos de ~45 arquivos individuais. Arquivos originais estão em `archive/`.
@@ -10,13 +10,14 @@
 
 1. [🏗️ Arquitetura Web (Go + templ + HTMX)](#-arquitetura-web-go--templ--htmx)
 2. [💾 Banco de Dados (SQLite, FTS5, Migrations)](#-banco-de-dados-sqlite-fts5-migrations)
-3. [🩺 Domínio Clínico e Validações](#-domínio-clínico-e-validações)
-4. [🎨 UI/UX e Design System](#-uiux-e-design-system)
-5. [🤖 Integração com IA Generativa](#-integração-com-ia-generativa)
-6. [🧪 Testes e Qualidade](#-testes-e-qualidade)
-7. [🔄 Fluxo de Trabalho e Scripts](#-fluxo-de-trabalho-e-scripts)
-8. [🚨 Anti-Padrões e Erros Comuns](#-anti-padrões-e-erros-comuns)
-9. [📁 Referências e Arquivos Originais](#-referências-e-arquivos-originais)
+3. [🔐 Autenticação e Multi-tenancy](#-autenticação-e-multi-tenancy)
+4. [🩺 Domínio Clínico e Validações](#-domínio-clínico-e-validações)
+5. [🎨 UI/UX e Design System](#-uiux-e-design-system)
+6. [🤖 Integração com IA Generativa](#-integração-com-ia-generativa)
+7. [🧪 Testes e Qualidade](#-testes-e-qualidade)
+8. [🔄 Fluxo de Trabalho e Scripts](#-fluxo-de-trabalho-e-scripts)
+9. [🚨 Anti-Padrões e Erros Comuns](#-anti-padrões-e-erros-comuns)
+10. [📁 Referências e Arquivos Originais](#-referências-e-arquivos-originais)
 
 ---
 
@@ -243,6 +244,99 @@ LIMIT ? OFFSET ?;
 **Lotes:** 20 itens por carregamento (padrão do sistema)
 
 **Referências:** `work/learnings/task_20260317_220659.md`
+
+---
+
+## 🔐 Autenticação e Multi-tenancy
+
+### 1. Provisão Automática de Tenant (Onboarding)
+
+**Contexto:** Implementação do fluxo de "Boas-vindas Técnico" para novos utilizadores do Arandu.
+
+**Problema:** Novos utilizadores via Google OAuth precisam de um ambiente clínico exclusivo (banco de dados SQLite) criado automaticamente no primeiro acesso.
+
+**Solução:** Serviço de provisionamento que cria fisicamente o banco de dados, aplica migrations e registra no Control Plane.
+
+**Código de exemplo:**
+```go
+func (s *TenantService) ProvisionNewTenant(ctx context.Context, userID string) (string, error) {
+    tenantID := uuid.New().String()
+    dbPath := filepath.Join(s.storage, "tenants", fmt.Sprintf("clinical_%s.db", tenantID))
+    
+    // 1. Criar ficheiro físico
+    db, err := sql.Open("sqlite", dbPath+"?_journal_mode=WAL")
+    
+    // 2. Executar Migrations Clínicas
+    migrator, err := migrations.NewMigrationManager(db)
+    if err := migrator.Migrate(); err != nil {
+        return "", fmt.Errorf("failed to run migrations: %w", err)
+    }
+    
+    // 3. Registar no Control Plane (Banco Central) com transação
+    tx, err := s.centralDB.BeginTx(ctx, nil)
+    tenantQuery := `INSERT INTO tenants (id, db_path, status, created_at) VALUES (?, ?, 'active', ?)`
+    userQuery := `UPDATE users SET tenant_id = ? WHERE id = ?`
+    
+    if err := tx.Commit(); err != nil {
+        return "", fmt.Errorf("failed to commit transaction: %w", err)
+    }
+    
+    return tenantID, nil
+}
+```
+
+**Padrões importantes:**
+1. **Atomicidade:** Usar transações para garantir que ou tudo é criado, ou nada é criado
+2. **UUIDs únicos:** Gerar UUIDs para cada tenant para garantir unicidade
+3. **Schema NULL:** Permitir `tenant_id` NULL na tabela `users` para novos utilizadores
+4. **UX silenciosa:** Página de aguarde com mensagem apropriada durante o provisionamento
+
+**Fluxo completo:**
+1. Utilizador faz login via Google OAuth
+2. Sistema detecta que não tem `tenant_id` (NULL)
+3. Redireciona para `/auth/provisioning` com cookie temporário
+4. Mostra página de aguarde com animação
+5. Executa provisionamento via POST
+6. Cria sessão e redireciona para `/dashboard`
+
+**Referência:** Tarefa 20260320_153638, REQ-07-03-05
+
+### 2. Integração com Fluxo de Autenticação Existente
+
+**Problema:** Integrar o provisionamento sem quebrar o fluxo existente de autenticação Google OAuth.
+
+**Solução:** Extensão do handler de auth para detectar primeiro acesso e redirecionar para provisionamento.
+
+**Código de exemplo:**
+```go
+func (h *AuthHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
+    // ... processamento OAuth ...
+    
+    userID, tenantID, err := h.findOrCreateUser(userInfo.Email)
+    
+    // Se o usuário não tem tenant, provisionar um novo
+    if tenantID == "" {
+        http.SetCookie(w, &http.Cookie{
+            Name:     "arandu_provisioning_user",
+            Value:    userID,
+            MaxAge:   300, // 5 minutos
+        })
+        http.Redirect(w, r, "/auth/provisioning", http.StatusFound)
+        return
+    }
+    
+    // Usuário existente - criar sessão diretamente
+    sessionID, err := h.createSession(userID, tenantID)
+    // ... redirecionar para dashboard
+}
+```
+
+**Padrões:**
+1. **Cookie temporário:** Usar cookie com timeout curto para segurança
+2. **Separação de concerns:** Handler de auth lida com OAuth, handler de provisionamento cria tenant
+3. **Redirecionamento suave:** UX não técnica com página de aguarde
+
+**Referência:** Tarefa 20260320_153638, REQ-07-03-05
 
 ---
 

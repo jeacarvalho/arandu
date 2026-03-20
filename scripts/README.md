@@ -150,7 +150,7 @@ work/tasks/
 └── task_YYYYMMDD_HHMMSS/        # Diretório da tarefa
     ├── task.md                  # Detalhes da tarefa
     └── implementation.md        # Documentação da implementação (opcional)
-
+20260320_153638
 docs/
 ├── agent_context/
 │   └── project_state.md         # Estado atual do projeto

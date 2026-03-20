@@ -1,11 +1,23 @@
 # 🧠 Estado Permanente do Projeto Arandu
 
 **Criado em:** seg 16 mar 2026 20:48:36 -03
+<<<<<<< Updated upstream
 **Última atualização:** qui 19 mar 2026 16:05:43 -03
+=======
+**Última atualização:** sex 20 mar 2026 15:55:11 -03
+>>>>>>> Stashed changes
 
 ## 📋 Histórico de Implementações
 
 | Data | Tarefa | Requirement | Status |
+<<<<<<< Updated upstream
+=======
+| 2026-03-20 | Onboarding e Provisão Automática de Tenant | REQ-07-03-05 | ✅ Concluída |
+| 2026-03-20 | Tela de Login Botânica (Silent UI) | REQ-07-03-01 e REQ-07-03-04 | ✅ Concluída |
+| 2026-03-20 | Integração Google OAuth (Feature) | REQ-07-03-04 | ✅ Concluída |
+| 2026-03-20 | Middleware de Sessão e Orquestração de Tenant | REQ-07-03-02 | ✅ Concluída |
+| 2026-03-20 | Implementação da Infraestrutura do Control Plane | REQ-07-03-01 e REQ-07-03-05 | ✅ Concluída |
+>>>>>>> Stashed changes
 | 2026-03-18 | Implementação do REQ-05-01-01 — Síntese Reflexiva de Evolução (IA) | REQ-05-01-01 | ✅ Concluída |
 | 2026-03-18 | Implementação do REQ-01-04-01 — Histórico Farmacológico e Sinais Vitais | REQ-01-04-01 | ✅ Concluída |
 | 2026-03-18 | Implementação do REQ-07-04-02 — Busca Contextual no Prontuário (FTS5) | REQ-07-04-02 | ✅ Concluída |
