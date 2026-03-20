@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** qui 19 mar 2026 16:05:43 -03
+**Gerado em:** sex 20 mar 2026 15:33:23 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -63,21 +63,23 @@
 - req-07-03-01-autenticacao-usuario.md
 - req-07-03-02-orquestracao-conexao-db.md
 - req-07-03-03-migracao-multi-tenant.md
+- req-07-03-04-integracao-google-oAuth.md
+- req-07-03-05-provisao-automática-tenant-criacao-db-fisico.md
 - req-07-04-01-paginação-Infinite-scroll.md
 - req-07-04-02-busca-contextual-prontuario.md
 - req-08-01-01-evolucao-base.md
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 27
+**Total de requirements:** 29
 
 ## 🛠️ Tarefas recentes
 
+- task_20260320_144325
+- task_20260320_142323
+- task_20260320_141410
+- task_20260320_135941
 - task_20260318_232641
-- task_20260318_230628
-- task_20260318_211140
-- task_20260318_150801
-- task_20260318_104646
 
 ## 📚 Sistema de Aprendizados
 
@@ -97,12 +99,12 @@ Arquivos principais:
 
 - Visions: 10
 - Capabilities: 19
-- Requirements: 27
+- Requirements: 29
 - Learnings: Sistema consolidado (4 arquivos principais + archive)
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 9
-- **Requirements implementados:** 9
-- **Última atualização permanente:** ** qui 19 mar 2026 16:05:43 -03
+- **Tarefas concluídas:** 13
+- **Requirements implementados:** 13
+- **Última atualização permanente:** ** sex 20 mar 2026 15:33:23 -03
 

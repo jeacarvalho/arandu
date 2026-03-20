@@ -10,6 +10,7 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/infrastructure/ai"
 	"arandu/internal/infrastructure/repository/sqlite"
+	"arandu/internal/platform/middleware"
 	"arandu/internal/web"
 	"arandu/internal/web/handlers"
 
@@ -22,7 +23,29 @@ func main() {
 		log.Printf("Warning: No .env file found or error loading: %v", err)
 	}
 
-	// Use production database
+	// Initialize Control Plane (Central DB)
+	log.Printf("Initializing Control Plane (Central DB)...")
+	centralDB, err := sqlite.NewCentralDB("storage")
+	if err != nil {
+		log.Fatalf("Failed to initialize central database: %v", err)
+	}
+	defer centralDB.Close()
+
+	// Apply central migrations
+	log.Printf("Applying central database migrations...")
+	if err := centralDB.Migrate(nil); err != nil {
+		log.Printf("Warning: Failed to apply central migrations: %v", err)
+	}
+
+	// Ensure tenants directory exists
+	tenantsDir := "storage/tenants"
+	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
+		log.Printf("Warning: Failed to create tenants directory: %v", err)
+	} else {
+		log.Printf("Tenants directory ready: %s", tenantsDir)
+	}
+
+	// Use production database (Data Plane)
 	dbPath := "arandu.db"
 	log.Printf("Using database: %s", dbPath)
 	db, err := sqlite.NewDB(dbPath)
@@ -122,7 +145,26 @@ func main() {
 
 	aiHandler := handlers.NewAIHandler(aiService)
 
+	// Auth handler with central DB for OAuth
+	authHandler := handlers.NewAuthHandler(centralDB)
+	log.Printf("Auth handler initialized")
+
+	// Initialize Tenant Pool for multi-tenant connections
+	tenantPool := sqlite.NewTenantPool("storage", nil)
+	log.Printf("Tenant pool initialized")
+
+	// Create auth middleware
+	authMiddleware := middleware.NewAuthMiddleware(centralDB, tenantPool)
+	log.Printf("Auth middleware initialized")
+
 	mux := http.NewServeMux()
+
+	// Auth routes (public) - using ServeHTTP for all routes
+	mux.HandleFunc("/login", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/login", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/google", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/google/callback", authHandler.ServeHTTP)
+	mux.HandleFunc("/logout", authHandler.ServeHTTP)
 
 	// Dashboard
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -251,6 +293,9 @@ func main() {
 		mux.ServeHTTP(w, r)
 	})
 
+	// Apply auth middleware to all routes
+	protectedHandler := authMiddleware.Middleware(corsHandler)
+
 	// Create a recovery middleware
 	recoveryHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -259,7 +304,7 @@ func main() {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
-		corsHandler.ServeHTTP(w, r)
+		protectedHandler.ServeHTTP(w, r)
 	})
 
 	port := ":8080"

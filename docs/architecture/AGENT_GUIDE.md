@@ -305,6 +305,41 @@ NOVA TASK RECEBIDA
 4. **Usar Adaptadores Existentes**: Reutilize `SessionServiceAdapter` como modelo
 5. **Manter ViewModels Simples**: Apenas dados necessários para a view
 
+Diretrizes para Criação de Tasks (IA-Friendly)
+
+Para evitar que os agentes de IA alucinem, "cansem" ou rodem em círculos, as tarefas no Arandu devem seguir este padrão SOTA de atomicidade e clareza.
+
+### 13. Regra da Atomicidade (Micro-Tasks)
+
+Uma tarefa deve ser pequena o suficiente para ser visualizada do início ao fim sem perda de contexto.
+
+Limite: Máximo de 3 arquivos complexos editados por task.
+
+Divisão: Sempre separe a Infraestrutura (SQL/Migrations) da Interface (Templ/HTMX).
+
+1. Estrutura Obrigatória da Task
+
+Toda task.md deve conter:
+
+🎯 Objetivo: Uma frase clara do que deve ser alcançado.
+
+🛠️ Escopo Técnico: Lista de arquivos e mudanças por camada (Domínio, Infra, Web).
+
+🎨 Design System: Lembrete das fontes (Inter/Serif) e cores (Botânica).
+
+🧪 Protocolo de Testes: Passos exatos para validar a funcionalidade (Unitários e E2E).
+
+2. O "Context Reset"
+
+Ao final de cada tarefa concluída com sucesso:
+
+O agente deve consolidar o que aprendeu no docs/learnings/logbook.md.
+
+O prompt da próxima tarefa deve começar com: "Com base no estado atual do repositório e nas últimas migrations aplicadas...".
+
+Objetivo: Garantir que o Arandu possa ser desenvolvido de forma modular e segura por múltiplos agentes ou humanos.
+
+
 ---
 
 **Última Atualização**: Março 2026  

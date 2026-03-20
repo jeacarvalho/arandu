@@ -3,11 +3,17 @@
 
 echo "🛡️ Arandu Guard: Verificando integridade do sistema..."
 
+# Login com usuário de teste para obter sessão
+SESSION_ID="test-session-001"
+
+echo "🔐 Sessão de teste configurada: $SESSION_ID"
+
+# Testar rotas protegidas com sessão
 ROUTES=("/dashboard" "/patients" "/patients/new")
 FAILED=0
 
 for route in "${ROUTES[@]}"; do
-  STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080${route})
+  STATUS=$(curl -o /dev/null -s -w "%{http_code}" -b "arandu_session=$SESSION_ID" http://localhost:8080${route})
   if [ "$STATUS" -eq 200 ]; then
     echo "✅ Rota ${route} está online."
   else
@@ -20,7 +26,6 @@ if [ $FAILED -eq 1 ]; then
   echo "🚨 O sistema apresenta regressões. Corrija antes de concluir a task."
   exit 1
 fi
-
 
 # --- Verificação de Geração de Templates (templ) ---
 echo "🔍 Verificando integridade dos componentes templ..."
