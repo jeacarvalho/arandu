@@ -8,12 +8,18 @@ import (
 	"path/filepath"
 	"time"
 
-	"arandu/internal/domain/shared"
 	"arandu/internal/infrastructure/repository/sqlite/migrations"
 
 	"github.com/google/uuid"
 	_ "modernc.org/sqlite"
 )
+
+type Tenant struct {
+	ID        string
+	DBPath    string
+	Status    string
+	CreatedAt time.Time
+}
 
 type TenantService struct {
 	centralDB *sql.DB
@@ -82,7 +88,7 @@ func (s *TenantService) ProvisionNewTenant(ctx context.Context, userID string) (
 	return tenantID, nil
 }
 
-func (s *TenantService) GetTenantByUserID(ctx context.Context, userID string) (*shared.Tenant, error) {
+func (s *TenantService) GetTenantByUserID(ctx context.Context, userID string) (*Tenant, error) {
 	query := `
 		SELECT t.id, t.db_path, t.status, t.created_at
 		FROM tenants t
@@ -90,7 +96,7 @@ func (s *TenantService) GetTenantByUserID(ctx context.Context, userID string) (*
 		WHERE u.id = ?
 	`
 
-	var tenant shared.Tenant
+	var tenant Tenant
 	err := s.centralDB.QueryRowContext(ctx, query, userID).Scan(
 		&tenant.ID,
 		&tenant.DBPath,
