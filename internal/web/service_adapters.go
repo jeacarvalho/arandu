@@ -197,3 +197,50 @@ func (a *InterventionServiceAdapter) GetIntervention(ctx context.Context, id str
 func (a *InterventionServiceAdapter) UpdateIntervention(ctx context.Context, id, content string) error {
 	return a.service.UpdateIntervention(ctx, id, content)
 }
+
+// GoalServiceAdapter adapts repository to handlers.GoalServiceInterface
+type GoalServiceAdapter struct {
+	repo interface {
+		Create(ctx context.Context, patientID, title, description string) (*patient.TherapeuticGoal, error)
+		GetActiveGoals(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
+		CloseWithNote(ctx context.Context, id string, status patient.GoalStatus, closureNote string) error
+		FindByID(ctx context.Context, id string) (*patient.TherapeuticGoal, error)
+		FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
+	}
+}
+
+// NewGoalServiceAdapter creates a new adapter
+func NewGoalServiceAdapter(repo interface {
+	Create(ctx context.Context, patientID, title, description string) (*patient.TherapeuticGoal, error)
+	GetActiveGoals(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
+	CloseWithNote(ctx context.Context, id string, status patient.GoalStatus, closureNote string) error
+	FindByID(ctx context.Context, id string) (*patient.TherapeuticGoal, error)
+	FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
+}) *GoalServiceAdapter {
+	return &GoalServiceAdapter{repo: repo}
+}
+
+// CreateGoal implements handlers.GoalServiceInterface
+func (a *GoalServiceAdapter) CreateGoal(ctx context.Context, patientID, title, description string) (*patient.TherapeuticGoal, error) {
+	return a.repo.Create(ctx, patientID, title, description)
+}
+
+// GetActiveGoals implements handlers.GoalServiceInterface
+func (a *GoalServiceAdapter) GetActiveGoals(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error) {
+	return a.repo.GetActiveGoals(ctx, patientID)
+}
+
+// CloseGoalWithNote implements handlers.GoalServiceInterface
+func (a *GoalServiceAdapter) CloseGoalWithNote(ctx context.Context, goalID string, status patient.GoalStatus, closureNote string) error {
+	return a.repo.CloseWithNote(ctx, goalID, status, closureNote)
+}
+
+// FindByID implements handlers.GoalServiceInterface
+func (a *GoalServiceAdapter) FindByID(ctx context.Context, id string) (*patient.TherapeuticGoal, error) {
+	return a.repo.FindByID(ctx, id)
+}
+
+// FindByPatientID implements handlers.GoalServiceInterface
+func (a *GoalServiceAdapter) FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error) {
+	return a.repo.FindByPatientID(ctx, patientID)
+}

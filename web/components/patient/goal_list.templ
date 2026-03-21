@@ -1,0 +1,176 @@
+package patient
+
+import "fmt"
+
+type GoalItemViewModel struct {
+	ID            string
+	Title         string
+	Description   string
+	Status        string
+	StatusLabel   string
+	CreatedAt     string
+	ClosedAt      string
+	ClosureNote   string
+	IsAchieved    bool
+	IsArchived    bool
+	IsInProgress  bool
+}
+
+type GoalListViewModel struct {
+	PatientID        string
+	InProgressGoals  []GoalItemViewModel
+	AchievedGoals    []GoalItemViewModel
+	ArchivedGoals    []GoalItemViewModel
+	Error            string
+}
+
+templ GoalList(data GoalListViewModel) {
+	<div id="goal-list" class="goal-list-container">
+		if data.Error != "" {
+			<div class="goal-error">{ data.Error }</div>
+		}
+		
+		<div class="goal-sections">
+			if len(data.InProgressGoals) > 0 || len(data.AchievedGoals) > 0 || len(data.ArchivedGoals) > 0 {
+				if len(data.InProgressGoals) > 0 {
+					<div class="goal-section">
+						<div class="goal-section-header">
+							<span class="goal-section-icon in-progress">
+								<i class="fas fa-spinner"></i>
+							</span>
+							<h4 class="goal-section-title">Em Progresso</h4>
+							<span class="goal-section-count">{ fmt.Sprintf("%d", len(data.InProgressGoals)) }</span>
+						</div>
+						<ul class="goal-items-list" id="goals-in-progress">
+							for _, goal := range data.InProgressGoals {
+								@GoalItem(goal, data.PatientID)
+							}
+						</ul>
+					</div>
+				}
+				
+				if len(data.AchievedGoals) > 0 {
+					<div class="goal-section">
+						<div class="goal-section-header">
+							<span class="goal-section-icon achieved">
+								<i class="fas fa-check-circle"></i>
+							</span>
+							<h4 class="goal-section-title">Alcançadas</h4>
+							<span class="goal-section-count">{ fmt.Sprintf("%d", len(data.AchievedGoals)) }</span>
+						</div>
+						<ul class="goal-items-list" id="goals-achieved">
+							for _, goal := range data.AchievedGoals {
+								@GoalItem(goal, data.PatientID)
+							}
+						</ul>
+					</div>
+				}
+				
+				if len(data.ArchivedGoals) > 0 {
+					<div class="goal-section goal-section-archived">
+						<div class="goal-section-header">
+							<span class="goal-section-icon archived">
+								<i class="fas fa-archive"></i>
+							</span>
+							<h4 class="goal-section-title">Arquivadas</h4>
+							<span class="goal-section-count">{ fmt.Sprintf("%d", len(data.ArchivedGoals)) }</span>
+						</div>
+						<ul class="goal-items-list" id="goals-archived">
+							for _, goal := range data.ArchivedGoals {
+								@GoalItem(goal, data.PatientID)
+							}
+						</ul>
+					</div>
+				}
+			} else {
+				<div class="goal-empty">
+					<i class="fas fa-bullseye"></i>
+					<p>Nenhuma meta definida</p>
+					<span class="goal-empty-hint">Use o formulário abaixo para adicionar uma meta terapêutica</span>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+templ GoalItem(goal GoalItemViewModel, patientID string) {
+	<li 
+		class={ "goal-item", templ.KV("goal-achieved", goal.IsAchieved), templ.KV("goal-archived", goal.IsArchived) }
+		id={ "goal-" + goal.ID }
+	>
+		<div class="goal-item-content">
+			<div class="goal-item-header">
+				if goal.IsAchieved {
+					<span class="goal-status-badge achieved">
+						<i class="fas fa-check"></i>
+					</span>
+				}
+				<h5 class="goal-item-title">{ goal.Title }</h5>
+			</div>
+			if goal.Description != "" {
+				<p class="goal-item-description">{ goal.Description }</p>
+			}
+			<div class="goal-item-meta">
+				<span class="goal-item-date">Criada em { goal.CreatedAt }</span>
+			</div>
+		</div>
+		<div class="goal-item-actions">
+			if goal.IsInProgress {
+				<button 
+					type="button"
+					class="goal-action achieve"
+					title="Marcar como alcançada"
+					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=achieved" }
+					hx-target="#goal-list"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-check"></i>
+				</button>
+				<button 
+					type="button"
+					class="goal-action archive"
+					title="Arquivar meta"
+					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived" }
+					hx-target="#goal-list"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-archive"></i>
+				</button>
+			}
+			if goal.IsAchieved {
+				<button 
+					type="button"
+					class="goal-action reopen"
+					title="Reabrir meta"
+					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress" }
+					hx-target="#goal-list"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-undo"></i>
+				</button>
+				<button 
+					type="button"
+					class="goal-action archive"
+					title="Arquivar meta"
+					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived" }
+					hx-target="#goal-list"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-archive"></i>
+				</button>
+			}
+			if goal.IsArchived {
+				<button 
+					type="button"
+					class="goal-action reopen"
+					title="Reabrir meta"
+					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress" }
+					hx-target="#goal-list"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-undo"></i>
+				</button>
+			}
+		</div>
+	</li>
+}

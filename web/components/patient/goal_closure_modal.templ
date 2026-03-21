@@ -1,0 +1,68 @@
+package patient
+
+templ GoalClosureModalInline(goal GoalItemViewModel, patientID string) {
+	<div id={ "goal-closure-modal-" + goal.ID } class="goal-closure-modal" x-data={ "{ showModal: false }" }>
+		<div class="goal-closure-backdrop" x-on:click="showModal = false" x-show="showModal"></div>
+		<div class="goal-closure-dialog" x-show="showModal" x-transition>
+			<div class="goal-closure-header">
+				<div class="goal-closure-icon">
+					<i class="fas fa-flag-checkered"></i>
+				</div>
+				<div>
+					<h3 class="goal-closure-title">Concluir Meta</h3>
+					<p class="goal-closure-subtitle">{ goal.Title }</p>
+				</div>
+				<button type="button" class="goal-closure-close" x-on:click="showModal = false">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			
+			<form 
+				class="goal-closure-form"
+				hx-post={ "/patients/" + patientID + "/goals/" + goal.ID + "/close" }
+				hx-target="#goal-list"
+				hx-swap="innerHTML"
+				x-on:htmx:after-request="showModal = false"
+			>
+				<div class="goal-closure-field">
+					<label class="goal-closure-label">
+						<i class="fas fa-pen-fancy"></i>
+						Nota de Desfecho
+					</label>
+					<p class="goal-closure-hint">
+						Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.
+					</p>
+					<textarea 
+						name="closure_note" 
+						class="goal-closure-textarea"
+						rows="6"
+						placeholder="Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?"
+					></textarea>
+				</div>
+				
+				<div class="goal-closure-actions">
+					<button type="button" class="goal-closure-btn-cancel" x-on:click="showModal = false">
+						<i class="fas fa-times"></i>
+						Cancelar
+					</button>
+					<button type="submit" class="goal-closure-btn-confirm">
+						<i class="fas fa-check"></i>
+						Concluir Meta
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+templ CloseGoalButton(goal GoalItemViewModel, patientID string) {
+	<button 
+		type="button"
+		class="goal-action achieve"
+		title="Concluir meta com nota"
+		x-on:click={ "showModal = true" }
+		x-data
+	>
+		<i class="fas fa-flag-checkered"></i>
+	</button>
+}

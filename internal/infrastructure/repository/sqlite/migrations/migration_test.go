@@ -172,9 +172,21 @@ func TestMigrationManager(t *testing.T) {
 			t.Fatalf("Failed to create migration manager: %v", err)
 		}
 
-		// Rollback the migration
-		if err := manager.Rollback("0001_initial_schema"); err != nil {
-			t.Fatalf("Failed to rollback migration: %v", err)
+		// First rollback all migrations to start fresh
+		if err := manager.Migrate(); err != nil {
+			t.Fatalf("Failed to apply migrations: %v", err)
+		}
+		status, err := manager.Status()
+		if err != nil {
+			t.Fatalf("Failed to get migration status: %v", err)
+		}
+		// Rollback all applied migrations in reverse order
+		for _, migration := range manager.migrations {
+			if status[migration.Version] == "applied" {
+				if err := manager.Rollback(migration.Version); err != nil {
+					t.Fatalf("Failed to rollback migration %s: %v", migration.Version, err)
+				}
+			}
 		}
 
 		// Check that patients table was removed
@@ -230,9 +242,25 @@ func TestMigrationManager(t *testing.T) {
 			t.Fatalf("Failed to create migration manager: %v", err)
 		}
 
-		// Rollback last migration
-		if err := manager.RollbackLast(); err != nil {
-			t.Fatalf("Failed to rollback last migration: %v", err)
+		// Rollback all migrations in reverse order
+		for {
+			status, err := manager.Status()
+			if err != nil {
+				t.Fatalf("Failed to get status: %v", err)
+			}
+			hasApplied := false
+			for _, s := range status {
+				if s == "applied" {
+					hasApplied = true
+					break
+				}
+			}
+			if !hasApplied {
+				break
+			}
+			if err := manager.RollbackLast(); err != nil {
+				t.Fatalf("Failed to rollback last migration: %v", err)
+			}
 		}
 
 		// Check that patients table was removed
