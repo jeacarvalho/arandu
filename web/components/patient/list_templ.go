@@ -69,7 +69,7 @@ func PatientList(data PatientListData) templ.Component {
 			}
 		}
 		if len(data.Patients) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div style=\"display: flex; flex-direction: column; gap: var(--space-sm); max-width: 56rem; margin: 0 auto;\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"patient-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -87,7 +87,7 @@ func PatientList(data PatientListData) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" style=\"display: flex; align-items: center; justify-content: space-between; padding: var(--space-lg) var(--space-xl); background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); text-decoration: none; transition: all 0.2s ease;\" onmouseover=\"this.style.borderColor='var(--primary-200)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)';\" onmouseout=\"this.style.borderColor='var(--neutral-100)'; this.style.boxShadow='none';\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"patient-card patient-card-link\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -110,7 +110,7 @@ func PatientList(data PatientListData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "><div style=\"display: flex; align-items: center; gap: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;\"><i class=\"fas fa-user\"></i></div><div><div style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-900);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "><div class=\"patient-card-main\"><div class=\"patient-card-avatar\"><i class=\"fas fa-user\"></i></div><div><div class=\"patient-name\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -128,7 +128,7 @@ func PatientList(data PatientListData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if p.Notes != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div style=\"font-family: var(--font-clinical); font-size: 0.875rem; color: var(--neutral-500); max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"patient-notes patient-notes-inline\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -146,12 +146,12 @@ func PatientList(data PatientListData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div style=\"font-size: 0.875rem; color: var(--neutral-400); font-style: italic;\">Nenhuma observação registrada</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"patient-empty-note\">Nenhuma observação registrada</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><div style=\"display: flex; align-items: center; gap: var(--space-lg);\"><div style=\"font-size: 0.75rem; color: var(--neutral-400);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><div class=\"patient-meta patient-meta-inline\"><div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -164,7 +164,7 @@ func PatientList(data PatientListData) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div style=\"width: 8px; height: 8px; background: var(--success-500); border-radius: var(--radius-full); flex-shrink: 0;\"></div></div></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"status-dot\" aria-hidden=\"true\"></div></div></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -174,12 +174,12 @@ func PatientList(data PatientListData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(data.Patients) == data.PageSize {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"loading-indicator-patients\" class=\"htmx-indicator\" style=\"text-align: center; padding: var(--space-xl);\"><div style=\"color: var(--neutral-400);\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">A carregar mais pacientes...</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"loading-indicator-patients\" class=\"htmx-indicator patient-list-feedback\"><div class=\"patient-list-feedback-icon\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p class=\"patient-list-feedback-text\">A carregar mais pacientes...</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else if len(data.Patients) > 0 && len(data.Patients) < data.PageSize {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div style=\"text-align: center; padding: var(--space-xl);\"><p style=\"font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);\">Fim da lista de pacientes</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"patient-list-feedback\"><p class=\"patient-list-feedback-text patient-list-feedback-end\">Fim da lista de pacientes</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
