@@ -40,19 +40,19 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div style=\"padding: var(--space-lg); max-width: 56rem; margin: 0 auto;\"><!-- Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><a href=\"/patients\" style=\"width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;\"><i class=\"fas fa-arrow-left\"></i></a><div><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Novo Paciente</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;\">Cadastre um novo paciente para iniciar o acompanhamento clínico</p></div></div></div><!-- Form Card --><div style=\"background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"form-container\"><div class=\"content-header\" style=\"margin-bottom: var(--space-xl);\"><div class=\"header-title\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><a href=\"/patients\" class=\"btn btn-ghost btn-sm\" aria-label=\"Voltar para a lista de pacientes\"><i class=\"fas fa-arrow-left btn-icon\"></i></a><div><h1 style=\"font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);\">Novo Paciente</h1><p class=\"header-subtitle\" style=\"font-size: 0.875rem; color: var(--neutral-500);\">Cadastre um novo paciente para iniciar o acompanhamento clínico</p></div></div></div></div><div class=\"card\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div style=\"padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);\"><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;\"><i class=\"fas fa-exclamation-circle\" style=\"margin-right: var(--space-sm);\"></i> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"form-error\" role=\"alert\" aria-live=\"polite\" style=\"margin-bottom: var(--space-lg);\"><p style=\"margin: 0;\"><i class=\"fas fa-exclamation-circle\" style=\"margin-right: var(--space-sm);\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 39, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 37, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -64,14 +64,14 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 			}
 		}
 		if data.ServerError != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div style=\"padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);\"><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;\"><i class=\"fas fa-exclamation-circle\" style=\"margin-right: var(--space-sm);\"></i> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"form-error\" role=\"alert\" aria-live=\"polite\" style=\"margin-bottom: var(--space-lg);\"><p style=\"margin: 0;\"><i class=\"fas fa-exclamation-circle\" style=\"margin-right: var(--space-sm);\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.ServerError)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 48, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 46, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -82,33 +82,33 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patient/create\" method=\"POST\" style=\"padding: var(--space-xl);\"><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-user-plus\"></i></div><div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Dados Pessoais</h2></div></div><div style=\"background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);\"><div style=\"margin-bottom: var(--space-lg);\"><label style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);\">Nome Completo *</label> <input type=\"text\" name=\"name\" required placeholder=\"Ex: Maria da Silva\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patient/create\" method=\"POST\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;\"><i class=\"fas fa-user-plus\"></i></div><div><h2 class=\"card-title\">Dados Pessoais</h2><p class=\"card-subtitle\">Informações mínimas para iniciar o acompanhamento</p></div></div><div style=\"padding: var(--space-xl);\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-name\">Nome Completo *</label> <input id=\"patient-name\" type=\"text\" name=\"name\" required autocomplete=\"name\" placeholder=\"Ex: Maria da Silva\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 74, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 64, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" style=\"width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 1rem; color: var(--neutral-800); outline: none; transition: all 0.15s ease;\" onfocus=\"this.style.borderColor='var(--primary-400)'; this.style.boxShadow='0 0 0 3px var(--primary-100)';\" onblur=\"this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='none';\"></div></div></div><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Notas Clínicas</h2></div></div><div style=\"background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);\"><div style=\"margin-bottom: var(--space-md);\"><label style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);\">Observações Iniciais</label> <textarea name=\"notes\" rows=\"6\" placeholder=\"Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores\" style=\"width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); outline: none; resize: vertical; transition: all 0.15s ease;\" onfocus=\"this.style.borderColor='var(--primary-400)'; this.style.boxShadow='0 0 0 3px var(--primary-100)';\" onblur=\"this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='none';\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"silent-input\" aria-describedby=\"patient-name-help\"><p id=\"patient-name-help\" class=\"small\" style=\"margin-top: var(--space-sm); margin-bottom: 0;\">Use o nome pelo qual o paciente deve ser identificado no prontuário.</p></div><div class=\"card-header\" style=\"padding: 0; margin-bottom: var(--space-lg);\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Notas Clínicas</h2><p class=\"card-subtitle\">Contexto inicial para consulta rápida durante as sessões</p></div></div><div class=\"silent-form-group\" style=\"margin-bottom: 0;\"><label class=\"silent-label\" for=\"patient-notes\">Observações Iniciais</label> <textarea id=\"patient-notes\" name=\"notes\" rows=\"6\" placeholder=\"Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores\" class=\"silent-textarea\" aria-describedby=\"patient-notes-help\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Notes)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 105, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 94, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</textarea></div><p style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-400); margin: 0;\"><i class=\"fas fa-info-circle\" style=\"margin-right: var(--space-xs);\"></i> Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.</p></div></div><div style=\"display: flex; justify-content: flex-end; gap: var(--space-md); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);\"><a href=\"/patients\" style=\"display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: var(--neutral-600); transition: all 0.15s ease;\"><i class=\"fas fa-times\"></i> Cancelar</a> <button type=\"submit\" style=\"display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: var(--primary-600); border: none; border-radius: var(--radius-lg); font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: white; cursor: pointer; transition: all 0.15s ease;\"><i class=\"fas fa-user-plus\"></i> Cadastrar Paciente</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</textarea><p id=\"patient-notes-help\" class=\"small\" style=\"margin-top: var(--space-sm); margin-bottom: 0;\">Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.</p></div><div class=\"form-actions\"><a href=\"/patients\" class=\"btn btn-outline\"><i class=\"fas fa-times btn-icon\"></i> Cancelar</a> <button type=\"submit\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i> Cadastrar Paciente</button></div></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
