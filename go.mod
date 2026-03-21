@@ -11,6 +11,8 @@ require (
 	github.com/google/generative-ai-go v0.20.1
 	github.com/google/go-cmp v0.7.0
 	github.com/joho/godotenv v1.5.1
+	golang.org/x/crypto v0.40.0
+	golang.org/x/oauth2 v0.21.0
 	google.golang.org/api v0.186.0
 	modernc.org/sqlite v1.47.0
 )
@@ -40,9 +42,7 @@ require (
 	go.opentelemetry.io/otel v1.26.0 // indirect
 	go.opentelemetry.io/otel/metric v1.26.0 // indirect
 	go.opentelemetry.io/otel/trace v1.26.0 // indirect
-	golang.org/x/crypto v0.40.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.27.0 // indirect

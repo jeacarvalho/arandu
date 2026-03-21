@@ -531,3 +531,101 @@ func (r *ContextAwareVitalsRepository) FindByPatientIDAndTimeframe(ctx context.C
 	tempRepo := NewVitalsRepository(&DB{db})
 	return tempRepo.FindByPatientIDAndTimeframe(ctx, patientID, startTime)
 }
+
+type ContextAwareGoalRepository struct {
+	factory *ContextAwareRepositoryFactory
+}
+
+func NewContextAwareGoalRepository(factory *ContextAwareRepositoryFactory) *ContextAwareGoalRepository {
+	return &ContextAwareGoalRepository{factory: factory}
+}
+
+func (r *ContextAwareGoalRepository) Create(ctx context.Context, patientID, title, description string) (*patient.TherapeuticGoal, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.Create(ctx, patientID, title, description)
+}
+
+func (r *ContextAwareGoalRepository) GetActiveGoals(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.GetActiveGoals(ctx, patientID)
+}
+
+func (r *ContextAwareGoalRepository) Save(ctx context.Context, g *patient.TherapeuticGoal) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.Save(ctx, g)
+}
+
+func (r *ContextAwareGoalRepository) FindByID(ctx context.Context, id string) (*patient.TherapeuticGoal, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.FindByID(ctx, id)
+}
+
+func (r *ContextAwareGoalRepository) FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.FindByPatientID(ctx, patientID)
+}
+
+func (r *ContextAwareGoalRepository) GetGoalsByStatus(ctx context.Context, patientID string, status patient.GoalStatus) ([]*patient.TherapeuticGoal, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.GetGoalsByStatus(ctx, patientID, status)
+}
+
+func (r *ContextAwareGoalRepository) UpdateStatus(ctx context.Context, id string, status patient.GoalStatus) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.UpdateStatus(ctx, id, status)
+}
+
+func (r *ContextAwareGoalRepository) Update(ctx context.Context, g *patient.TherapeuticGoal) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.Update(ctx, g)
+}
+
+func (r *ContextAwareGoalRepository) Delete(ctx context.Context, id string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.Delete(ctx, id)
+}
+
+func (r *ContextAwareGoalRepository) CloseWithNote(ctx context.Context, id string, status patient.GoalStatus, closureNote string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewGoalRepository(&DB{db})
+	return tempRepo.CloseWithNote(ctx, id, status, closureNote)
+}

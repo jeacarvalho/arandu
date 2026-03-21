@@ -56,7 +56,7 @@ func (am *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 
 		db, err := am.pool.GetConnection(session.TenantID)
 		if err != nil {
-			am.renderMaintenancePage(w)
+			am.renderMaintenancePage(w, err)
 			return
 		}
 
@@ -157,13 +157,17 @@ func (am *AuthMiddleware) clearSession(w http.ResponseWriter) {
 	})
 }
 
-func (am *AuthMiddleware) renderMaintenancePage(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "text/html")
+func (am *AuthMiddleware) renderMaintenancePage(w http.ResponseWriter, err error) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusServiceUnavailable)
+	errMsg := ""
+	if err != nil {
+		errMsg = fmt.Sprintf("<p style='color: #666; font-size: 0.9em;'>Detalhe técnico: %v</p>", err)
+	}
 	w.Write([]byte(`<!DOCTYPE html>
-<html><head><title>Manutenção</title></head>
-<body style="font-family: system-ui; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-<div style="text-align: center;"><h1>Manutenção Temporária</h1><p>Seu consultório está temporariamente indisponível. Tente novamente em alguns minutos.</p></div>
+<html><head><title>Manuten&#231;&#227;o</title><meta charset="UTF-8"></head>
+<body style="font-family: system-ui; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #E1F5EE;">
+<div style="text-align: center; padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><h1 style="color: #1B4D3E; font-family: 'Source Serif 4', serif;">Manuten&#231;&#227;o Tempor&#225;ria</h1><p style="color: #2D6A4F;">Seu consult&#243;rio est&#225; temporariamente indispon&#237;vel.<br>Tente novamente em alguns minutos.</p>` + errMsg + `</div>
 </body></html>`))
 }
 

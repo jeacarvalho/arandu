@@ -15,6 +15,7 @@ import (
 	"arandu/internal/domain/session"
 
 	layoutComponents "arandu/web/components/layout"
+	patientComponents "arandu/web/components/patient"
 	sessionComponents "arandu/web/components/session"
 )
 
@@ -90,6 +91,16 @@ type SessionHandler struct {
 	patientService      PatientServiceInterface
 	observationService  ObservationServiceInterface
 	interventionService InterventionServiceInterface
+	goalService         GoalServiceInterface
+}
+
+// GoalServiceInterface defines the interface for goal operations
+type GoalServiceInterface interface {
+	CreateGoal(ctx context.Context, patientID, title, description string) (*patient.TherapeuticGoal, error)
+	GetActiveGoals(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
+	CloseGoalWithNote(ctx context.Context, goalID string, status patient.GoalStatus, closureNote string) error
+	FindByID(ctx context.Context, id string) (*patient.TherapeuticGoal, error)
+	FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error)
 }
 
 // NewSessionHandler creates a new SessionHandler with dependency injection
@@ -98,12 +109,14 @@ func NewSessionHandler(
 	patientService PatientServiceInterface,
 	observationService ObservationServiceInterface,
 	interventionService InterventionServiceInterface,
+	goalService GoalServiceInterface,
 ) *SessionHandler {
 	return &SessionHandler{
 		sessionService:      sessionService,
 		patientService:      patientService,
 		observationService:  observationService,
 		interventionService: interventionService,
+		goalService:         goalService,
 	}
 }
 
@@ -253,12 +266,30 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Found patient: %s", patient.Name)
 
+	// Get active goals for the patient
+	var goalsData []sessionComponents.GoalDataItem
+	if h.goalService != nil {
+		activeGoals, err := h.goalService.GetActiveGoals(r.Context(), patientID)
+		if err != nil {
+			log.Printf("Error getting active goals: %v", err)
+		} else {
+			for _, g := range activeGoals {
+				goalsData = append(goalsData, sessionComponents.GoalDataItem{
+					ID:          g.ID,
+					Title:       g.Title,
+					Description: g.Description,
+				})
+			}
+		}
+	}
+
 	formData := sessionComponents.NewSessionFormData{
 		PatientName: patient.Name,
 		FormData: &sessionComponents.SessionFormValues{
 			PatientID: patientID,
 			Date:      time.Now().Format("2006-01-02"),
 		},
+		Goals: goalsData,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -270,7 +301,7 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Render with layout using templ
+	// Render form with base layout
 	form := sessionComponents.NewSessionForm(formData)
 	layoutComponents.BaseWithContent("Nova Sessão", form).Render(r.Context(), w)
 }
@@ -434,6 +465,23 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Get active goals
+	var goalsData []sessionComponents.GoalDataItem
+	if h.goalService != nil {
+		activeGoals, err := h.goalService.GetActiveGoals(r.Context(), sess.PatientID)
+		if err != nil {
+			log.Printf("Error getting active goals: %v", err)
+		} else {
+			for _, g := range activeGoals {
+				goalsData = append(goalsData, sessionComponents.GoalDataItem{
+					ID:          g.ID,
+					Title:       g.Title,
+					Description: g.Description,
+				})
+			}
+		}
+	}
+
 	formData := sessionComponents.EditSessionFormData{
 		SessionID:   sessionID,
 		PatientName: patient.Name,
@@ -444,6 +492,7 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 		},
 		Observations:  observations,
 		Interventions: interventions,
+		Goals:         goalsData,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -457,7 +506,7 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContent("Completar Sessão", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContent("Editar Sessão", form).Render(r.Context(), w)
 }
 
 // UpdateSession handles POST /sessions/update - updates an existing session
@@ -706,6 +755,182 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// CloseGoalWithNote handles PUT /patients/{patientID}/goals/{goalID}/close
+func (h *SessionHandler) CloseGoalWithNote(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// Extract patient ID and goal ID from path
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	var patientID, goalID string
+	for i, part := range parts {
+		if part == "patients" && i+1 < len(parts) {
+			patientID = parts[i+1]
+		}
+		if part == "goals" && i+1 < len(parts) {
+			goalID = parts[i+1]
+		}
+	}
+
+	if patientID == "" || goalID == "" {
+		h.renderError(w, r, "IDs inválidos", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	closureNote := r.FormValue("closure_note")
+
+	if err := h.goalService.CloseGoalWithNote(ctx, goalID, patient.GoalStatusAchieved, closureNote); err != nil {
+		log.Printf("Error closing goal: %v", err)
+		h.renderError(w, r, "Erro ao concluir meta: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get all goals to render updated list
+	goals, err := h.goalService.FindByPatientID(ctx, patientID)
+	if err != nil {
+		log.Printf("Error fetching goals: %v", err)
+	}
+
+	// Build view model
+	var inProgressGoals, achievedGoals, archivedGoals []patientComponents.GoalItemViewModel
+	for _, g := range goals {
+		item := patientComponents.GoalItemViewModel{
+			ID:           g.ID,
+			Title:        g.Title,
+			Description:  g.Description,
+			Status:       string(g.Status),
+			StatusLabel:  goalStatusLabel(g.Status),
+			CreatedAt:    g.CreatedAt.Format("02/01/2006"),
+			ClosureNote:  g.ClosureNote,
+			IsAchieved:   g.IsAchieved(),
+			IsArchived:   g.IsArchived(),
+			IsInProgress: g.IsInProgress(),
+		}
+		if g.ClosedAt != nil {
+			item.ClosedAt = g.ClosedAt.Format("02/01/2006")
+		}
+
+		if g.IsInProgress() {
+			inProgressGoals = append(inProgressGoals, item)
+		} else if g.IsAchieved() {
+			achievedGoals = append(achievedGoals, item)
+		} else if g.IsArchived() {
+			archivedGoals = append(archivedGoals, item)
+		}
+	}
+
+	goalListVM := patientComponents.GoalListViewModel{
+		PatientID:       patientID,
+		InProgressGoals: inProgressGoals,
+		AchievedGoals:   achievedGoals,
+		ArchivedGoals:   archivedGoals,
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	if err := patientComponents.GoalList(goalListVM).Render(ctx, w); err != nil {
+		log.Printf("Error rendering goal list: %v", err)
+	}
+}
+
+// TherapeuticPlanReport handles GET /patients/{patientID}/plan/report
+func (h *SessionHandler) TherapeuticPlanReport(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// Extract patient ID from path
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	var patientID string
+	for i, part := range parts {
+		if part == "patients" && i+1 < len(parts) {
+			patientID = parts[i+1]
+			break
+		}
+	}
+
+	if patientID == "" {
+		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	// Get patient info
+	patientInfo, err := h.patientService.GetPatientByID(ctx, patientID)
+	if err != nil {
+		h.renderError(w, r, "Paciente não encontrado", http.StatusNotFound)
+		return
+	}
+
+	// Get all goals
+	goals, err := h.goalService.FindByPatientID(ctx, patientID)
+	if err != nil {
+		log.Printf("Error fetching goals: %v", err)
+		goals = []*patient.TherapeuticGoal{}
+	}
+
+	// Build view model
+	var goalItems []patientComponents.GoalReportItemVM
+	for _, g := range goals {
+		item := patientComponents.GoalReportItemVM{
+			ID:           g.ID,
+			Title:        g.Title,
+			Description:  g.Description,
+			Status:       string(g.Status),
+			StatusLabel:  goalStatusLabel(g.Status),
+			ClosureNote:  g.ClosureNote,
+			CreatedAt:    g.CreatedAt.Format("02/01/2006"),
+			IsAchieved:   g.IsAchieved(),
+			IsArchived:   g.IsArchived(),
+			IsInProgress: g.IsInProgress(),
+		}
+		if g.ClosedAt != nil {
+			item.ClosedAt = g.ClosedAt.Format("02/01/2006")
+		}
+		goalItems = append(goalItems, item)
+	}
+
+	reportData := patientComponents.TherapeuticPlanReportData{
+		PatientName: patientInfo.Name,
+		PatientID:   patientID,
+		ReportDate:  time.Now().Format("02/01/2006 às 15:04"),
+		Goals:       goalItems,
+	}
+
+	// Render with full HTML layout including CSS
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	html := `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Relatório de Plano Terapêutico - ` + patientInfo.Name + `</title>
+	<link href="/static/css/style.css?v=20260321_report" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+`
+	w.Write([]byte(html))
+	patientComponents.TherapeuticPlanReport(reportData).Render(ctx, w)
+	w.Write([]byte(`</body></html>`))
+}
+
+func goalStatusLabel(status patient.GoalStatus) string {
+	switch status {
+	case patient.GoalStatusInProgress:
+		return "Em Progresso"
+	case patient.GoalStatusAchieved:
+		return "Alcançada"
+	case patient.GoalStatusArchived:
+		return "Arquivada"
+	default:
+		return string(status)
+	}
+}
+
 // Helper function to extract session ID from URL path
 func extractSessionID(path, prefix, suffix string) string {
 	path = strings.TrimPrefix(path, prefix)
@@ -718,4 +943,51 @@ func extractSessionID(path, prefix, suffix string) string {
 		return parts[0]
 	}
 	return ""
+}
+
+// CreateGoal handles POST /patients/{patientID}/goals
+func (h *SessionHandler) CreateGoal(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	var patientID string
+	for i, part := range parts {
+		if part == "patients" && i+1 < len(parts) {
+			patientID = parts[i+1]
+			break
+		}
+	}
+
+	if patientID == "" {
+		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		h.renderError(w, r, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	title := r.FormValue("title")
+	description := r.FormValue("description")
+
+	if title == "" {
+		h.renderError(w, r, "Título da meta é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	goal, err := h.goalService.CreateGoal(ctx, patientID, title, description)
+	if err != nil {
+		h.renderError(w, r, "Erro ao criar meta: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	vm := sessionComponents.GoalDataItem{
+		ID:          goal.ID,
+		Title:       goal.Title,
+		Description: goal.Description,
+	}
+
+	sessionComponents.SessionGoalItemRender(vm, patientID).Render(ctx, w)
 }

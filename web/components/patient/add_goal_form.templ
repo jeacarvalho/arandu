@@ -1,0 +1,58 @@
+package patient
+
+templ AddGoalForm(patientID string) {
+	<div id="add-goal-form" class="add-goal-form">
+		<form 
+			hx-post={ "/patients/" + patientID + "/goals" }
+			hx-target="#goals-in-progress"
+			hx-swap="afterbegin"
+			class="goal-form"
+		>
+			<div class="goal-form-input-wrapper">
+				<i class="fas fa-bullseye goal-form-icon"></i>
+				<input 
+					type="text" 
+					name="title" 
+					placeholder="Definir nova meta terapêutica..."
+					class="goal-form-input"
+					autocomplete="off"
+					required
+				/>
+			</div>
+			<textarea 
+				name="description" 
+				placeholder="Racional clínico (opcional)..."
+				class="goal-form-textarea"
+				rows="2"
+			></textarea>
+			<div class="goal-form-actions">
+				<button type="submit" class="goal-form-submit">
+					<i class="fas fa-plus"></i>
+					<span>Adicionar Meta</span>
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+templ AddGoalFormInline(patientID string) {
+	<form 
+		hx-post={ "/patients/" + patientID + "/goals" }
+		hx-target="#goals-in-progress"
+		hx-swap="afterbegin"
+		hx-on:htmx:after-request="if(event.detail.successful) { this.reset(); }"
+		class="goal-form-inline"
+	>
+		<input 
+			type="text" 
+			name="title" 
+			placeholder="Nova meta..."
+			class="goal-form-inline-input"
+			autocomplete="off"
+			required
+		/>
+		<button type="submit" class="goal-form-inline-submit" title="Adicionar">
+			<i class="fas fa-plus"></i>
+		</button>
+	</form>
+}

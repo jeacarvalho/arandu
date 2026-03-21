@@ -82,6 +82,7 @@ func main() {
 	insightRepo := sqlite.NewContextAwareInsightRepository(repoFactory)
 	medicationRepo := sqlite.NewContextAwareMedicationRepository(repoFactory)
 	vitalsRepo := sqlite.NewContextAwareVitalsRepository(repoFactory)
+	goalRepo := sqlite.NewContextAwareGoalRepository(repoFactory)
 
 	// Use base repo for timeline (requires specific type)
 	timelineRepoBase := sqlite.NewTimelineRepository(db)
@@ -103,6 +104,7 @@ func main() {
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
 	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
+	goalServiceAdapter := web.NewGoalServiceAdapter(goalRepo)
 
 	// Create biopsychosocial service adapter
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
@@ -128,7 +130,7 @@ func main() {
 
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl)
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
@@ -266,6 +268,12 @@ func main() {
 			biopsychosocialHandler.UpdateMedicationStatus(w, r)
 		} else if strings.Contains(r.URL.Path, "/analysis/synthesis") && r.Method == "POST" {
 			aiHandler.GeneratePatientSynthesis(w, r)
+		} else if strings.Contains(r.URL.Path, "/plan/report") && r.Method == "GET" {
+			sessionHandler.TherapeuticPlanReport(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/goals") && r.Method == "POST" {
+			sessionHandler.CreateGoal(w, r)
+		} else if strings.Contains(r.URL.Path, "/goals/") && strings.HasSuffix(r.URL.Path, "/close") && r.Method == "POST" {
+			sessionHandler.CloseGoalWithNote(w, r)
 		} else {
 			http.NotFound(w, r)
 		}

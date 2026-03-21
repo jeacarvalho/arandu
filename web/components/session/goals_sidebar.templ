@@ -1,0 +1,90 @@
+package session
+
+type GoalDataItem struct {
+	ID          string
+	Title       string
+	Description string
+}
+
+type GoalsSessionSidebarData struct {
+	PatientID string
+	Goals     []GoalDataItem
+}
+
+templ GoalsSessionSidebar(data GoalsSessionSidebarData) {
+	<div id="session-goals-sidebar" class="session-goals-sidebar">
+		<div class="session-goals-header">
+			<span class="session-goals-icon">
+				<i class="fas fa-bullseye"></i>
+			</span>
+			<h4 class="session-goals-title">Metas em Foco</h4>
+		</div>
+		
+		<ul id="session-goals-list" class="session-goals-list">
+			for _, goal := range data.Goals {
+				@SessionGoalItemRender(goal, data.PatientID)
+			}
+		</ul>
+		
+		if len(data.Goals) == 0 {
+			<div class="session-goals-empty">
+				<p>Nenhuma meta ativa</p>
+			</div>
+		}
+	</div>
+}
+
+templ SessionGoalItemRender(goal GoalDataItem, patientID string) {
+	<li class="session-goal-item" id={ "session-goal-" + goal.ID }>
+		<div class="session-goal-content">
+			<span class="session-goal-indicator"></span>
+			<span class="session-goal-title">{ goal.Title }</span>
+		</div>
+		<button 
+			type="button"
+			class="session-goal-achieve"
+			title="Marcar como alcançada"
+			hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=achieved" }
+			hx-target="#session-goals-sidebar"
+			hx-swap="innerHTML"
+		>
+			<i class="fas fa-check"></i>
+		</button>
+	</li>
+}
+
+templ GoalFormInline(patientID string) {
+	<form 
+		class="inline-form"
+		hx-post={ "/patients/" + patientID + "/goals" }
+		hx-target="#session-goals-list"
+		hx-swap="beforeend"
+		hx-on::after-request="if(event.detail.successful) this.reset()"
+	>
+		<div class="silent-form-group">
+			<label class="silent-label">
+				<i class="fas fa-plus-circle"></i>
+				Adicionar Meta
+			</label>
+			<input 
+				type="text" 
+				name="title" 
+				placeholder="Descreva a meta terapêutica..." 
+				class="silent-input"
+				required
+			>
+			<textarea 
+				name="description" 
+				placeholder="Racional clínico (opcional)..." 
+				class="silent-textarea"
+				rows="2"
+			></textarea>
+		</div>
+		<div class="form-actions" style="margin-top: var(--space-md);">
+			<button type="submit" class="btn btn-primary btn-sm">
+				<i class="fas fa-plus btn-icon"></i>
+				Adicionar
+			</button>
+		</div>
+	</form>
+}

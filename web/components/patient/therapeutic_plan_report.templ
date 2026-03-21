@@ -1,0 +1,184 @@
+package patient
+
+import "fmt"
+
+type TherapeuticPlanReportData struct {
+	PatientName string
+	PatientID   string
+	ReportDate  string
+	Goals       []GoalReportItemVM
+}
+
+type GoalReportItemVM struct {
+	ID           string
+	Title        string
+	Description  string
+	Status       string
+	StatusLabel  string
+	ClosureNote  string
+	ClosedAt     string
+	CreatedAt    string
+	IsAchieved   bool
+	IsArchived   bool
+	IsInProgress bool
+}
+
+templ TherapeuticPlanReport(data TherapeuticPlanReportData) {
+	<div class="plan-report-container">
+		<!-- Report Header -->
+		<header class="plan-report-header">
+			<div class="plan-report-logo">
+				<i class="fas fa-heartbeat"></i>
+				<span>Arandu</span>
+			</div>
+			<div class="plan-report-meta">
+				<p class="plan-report-title">Relatório de Plano Terapêutico</p>
+				<p class="plan-report-patient">{ data.PatientName }</p>
+				<p class="plan-report-date">Gerado em { data.ReportDate }</p>
+			</div>
+		</header>
+
+		<!-- Report Summary -->
+		<div class="plan-report-summary">
+			<div class="plan-report-stat">
+				<span class="plan-report-stat-number">{ fmt.Sprintf("%d", len(data.Goals)) }</span>
+				<span class="plan-report-stat-label">Total de Metas</span>
+			</div>
+			<div class="plan-report-stat">
+				<span class="plan-report-stat-number">{ fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "achieved")) }</span>
+				<span class="plan-report-stat-label">Alcançadas</span>
+			</div>
+			<div class="plan-report-stat">
+				<span class="plan-report-stat-number">{ fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "in_progress")) }</span>
+				<span class="plan-report-stat-label">Em Progresso</span>
+			</div>
+			<div class="plan-report-stat">
+				<span class="plan-report-stat-number">{ fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "archived")) }</span>
+				<span class="plan-report-stat-label">Arquivadas</span>
+			</div>
+		</div>
+
+		<!-- Achieved Goals Section -->
+		if hasGoalsWithStatus(data.Goals, "achieved") {
+			<section class="plan-report-section">
+				<div class="plan-report-section-header achieved">
+					<i class="fas fa-check-circle"></i>
+					<h2>Metas Alcançadas</h2>
+				</div>
+				<div class="plan-report-goals">
+					for _, goal := range data.Goals {
+						if goal.IsAchieved {
+							@GoalReportCard(goal)
+						}
+					}
+				</div>
+			</section>
+		}
+
+		<!-- In Progress Goals Section -->
+		if hasGoalsWithStatus(data.Goals, "in_progress") {
+			<section class="plan-report-section">
+				<div class="plan-report-section-header in-progress">
+					<i class="fas fa-spinner"></i>
+					<h2>Metas em Progresso</h2>
+				</div>
+				<div class="plan-report-goals">
+					for _, goal := range data.Goals {
+						if goal.IsInProgress {
+							@GoalReportCard(goal)
+						}
+					}
+				</div>
+			</section>
+		}
+
+		<!-- Archived Goals Section -->
+		if hasGoalsWithStatus(data.Goals, "archived") {
+			<section class="plan-report-section archived">
+				<div class="plan-report-section-header archived">
+					<i class="fas fa-archive"></i>
+					<h2>Metas Arquivadas</h2>
+				</div>
+				<div class="plan-report-goals">
+					for _, goal := range data.Goals {
+						if goal.IsArchived {
+							@GoalReportCard(goal)
+						}
+					}
+				</div>
+			</section>
+		}
+
+		<!-- Report Footer -->
+		<footer class="plan-report-footer">
+			<div class="plan-report-watermark">
+				<span>Arandu - Registro da Prática Clínica</span>
+			</div>
+			<p class="plan-report-footer-note">
+				Este relatório é um documento clínico confidencial, protegido por sigilo profissional.
+			</p>
+		</footer>
+	</div>
+}
+
+templ GoalReportCard(goal GoalReportItemVM) {
+	<article class="plan-report-goal-item">
+		<div class="plan-report-goal-header">
+			<h3 class="plan-report-goal-title">{ goal.Title }</h3>
+			<span class={ "plan-report-goal-badge", templ.KV("achieved", goal.IsAchieved), templ.KV("in-progress", goal.IsInProgress), templ.KV("archived", goal.IsArchived) }>
+				if goal.IsAchieved {
+					<i class="fas fa-check"></i>
+				}
+				if goal.IsInProgress {
+					<i class="fas fa-spinner"></i>
+				}
+				if goal.IsArchived {
+					<i class="fas fa-archive"></i>
+				}
+				{ goal.StatusLabel }
+			</span>
+		</div>
+		
+		if goal.Description != "" {
+			<div class="plan-report-goal-rational">
+				<h4>Racional Clínico</h4>
+				<p>{ goal.Description }</p>
+			</div>
+		}
+		
+		if goal.IsAchieved && goal.ClosureNote != "" {
+			<div class="plan-report-goal-closure">
+				<h4>Nota de Desfecho</h4>
+				<p>{ goal.ClosureNote }</p>
+				if goal.ClosedAt != "" {
+					<span class="plan-report-goal-closed-date">
+						Concluída em { goal.ClosedAt }
+					</span>
+				}
+			</div>
+		}
+		
+		<div class="plan-report-goal-meta">
+			<span>Criada em { goal.CreatedAt }</span>
+		</div>
+	</article>
+}
+
+func countGoalsByStatus(goals []GoalReportItemVM, status string) int {
+	count := 0
+	for _, g := range goals {
+		if g.Status == status {
+			count++
+		}
+	}
+	return count
+}
+
+func hasGoalsWithStatus(goals []GoalReportItemVM, status string) bool {
+	for _, g := range goals {
+		if g.Status == status {
+			return true
+		}
+	}
+	return false
+}
