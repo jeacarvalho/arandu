@@ -31,7 +31,7 @@ templ SessionList(patientID string, sessions []SessionItem) {
 		if len(sessions) > 0 {
 			<div style="max-height: 400px; overflow-y: auto;">
 				for _, s := range sessions {
-					<a href={ "/session/" + s.ID } style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--space-lg); text-decoration: none; border-bottom: 1px solid var(--neutral-50); transition: background-color 0.15s ease;" onmouseover="this.style.backgroundColor='var(--neutral-50)';" onmouseout="this.style.backgroundColor='transparent';">
+					<a href={ "/session/" + s.ID + "/edit" } style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--space-lg); text-decoration: none; border-bottom: 1px solid var(--neutral-50); transition: background-color 0.15s ease;" onmouseover="this.style.backgroundColor='var(--neutral-50)';" onmouseout="this.style.backgroundColor='transparent';">
 						<div style="flex: 1; min-width: 0;">
 							<div style="font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; color: var(--neutral-800);">
 								{ s.Date }

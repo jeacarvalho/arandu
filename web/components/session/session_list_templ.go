@@ -70,9 +70,9 @@ func SessionList(patientID string, sessions []SessionItem) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 templ.SafeURL
-				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + s.ID)
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + s.ID + "/edit")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/session_list.templ`, Line: 34, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/session_list.templ`, Line: 34, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
