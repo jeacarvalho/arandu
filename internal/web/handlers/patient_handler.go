@@ -12,7 +12,6 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
-	sqliteRepo "arandu/internal/infrastructure/repository/sqlite"
 
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
@@ -78,28 +77,28 @@ type InsightService interface {
 
 // BiopsychosocialService defines the interface for biopsychosocial context operations
 type BiopsychosocialService interface {
-	GetMedications(patientID string) ([]interface{}, error)
-	GetLatestVitals(patientID string) (interface{}, error)
-	GetAverageVitals(patientID string, days int) (interface{}, error)
+	GetMedications(ctx context.Context, patientID string) ([]interface{}, error)
+	GetLatestVitals(ctx context.Context, patientID string) (interface{}, error)
+	GetAverageVitals(ctx context.Context, patientID string, days int) (interface{}, error)
 }
 
 // BiopsychosocialServiceFuncs is a helper type that implements BiopsychosocialService using functions
 type BiopsychosocialServiceFuncs struct {
-	GetMedicationsFunc   func(patientID string) ([]interface{}, error)
-	GetLatestVitalsFunc  func(patientID string) (interface{}, error)
-	GetAverageVitalsFunc func(patientID string, days int) (interface{}, error)
+	GetMedicationsFunc   func(ctx context.Context, patientID string) ([]interface{}, error)
+	GetLatestVitalsFunc  func(ctx context.Context, patientID string) (interface{}, error)
+	GetAverageVitalsFunc func(ctx context.Context, patientID string, days int) (interface{}, error)
 }
 
-func (f BiopsychosocialServiceFuncs) GetMedications(patientID string) ([]interface{}, error) {
-	return f.GetMedicationsFunc(patientID)
+func (f BiopsychosocialServiceFuncs) GetMedications(ctx context.Context, patientID string) ([]interface{}, error) {
+	return f.GetMedicationsFunc(ctx, patientID)
 }
 
-func (f BiopsychosocialServiceFuncs) GetLatestVitals(patientID string) (interface{}, error) {
-	return f.GetLatestVitalsFunc(patientID)
+func (f BiopsychosocialServiceFuncs) GetLatestVitals(ctx context.Context, patientID string) (interface{}, error) {
+	return f.GetLatestVitalsFunc(ctx, patientID)
 }
 
-func (f BiopsychosocialServiceFuncs) GetAverageVitals(patientID string, days int) (interface{}, error) {
-	return f.GetAverageVitalsFunc(patientID, days)
+func (f BiopsychosocialServiceFuncs) GetAverageVitals(ctx context.Context, patientID string, days int) (interface{}, error) {
+	return f.GetAverageVitalsFunc(ctx, patientID, days)
 }
 
 // PatientHandler handles HTTP requests related to patients
@@ -347,8 +346,10 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	if h.biopsychosocialService != nil {
 		log.Printf("DEBUG: Getting biopsychosocial context for patient %s", id)
 
+		ctx := r.Context()
+
 		// Get medications
-		meds, err := h.biopsychosocialService.GetMedications(id)
+		meds, err := h.biopsychosocialService.GetMedications(ctx, id)
 		log.Printf("DEBUG: GetMedications returned - err: %v, meds count: %d", err, len(meds))
 
 		var medicationItems []patientComponents.MedicationListItemViewModel
@@ -360,6 +361,10 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 				// Handle different types
 				switch med := m.(type) {
 				case *patient.Medication:
+					if med == nil {
+						log.Printf("DEBUG: Medication is nil pointer")
+						continue
+					}
 					// Convert patient.Medication to viewmodel
 					statusLabel := "Desconhecido"
 					switch med.Status {
@@ -427,7 +432,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		log.Printf("DEBUG: Total medication items: %d", len(medicationItems))
 
 		// Get latest vitals
-		latestVitals, errVitals := h.biopsychosocialService.GetLatestVitals(id)
+		latestVitals, errVitals := h.biopsychosocialService.GetLatestVitals(ctx, id)
 		log.Printf("DEBUG: GetLatestVitals returned - err: %v, vitals: %+v", errVitals, latestVitals)
 
 		var vitalsItem *patientComponents.VitalsItemViewModel
@@ -437,6 +442,10 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 			// Handle different types
 			switch v := latestVitals.(type) {
 			case *patient.Vitals:
+				if v == nil {
+					log.Printf("DEBUG: Latest vitals is nil pointer")
+					break
+				}
 				// Convert patient.Vitals to viewmodel
 				sleepHours := ""
 				if v.SleepHours != nil {
@@ -485,7 +494,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get average vitals
-		avgVitals, errAvg := h.biopsychosocialService.GetAverageVitals(id, 30)
+		avgVitals, errAvg := h.biopsychosocialService.GetAverageVitals(ctx, id, 30)
 		log.Printf("DEBUG: GetAverageVitals returned - err: %v, avgVitals: %+v", errAvg, avgVitals)
 
 		var avgItem *patientComponents.VitalsAverageItemViewModel
@@ -494,8 +503,12 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 			// Handle different types
 			switch a := avgVitals.(type) {
-			case *sqliteRepo.VitalsAverage:
-				// Convert sqliteRepo.VitalsAverage to viewmodel
+			case *patient.VitalsAverage:
+				if a == nil {
+					log.Printf("DEBUG: Average vitals is nil pointer")
+					break
+				}
+				// Convert patient.VitalsAverage to viewmodel
 				avgSleepHours := ""
 				if a.AverageSleepHours != nil {
 					avgSleepHours = formatFloat(*a.AverageSleepHours, 1)

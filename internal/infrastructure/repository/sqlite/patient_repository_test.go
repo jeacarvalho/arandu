@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -34,6 +35,8 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		t.Fatalf("Failed to run migrations: %v", err)
 	}
 
+	ctx := context.Background()
+
 	t.Run("Create and retrieve patient", func(t *testing.T) {
 		// Create a patient using domain constructor
 		p, err := patient.NewPatient("Test Patient", "Test Notes")
@@ -42,12 +45,12 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Save patient
-		if err := repo.Save(p); err != nil {
+		if err := repo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
 		// Retrieve patient
-		retrieved, err := repo.FindByID(p.ID)
+		retrieved, err := repo.FindByID(ctx, p.ID)
 		if err != nil {
 			t.Fatalf("Failed to find patient: %v", err)
 		}
@@ -76,9 +79,9 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("FindAll returns patients in correct order", func(t *testing.T) {
 		// Clear existing patients
-		allPatients, _ := repo.FindAll()
+		allPatients, _ := repo.FindAll(ctx)
 		for _, p := range allPatients {
-			repo.Delete(p.ID)
+			repo.Delete(ctx, p.ID)
 		}
 
 		// Create multiple patients with slight time differences
@@ -95,14 +98,14 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			// Small delay to ensure different timestamps
 			time.Sleep(1 * time.Millisecond)
 
-			if err := repo.Save(p); err != nil {
+			if err := repo.Save(ctx, p); err != nil {
 				t.Fatalf("Failed to save patient %d: %v", i, err)
 			}
 			patients = append(patients, p)
 		}
 
 		// Retrieve all patients
-		all, err := repo.FindAll()
+		all, err := repo.FindAll(ctx)
 		if err != nil {
 			t.Fatalf("Failed to find all patients: %v", err)
 		}
@@ -131,7 +134,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
 
-		if err := repo.Save(p); err != nil {
+		if err := repo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
@@ -144,12 +147,12 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Save update
-		if err := repo.Update(p); err != nil {
+		if err := repo.Update(ctx, p); err != nil {
 			t.Fatalf("Failed to save update: %v", err)
 		}
 
 		// Retrieve and verify
-		retrieved, err := repo.FindByID(p.ID)
+		retrieved, err := repo.FindByID(ctx, p.ID)
 		if err != nil {
 			t.Fatalf("Failed to find updated patient: %v", err)
 		}
@@ -172,23 +175,23 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
 
-		if err := repo.Save(p); err != nil {
+		if err := repo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
 		// Verify exists
-		found, err := repo.FindByID(p.ID)
+		found, err := repo.FindByID(ctx, p.ID)
 		if err != nil || found == nil {
 			t.Fatal("Patient should exist before deletion")
 		}
 
 		// Delete
-		if err := repo.Delete(p.ID); err != nil {
+		if err := repo.Delete(ctx, p.ID); err != nil {
 			t.Fatalf("Failed to delete patient: %v", err)
 		}
 
 		// Verify deleted
-		found, err = repo.FindByID(p.ID)
+		found, err = repo.FindByID(ctx, p.ID)
 		if err != nil {
 			t.Fatalf("Error finding deleted patient: %v", err)
 		}
@@ -199,7 +202,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("FindByID returns nil for non-existent patient", func(t *testing.T) {
 		nonExistentID := "non-existent-id"
-		p, err := repo.FindByID(nonExistentID)
+		p, err := repo.FindByID(ctx, nonExistentID)
 		if err != nil {
 			t.Fatalf("FindByID should not error for non-existent ID: %v", err)
 		}
@@ -210,9 +213,9 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("FindByName searches patients", func(t *testing.T) {
 		// Clear existing patients
-		allPatients, _ := repo.FindAll()
+		allPatients, _ := repo.FindAll(ctx)
 		for _, p := range allPatients {
-			repo.Delete(p.ID)
+			repo.Delete(ctx, p.ID)
 		}
 
 		// Create test patients with different names
@@ -231,13 +234,13 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to create patient: %v", err)
 			}
-			if err := repo.Save(p); err != nil {
+			if err := repo.Save(ctx, p); err != nil {
 				t.Fatalf("Failed to save patient: %v", err)
 			}
 		}
 
 		// Test search for "John" (should find John Doe and Johnny Appleseed)
-		results, err := repo.FindByName("John")
+		results, err := repo.FindByName(ctx, "John")
 		if err != nil {
 			t.Fatalf("FindByName failed: %v", err)
 		}
@@ -254,7 +257,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test case-insensitive search
-		results, err = repo.FindByName("jOhN")
+		results, err = repo.FindByName(ctx, "jOhN")
 		if err != nil {
 			t.Fatalf("FindByName (case-insensitive) failed: %v", err)
 		}
@@ -264,7 +267,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test search for non-existent name
-		results, err = repo.FindByName("Nonexistent")
+		results, err = repo.FindByName(ctx, "Nonexistent")
 		if err != nil {
 			t.Fatalf("FindByName (non-existent) failed: %v", err)
 		}
@@ -276,9 +279,9 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("CountAll returns correct count", func(t *testing.T) {
 		// Clear existing patients
-		allPatients, _ := repo.FindAll()
+		allPatients, _ := repo.FindAll(ctx)
 		for _, p := range allPatients {
-			repo.Delete(p.ID)
+			repo.Delete(ctx, p.ID)
 		}
 
 		// Create 5 patients
@@ -287,12 +290,12 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to create patient: %v", err)
 			}
-			if err := repo.Save(p); err != nil {
+			if err := repo.Save(ctx, p); err != nil {
 				t.Fatalf("Failed to save patient: %v", err)
 			}
 		}
 
-		count, err := repo.CountAll()
+		count, err := repo.CountAll(ctx)
 		if err != nil {
 			t.Fatalf("CountAll failed: %v", err)
 		}
@@ -302,11 +305,11 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Delete one and count again
-		allPatients, _ = repo.FindAll()
+		allPatients, _ = repo.FindAll(ctx)
 		if len(allPatients) > 0 {
-			repo.Delete(allPatients[0].ID)
+			repo.Delete(ctx, allPatients[0].ID)
 
-			count, err = repo.CountAll()
+			count, err = repo.CountAll(ctx)
 			if err != nil {
 				t.Fatalf("CountAll after delete failed: %v", err)
 			}
@@ -319,9 +322,9 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("FindPaginated returns paginated results", func(t *testing.T) {
 		// Clear existing patients
-		allPatients, _ := repo.FindAll()
+		allPatients, _ := repo.FindAll(ctx)
 		for _, p := range allPatients {
-			repo.Delete(p.ID)
+			repo.Delete(ctx, p.ID)
 		}
 
 		// Create 10 patients
@@ -332,13 +335,13 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			}
 			// Small delay to ensure different timestamps for ordering
 			time.Sleep(1 * time.Millisecond)
-			if err := repo.Save(p); err != nil {
+			if err := repo.Save(ctx, p); err != nil {
 				t.Fatalf("Failed to save patient: %v", err)
 			}
 		}
 
 		// Test first page (limit 3, offset 0)
-		page1, err := repo.FindPaginated(3, 0)
+		page1, err := repo.FindPaginated(ctx, 3, 0)
 		if err != nil {
 			t.Fatalf("FindPaginated page 1 failed: %v", err)
 		}
@@ -348,7 +351,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test second page (limit 3, offset 3)
-		page2, err := repo.FindPaginated(3, 3)
+		page2, err := repo.FindPaginated(ctx, 3, 3)
 		if err != nil {
 			t.Fatalf("FindPaginated page 2 failed: %v", err)
 		}
@@ -369,7 +372,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test last page with partial results (limit 3, offset 9)
-		page4, err := repo.FindPaginated(3, 9)
+		page4, err := repo.FindPaginated(ctx, 3, 9)
 		if err != nil {
 			t.Fatalf("FindPaginated page 4 failed: %v", err)
 		}
@@ -379,17 +382,17 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		// Test invalid parameters
-		_, err = repo.FindPaginated(0, 0)
+		_, err = repo.FindPaginated(ctx, 0, 0)
 		if err == nil {
 			t.Error("Expected error for limit=0")
 		}
 
-		_, err = repo.FindPaginated(101, 0)
+		_, err = repo.FindPaginated(ctx, 101, 0)
 		if err == nil {
 			t.Error("Expected error for limit>100")
 		}
 
-		_, err = repo.FindPaginated(10, -1)
+		_, err = repo.FindPaginated(ctx, 10, -1)
 		if err == nil {
 			t.Error("Expected error for negative offset")
 		}
@@ -402,32 +405,32 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 			Name: "Test",
 		}
 
-		err := repo.Save(invalidPatient)
+		err := repo.Save(ctx, invalidPatient)
 		if err == nil {
 			t.Error("Expected error when saving patient with empty ID")
 		}
 
 		// Test FindByID with empty ID
-		_, err = repo.FindByID("")
+		_, err = repo.FindByID(ctx, "")
 		if err == nil {
 			t.Error("Expected error when finding patient with empty ID")
 		}
 
 		// Test Delete with empty ID
-		err = repo.Delete("")
+		err = repo.Delete(ctx, "")
 		if err == nil {
 			t.Error("Expected error when deleting patient with empty ID")
 		}
 
 		// Test FindByName with empty name
-		_, err = repo.FindByName("")
+		_, err = repo.FindByName(ctx, "")
 		if err == nil {
 			t.Error("Expected error when searching with empty name")
 		}
 
 		// Test FindByName with very long name
 		longName := strings.Repeat("a", 101)
-		_, err = repo.FindByName(longName)
+		_, err = repo.FindByName(ctx, longName)
 		if err == nil {
 			t.Error("Expected error when searching with name > 100 characters")
 		}

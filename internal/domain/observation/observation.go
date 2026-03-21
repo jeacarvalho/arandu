@@ -1,6 +1,7 @@
 package observation
 
 import (
+	"context"
 	"time"
 )
 
@@ -13,10 +14,10 @@ type Observation struct {
 }
 
 type Repository interface {
-	Save(observation *Observation) error
-	FindByID(id string) (*Observation, error)
-	FindBySessionID(sessionID string) ([]*Observation, error)
-	FindAll() ([]*Observation, error)
-	Update(observation *Observation) error
-	Delete(id string) error
+	Save(ctx context.Context, observation *Observation) error
+	FindByID(ctx context.Context, id string) (*Observation, error)
+	FindBySessionID(ctx context.Context, sessionID string) ([]*Observation, error)
+	FindAll(ctx context.Context) ([]*Observation, error)
+	Update(ctx context.Context, observation *Observation) error
+	Delete(ctx context.Context, id string) error
 }

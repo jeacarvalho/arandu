@@ -11,56 +11,56 @@ import (
 
 // mockPatientRepository is a mock implementation of patient.Repository for testing
 type mockPatientRepository struct {
-	saveFunc              func(p *patient.Patient) error
-	findByIDFunc          func(id string) (*patient.Patient, error)
-	findAllFunc           func() ([]*patient.Patient, error)
-	updateFunc            func(p *patient.Patient) error
-	deleteFunc            func(id string) error
-	findByNameFunc        func(name string) ([]*patient.Patient, error)
+	saveFunc              func(ctx context.Context, p *patient.Patient) error
+	findByIDFunc          func(ctx context.Context, id string) (*patient.Patient, error)
+	findAllFunc           func(ctx context.Context) ([]*patient.Patient, error)
+	updateFunc            func(ctx context.Context, p *patient.Patient) error
+	deleteFunc            func(ctx context.Context, id string) error
+	findByNameFunc        func(ctx context.Context, name string) ([]*patient.Patient, error)
 	searchFunc            func(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
-	countAllFunc          func() (int, error)
-	findPaginatedFunc     func(limit, offset int) ([]*patient.Patient, error)
+	countAllFunc          func(ctx context.Context) (int, error)
+	findPaginatedFunc     func(ctx context.Context, limit, offset int) ([]*patient.Patient, error)
 	getThemeFrequencyFunc func(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
 }
 
-func (m *mockPatientRepository) Save(p *patient.Patient) error {
+func (m *mockPatientRepository) Save(ctx context.Context, p *patient.Patient) error {
 	if m.saveFunc != nil {
-		return m.saveFunc(p)
+		return m.saveFunc(ctx, p)
 	}
 	return nil
 }
 
-func (m *mockPatientRepository) FindByID(id string) (*patient.Patient, error) {
+func (m *mockPatientRepository) FindByID(ctx context.Context, id string) (*patient.Patient, error) {
 	if m.findByIDFunc != nil {
-		return m.findByIDFunc(id)
+		return m.findByIDFunc(ctx, id)
 	}
 	return nil, nil
 }
 
-func (m *mockPatientRepository) FindAll() ([]*patient.Patient, error) {
+func (m *mockPatientRepository) FindAll(ctx context.Context) ([]*patient.Patient, error) {
 	if m.findAllFunc != nil {
-		return m.findAllFunc()
+		return m.findAllFunc(ctx)
 	}
 	return nil, nil
 }
 
-func (m *mockPatientRepository) Update(p *patient.Patient) error {
+func (m *mockPatientRepository) Update(ctx context.Context, p *patient.Patient) error {
 	if m.updateFunc != nil {
-		return m.updateFunc(p)
+		return m.updateFunc(ctx, p)
 	}
 	return nil
 }
 
-func (m *mockPatientRepository) Delete(id string) error {
+func (m *mockPatientRepository) Delete(ctx context.Context, id string) error {
 	if m.deleteFunc != nil {
-		return m.deleteFunc(id)
+		return m.deleteFunc(ctx, id)
 	}
 	return nil
 }
 
-func (m *mockPatientRepository) FindByName(name string) ([]*patient.Patient, error) {
+func (m *mockPatientRepository) FindByName(ctx context.Context, name string) ([]*patient.Patient, error) {
 	if m.findByNameFunc != nil {
-		return m.findByNameFunc(name)
+		return m.findByNameFunc(ctx, name)
 	}
 	return nil, nil
 }
@@ -72,16 +72,16 @@ func (m *mockPatientRepository) Search(ctx context.Context, query string, limit,
 	return nil, nil
 }
 
-func (m *mockPatientRepository) CountAll() (int, error) {
+func (m *mockPatientRepository) CountAll(ctx context.Context) (int, error) {
 	if m.countAllFunc != nil {
-		return m.countAllFunc()
+		return m.countAllFunc(ctx)
 	}
 	return 0, nil
 }
 
-func (m *mockPatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient, error) {
+func (m *mockPatientRepository) FindPaginated(ctx context.Context, limit, offset int) ([]*patient.Patient, error) {
 	if m.findPaginatedFunc != nil {
-		return m.findPaginatedFunc(limit, offset)
+		return m.findPaginatedFunc(ctx, limit, offset)
 	}
 	return nil, nil
 }
@@ -97,7 +97,7 @@ func TestPatientService_CreatePatient(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     CreatePatientInput
-		mockSave  func(p *patient.Patient) error
+		mockSave  func(ctx context.Context, p *patient.Patient) error
 		wantError bool
 		errorType error
 	}{
@@ -107,7 +107,7 @@ func TestPatientService_CreatePatient(t *testing.T) {
 				Name:  "John Doe",
 				Notes: "Test patient",
 			},
-			mockSave: func(p *patient.Patient) error {
+			mockSave: func(ctx context.Context, p *patient.Patient) error {
 				// Simulate successful save
 				return nil
 			},
@@ -164,7 +164,7 @@ func TestPatientService_CreatePatient(t *testing.T) {
 				Name:  "John Doe",
 				Notes: "Test patient",
 			},
-			mockSave: func(p *patient.Patient) error {
+			mockSave: func(ctx context.Context, p *patient.Patient) error {
 				return errors.New("database connection failed")
 			},
 			wantError: true,
@@ -259,7 +259,7 @@ func TestPatientService_GetPatientByID(t *testing.T) {
 	tests := []struct {
 		name          string
 		id            string
-		mockFindByID  func(id string) (*patient.Patient, error)
+		mockFindByID  func(ctx context.Context, id string) (*patient.Patient, error)
 		wantError     bool
 		errorType     error
 		wantPatientID string
@@ -267,7 +267,7 @@ func TestPatientService_GetPatientByID(t *testing.T) {
 		{
 			name: "Valid ID returns patient",
 			id:   "test-id-123",
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				return &patient.Patient{
 					ID:   id,
 					Name: "John Doe",
@@ -285,7 +285,7 @@ func TestPatientService_GetPatientByID(t *testing.T) {
 		{
 			name: "Patient not found returns error",
 			id:   "non-existent-id",
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				return nil, nil // Repository returns nil, nil for not found
 			},
 			wantError: true,
@@ -294,7 +294,7 @@ func TestPatientService_GetPatientByID(t *testing.T) {
 		{
 			name: "Repository error returns wrapped error",
 			id:   "test-id-123",
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				return nil, errors.New("database error")
 			},
 			wantError: true,
@@ -357,8 +357,8 @@ func TestPatientService_UpdatePatient(t *testing.T) {
 	tests := []struct {
 		name         string
 		input        UpdatePatientInput
-		mockFindByID func(id string) (*patient.Patient, error)
-		mockUpdate   func(p *patient.Patient) error
+		mockFindByID func(ctx context.Context, id string) (*patient.Patient, error)
+		mockUpdate   func(ctx context.Context, p *patient.Patient) error
 		wantError    bool
 		errorType    error
 	}{
@@ -369,13 +369,13 @@ func TestPatientService_UpdatePatient(t *testing.T) {
 				Name:  "New Name",
 				Notes: "Updated notes",
 			},
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				if id == "existing-id" {
 					return existingPatient, nil
 				}
 				return nil, nil
 			},
-			mockUpdate: func(p *patient.Patient) error {
+			mockUpdate: func(ctx context.Context, p *patient.Patient) error {
 				return nil
 			},
 			wantError: false,
@@ -386,7 +386,7 @@ func TestPatientService_UpdatePatient(t *testing.T) {
 				ID:   "non-existent-id",
 				Name: "New Name",
 			},
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				return nil, nil
 			},
 			wantError: true,
@@ -445,21 +445,21 @@ func TestPatientService_DeletePatient(t *testing.T) {
 	tests := []struct {
 		name         string
 		id           string
-		mockFindByID func(id string) (*patient.Patient, error)
-		mockDelete   func(id string) error
+		mockFindByID func(ctx context.Context, id string) (*patient.Patient, error)
+		mockDelete   func(ctx context.Context, id string) error
 		wantError    bool
 		errorType    error
 	}{
 		{
 			name: "Valid delete succeeds",
 			id:   "existing-id",
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				if id == "existing-id" {
 					return &patient.Patient{ID: id}, nil
 				}
 				return nil, nil
 			},
-			mockDelete: func(id string) error {
+			mockDelete: func(ctx context.Context, id string) error {
 				return nil
 			},
 			wantError: false,
@@ -467,7 +467,7 @@ func TestPatientService_DeletePatient(t *testing.T) {
 		{
 			name: "Patient not found returns error",
 			id:   "non-existent-id",
-			mockFindByID: func(id string) (*patient.Patient, error) {
+			mockFindByID: func(ctx context.Context, id string) (*patient.Patient, error) {
 				return nil, nil
 			},
 			wantError: true,
@@ -523,7 +523,7 @@ func TestPatientService_SearchPatientsByName(t *testing.T) {
 	tests := []struct {
 		name           string
 		searchTerm     string
-		mockFindByName func(name string) ([]*patient.Patient, error)
+		mockFindByName func(ctx context.Context, name string) ([]*patient.Patient, error)
 		wantError      bool
 		errorType      error
 		wantCount      int
@@ -531,7 +531,7 @@ func TestPatientService_SearchPatientsByName(t *testing.T) {
 		{
 			name:       "Valid search returns patients",
 			searchTerm: "John",
-			mockFindByName: func(name string) ([]*patient.Patient, error) {
+			mockFindByName: func(ctx context.Context, name string) ([]*patient.Patient, error) {
 				return []*patient.Patient{
 					{ID: "1", Name: "John Doe"},
 					{ID: "2", Name: "Johnny Smith"},
@@ -555,7 +555,7 @@ func TestPatientService_SearchPatientsByName(t *testing.T) {
 		{
 			name:       "Repository error returns wrapped error",
 			searchTerm: "John",
-			mockFindByName: func(name string) ([]*patient.Patient, error) {
+			mockFindByName: func(ctx context.Context, name string) ([]*patient.Patient, error) {
 				return nil, errors.New("database error")
 			},
 			wantError: true,
@@ -610,8 +610,8 @@ func TestPatientService_ListPatientsPaginated(t *testing.T) {
 		name              string
 		page              int
 		pageSize          int
-		mockFindPaginated func(limit, offset int) ([]*patient.Patient, error)
-		mockCountAll      func() (int, error)
+		mockFindPaginated func(ctx context.Context, limit, offset int) ([]*patient.Patient, error)
+		mockCountAll      func(ctx context.Context) (int, error)
 		wantError         bool
 		errorType         error
 		wantPatientsCount int
@@ -621,7 +621,7 @@ func TestPatientService_ListPatientsPaginated(t *testing.T) {
 			name:     "Valid pagination returns results",
 			page:     1,
 			pageSize: 10,
-			mockFindPaginated: func(limit, offset int) ([]*patient.Patient, error) {
+			mockFindPaginated: func(ctx context.Context, limit, offset int) ([]*patient.Patient, error) {
 				// Return 5 patients for page 1
 				return []*patient.Patient{
 					{ID: "1", Name: "Patient 1"},
@@ -631,7 +631,7 @@ func TestPatientService_ListPatientsPaginated(t *testing.T) {
 					{ID: "5", Name: "Patient 5"},
 				}, nil
 			},
-			mockCountAll: func() (int, error) {
+			mockCountAll: func(ctx context.Context) (int, error) {
 				return 25, nil // Total 25 patients
 			},
 			wantError:         false,
@@ -711,7 +711,7 @@ func TestPatientService_ListPatientsPaginated(t *testing.T) {
 func TestPatientService_ContextCancellation(t *testing.T) {
 	// Create mock repository
 	mockRepo := &mockPatientRepository{
-		findAllFunc: func() ([]*patient.Patient, error) {
+		findAllFunc: func(ctx context.Context) ([]*patient.Patient, error) {
 			return []*patient.Patient{{ID: "1", Name: "Test"}}, nil
 		},
 	}
@@ -821,7 +821,7 @@ func TestInputSanitization(t *testing.T) {
 
 func TestPatientService_CreatePatientLegacy(t *testing.T) {
 	repo := &mockPatientRepository{
-		saveFunc: func(p *patient.Patient) error {
+		saveFunc: func(ctx context.Context, p *patient.Patient) error {
 			return nil
 		},
 	}
@@ -864,7 +864,7 @@ func TestPatientService_GetPatientLegacy(t *testing.T) {
 	}
 
 	repo := &mockPatientRepository{
-		findByIDFunc: func(id string) (*patient.Patient, error) {
+		findByIDFunc: func(ctx context.Context, id string) (*patient.Patient, error) {
 			if id == "patient-123" {
 				return expectedPatient, nil
 			}
@@ -923,7 +923,7 @@ func TestPatientService_ListPatientsLegacy(t *testing.T) {
 	}
 
 	repo := &mockPatientRepository{
-		findAllFunc: func() ([]*patient.Patient, error) {
+		findAllFunc: func(ctx context.Context) ([]*patient.Patient, error) {
 			return expectedPatients, nil
 		},
 	}
@@ -942,7 +942,7 @@ func TestPatientService_ListPatientsLegacy(t *testing.T) {
 	t.Run("Repository error returns wrapped error", func(t *testing.T) {
 		expectedErr := errors.New("repository error")
 		errorRepo := &mockPatientRepository{
-			findAllFunc: func() ([]*patient.Patient, error) {
+			findAllFunc: func(ctx context.Context) ([]*patient.Patient, error) {
 				return nil, expectedErr
 			},
 		}
@@ -969,13 +969,13 @@ func TestPatientService_UpdatePatientLegacy(t *testing.T) {
 
 	var updatedPatient *patient.Patient
 	repo := &mockPatientRepository{
-		findByIDFunc: func(id string) (*patient.Patient, error) {
+		findByIDFunc: func(ctx context.Context, id string) (*patient.Patient, error) {
 			if id == "patient-123" {
 				return existingPatient, nil
 			}
 			return nil, nil
 		},
-		updateFunc: func(p *patient.Patient) error {
+		updateFunc: func(ctx context.Context, p *patient.Patient) error {
 			updatedPatient = p
 			return nil
 		},

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/infrastructure/ai"
 	"arandu/internal/infrastructure/repository/sqlite"
+	"arandu/internal/platform/middleware"
 	"arandu/internal/web"
 	"arandu/internal/web/handlers"
 
@@ -22,7 +24,29 @@ func main() {
 		log.Printf("Warning: No .env file found or error loading: %v", err)
 	}
 
-	// Use production database
+	// Initialize Control Plane (Central DB)
+	log.Printf("Initializing Control Plane (Central DB)...")
+	centralDB, err := sqlite.NewCentralDB("storage")
+	if err != nil {
+		log.Fatalf("Failed to initialize central database: %v", err)
+	}
+	defer centralDB.Close()
+
+	// Apply central migrations
+	log.Printf("Applying central database migrations...")
+	if err := centralDB.Migrate(nil); err != nil {
+		log.Printf("Warning: Failed to apply central migrations: %v", err)
+	}
+
+	// Ensure tenants directory exists
+	tenantsDir := "storage/tenants"
+	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
+		log.Printf("Warning: Failed to create tenants directory: %v", err)
+	} else {
+		log.Printf("Tenants directory ready: %s", tenantsDir)
+	}
+
+	// Use production database (Data Plane)
 	dbPath := "arandu.db"
 	log.Printf("Using database: %s", dbPath)
 	db, err := sqlite.NewDB(dbPath)
@@ -34,27 +58,43 @@ func main() {
 	// Initialize database schema
 	log.Printf("Initializing database schema...")
 
-	patientRepo := sqlite.NewPatientRepository(db)
-	sessionRepo := sqlite.NewSessionRepository(db)
-	observationRepo := sqlite.NewObservationRepository(db)
-	interventionRepo := sqlite.NewInterventionRepository(db)
-	insightRepo := sqlite.NewInsightRepository(db)
-	medicationRepo := sqlite.NewMedicationRepository(db)
-	vitalsRepo := sqlite.NewVitalsRepository(db)
-
 	// Apply database migrations
 	if err := db.Migrate(); err != nil {
 		log.Printf("Warning: Failed to apply database migrations: %v", err)
 	}
+
+	// Initialize Tenant Pool for multi-tenant connections (must be before repositories)
+	tenantPool := sqlite.NewTenantPool("storage", nil)
+	log.Printf("Tenant pool initialized")
+
+	// Create base repositories (single-tenant for AI service)
+	observationRepoBase := sqlite.NewObservationRepository(db)
+	interventionRepoBase := sqlite.NewInterventionRepository(db)
+	vitalsRepoBase := sqlite.NewVitalsRepository(db)
+	medicationRepoBase := sqlite.NewMedicationRepository(db)
+
+	// Create context-aware repository factory for multi-tenant support (clinical services)
+	repoFactory := sqlite.NewContextAwareRepositoryFactory(db, tenantPool)
+	patientRepo := sqlite.NewContextAwarePatientRepository(repoFactory)
+	sessionRepo := sqlite.NewContextAwareSessionRepository(repoFactory)
+	observationRepo := sqlite.NewContextAwareObservationRepository(repoFactory)
+	interventionRepo := sqlite.NewContextAwareInterventionRepository(repoFactory)
+	insightRepo := sqlite.NewContextAwareInsightRepository(repoFactory)
+	medicationRepo := sqlite.NewContextAwareMedicationRepository(repoFactory)
+	vitalsRepo := sqlite.NewContextAwareVitalsRepository(repoFactory)
+
+	// Use base repo for timeline (requires specific type)
+	timelineRepoBase := sqlite.NewTimelineRepository(db)
+
+	// Use context-aware repos for biopsychosocial (requires interface-based with context)
+	biopsychosocialService := services.NewBiopsychosocialService(medicationRepo, vitalsRepo)
 
 	patientService := services.NewPatientService(patientRepo)
 	sessionService := services.NewSessionService(sessionRepo)
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-	timelineRepo := sqlite.NewTimelineRepository(db)
-	timelineService := services.NewTimelineService(timelineRepo)
-	biopsychosocialService := services.NewBiopsychosocialService(medicationRepo, vitalsRepo)
+	timelineService := services.NewTimelineService(timelineRepoBase)
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
@@ -66,8 +106,8 @@ func main() {
 
 	// Create biopsychosocial service adapter
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
-		GetMedicationsFunc: func(patientID string) ([]interface{}, error) {
-			meds, err := biopsychosocialService.GetMedications(patientID)
+		GetMedicationsFunc: func(ctx context.Context, patientID string) ([]interface{}, error) {
+			meds, err := biopsychosocialService.GetMedications(ctx, patientID)
 			if err != nil {
 				return nil, err
 			}
@@ -78,11 +118,11 @@ func main() {
 			}
 			return result, nil
 		},
-		GetLatestVitalsFunc: func(patientID string) (interface{}, error) {
-			return biopsychosocialService.GetLatestVitals(patientID)
+		GetLatestVitalsFunc: func(ctx context.Context, patientID string) (interface{}, error) {
+			return biopsychosocialService.GetLatestVitals(ctx, patientID)
 		},
-		GetAverageVitalsFunc: func(patientID string, days int) (interface{}, error) {
-			return biopsychosocialService.GetAverageVitals(patientID, days)
+		GetAverageVitalsFunc: func(ctx context.Context, patientID string, days int) (interface{}, error) {
+			return biopsychosocialService.GetAverageVitals(ctx, patientID, days)
 		},
 	}
 
@@ -110,19 +150,34 @@ func main() {
 	// Create cache for AI responses (24 hour TTL)
 	cache := ai.NewCache(24 * time.Hour)
 
-	// Create AI service with repository adapters
+	// Create AI service with base repositories (single-tenant)
 	aiService := services.NewAIService(
 		geminiClient,
 		cache,
-		observationRepo,
-		interventionRepo,
-		vitalsRepo,
-		medicationRepo,
+		observationRepoBase,
+		interventionRepoBase,
+		vitalsRepoBase,
+		medicationRepoBase,
 	)
 
 	aiHandler := handlers.NewAIHandler(aiService)
 
+	// Auth handler with central DB for OAuth
+	authHandler := handlers.NewAuthHandler(centralDB)
+	log.Printf("Auth handler initialized")
+
+	// Create auth middleware
+	authMiddleware := middleware.NewAuthMiddleware(centralDB, tenantPool)
+	log.Printf("Auth middleware initialized")
+
 	mux := http.NewServeMux()
+
+	// Auth routes (public) - using ServeHTTP for all routes
+	mux.HandleFunc("/login", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/login", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/google", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/google/callback", authHandler.ServeHTTP)
+	mux.HandleFunc("/logout", authHandler.ServeHTTP)
 
 	// Dashboard
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -251,6 +306,9 @@ func main() {
 		mux.ServeHTTP(w, r)
 	})
 
+	// Apply auth middleware to all routes
+	protectedHandler := authMiddleware.Middleware(corsHandler)
+
 	// Create a recovery middleware
 	recoveryHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -259,7 +317,7 @@ func main() {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
-		corsHandler.ServeHTTP(w, r)
+		protectedHandler.ServeHTTP(w, r)
 	})
 
 	port := ":8080"

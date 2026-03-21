@@ -16,17 +16,17 @@ func NewVitalsRepository(db *DB) *VitalsRepository {
 	return &VitalsRepository{db: db}
 }
 
-func (r *VitalsRepository) Save(v *patient.Vitals) error {
+func (r *VitalsRepository) Save(ctx context.Context, v *patient.Vitals) error {
 	query := `INSERT INTO patient_vitals (id, patient_id, date, sleep_hours, appetite_level, weight, physical_activity, notes, created_at, updated_at) 
 			  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := r.db.Exec(query, v.ID, v.PatientID, v.Date, v.SleepHours, v.AppetiteLevel, v.Weight, v.PhysicalActivity, v.Notes, v.CreatedAt, v.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, query, v.ID, v.PatientID, v.Date, v.SleepHours, v.AppetiteLevel, v.Weight, v.PhysicalActivity, v.Notes, v.CreatedAt, v.UpdatedAt)
 	return err
 }
 
-func (r *VitalsRepository) FindByID(id string) (*patient.Vitals, error) {
+func (r *VitalsRepository) FindByID(ctx context.Context, id string) (*patient.Vitals, error) {
 	query := `SELECT id, patient_id, date, sleep_hours, appetite_level, weight, physical_activity, notes, created_at, updated_at 
 			  FROM patient_vitals WHERE id = ?`
-	row := r.db.QueryRow(query, id)
+	row := r.db.QueryRowContext(ctx, query, id)
 
 	var v patient.Vitals
 	var sleepHours, weight sql.NullFloat64
@@ -55,13 +55,13 @@ func (r *VitalsRepository) FindByID(id string) (*patient.Vitals, error) {
 	return &v, nil
 }
 
-func (r *VitalsRepository) FindByPatientID(patientID string, limit int) ([]*patient.Vitals, error) {
+func (r *VitalsRepository) FindByPatientID(ctx context.Context, patientID string, limit int) ([]*patient.Vitals, error) {
 	if limit <= 0 {
 		limit = 30
 	}
 	query := `SELECT id, patient_id, date, sleep_hours, appetite_level, weight, physical_activity, notes, created_at, updated_at 
 			  FROM patient_vitals WHERE patient_id = ? ORDER BY date DESC LIMIT ?`
-	rows, err := r.db.Query(query, patientID, limit)
+	rows, err := r.db.QueryContext(ctx, query, patientID, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -70,10 +70,10 @@ func (r *VitalsRepository) FindByPatientID(patientID string, limit int) ([]*pati
 	return r.scanVitals(rows)
 }
 
-func (r *VitalsRepository) GetLatestVitals(patientID string) (*patient.Vitals, error) {
+func (r *VitalsRepository) GetLatestVitals(ctx context.Context, patientID string) (*patient.Vitals, error) {
 	query := `SELECT id, patient_id, date, sleep_hours, appetite_level, weight, physical_activity, notes, created_at, updated_at 
 			  FROM patient_vitals WHERE patient_id = ? ORDER BY date DESC LIMIT 1`
-	row := r.db.QueryRow(query, patientID)
+	row := r.db.QueryRowContext(ctx, query, patientID)
 
 	var v patient.Vitals
 	var sleepHours, weight sql.NullFloat64
@@ -102,7 +102,7 @@ func (r *VitalsRepository) GetLatestVitals(patientID string) (*patient.Vitals, e
 	return &v, nil
 }
 
-func (r *VitalsRepository) GetAverageVitals(patientID string, days int) (*VitalsAverage, error) {
+func (r *VitalsRepository) GetAverageVitals(ctx context.Context, patientID string, days int) (*patient.VitalsAverage, error) {
 	if days <= 0 {
 		days = 30
 	}
@@ -117,9 +117,9 @@ func (r *VitalsRepository) GetAverageVitals(patientID string, days int) (*Vitals
 			  FROM patient_vitals 
 			  WHERE patient_id = ? AND date >= ?`
 
-	row := r.db.QueryRow(query, patientID, fromDate)
+	row := r.db.QueryRowContext(ctx, query, patientID, fromDate)
 
-	var avg VitalsAverage
+	var avg patient.VitalsAverage
 	var avgSleep, avgAppetite, avgWeight, avgActivity sql.NullFloat64
 	err := row.Scan(&avgSleep, &avgAppetite, &avgWeight, &avgActivity, &avg.Count)
 	if err == sql.ErrNoRows {
@@ -143,15 +143,15 @@ func (r *VitalsRepository) GetAverageVitals(patientID string, days int) (*Vitals
 	return &avg, nil
 }
 
-func (r *VitalsRepository) Update(v *patient.Vitals) error {
+func (r *VitalsRepository) Update(ctx context.Context, v *patient.Vitals) error {
 	query := `UPDATE patient_vitals SET sleep_hours = ?, appetite_level = ?, weight = ?, physical_activity = ?, notes = ?, updated_at = ? WHERE id = ?`
-	_, err := r.db.Exec(query, v.SleepHours, v.AppetiteLevel, v.Weight, v.PhysicalActivity, v.Notes, time.Now(), v.ID)
+	_, err := r.db.ExecContext(ctx, query, v.SleepHours, v.AppetiteLevel, v.Weight, v.PhysicalActivity, v.Notes, time.Now(), v.ID)
 	return err
 }
 
-func (r *VitalsRepository) Delete(id string) error {
+func (r *VitalsRepository) Delete(ctx context.Context, id string) error {
 	query := `DELETE FROM patient_vitals WHERE id = ?`
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 
@@ -229,12 +229,4 @@ func (r *VitalsRepository) FindByPatientIDAndTimeframe(ctx context.Context, pati
 		vitals = append(vitals, &v)
 	}
 	return vitals, nil
-}
-
-type VitalsAverage struct {
-	AverageSleepHours       *float64
-	AverageAppetiteLevel    *float64
-	AverageWeight           *float64
-	AveragePhysicalActivity *float64
-	Count                   int
 }

@@ -353,7 +353,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 		</div>
 		
 		<script>
-			// Função para abrir editor do contexto biológico
+			// Função para abrir editor do contexto biológico usando HTMX
 			function openBioContextEditor(patientId) {
 				// Criar modal
 				const modal = document.createElement('div');
@@ -382,24 +382,20 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 				
 				document.body.appendChild(modal);
 				
-				// Carregar conteúdo
+				// Fazer fetch e depois processar com HTMX
 				fetch('/patients/' + patientId + '/context')
-					.then(function(response) {
-						if (!response.ok) throw new Error('HTTP ' + response.status);
-						return response.text();
-					})
+					.then(function(response) { return response.text(); })
 					.then(function(html) {
-						const editorContent = document.getElementById('bio-context-editor-content');
+						var editorContent = document.getElementById('bio-context-editor-content');
 						editorContent.innerHTML = html;
-						setTimeout(function() {
-							if (window.Alpine) {
-								Alpine.initTree(editorContent);
-							}
-						}, 50);
+						// Processar com HTMX após o conteúdo ser inserido
+						if (window.htmx) {
+							htmx.process(editorContent);
+						}
 					})
 					.catch(function(error) {
 						console.error('Erro ao carregar editor:', error);
-						const editorContent = document.getElementById('bio-context-editor-content');
+						var editorContent = document.getElementById('bio-context-editor-content');
 						editorContent.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">Erro: ' + error.message + '</div>';
 					});
 				
@@ -417,9 +413,9 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 			
 			// Configurar botão de edição após carregar DOM
 			document.addEventListener('DOMContentLoaded', function() {
-				const editBtn = document.getElementById('bio-edit-btn');
+				var editBtn = document.getElementById('bio-edit-btn');
 				if (editBtn) {
-					const patientId = editBtn.getAttribute('data-patient-id');
+					var patientId = editBtn.getAttribute('data-patient-id');
 					if (patientId) {
 						editBtn.addEventListener('click', function() {
 							openBioContextEditor(patientId);

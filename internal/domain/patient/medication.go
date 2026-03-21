@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -85,4 +86,15 @@ func (m *Medication) Finish() error {
 
 func (m *Medication) IsActive() bool {
 	return m.Status == MedicationStatusActive
+}
+
+type MedicationRepository interface {
+	Save(ctx context.Context, m *Medication) error
+	FindByID(ctx context.Context, id string) (*Medication, error)
+	FindByPatientID(ctx context.Context, patientID string) ([]*Medication, error)
+	GetActiveMedications(ctx context.Context, patientID string) ([]*Medication, error)
+	GetMedicationsByStatus(ctx context.Context, patientID string, status MedicationStatus) ([]*Medication, error)
+	UpdateStatus(ctx context.Context, id string, status MedicationStatus) error
+	Delete(ctx context.Context, id string) error
+	FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*Medication, error)
 }

@@ -17,20 +17,20 @@ func NewObservationRepository(db *DB) *ObservationRepository {
 	return &ObservationRepository{db: db}
 }
 
-func (r *ObservationRepository) Save(o *observation.Observation) error {
+func (r *ObservationRepository) Save(ctx context.Context, o *observation.Observation) error {
 	if o.ID == "" {
 		o.ID = uuid.New().String()
 	}
 	o.CreatedAt = time.Now()
 
 	query := `INSERT INTO observations (id, session_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, NULL)`
-	_, err := r.db.Exec(query, o.ID, o.SessionID, o.Content, o.CreatedAt)
+	_, err := r.db.ExecContext(ctx, query, o.ID, o.SessionID, o.Content, o.CreatedAt)
 	return err
 }
 
-func (r *ObservationRepository) FindByID(id string) (*observation.Observation, error) {
+func (r *ObservationRepository) FindByID(ctx context.Context, id string) (*observation.Observation, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM observations WHERE id = ?`
-	row := r.db.QueryRow(query, id)
+	row := r.db.QueryRowContext(ctx, query, id)
 
 	var o observation.Observation
 	var updatedAt sql.NullTime
@@ -47,9 +47,9 @@ func (r *ObservationRepository) FindByID(id string) (*observation.Observation, e
 	return &o, nil
 }
 
-func (r *ObservationRepository) FindBySessionID(sessionID string) ([]*observation.Observation, error) {
+func (r *ObservationRepository) FindBySessionID(ctx context.Context, sessionID string) ([]*observation.Observation, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM observations WHERE session_id = ? ORDER BY created_at DESC`
-	rows, err := r.db.Query(query, sessionID)
+	rows, err := r.db.QueryContext(ctx, query, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -70,9 +70,9 @@ func (r *ObservationRepository) FindBySessionID(sessionID string) ([]*observatio
 	return observations, nil
 }
 
-func (r *ObservationRepository) FindAll() ([]*observation.Observation, error) {
+func (r *ObservationRepository) FindAll(ctx context.Context) ([]*observation.Observation, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM observations ORDER BY created_at DESC`
-	rows, err := r.db.Query(query)
+	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -93,15 +93,15 @@ func (r *ObservationRepository) FindAll() ([]*observation.Observation, error) {
 	return observations, nil
 }
 
-func (r *ObservationRepository) Update(o *observation.Observation) error {
+func (r *ObservationRepository) Update(ctx context.Context, o *observation.Observation) error {
 	query := `UPDATE observations SET content = ?, updated_at = ? WHERE id = ?`
-	_, err := r.db.Exec(query, o.Content, time.Now(), o.ID)
+	_, err := r.db.ExecContext(ctx, query, o.Content, time.Now(), o.ID)
 	return err
 }
 
-func (r *ObservationRepository) Delete(id string) error {
+func (r *ObservationRepository) Delete(ctx context.Context, id string) error {
 	query := `DELETE FROM observations WHERE id = ?`
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 

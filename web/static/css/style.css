@@ -1983,6 +1983,20 @@ header {
     font-weight: 500;
 }
 
+.sidebar-nav-footer {
+    padding: var(--space-md);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: auto;
+}
+
+.sidebar-nav-logout {
+    color: rgba(255,255,255,0.6);
+}
+
+.sidebar-nav-logout:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
 
 
 /* Desktop styles - Sidebar still hidden by default, triggered by hamburger */

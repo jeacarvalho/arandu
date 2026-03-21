@@ -40,16 +40,16 @@ func TestSessionRepositoryIntegration(t *testing.T) {
 	patientRepo := NewPatientRepository(db)
 	sessionRepo := NewSessionRepository(db)
 
+	ctx := context.Background()
+
 	// Create a patient to associate sessions with
 	p, err := patient.NewPatient("Test Patient", "Test Notes")
 	if err != nil {
 		t.Fatalf("Failed to create patient: %v", err)
 	}
-	if err := patientRepo.Save(p); err != nil {
+	if err := patientRepo.Save(ctx, p); err != nil {
 		t.Fatalf("Failed to save patient: %v", err)
 	}
-
-	ctx := context.Background()
 
 	t.Run("Create and retrieve session", func(t *testing.T) {
 		sess := session.NewSession(p.ID, time.Now(), "Test Summary")
@@ -120,7 +120,7 @@ func TestSessionRepositoryIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create new patient: %v", err)
 		}
-		if err := patientRepo.Save(newPatient); err != nil {
+		if err := patientRepo.Save(ctx, newPatient); err != nil {
 			t.Fatalf("Failed to save new patient: %v", err)
 		}
 

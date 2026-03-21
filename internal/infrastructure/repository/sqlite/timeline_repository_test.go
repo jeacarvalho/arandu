@@ -49,7 +49,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
-		if err := patientRepo.Save(p); err != nil {
+		if err := patientRepo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
@@ -67,7 +67,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		if err := observationRepo.Save(obs); err != nil {
+		if err := observationRepo.Save(ctx, obs); err != nil {
 			t.Fatalf("Failed to save observation: %v", err)
 		}
 
@@ -79,7 +79,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		if err := interventionRepo.Save(intv); err != nil {
+		if err := interventionRepo.Save(ctx, intv); err != nil {
 			t.Fatalf("Failed to save intervention: %v", err)
 		}
 
@@ -116,7 +116,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
-		if err := patientRepo.Save(p); err != nil {
+		if err := patientRepo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
@@ -134,7 +134,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		if err := observationRepo.Save(obs); err != nil {
+		if err := observationRepo.Save(ctx, obs); err != nil {
 			t.Fatalf("Failed to save observation: %v", err)
 		}
 
@@ -171,7 +171,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
-		if err := patientRepo.Save(p); err != nil {
+		if err := patientRepo.Save(ctx, p); err != nil {
 			t.Fatalf("Failed to save patient: %v", err)
 		}
 
@@ -189,7 +189,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		if err := observationRepo.Save(obs); err != nil {
+		if err := observationRepo.Save(ctx, obs); err != nil {
 			t.Fatalf("Failed to save observation: %v", err)
 		}
 
@@ -201,7 +201,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		if err := interventionRepo.Save(intv); err != nil {
+		if err := interventionRepo.Save(ctx, intv); err != nil {
 			t.Fatalf("Failed to save intervention: %v", err)
 		}
 

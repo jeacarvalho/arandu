@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -10,6 +11,8 @@ import (
 )
 
 func TestObservationEditFlow(t *testing.T) {
+	ctx := context.Background()
+
 	// Setup in-memory database
 	db, err := sqlite.NewDB(":memory:")
 	if err != nil {
@@ -29,7 +32,7 @@ func TestObservationEditFlow(t *testing.T) {
 	observationService := services.NewObservationService(observationRepo)
 
 	// Create a test observation
-	obs, err := observationService.CreateObservation("session-test-123", "Observação clínica inicial para teste")
+	obs, err := observationService.CreateObservation(ctx, "session-test-123", "Observação clínica inicial para teste")
 	if err != nil {
 		t.Fatalf("Failed to create test observation: %v", err)
 	}
@@ -37,7 +40,7 @@ func TestObservationEditFlow(t *testing.T) {
 	// Test 1: Get observation item (view mode)
 	t.Run("GetObservationItem", func(t *testing.T) {
 		// Test the service layer directly
-		retrieved, err := observationService.GetObservation(obs.ID)
+		retrieved, err := observationService.GetObservation(ctx, obs.ID)
 		if err != nil {
 			t.Errorf("GetObservation failed: %v", err)
 		}
@@ -53,13 +56,13 @@ func TestObservationEditFlow(t *testing.T) {
 
 	// Test 2: Update observation
 	t.Run("UpdateObservation", func(t *testing.T) {
-		err := observationService.UpdateObservation(obs.ID, "Observação clínica atualizada após edição")
+		err := observationService.UpdateObservation(ctx, obs.ID, "Observação clínica atualizada após edição")
 		if err != nil {
 			t.Errorf("UpdateObservation failed: %v", err)
 		}
 
 		// Verify update
-		updated, err := observationService.GetObservation(obs.ID)
+		updated, err := observationService.GetObservation(ctx, obs.ID)
 		if err != nil {
 			t.Errorf("GetObservation after update failed: %v", err)
 		}
@@ -76,7 +79,7 @@ func TestObservationEditFlow(t *testing.T) {
 
 	// Test 3: Update with empty content (should fail)
 	t.Run("UpdateObservationEmptyContent", func(t *testing.T) {
-		err := observationService.UpdateObservation(obs.ID, "")
+		err := observationService.UpdateObservation(ctx, obs.ID, "")
 		if err == nil {
 			t.Error("UpdateObservation with empty content should fail")
 		}
@@ -89,7 +92,7 @@ func TestObservationEditFlow(t *testing.T) {
 	// Test 4: Update with content too long (should fail)
 	t.Run("UpdateObservationContentTooLong", func(t *testing.T) {
 		longContent := strings.Repeat("a", 5001)
-		err := observationService.UpdateObservation(obs.ID, longContent)
+		err := observationService.UpdateObservation(ctx, obs.ID, longContent)
 		if err == nil {
 			t.Error("UpdateObservation with content too long should fail")
 		}
@@ -101,7 +104,7 @@ func TestObservationEditFlow(t *testing.T) {
 
 	// Test 5: Update non-existent observation (should fail)
 	t.Run("UpdateNonExistentObservation", func(t *testing.T) {
-		err := observationService.UpdateObservation("non-existent-id", "Conteúdo válido")
+		err := observationService.UpdateObservation(ctx, "non-existent-id", "Conteúdo válido")
 		if err == nil {
 			t.Error("UpdateObservation with non-existent ID should fail")
 		}
@@ -114,7 +117,7 @@ func TestObservationEditFlow(t *testing.T) {
 	// Test 6: Verify original created_at is preserved after update
 	t.Run("CreatedAtPreservedAfterUpdate", func(t *testing.T) {
 		// Get original observation
-		original, err := observationService.GetObservation(obs.ID)
+		original, err := observationService.GetObservation(ctx, obs.ID)
 		if err != nil {
 			t.Fatalf("Failed to get observation: %v", err)
 		}
@@ -122,13 +125,13 @@ func TestObservationEditFlow(t *testing.T) {
 		originalCreatedAt := original.CreatedAt
 
 		// Update observation
-		err = observationService.UpdateObservation(obs.ID, "Outro conteúdo atualizado")
+		err = observationService.UpdateObservation(ctx, obs.ID, "Outro conteúdo atualizado")
 		if err != nil {
 			t.Fatalf("Failed to update observation: %v", err)
 		}
 
 		// Get updated observation
-		updated, err := observationService.GetObservation(obs.ID)
+		updated, err := observationService.GetObservation(ctx, obs.ID)
 		if err != nil {
 			t.Fatalf("Failed to get updated observation: %v", err)
 		}
@@ -146,6 +149,8 @@ func TestObservationEditFlow(t *testing.T) {
 }
 
 func TestObservationRepositorySchema(t *testing.T) {
+	ctx := context.Background()
+
 	// Test that the schema includes updated_at field
 	db, err := sqlite.NewDB(":memory:")
 	if err != nil {
@@ -166,18 +171,18 @@ func TestObservationRepositorySchema(t *testing.T) {
 		Content:   "Test content",
 	}
 
-	if err := repo.Save(obs); err != nil {
+	if err := repo.Save(ctx, obs); err != nil {
 		t.Fatalf("Failed to save observation: %v", err)
 	}
 
 	// Update observation
 	obs.Content = "Updated content"
-	if err := repo.Update(obs); err != nil {
+	if err := repo.Update(ctx, obs); err != nil {
 		t.Fatalf("Failed to update observation: %v", err)
 	}
 
 	// Retrieve and verify updated_at was set
-	updated, err := repo.FindByID(obs.ID)
+	updated, err := repo.FindByID(ctx, obs.ID)
 	if err != nil {
 		t.Fatalf("Failed to find observation: %v", err)
 	}
