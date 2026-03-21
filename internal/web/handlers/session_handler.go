@@ -600,7 +600,7 @@ func (h *SessionHandler) CreateObservation(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 
 	// Extract session ID from URL
-	sessionID := extractSessionID(r.URL.Path, "/sessions/", "/observations")
+	sessionID := extractSessionID(r.URL.Path, "/session/", "/observations")
 	if sessionID == "" {
 		h.renderError(w, r, "ID da sessão não encontrado", http.StatusBadRequest)
 		return
@@ -659,7 +659,7 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 	ctx := r.Context()
 
 	// Extract session ID from URL
-	sessionID := extractSessionID(r.URL.Path, "/sessions/", "/interventions")
+	sessionID := extractSessionID(r.URL.Path, "/session/", "/interventions")
 	if sessionID == "" {
 		h.renderError(w, r, "ID da sessão não encontrado", http.StatusBadRequest)
 		return

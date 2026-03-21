@@ -313,7 +313,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 					
 					<div>
 						for _, s := range sessions {
-							<div class="session-notebook-card">
+							<a href={ "/session/" + s.ID + "/edit" } class="session-notebook-card" style="text-decoration: none; display: block;">
 								<div class="session-badge">
 									Sessão #{ strconv.Itoa(s.SessionNumber) }
 								</div>
@@ -329,7 +329,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 								<div style="font-family: var(--font-clinical); font-size: 0.75rem; color: var(--arandu-soft);">
 									{ s.Date }
 								</div>
-							</div>
+							</a>
 						}
 					</div>
 				</div>
