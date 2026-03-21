@@ -155,7 +155,7 @@ func (s *PatientService) CreatePatient(ctx context.Context, input CreatePatientI
 	}
 
 	// Step 6: Persist to repository
-	if err := s.repo.Save(p); err != nil {
+	if err := s.repo.Save(ctx, p); err != nil {
 		// Repository error
 		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -190,7 +190,7 @@ func (s *PatientService) GetPatientByID(ctx context.Context, id string) (*patien
 	}
 
 	// Retrieve from repository
-	p, err := s.repo.FindByID(id)
+	p, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -216,7 +216,7 @@ func (s *PatientService) ListPatients(ctx context.Context) ([]*patient.Patient, 
 	}
 
 	// Retrieve from repository
-	patients, err := s.repo.FindAll()
+	patients, err := s.repo.FindAll(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -246,7 +246,7 @@ func (s *PatientService) UpdatePatient(ctx context.Context, input UpdatePatientI
 	}
 
 	// Step 4: Retrieve existing patient
-	p, err := s.repo.FindByID(input.ID)
+	p, err := s.repo.FindByID(ctx, input.ID)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -262,7 +262,7 @@ func (s *PatientService) UpdatePatient(ctx context.Context, input UpdatePatientI
 	}
 
 	// Step 6: Persist changes
-	if err := s.repo.Update(p); err != nil {
+	if err := s.repo.Update(ctx, p); err != nil {
 		return fmt.Errorf("%w: %v", ErrRepository, err)
 	}
 
@@ -297,7 +297,7 @@ func (s *PatientService) DeletePatient(ctx context.Context, id string) error {
 	// Optional: Check if patient exists before deleting
 	// This is an application-level decision - you might want to skip this
 	// to avoid an extra database query
-	p, err := s.repo.FindByID(id)
+	p, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -307,7 +307,7 @@ func (s *PatientService) DeletePatient(ctx context.Context, id string) error {
 	}
 
 	// Delete from repository
-	if err := s.repo.Delete(id); err != nil {
+	if err := s.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("%w: %v", ErrRepository, err)
 	}
 
@@ -338,7 +338,7 @@ func (s *PatientService) SearchPatientsByName(ctx context.Context, name string) 
 	}
 
 	// Search in repository
-	patients, err := s.repo.FindByName(name)
+	patients, err := s.repo.FindByName(ctx, name)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -390,7 +390,7 @@ func (s *PatientService) GetPatientCount(ctx context.Context) (int, error) {
 	}
 
 	// Get count from repository
-	count, err := s.repo.CountAll()
+	count, err := s.repo.CountAll(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
@@ -418,13 +418,13 @@ func (s *PatientService) ListPatientsPaginated(ctx context.Context, page, pageSi
 	offset := (page - 1) * pageSize
 
 	// Get paginated results
-	patients, err := s.repo.FindPaginated(pageSize, offset)
+	patients, err := s.repo.FindPaginated(ctx, pageSize, offset)
 	if err != nil {
 		return nil, 0, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
 
 	// Get total count for pagination metadata
-	total, err := s.repo.CountAll()
+	total, err := s.repo.CountAll(ctx)
 	if err != nil {
 		return nil, 0, fmt.Errorf("%w: %v", ErrRepository, err)
 	}

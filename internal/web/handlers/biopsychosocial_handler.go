@@ -9,20 +9,19 @@ import (
 
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
-	"arandu/internal/infrastructure/repository/sqlite"
 
 	patientComponents "arandu/web/components/patient"
 )
 
 type BiopsychosocialServiceInterface interface {
-	GetContext(patientID string) (*services.BiopsychosocialContext, error)
-	AddMedication(patientID, name, dosage, frequency, prescriber string, startedAt time.Time) (*patient.Medication, error)
-	GetMedications(patientID string) ([]*patient.Medication, error)
-	SuspendMedication(medicationID string) (*patient.Medication, error)
-	ActivateMedication(medicationID string) (*patient.Medication, error)
-	RecordVitals(patientID string, date time.Time, sleepHours *float64, appetiteLevel *int, weight *float64, physicalActivity int, notes string) (*patient.Vitals, error)
-	GetLatestVitals(patientID string) (*patient.Vitals, error)
-	GetAverageVitals(patientID string, days int) (*sqlite.VitalsAverage, error)
+	GetContext(ctx context.Context, patientID string) (*services.BiopsychosocialContext, error)
+	AddMedication(ctx context.Context, patientID, name, dosage, frequency, prescriber string, startedAt time.Time) (*patient.Medication, error)
+	GetMedications(ctx context.Context, patientID string) ([]*patient.Medication, error)
+	SuspendMedication(ctx context.Context, medicationID string) (*patient.Medication, error)
+	ActivateMedication(ctx context.Context, medicationID string) (*patient.Medication, error)
+	RecordVitals(ctx context.Context, patientID string, date time.Time, sleepHours *float64, appetiteLevel *int, weight *float64, physicalActivity int, notes string) (*patient.Vitals, error)
+	GetLatestVitals(ctx context.Context, patientID string) (*patient.Vitals, error)
+	GetAverageVitals(ctx context.Context, patientID string, days int) (*patient.VitalsAverage, error)
 }
 
 type BiopsychosocialHandler struct {
@@ -42,8 +41,13 @@ func (h *BiopsychosocialHandler) GetContextPanel(w http.ResponseWriter, r *http.
 		return
 	}
 
-	ctx := context.Background()
-	context, err := h.biopsychosocialService.GetContext(patientID)
+	// Disable caching for this endpoint
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	ctx := r.Context()
+	context, err := h.biopsychosocialService.GetContext(ctx, patientID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,7 +103,8 @@ func (h *BiopsychosocialHandler) AddMedication(w http.ResponseWriter, r *http.Re
 		startedAt = time.Now()
 	}
 
-	_, err := h.biopsychosocialService.AddMedication(patientID, name, dosage, frequency, prescriber, startedAt)
+	ctx := r.Context()
+	_, err := h.biopsychosocialService.AddMedication(ctx, patientID, name, dosage, frequency, prescriber, startedAt)
 	if err != nil {
 		h.renderMedicationList(w, r, patientID, err.Error())
 		return
@@ -118,12 +123,13 @@ func (h *BiopsychosocialHandler) UpdateMedicationStatus(w http.ResponseWriter, r
 		return
 	}
 
+	ctx := r.Context()
 	var err error
 	switch newStatus {
 	case "suspend":
-		_, err = h.biopsychosocialService.SuspendMedication(medicationID)
+		_, err = h.biopsychosocialService.SuspendMedication(ctx, medicationID)
 	case "activate":
-		_, err = h.biopsychosocialService.ActivateMedication(medicationID)
+		_, err = h.biopsychosocialService.ActivateMedication(ctx, medicationID)
 	default:
 		http.Error(w, "Invalid status", http.StatusBadRequest)
 		return
@@ -195,7 +201,8 @@ func (h *BiopsychosocialHandler) RecordVitals(w http.ResponseWriter, r *http.Req
 		date = time.Now()
 	}
 
-	_, err := h.biopsychosocialService.RecordVitals(patientID, date, sleepHours, appetiteLevel, weight, physicalActivity, notes)
+	ctx := r.Context()
+	_, err := h.biopsychosocialService.RecordVitals(ctx, patientID, date, sleepHours, appetiteLevel, weight, physicalActivity, notes)
 	if err != nil {
 		h.renderVitalsWidget(w, r, patientID, err.Error())
 		return
@@ -205,8 +212,8 @@ func (h *BiopsychosocialHandler) RecordVitals(w http.ResponseWriter, r *http.Req
 }
 
 func (h *BiopsychosocialHandler) renderMedicationList(w http.ResponseWriter, r *http.Request, patientID, errorMsg string) {
-	ctx := context.Background()
-	medications, err := h.biopsychosocialService.GetMedications(patientID)
+	ctx := r.Context()
+	medications, err := h.biopsychosocialService.GetMedications(ctx, patientID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -225,10 +232,10 @@ func (h *BiopsychosocialHandler) renderMedicationList(w http.ResponseWriter, r *
 }
 
 func (h *BiopsychosocialHandler) renderVitalsWidget(w http.ResponseWriter, r *http.Request, patientID, errorMsg string) {
-	ctx := context.Background()
+	ctx := r.Context()
 
-	vitals, _ := h.biopsychosocialService.GetLatestVitals(patientID)
-	avg, _ := h.biopsychosocialService.GetAverageVitals(patientID, 30)
+	vitals, _ := h.biopsychosocialService.GetLatestVitals(ctx, patientID)
+	avg, _ := h.biopsychosocialService.GetAverageVitals(ctx, patientID, 30)
 
 	viewModel := patientComponents.VitalsWidgetViewModel{
 		PatientID:     patientID,
@@ -300,7 +307,7 @@ func toVitalsViewModel(v *patient.Vitals) *patientComponents.VitalsItemViewModel
 	return vm
 }
 
-func toVitalsAverageViewModel(avg *sqlite.VitalsAverage) *patientComponents.VitalsAverageItemViewModel {
+func toVitalsAverageViewModel(avg *patient.VitalsAverage) *patientComponents.VitalsAverageItemViewModel {
 	if avg == nil || avg.Count == 0 {
 		return &patientComponents.VitalsAverageItemViewModel{HasData: false}
 	}

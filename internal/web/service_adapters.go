@@ -110,12 +110,12 @@ func NewObservationServiceAdapter(service *services.ObservationService) *Observa
 
 // CreateObservation implements handlers.ObservationServiceInterface
 func (a *ObservationServiceAdapter) CreateObservation(ctx context.Context, sessionID, content string) (interface{}, error) {
-	return a.service.CreateObservation(sessionID, content)
+	return a.service.CreateObservation(ctx, sessionID, content)
 }
 
 // GetObservationsBySession implements handlers.ObservationServiceInterface
 func (a *ObservationServiceAdapter) GetObservationsBySession(ctx context.Context, sessionID string) ([]interface{}, error) {
-	observations, err := a.service.ListObservationsBySession(sessionID)
+	observations, err := a.service.ListObservationsBySession(ctx, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -130,12 +130,12 @@ func (a *ObservationServiceAdapter) GetObservationsBySession(ctx context.Context
 
 // GetObservation implements handlers.ObservationHandlerServiceInterface
 func (a *ObservationServiceAdapter) GetObservation(ctx context.Context, id string) (*observation.Observation, error) {
-	return a.service.GetObservation(id)
+	return a.service.GetObservation(ctx, id)
 }
 
 // UpdateObservation implements handlers.ObservationHandlerServiceInterface
 func (a *ObservationServiceAdapter) UpdateObservation(ctx context.Context, id, content string) error {
-	return a.service.UpdateObservation(id, content)
+	return a.service.UpdateObservation(ctx, id, content)
 }
 
 // InterventionServiceAdapter adapts services.InterventionService to handlers.InterventionServiceInterface
@@ -170,12 +170,12 @@ func NewInterventionServiceAdapter(service *services.InterventionService) *Inter
 
 // CreateIntervention implements handlers.InterventionServiceInterface
 func (a *InterventionServiceAdapter) CreateIntervention(ctx context.Context, sessionID, content string) (interface{}, error) {
-	return a.service.CreateIntervention(sessionID, content)
+	return a.service.CreateIntervention(ctx, sessionID, content)
 }
 
 // GetInterventionsBySession implements handlers.InterventionServiceInterface
 func (a *InterventionServiceAdapter) GetInterventionsBySession(ctx context.Context, sessionID string) ([]interface{}, error) {
-	interventions, err := a.service.ListInterventionsBySession(sessionID)
+	interventions, err := a.service.ListInterventionsBySession(ctx, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -190,10 +190,10 @@ func (a *InterventionServiceAdapter) GetInterventionsBySession(ctx context.Conte
 
 // GetIntervention implements handlers.InterventionHandlerServiceInterface
 func (a *InterventionServiceAdapter) GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error) {
-	return a.service.GetIntervention(id)
+	return a.service.GetIntervention(ctx, id)
 }
 
 // UpdateIntervention implements handlers.InterventionHandlerServiceInterface
 func (a *InterventionServiceAdapter) UpdateIntervention(ctx context.Context, id, content string) error {
-	return a.service.UpdateIntervention(id, content)
+	return a.service.UpdateIntervention(ctx, id, content)
 }

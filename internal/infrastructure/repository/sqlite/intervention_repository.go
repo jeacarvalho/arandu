@@ -17,7 +17,7 @@ func NewInterventionRepository(db *DB) *InterventionRepository {
 	return &InterventionRepository{db: db}
 }
 
-func (r *InterventionRepository) Save(i *intervention.Intervention) error {
+func (r *InterventionRepository) Save(ctx context.Context, i *intervention.Intervention) error {
 	if i.ID == "" {
 		i.ID = uuid.New().String()
 	}
@@ -25,13 +25,13 @@ func (r *InterventionRepository) Save(i *intervention.Intervention) error {
 	i.UpdatedAt = time.Now()
 
 	query := `INSERT INTO interventions (id, session_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`
-	_, err := r.db.Exec(query, i.ID, i.SessionID, i.Content, i.CreatedAt, i.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, query, i.ID, i.SessionID, i.Content, i.CreatedAt, i.UpdatedAt)
 	return err
 }
 
-func (r *InterventionRepository) FindByID(id string) (*intervention.Intervention, error) {
+func (r *InterventionRepository) FindByID(ctx context.Context, id string) (*intervention.Intervention, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM interventions WHERE id = ?`
-	row := r.db.QueryRow(query, id)
+	row := r.db.QueryRowContext(ctx, query, id)
 
 	var i intervention.Intervention
 	err := row.Scan(&i.ID, &i.SessionID, &i.Content, &i.CreatedAt, &i.UpdatedAt)
@@ -44,9 +44,9 @@ func (r *InterventionRepository) FindByID(id string) (*intervention.Intervention
 	return &i, nil
 }
 
-func (r *InterventionRepository) FindBySessionID(sessionID string) ([]*intervention.Intervention, error) {
+func (r *InterventionRepository) FindBySessionID(ctx context.Context, sessionID string) ([]*intervention.Intervention, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM interventions WHERE session_id = ? ORDER BY created_at DESC`
-	rows, err := r.db.Query(query, sessionID)
+	rows, err := r.db.QueryContext(ctx, query, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +63,9 @@ func (r *InterventionRepository) FindBySessionID(sessionID string) ([]*intervent
 	return interventions, nil
 }
 
-func (r *InterventionRepository) FindAll() ([]*intervention.Intervention, error) {
+func (r *InterventionRepository) FindAll(ctx context.Context) ([]*intervention.Intervention, error) {
 	query := `SELECT id, session_id, content, created_at, updated_at FROM interventions ORDER BY created_at DESC`
-	rows, err := r.db.Query(query)
+	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -82,16 +82,16 @@ func (r *InterventionRepository) FindAll() ([]*intervention.Intervention, error)
 	return interventions, nil
 }
 
-func (r *InterventionRepository) Update(i *intervention.Intervention) error {
+func (r *InterventionRepository) Update(ctx context.Context, i *intervention.Intervention) error {
 	i.UpdatedAt = time.Now()
 	query := `UPDATE interventions SET content = ?, updated_at = ? WHERE id = ?`
-	_, err := r.db.Exec(query, i.Content, i.UpdatedAt, i.ID)
+	_, err := r.db.ExecContext(ctx, query, i.Content, i.UpdatedAt, i.ID)
 	return err
 }
 
-func (r *InterventionRepository) Delete(id string) error {
+func (r *InterventionRepository) Delete(ctx context.Context, id string) error {
 	query := `DELETE FROM interventions WHERE id = ?`
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 

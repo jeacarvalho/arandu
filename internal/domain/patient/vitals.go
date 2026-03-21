@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -63,4 +64,23 @@ func (v *Vitals) Update(sleepHours *float64, appetiteLevel *int, weight *float64
 	v.Notes = notes
 	v.UpdatedAt = time.Now()
 	return nil
+}
+
+type VitalsAverage struct {
+	AverageSleepHours       *float64
+	AverageAppetiteLevel    *float64
+	AverageWeight           *float64
+	AveragePhysicalActivity *float64
+	Count                   int
+}
+
+type VitalsRepository interface {
+	Save(ctx context.Context, v *Vitals) error
+	FindByID(ctx context.Context, id string) (*Vitals, error)
+	FindByPatientID(ctx context.Context, patientID string, limit int) ([]*Vitals, error)
+	GetLatestVitals(ctx context.Context, patientID string) (*Vitals, error)
+	GetAverageVitals(ctx context.Context, patientID string, days int) (*VitalsAverage, error)
+	Update(ctx context.Context, v *Vitals) error
+	Delete(ctx context.Context, id string) error
+	FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*Vitals, error)
 }

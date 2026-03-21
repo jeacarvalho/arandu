@@ -16,17 +16,17 @@ func NewMedicationRepository(db *DB) *MedicationRepository {
 	return &MedicationRepository{db: db}
 }
 
-func (r *MedicationRepository) Save(m *patient.Medication) error {
+func (r *MedicationRepository) Save(ctx context.Context, m *patient.Medication) error {
 	query := `INSERT INTO patient_medications (id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at) 
 			  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := r.db.Exec(query, m.ID, m.PatientID, m.Name, m.Dosage, m.Frequency, m.Prescriber, m.Status, m.StartedAt, m.EndedAt, m.CreatedAt, m.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, query, m.ID, m.PatientID, m.Name, m.Dosage, m.Frequency, m.Prescriber, m.Status, m.StartedAt, m.EndedAt, m.CreatedAt, m.UpdatedAt)
 	return err
 }
 
-func (r *MedicationRepository) FindByID(id string) (*patient.Medication, error) {
+func (r *MedicationRepository) FindByID(ctx context.Context, id string) (*patient.Medication, error) {
 	query := `SELECT id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at 
 			  FROM patient_medications WHERE id = ?`
-	row := r.db.QueryRow(query, id)
+	row := r.db.QueryRowContext(ctx, query, id)
 
 	var m patient.Medication
 	var endedAt sql.NullTime
@@ -43,10 +43,10 @@ func (r *MedicationRepository) FindByID(id string) (*patient.Medication, error) 
 	return &m, nil
 }
 
-func (r *MedicationRepository) FindByPatientID(patientID string) ([]*patient.Medication, error) {
+func (r *MedicationRepository) FindByPatientID(ctx context.Context, patientID string) ([]*patient.Medication, error) {
 	query := `SELECT id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at 
 			  FROM patient_medications WHERE patient_id = ? ORDER BY created_at DESC`
-	rows, err := r.db.Query(query, patientID)
+	rows, err := r.db.QueryContext(ctx, query, patientID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,10 +55,10 @@ func (r *MedicationRepository) FindByPatientID(patientID string) ([]*patient.Med
 	return r.scanMedications(rows)
 }
 
-func (r *MedicationRepository) GetActiveMedications(patientID string) ([]*patient.Medication, error) {
+func (r *MedicationRepository) GetActiveMedications(ctx context.Context, patientID string) ([]*patient.Medication, error) {
 	query := `SELECT id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at 
 			  FROM patient_medications WHERE patient_id = ? AND status = 'active' ORDER BY name`
-	rows, err := r.db.Query(query, patientID)
+	rows, err := r.db.QueryContext(ctx, query, patientID)
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +67,10 @@ func (r *MedicationRepository) GetActiveMedications(patientID string) ([]*patien
 	return r.scanMedications(rows)
 }
 
-func (r *MedicationRepository) GetMedicationsByStatus(patientID string, status patient.MedicationStatus) ([]*patient.Medication, error) {
+func (r *MedicationRepository) GetMedicationsByStatus(ctx context.Context, patientID string, status patient.MedicationStatus) ([]*patient.Medication, error) {
 	query := `SELECT id, patient_id, name, dosage, frequency, prescriber, status, started_at, ended_at, created_at, updated_at 
 			  FROM patient_medications WHERE patient_id = ? AND status = ? ORDER BY created_at DESC`
-	rows, err := r.db.Query(query, patientID, status)
+	rows, err := r.db.QueryContext(ctx, query, patientID, status)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (r *MedicationRepository) GetMedicationsByStatus(patientID string, status p
 	return r.scanMedications(rows)
 }
 
-func (r *MedicationRepository) UpdateStatus(id string, status patient.MedicationStatus) error {
+func (r *MedicationRepository) UpdateStatus(ctx context.Context, id string, status patient.MedicationStatus) error {
 	var endedAt *time.Time
 	if status == patient.MedicationStatusSuspended || status == patient.MedicationStatusFinished {
 		now := time.Now()
@@ -87,13 +87,13 @@ func (r *MedicationRepository) UpdateStatus(id string, status patient.Medication
 	}
 
 	query := `UPDATE patient_medications SET status = ?, ended_at = ?, updated_at = ? WHERE id = ?`
-	_, err := r.db.Exec(query, status, endedAt, time.Now(), id)
+	_, err := r.db.ExecContext(ctx, query, status, endedAt, time.Now(), id)
 	return err
 }
 
-func (r *MedicationRepository) Delete(id string) error {
+func (r *MedicationRepository) Delete(ctx context.Context, id string) error {
 	query := `DELETE FROM patient_medications WHERE id = ?`
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 

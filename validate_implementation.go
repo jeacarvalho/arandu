@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -17,6 +18,8 @@ func main() {
 	fmt.Println("🔍 Validação Completa da Implementação REQ-01-02-02")
 	fmt.Println("====================================================")
 	fmt.Println()
+
+	ctx := context.Background()
 
 	// 1. Configurar banco de dados em memória para teste
 	fmt.Println("1. Configurando ambiente de teste...")
@@ -42,7 +45,7 @@ func main() {
 
 	// 4. Testar criação de observação
 	fmt.Println("4. Testando criação de observação...")
-	obs, err := service.CreateObservation("session-test-123", "Observação clínica inicial para validação")
+	obs, err := service.CreateObservation(ctx, "session-test-123", "Observação clínica inicial para validação")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,7 +55,7 @@ func main() {
 
 	// 5. Testar recuperação da observação
 	fmt.Println("5. Testando recuperação da observação...")
-	retrieved, err := service.GetObservation(obs.ID)
+	retrieved, err := service.GetObservation(ctx, obs.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +69,7 @@ func main() {
 	originalCreatedAt := retrieved.CreatedAt
 	time.Sleep(10 * time.Millisecond) // Garantir diferença de tempo
 
-	err = service.UpdateObservation(obs.ID, "Observação clínica ATUALIZADA após edição")
+	err = service.UpdateObservation(ctx, obs.ID, "Observação clínica ATUALIZADA após edição")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,7 +77,7 @@ func main() {
 
 	// 7. Verificar atualização
 	fmt.Println("7. Verificando dados atualizados...")
-	updated, err := service.GetObservation(obs.ID)
+	updated, err := service.GetObservation(ctx, obs.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,7 +110,7 @@ func main() {
 	fmt.Println("8. Testando validações...")
 
 	// Testar conteúdo vazio
-	err = service.UpdateObservation(obs.ID, "")
+	err = service.UpdateObservation(ctx, obs.ID, "")
 	if err == nil {
 		log.Fatal("Update com conteúdo vazio deveria falhar")
 	}
@@ -118,14 +121,14 @@ func main() {
 	for i := 0; i < 5001; i++ {
 		longContent += "a"
 	}
-	err = service.UpdateObservation(obs.ID, longContent)
+	err = service.UpdateObservation(ctx, obs.ID, longContent)
 	if err == nil {
 		log.Fatal("Update com conteúdo muito longo deveria falhar")
 	}
 	fmt.Println("   ✅ Validação: conteúdo não pode exceder 5000 caracteres")
 
 	// Testar observação não existente
-	err = service.UpdateObservation("id-inexistente", "Conteúdo válido")
+	err = service.UpdateObservation(ctx, "id-inexistente", "Conteúdo válido")
 	if err == nil {
 		log.Fatal("Update de observação inexistente deveria falhar")
 	}
@@ -140,21 +143,21 @@ func main() {
 		Content:   "Observação criada diretamente no repositório",
 	}
 
-	if err := repo.Save(repoObs); err != nil {
+	if err := repo.Save(ctx, repoObs); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("   ✅ Observação salva via repositório: ID=%s\n", repoObs.ID)
 
 	// Atualizar via repositório
 	repoObs.Content = "Observação atualizada via repositório"
-	if err := repo.Update(repoObs); err != nil {
+	if err := repo.Update(ctx, repoObs); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("   ✅ Observação atualizada via repositório")
 
 	// Verificar updated_at no banco
 	var updatedAt sql.NullTime
-	err = db.QueryRow("SELECT updated_at FROM observations WHERE id = ?", repoObs.ID).Scan(&updatedAt)
+	err = db.QueryRowContext(ctx, "SELECT updated_at FROM observations WHERE id = ?", repoObs.ID).Scan(&updatedAt)
 	if err != nil {
 		log.Fatal(err)
 	}

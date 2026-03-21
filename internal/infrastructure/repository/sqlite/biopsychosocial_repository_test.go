@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -21,13 +22,15 @@ func TestMedicationRepository(t *testing.T) {
 	repo := NewMedicationRepository(db)
 	patientRepo := NewPatientRepository(db)
 
+	ctx := context.Background()
+
 	patientObj := &patient.Patient{
 		ID:        "test-patient-1",
 		Name:      "Test Patient",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	if err := patientRepo.Save(patientObj); err != nil {
+	if err := patientRepo.Save(ctx, patientObj); err != nil {
 		t.Fatalf("Failed to save patient: %v", err)
 	}
 
@@ -45,11 +48,11 @@ func TestMedicationRepository(t *testing.T) {
 			UpdatedAt:  time.Now(),
 		}
 
-		if err := repo.Save(med); err != nil {
+		if err := repo.Save(ctx, med); err != nil {
 			t.Fatalf("Failed to save medication: %v", err)
 		}
 
-		found, err := repo.FindByID("med-1")
+		found, err := repo.FindByID(ctx, "med-1")
 		if err != nil {
 			t.Fatalf("Failed to find medication: %v", err)
 		}
@@ -62,7 +65,7 @@ func TestMedicationRepository(t *testing.T) {
 	})
 
 	t.Run("GetActiveMedications", func(t *testing.T) {
-		activeMeds, err := repo.GetActiveMedications(patientObj.ID)
+		activeMeds, err := repo.GetActiveMedications(ctx, patientObj.ID)
 		if err != nil {
 			t.Fatalf("Failed to get active medications: %v", err)
 		}
@@ -72,11 +75,11 @@ func TestMedicationRepository(t *testing.T) {
 	})
 
 	t.Run("UpdateStatus", func(t *testing.T) {
-		if err := repo.UpdateStatus("med-1", patient.MedicationStatusSuspended); err != nil {
+		if err := repo.UpdateStatus(ctx, "med-1", patient.MedicationStatusSuspended); err != nil {
 			t.Fatalf("Failed to update status: %v", err)
 		}
 
-		updated, err := repo.FindByID("med-1")
+		updated, err := repo.FindByID(ctx, "med-1")
 		if err != nil {
 			t.Fatalf("Failed to find updated medication: %v", err)
 		}
@@ -89,7 +92,7 @@ func TestMedicationRepository(t *testing.T) {
 	})
 
 	t.Run("FindByPatientID", func(t *testing.T) {
-		meds, err := repo.FindByPatientID(patientObj.ID)
+		meds, err := repo.FindByPatientID(ctx, patientObj.ID)
 		if err != nil {
 			t.Fatalf("Failed to find medications by patient: %v", err)
 		}
@@ -113,13 +116,15 @@ func TestVitalsRepository(t *testing.T) {
 	repo := NewVitalsRepository(db)
 	patientRepo := NewPatientRepository(db)
 
+	ctx := context.Background()
+
 	patientObj := &patient.Patient{
 		ID:        "test-patient-2",
 		Name:      "Test Patient 2",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	if err := patientRepo.Save(patientObj); err != nil {
+	if err := patientRepo.Save(ctx, patientObj); err != nil {
 		t.Fatalf("Failed to save patient: %v", err)
 	}
 
@@ -141,11 +146,11 @@ func TestVitalsRepository(t *testing.T) {
 			UpdatedAt:        time.Now(),
 		}
 
-		if err := repo.Save(vitals); err != nil {
+		if err := repo.Save(ctx, vitals); err != nil {
 			t.Fatalf("Failed to save vitals: %v", err)
 		}
 
-		found, err := repo.FindByID("vitals-1")
+		found, err := repo.FindByID(ctx, "vitals-1")
 		if err != nil {
 			t.Fatalf("Failed to find vitals: %v", err)
 		}
@@ -158,7 +163,7 @@ func TestVitalsRepository(t *testing.T) {
 	})
 
 	t.Run("GetLatestVitals", func(t *testing.T) {
-		latest, err := repo.GetLatestVitals(patientObj.ID)
+		latest, err := repo.GetLatestVitals(ctx, patientObj.ID)
 		if err != nil {
 			t.Fatalf("Failed to get latest vitals: %v", err)
 		}
@@ -171,7 +176,7 @@ func TestVitalsRepository(t *testing.T) {
 	})
 
 	t.Run("GetAverageVitals", func(t *testing.T) {
-		avg, err := repo.GetAverageVitals(patientObj.ID, 30)
+		avg, err := repo.GetAverageVitals(ctx, patientObj.ID, 30)
 		if err != nil {
 			t.Fatalf("Failed to get average vitals: %v", err)
 		}
@@ -184,7 +189,7 @@ func TestVitalsRepository(t *testing.T) {
 	})
 
 	t.Run("FindByPatientID", func(t *testing.T) {
-		vitals, err := repo.FindByPatientID(patientObj.ID, 10)
+		vitals, err := repo.FindByPatientID(ctx, patientObj.ID, 10)
 		if err != nil {
 			t.Fatalf("Failed to find vitals by patient: %v", err)
 		}

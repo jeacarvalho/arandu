@@ -46,6 +46,7 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 	// Test 1: Add medication
 	t.Run("AddMedication", func(t *testing.T) {
 		med, err := biopsychosocialService.AddMedication(
+			ctx,
 			testPatient.ID,
 			"Sertralina",
 			"50mg",
@@ -76,7 +77,7 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 
 	// Test 2: Get medications for patient
 	t.Run("GetMedications", func(t *testing.T) {
-		meds, err := biopsychosocialService.GetMedications(testPatient.ID)
+		meds, err := biopsychosocialService.GetMedications(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetMedications failed: %v", err)
 		}
@@ -92,12 +93,12 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 
 	// Test 3: Suspend medication
 	t.Run("SuspendMedication", func(t *testing.T) {
-		meds, _ := biopsychosocialService.GetMedications(testPatient.ID)
+		meds, _ := biopsychosocialService.GetMedications(ctx, testPatient.ID)
 		if len(meds) == 0 {
 			t.Fatal("No medications to suspend")
 		}
 
-		suspendedMed, err := biopsychosocialService.SuspendMedication(meds[0].ID)
+		suspendedMed, err := biopsychosocialService.SuspendMedication(ctx, meds[0].ID)
 		if err != nil {
 			t.Errorf("SuspendMedication failed: %v", err)
 		}
@@ -113,12 +114,12 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 
 	// Test 4: Activate suspended medication
 	t.Run("ActivateMedication", func(t *testing.T) {
-		meds, _ := biopsychosocialService.GetMedications(testPatient.ID)
+		meds, _ := biopsychosocialService.GetMedications(ctx, testPatient.ID)
 		if len(meds) == 0 {
 			t.Fatal("No medications to activate")
 		}
 
-		activatedMed, err := biopsychosocialService.ActivateMedication(meds[0].ID)
+		activatedMed, err := biopsychosocialService.ActivateMedication(ctx, meds[0].ID)
 		if err != nil {
 			t.Errorf("ActivateMedication failed: %v", err)
 		}
@@ -134,7 +135,7 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 
 	// Test 5: Get active medications
 	t.Run("GetActiveMedications", func(t *testing.T) {
-		activeMeds, err := medicationRepo.GetActiveMedications(testPatient.ID)
+		activeMeds, err := medicationRepo.GetActiveMedications(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetActiveMedications failed: %v", err)
 		}
@@ -151,6 +152,7 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 	// Test 6: Add medication with empty name (should fail)
 	t.Run("AddMedicationEmptyName", func(t *testing.T) {
 		_, err := biopsychosocialService.AddMedication(
+			ctx,
 			testPatient.ID,
 			"",
 			"50mg",
@@ -171,6 +173,7 @@ func TestBiopsychosocialMedicationFlow(t *testing.T) {
 	t.Run("AddMedicationFutureDate", func(t *testing.T) {
 		futureDate := time.Now().Add(24 * time.Hour)
 		_, err := biopsychosocialService.AddMedication(
+			ctx,
 			testPatient.ID,
 			"Paroxetina",
 			"20mg",
@@ -227,6 +230,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 		weight := 70.5
 
 		vitals, err := biopsychosocialService.RecordVitals(
+			ctx,
 			testPatient.ID,
 			time.Now(),
 			&sleepHours,
@@ -262,7 +266,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 
 	// Test 2: Get latest vitals
 	t.Run("GetLatestVitals", func(t *testing.T) {
-		latest, err := biopsychosocialService.GetLatestVitals(testPatient.ID)
+		latest, err := biopsychosocialService.GetLatestVitals(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetLatestVitals failed: %v", err)
 		}
@@ -282,6 +286,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 		appetiteLevel := 6
 
 		vitals, err := biopsychosocialService.RecordVitals(
+			ctx,
 			testPatient.ID,
 			time.Now(),
 			&sleepHours,
@@ -306,6 +311,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 		weight := 70.5
 
 		_, err := biopsychosocialService.RecordVitals(
+			ctx,
 			testPatient.ID,
 			time.Now(),
 			&sleepHours,
@@ -330,6 +336,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 		weight := 70.5
 
 		_, err := biopsychosocialService.RecordVitals(
+			ctx,
 			testPatient.ID,
 			time.Now(),
 			&sleepHours,
@@ -357,6 +364,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 			date := time.Now().AddDate(0, 0, -i) // Different dates
 
 			_, err := biopsychosocialService.RecordVitals(
+				ctx,
 				testPatient.ID,
 				date,
 				&sleepHours,
@@ -370,7 +378,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 			}
 		}
 
-		avg, err := vitalsRepo.GetAverageVitals(testPatient.ID, 30)
+		avg, err := vitalsRepo.GetAverageVitals(ctx, testPatient.ID, 30)
 		if err != nil {
 			t.Errorf("GetAverageVitals failed: %v", err)
 		}
@@ -386,7 +394,7 @@ func TestBiopsychosocialVitalsFlow(t *testing.T) {
 
 	// Test 7: Find vitals by patient ID
 	t.Run("FindVitalsByPatientID", func(t *testing.T) {
-		vitalsList, err := vitalsRepo.FindByPatientID(testPatient.ID, 30)
+		vitalsList, err := vitalsRepo.FindByPatientID(ctx, testPatient.ID, 30)
 		if err != nil {
 			t.Errorf("FindVitalsByPatientID failed: %v", err)
 		}
@@ -432,7 +440,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 
 	// Test 1: Get empty context
 	t.Run("GetEmptyContext", func(t *testing.T) {
-		context, err := biopsychosocialService.GetContext(testPatient.ID)
+		context, err := biopsychosocialService.GetContext(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetContext failed: %v", err)
 		}
@@ -458,6 +466,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 	t.Run("GetContextWithData", func(t *testing.T) {
 		// Add medication
 		_, err := biopsychosocialService.AddMedication(
+			ctx,
 			testPatient.ID,
 			"Fluoxetina",
 			"20mg",
@@ -474,6 +483,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 		appetiteLevel := 8
 		weight := 68.0
 		_, err = biopsychosocialService.RecordVitals(
+			ctx,
 			testPatient.ID,
 			time.Now(),
 			&sleepHours,
@@ -487,7 +497,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 		}
 
 		// Get context
-		context, err := biopsychosocialService.GetContext(testPatient.ID)
+		context, err := biopsychosocialService.GetContext(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetContext with data failed: %v", err)
 		}
@@ -505,7 +515,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 		}
 
 		// Check average vitals
-		avg, err := vitalsRepo.GetAverageVitals(testPatient.ID, 30)
+		avg, err := vitalsRepo.GetAverageVitals(ctx, testPatient.ID, 30)
 		if err != nil {
 			t.Errorf("GetAverageVitals for context failed: %v", err)
 		}
@@ -523,6 +533,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 	t.Run("GetContextMultipleMedications", func(t *testing.T) {
 		// Add second medication
 		_, err := biopsychosocialService.AddMedication(
+			ctx,
 			testPatient.ID,
 			"Clonazepam",
 			"0.5mg",
@@ -534,7 +545,7 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 			t.Fatalf("Failed to add second medication: %v", err)
 		}
 
-		context, err := biopsychosocialService.GetContext(testPatient.ID)
+		context, err := biopsychosocialService.GetContext(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetContext with multiple medications failed: %v", err)
 		}
@@ -551,18 +562,18 @@ func TestBiopsychosocialContextFlow(t *testing.T) {
 
 	// Test 4: Get context with suspended medication
 	t.Run("GetContextWithSuspendedMedication", func(t *testing.T) {
-		meds, _ := biopsychosocialService.GetMedications(testPatient.ID)
+		meds, _ := biopsychosocialService.GetMedications(ctx, testPatient.ID)
 		if len(meds) == 0 {
 			t.Fatal("No medications to suspend")
 		}
 
 		// Suspend first medication
-		_, err := biopsychosocialService.SuspendMedication(meds[0].ID)
+		_, err := biopsychosocialService.SuspendMedication(ctx, meds[0].ID)
 		if err != nil {
 			t.Fatalf("Failed to suspend medication: %v", err)
 		}
 
-		context, err := biopsychosocialService.GetContext(testPatient.ID)
+		context, err := biopsychosocialService.GetContext(ctx, testPatient.ID)
 		if err != nil {
 			t.Errorf("GetContext with suspended medication failed: %v", err)
 		}

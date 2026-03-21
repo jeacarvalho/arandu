@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -13,7 +14,7 @@ type mockObservationRepository struct {
 	observations map[string]*observation.Observation
 }
 
-func (m *mockObservationRepository) Save(o *observation.Observation) error {
+func (m *mockObservationRepository) Save(ctx context.Context, o *observation.Observation) error {
 	if o.ID == "" {
 		o.ID = uuid.New().String()
 	}
@@ -24,11 +25,11 @@ func (m *mockObservationRepository) Save(o *observation.Observation) error {
 	return nil
 }
 
-func (m *mockObservationRepository) FindByID(id string) (*observation.Observation, error) {
+func (m *mockObservationRepository) FindByID(ctx context.Context, id string) (*observation.Observation, error) {
 	return m.observations[id], nil
 }
 
-func (m *mockObservationRepository) FindBySessionID(sessionID string) ([]*observation.Observation, error) {
+func (m *mockObservationRepository) FindBySessionID(ctx context.Context, sessionID string) ([]*observation.Observation, error) {
 	var result []*observation.Observation
 	for _, obs := range m.observations {
 		if obs.SessionID == sessionID {
@@ -38,7 +39,7 @@ func (m *mockObservationRepository) FindBySessionID(sessionID string) ([]*observ
 	return result, nil
 }
 
-func (m *mockObservationRepository) FindAll() ([]*observation.Observation, error) {
+func (m *mockObservationRepository) FindAll(ctx context.Context) ([]*observation.Observation, error) {
 	var result []*observation.Observation
 	for _, obs := range m.observations {
 		result = append(result, obs)
@@ -46,12 +47,12 @@ func (m *mockObservationRepository) FindAll() ([]*observation.Observation, error
 	return result, nil
 }
 
-func (m *mockObservationRepository) Update(o *observation.Observation) error {
+func (m *mockObservationRepository) Update(ctx context.Context, o *observation.Observation) error {
 	m.observations[o.ID] = o
 	return nil
 }
 
-func (m *mockObservationRepository) Delete(id string) error {
+func (m *mockObservationRepository) Delete(ctx context.Context, id string) error {
 	delete(m.observations, id)
 	return nil
 }
@@ -88,12 +89,13 @@ func TestObservationService_CreateObservation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
 			repo := &mockObservationRepository{
 				observations: make(map[string]*observation.Observation),
 			}
 			service := NewObservationService(repo)
 
-			obs, err := service.CreateObservation(tt.sessionID, tt.content)
+			obs, err := service.CreateObservation(ctx, tt.sessionID, tt.content)
 
 			if tt.wantErr {
 				if err == nil {
@@ -132,7 +134,7 @@ func TestObservationService_CreateObservation(t *testing.T) {
 			}
 
 			// Verify it was saved
-			saved, err := repo.FindByID(obs.ID)
+			saved, err := repo.FindByID(ctx, obs.ID)
 			if err != nil {
 				t.Errorf("FindByID() error: %v", err)
 			}
@@ -147,6 +149,7 @@ func TestObservationService_CreateObservation(t *testing.T) {
 }
 
 func TestObservationService_ListObservationsBySession(t *testing.T) {
+	ctx := context.Background()
 	repo := &mockObservationRepository{
 		observations: map[string]*observation.Observation{
 			"obs-1": {
@@ -168,7 +171,7 @@ func TestObservationService_ListObservationsBySession(t *testing.T) {
 	}
 	service := NewObservationService(repo)
 
-	observations, err := service.ListObservationsBySession("session-123")
+	observations, err := service.ListObservationsBySession(ctx, "session-123")
 	if err != nil {
 		t.Errorf("ListObservationsBySession() error: %v", err)
 		return
@@ -234,6 +237,7 @@ func TestObservationService_UpdateObservation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
 			repo := &mockObservationRepository{
 				observations: map[string]*observation.Observation{
 					"obs-1": {
@@ -246,7 +250,7 @@ func TestObservationService_UpdateObservation(t *testing.T) {
 			}
 			service := NewObservationService(repo)
 
-			err := service.UpdateObservation(tt.id, tt.content)
+			err := service.UpdateObservation(ctx, tt.id, tt.content)
 
 			if tt.wantErr {
 				if err == nil {
@@ -264,7 +268,7 @@ func TestObservationService_UpdateObservation(t *testing.T) {
 			}
 
 			// Verify the observation was updated
-			updated, err := repo.FindByID(tt.id)
+			updated, err := repo.FindByID(ctx, tt.id)
 			if err != nil {
 				t.Errorf("FindByID() error: %v", err)
 				return

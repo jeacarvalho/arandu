@@ -45,17 +45,17 @@ func (p *Patient) Update(name, notes string) error {
 }
 
 type Repository interface {
-	Save(patient *Patient) error
-	FindByID(id string) (*Patient, error)
-	FindAll() ([]*Patient, error)
-	Update(patient *Patient) error
-	Delete(id string) error
+	Save(ctx context.Context, patient *Patient) error
+	FindByID(ctx context.Context, id string) (*Patient, error)
+	FindAll(ctx context.Context) ([]*Patient, error)
+	Update(ctx context.Context, patient *Patient) error
+	Delete(ctx context.Context, id string) error
 
 	// Additional queries for enhanced functionality
-	FindByName(name string) ([]*Patient, error)
+	FindByName(ctx context.Context, name string) ([]*Patient, error)
 	Search(ctx context.Context, query string, limit, offset int) ([]*Patient, error)
-	CountAll() (int, error)
-	FindPaginated(limit, offset int) ([]*Patient, error)
+	CountAll(ctx context.Context) (int, error)
+	FindPaginated(ctx context.Context, limit, offset int) ([]*Patient, error)
 
 	// Theme analysis
 	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)

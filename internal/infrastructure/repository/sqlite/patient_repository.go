@@ -151,7 +151,7 @@ func validateNameQuery(name string) error {
 
 // Save persists a new patient to the database
 // Validates parameters before execution to prevent SQL injection and ensure data integrity
-func (r *PatientRepository) Save(p *patient.Patient) error {
+func (r *PatientRepository) Save(ctx context.Context, p *patient.Patient) error {
 	// Validate parameters
 	if err := validatePatientForSave(p); err != nil {
 		return err
@@ -163,20 +163,20 @@ func (r *PatientRepository) Save(p *patient.Patient) error {
 		Valid: !p.UpdatedAt.IsZero(),
 	}
 
-	_, err := r.db.Exec(r.queries.save, p.ID, p.Name, p.Notes, p.CreatedAt, updatedAt)
+	_, err := r.db.ExecContext(ctx, r.queries.save, p.ID, p.Name, p.Notes, p.CreatedAt, updatedAt)
 	return err
 }
 
 // FindByID retrieves a patient by their ID
 // Returns nil, nil if patient is not found (not an error)
 // Uses index on primary key for optimal performance
-func (r *PatientRepository) FindByID(id string) (*patient.Patient, error) {
+func (r *PatientRepository) FindByID(ctx context.Context, id string) (*patient.Patient, error) {
 	// Validate ID
 	if err := validateID(id); err != nil {
 		return nil, err
 	}
 
-	row := r.db.QueryRow(r.queries.findByID, id)
+	row := r.db.QueryRowContext(ctx, r.queries.findByID, id)
 
 	var p patient.Patient
 	err := row.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
@@ -192,8 +192,8 @@ func (r *PatientRepository) FindByID(id string) (*patient.Patient, error) {
 // FindAll retrieves all patients ordered by creation date (newest first)
 // Uses idx_patients_created_at index for optimal sorting performance
 // Consider using FindPaginated for large datasets to avoid memory issues
-func (r *PatientRepository) FindAll() ([]*patient.Patient, error) {
-	rows, err := r.db.Query(r.queries.findAll)
+func (r *PatientRepository) FindAll(ctx context.Context) ([]*patient.Patient, error) {
+	rows, err := r.db.QueryContext(ctx, r.queries.findAll)
 	if err != nil {
 		return nil, err
 	}
@@ -213,33 +213,33 @@ func (r *PatientRepository) FindAll() ([]*patient.Patient, error) {
 // Update modifies an existing patient in the database
 // Validates all parameters and ensures updated_at is current
 // Uses primary key index for optimal update performance
-func (r *PatientRepository) Update(p *patient.Patient) error {
+func (r *PatientRepository) Update(ctx context.Context, p *patient.Patient) error {
 	// Validate parameters
 	if err := validatePatientForUpdate(p); err != nil {
 		return err
 	}
 
-	_, err := r.db.Exec(r.queries.update, p.Name, p.Notes, p.UpdatedAt, p.ID)
+	_, err := r.db.ExecContext(ctx, r.queries.update, p.Name, p.Notes, p.UpdatedAt, p.ID)
 	return err
 }
 
 // Delete removes a patient from the database by ID
 // Validates ID before execution
 // Uses primary key index for optimal delete performance
-func (r *PatientRepository) Delete(id string) error {
+func (r *PatientRepository) Delete(ctx context.Context, id string) error {
 	// Validate ID
 	if err := validateID(id); err != nil {
 		return err
 	}
 
-	_, err := r.db.Exec(r.queries.delete, id)
+	_, err := r.db.ExecContext(ctx, r.queries.delete, id)
 	return err
 }
 
 // FindByName searches for patients by name (case-insensitive, partial match)
 // Uses idx_patients_name index for optimal search performance
 // Returns empty slice if no patients found (not an error)
-func (r *PatientRepository) FindByName(name string) ([]*patient.Patient, error) {
+func (r *PatientRepository) FindByName(ctx context.Context, name string) ([]*patient.Patient, error) {
 	// Validate name query
 	if err := validateNameQuery(name); err != nil {
 		return nil, err
@@ -248,7 +248,7 @@ func (r *PatientRepository) FindByName(name string) ([]*patient.Patient, error) 
 	// Add wildcards for partial match
 	searchTerm := "%" + name + "%"
 
-	rows, err := r.db.Query(r.queries.findByName, searchTerm)
+	rows, err := r.db.QueryContext(ctx, r.queries.findByName, searchTerm)
 	if err != nil {
 		return nil, err
 	}
@@ -316,9 +316,9 @@ func (r *PatientRepository) Search(ctx context.Context, query string, limit, off
 
 // CountAll returns the total number of patients in the database
 // Useful for pagination and statistics
-func (r *PatientRepository) CountAll() (int, error) {
+func (r *PatientRepository) CountAll(ctx context.Context) (int, error) {
 	var count int
-	err := r.db.QueryRow(r.queries.countAll).Scan(&count)
+	err := r.db.QueryRowContext(ctx, r.queries.countAll).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
@@ -329,7 +329,7 @@ func (r *PatientRepository) CountAll() (int, error) {
 // Uses idx_patients_created_at index for optimal sorting performance
 // limit: maximum number of patients to return
 // offset: number of patients to skip (for pagination)
-func (r *PatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient, error) {
+func (r *PatientRepository) FindPaginated(ctx context.Context, limit, offset int) ([]*patient.Patient, error) {
 	// Validate pagination parameters
 	if limit < 1 || limit > 100 {
 		return nil, fmt.Errorf("limit must be between 1 and 100")
@@ -339,7 +339,7 @@ func (r *PatientRepository) FindPaginated(limit, offset int) ([]*patient.Patient
 		return nil, fmt.Errorf("offset cannot be negative")
 	}
 
-	rows, err := r.db.Query(r.queries.findPaginated, limit, offset)
+	rows, err := r.db.QueryContext(ctx, r.queries.findPaginated, limit, offset)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package intervention
 
 import (
+	"context"
 	"time"
 )
 
@@ -13,10 +14,10 @@ type Intervention struct {
 }
 
 type Repository interface {
-	Save(intervention *Intervention) error
-	FindByID(id string) (*Intervention, error)
-	FindBySessionID(sessionID string) ([]*Intervention, error)
-	FindAll() ([]*Intervention, error)
-	Update(intervention *Intervention) error
-	Delete(id string) error
+	Save(ctx context.Context, intervention *Intervention) error
+	FindByID(ctx context.Context, id string) (*Intervention, error)
+	FindBySessionID(ctx context.Context, sessionID string) ([]*Intervention, error)
+	FindAll(ctx context.Context) ([]*Intervention, error)
+	Update(ctx context.Context, intervention *Intervention) error
+	Delete(ctx context.Context, id string) error
 }

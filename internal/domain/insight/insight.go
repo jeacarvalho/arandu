@@ -1,6 +1,7 @@
 package insight
 
 import (
+	"context"
 	"time"
 )
 
@@ -12,8 +13,8 @@ type Insight struct {
 }
 
 type Repository interface {
-	Save(insight *Insight) error
-	FindByID(id string) (*Insight, error)
-	FindAll() ([]*Insight, error)
-	Delete(id string) error
+	Save(ctx context.Context, insight *Insight) error
+	FindByID(ctx context.Context, id string) (*Insight, error)
+	FindAll(ctx context.Context) ([]*Insight, error)
+	Delete(ctx context.Context, id string) error
 }

@@ -1,83 +1,83 @@
 package services
 
 import (
+	"context"
 	"time"
 
 	"arandu/internal/domain/patient"
-	"arandu/internal/infrastructure/repository/sqlite"
 )
 
 type BiopsychosocialService struct {
-	medicationRepo *sqlite.MedicationRepository
-	vitalsRepo     *sqlite.VitalsRepository
+	medicationRepo patient.MedicationRepository
+	vitalsRepo     patient.VitalsRepository
 }
 
-func NewBiopsychosocialService(medicationRepo *sqlite.MedicationRepository, vitalsRepo *sqlite.VitalsRepository) *BiopsychosocialService {
+func NewBiopsychosocialService(medicationRepo patient.MedicationRepository, vitalsRepo patient.VitalsRepository) *BiopsychosocialService {
 	return &BiopsychosocialService{
 		medicationRepo: medicationRepo,
 		vitalsRepo:     vitalsRepo,
 	}
 }
 
-func (s *BiopsychosocialService) AddMedication(patientID, name, dosage, frequency, prescriber string, startedAt time.Time) (*patient.Medication, error) {
+func (s *BiopsychosocialService) AddMedication(ctx context.Context, patientID, name, dosage, frequency, prescriber string, startedAt time.Time) (*patient.Medication, error) {
 	medication, err := patient.NewMedication(patientID, name, dosage, frequency, prescriber, startedAt)
 	if err != nil {
 		return nil, err
 	}
-	if err := s.medicationRepo.Save(medication); err != nil {
+	if err := s.medicationRepo.Save(ctx, medication); err != nil {
 		return nil, err
 	}
 	return medication, nil
 }
 
-func (s *BiopsychosocialService) GetMedications(patientID string) ([]*patient.Medication, error) {
-	return s.medicationRepo.FindByPatientID(patientID)
+func (s *BiopsychosocialService) GetMedications(ctx context.Context, patientID string) ([]*patient.Medication, error) {
+	return s.medicationRepo.FindByPatientID(ctx, patientID)
 }
 
-func (s *BiopsychosocialService) GetActiveMedications(patientID string) ([]*patient.Medication, error) {
-	return s.medicationRepo.GetActiveMedications(patientID)
+func (s *BiopsychosocialService) GetActiveMedications(ctx context.Context, patientID string) ([]*patient.Medication, error) {
+	return s.medicationRepo.GetActiveMedications(ctx, patientID)
 }
 
-func (s *BiopsychosocialService) UpdateMedicationStatus(medicationID string, status patient.MedicationStatus) (*patient.Medication, error) {
-	if err := s.medicationRepo.UpdateStatus(medicationID, status); err != nil {
+func (s *BiopsychosocialService) UpdateMedicationStatus(ctx context.Context, medicationID string, status patient.MedicationStatus) (*patient.Medication, error) {
+	if err := s.medicationRepo.UpdateStatus(ctx, medicationID, status); err != nil {
 		return nil, err
 	}
-	return s.medicationRepo.FindByID(medicationID)
+	return s.medicationRepo.FindByID(ctx, medicationID)
 }
 
-func (s *BiopsychosocialService) SuspendMedication(medicationID string) (*patient.Medication, error) {
-	return s.UpdateMedicationStatus(medicationID, patient.MedicationStatusSuspended)
+func (s *BiopsychosocialService) SuspendMedication(ctx context.Context, medicationID string) (*patient.Medication, error) {
+	return s.UpdateMedicationStatus(ctx, medicationID, patient.MedicationStatusSuspended)
 }
 
-func (s *BiopsychosocialService) ActivateMedication(medicationID string) (*patient.Medication, error) {
-	return s.UpdateMedicationStatus(medicationID, patient.MedicationStatusActive)
+func (s *BiopsychosocialService) ActivateMedication(ctx context.Context, medicationID string) (*patient.Medication, error) {
+	return s.UpdateMedicationStatus(ctx, medicationID, patient.MedicationStatusActive)
 }
 
-func (s *BiopsychosocialService) FinishMedication(medicationID string) (*patient.Medication, error) {
-	return s.UpdateMedicationStatus(medicationID, patient.MedicationStatusFinished)
+func (s *BiopsychosocialService) FinishMedication(ctx context.Context, medicationID string) (*patient.Medication, error) {
+	return s.UpdateMedicationStatus(ctx, medicationID, patient.MedicationStatusFinished)
 }
 
-func (s *BiopsychosocialService) RecordVitals(patientID string, date time.Time, sleepHours *float64, appetiteLevel *int, weight *float64, physicalActivity int, notes string) (*patient.Vitals, error) {
+func (s *BiopsychosocialService) RecordVitals(ctx context.Context, patientID string, date time.Time, sleepHours *float64, appetiteLevel *int, weight *float64, physicalActivity int, notes string) (*patient.Vitals, error) {
 	vitals, err := patient.NewVitals(patientID, date, sleepHours, appetiteLevel, weight, physicalActivity, notes)
 	if err != nil {
 		return nil, err
 	}
-	if err := s.vitalsRepo.Save(vitals); err != nil {
+	if err := s.vitalsRepo.Save(ctx, vitals); err != nil {
 		return nil, err
 	}
 	return vitals, nil
 }
 
-func (s *BiopsychosocialService) GetLatestVitals(patientID string) (*patient.Vitals, error) {
-	return s.vitalsRepo.GetLatestVitals(patientID)
+func (s *BiopsychosocialService) GetLatestVitals(ctx context.Context, patientID string) (*patient.Vitals, error) {
+	return s.vitalsRepo.GetLatestVitals(ctx, patientID)
 }
 
-func (s *BiopsychosocialService) GetVitalsHistory(patientID string, limit int) ([]*patient.Vitals, error) {
-	return s.vitalsRepo.FindByPatientID(patientID, limit)
+func (s *BiopsychosocialService) GetVitalsHistory(ctx context.Context, patientID string, limit int) ([]*patient.Vitals, error) {
+	return s.vitalsRepo.FindByPatientID(ctx, patientID, limit)
 }
 
-func (s *BiopsychosocialService) GetAverageVitals(patientID string, days int) (*sqlite.VitalsAverage, error) {
-	return s.vitalsRepo.GetAverageVitals(patientID, days)
+func (s *BiopsychosocialService) GetAverageVitals(ctx context.Context, patientID string, days int) (*patient.VitalsAverage, error) {
+	return s.vitalsRepo.GetAverageVitals(ctx, patientID, days)
 }
 
 type BiopsychosocialContext struct {
@@ -85,23 +85,23 @@ type BiopsychosocialContext struct {
 	ActiveMedications []*patient.Medication
 	AllMedications    []*patient.Medication
 	LatestVitals      *patient.Vitals
-	VitalsAverage     *sqlite.VitalsAverage
+	VitalsAverage     *patient.VitalsAverage
 }
 
-func (s *BiopsychosocialService) GetContext(patientID string) (*BiopsychosocialContext, error) {
-	activeMeds, err := s.GetActiveMedications(patientID)
+func (s *BiopsychosocialService) GetContext(ctx context.Context, patientID string) (*BiopsychosocialContext, error) {
+	activeMeds, err := s.GetActiveMedications(ctx, patientID)
 	if err != nil {
 		return nil, err
 	}
-	allMeds, err := s.GetMedications(patientID)
+	allMeds, err := s.GetMedications(ctx, patientID)
 	if err != nil {
 		return nil, err
 	}
-	latestVitals, err := s.GetLatestVitals(patientID)
+	latestVitals, err := s.GetLatestVitals(ctx, patientID)
 	if err != nil {
 		return nil, err
 	}
-	avgVitals, err := s.GetAverageVitals(patientID, 30)
+	avgVitals, err := s.GetAverageVitals(ctx, patientID, 30)
 	if err != nil {
 		return nil, err
 	}

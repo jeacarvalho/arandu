@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 	"time"
@@ -28,6 +29,7 @@ func setupTestDB(t *testing.T) *DB {
 }
 
 func TestObservationRepository_SaveAndFindByID(t *testing.T) {
+	ctx := context.Background()
 	db := setupTestDB(t)
 	repo := NewObservationRepository(db)
 
@@ -38,7 +40,7 @@ func TestObservationRepository_SaveAndFindByID(t *testing.T) {
 	}
 
 	// Save observation
-	err := repo.Save(obs)
+	err := repo.Save(ctx, obs)
 	if err != nil {
 		t.Fatalf("Save() error = %v", err)
 	}
@@ -52,7 +54,7 @@ func TestObservationRepository_SaveAndFindByID(t *testing.T) {
 	}
 
 	// Find by ID
-	found, err := repo.FindByID(obs.ID)
+	found, err := repo.FindByID(ctx, obs.ID)
 	if err != nil {
 		t.Fatalf("FindByID() error = %v", err)
 	}
@@ -79,6 +81,7 @@ func TestObservationRepository_SaveAndFindByID(t *testing.T) {
 }
 
 func TestObservationRepository_Update(t *testing.T) {
+	ctx := context.Background()
 	db := setupTestDB(t)
 	repo := NewObservationRepository(db)
 
@@ -88,7 +91,7 @@ func TestObservationRepository_Update(t *testing.T) {
 		Content:   "Conteúdo original",
 	}
 
-	err := repo.Save(obs)
+	err := repo.Save(ctx, obs)
 	if err != nil {
 		t.Fatalf("Save() error = %v", err)
 	}
@@ -100,13 +103,13 @@ func TestObservationRepository_Update(t *testing.T) {
 	originalCreatedAt := obs.CreatedAt
 	obs.Content = "Conteúdo atualizado"
 
-	err = repo.Update(obs)
+	err = repo.Update(ctx, obs)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
 	}
 
 	// Find updated observation
-	updated, err := repo.FindByID(obs.ID)
+	updated, err := repo.FindByID(ctx, obs.ID)
 	if err != nil {
 		t.Fatalf("FindByID() after update error = %v", err)
 	}
@@ -137,6 +140,7 @@ func TestObservationRepository_Update(t *testing.T) {
 }
 
 func TestObservationRepository_FindBySessionID(t *testing.T) {
+	ctx := context.Background()
 	db := setupTestDB(t)
 	repo := NewObservationRepository(db)
 
@@ -156,13 +160,13 @@ func TestObservationRepository_FindBySessionID(t *testing.T) {
 
 	// Save all observations
 	for _, obs := range []*observation.Observation{obs1, obs2, obs3} {
-		if err := repo.Save(obs); err != nil {
+		if err := repo.Save(ctx, obs); err != nil {
 			t.Fatalf("Save() error = %v", err)
 		}
 	}
 
 	// Find observations for session-123
-	observations, err := repo.FindBySessionID("session-123")
+	observations, err := repo.FindBySessionID(ctx, "session-123")
 	if err != nil {
 		t.Fatalf("FindBySessionID() error = %v", err)
 	}
@@ -189,6 +193,7 @@ func TestObservationRepository_FindBySessionID(t *testing.T) {
 }
 
 func TestObservationRepository_Delete(t *testing.T) {
+	ctx := context.Background()
 	db := setupTestDB(t)
 	repo := NewObservationRepository(db)
 
@@ -198,19 +203,19 @@ func TestObservationRepository_Delete(t *testing.T) {
 		Content:   "Observation to delete",
 	}
 
-	err := repo.Save(obs)
+	err := repo.Save(ctx, obs)
 	if err != nil {
 		t.Fatalf("Save() error = %v", err)
 	}
 
 	// Delete observation
-	err = repo.Delete(obs.ID)
+	err = repo.Delete(ctx, obs.ID)
 	if err != nil {
 		t.Fatalf("Delete() error = %v", err)
 	}
 
 	// Try to find deleted observation
-	deleted, err := repo.FindByID(obs.ID)
+	deleted, err := repo.FindByID(ctx, obs.ID)
 	if err != nil {
 		t.Fatalf("FindByID() after delete error = %v", err)
 	}
@@ -221,6 +226,7 @@ func TestObservationRepository_Delete(t *testing.T) {
 }
 
 func TestObservationRepository_FindAll(t *testing.T) {
+	ctx := context.Background()
 	db := setupTestDB(t)
 	repo := NewObservationRepository(db)
 
@@ -233,13 +239,13 @@ func TestObservationRepository_FindAll(t *testing.T) {
 
 	// Save all observations
 	for _, obs := range observations {
-		if err := repo.Save(obs); err != nil {
+		if err := repo.Save(ctx, obs); err != nil {
 			t.Fatalf("Save() error = %v", err)
 		}
 	}
 
 	// Find all observations
-	all, err := repo.FindAll()
+	all, err := repo.FindAll(ctx)
 	if err != nil {
 		t.Fatalf("FindAll() error = %v", err)
 	}
