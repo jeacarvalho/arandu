@@ -264,7 +264,7 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 
 	if isHTMXRequest {
 		// For HTMX requests, render just the patient list fragment
-		patientComponents.PatientList(listData).Render(r.Context(), w)
+		patientComponents.PatientListFragment(listData).Render(r.Context(), w)
 	} else {
 		// For full page requests, render with layout
 		patientList := patientComponents.PatientList(listData)
