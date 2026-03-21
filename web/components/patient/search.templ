@@ -6,26 +6,27 @@ type SearchResultItem struct {
 }
 
 templ SearchResults(results []SearchResultItem) {
-	<div id="search-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 var(--radius-xl) var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-100); max-height: 400px; overflow-y: auto; z-index: 50;">
+	<div id="search-results" class="search-results-dropdown" role="listbox" aria-label="Resultados da busca de pacientes">
 		if len(results) > 0 {
-			<div style="padding: var(--space-sm);">
+			<div class="search-results-list">
 				for _, r := range results {
 					<a 
 						href={ templ.URL("/patient/" + r.ID) }
-						style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-lg); text-decoration: none; border-radius: var(--radius-lg); transition: background-color 0.15s ease;"
-						onmouseover="this.style.backgroundColor='var(--neutral-50)';"
-						onmouseout="this.style.backgroundColor='transparent';"
+						class="search-result-link"
+						role="option"
+						data-search-result="true"
+						tabindex="-1"
 					>
-						<div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;">
-							<i class="fas fa-user" style="font-size: 0.75rem;"></i>
+						<div class="search-result-avatar">
+							<i class="fas fa-user" aria-hidden="true"></i>
 						</div>
-						<div style="font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; color: var(--neutral-900);">{ r.Name }</div>
+						<div class="search-result-text">{ r.Name }</div>
 					</a>
 				}
 			</div>
 		} else {
-			<div style="padding: var(--space-xl); text-align: center; color: var(--neutral-400); font-size: 0.875rem;">
-				<i class="fas fa-search" style="margin-bottom: var(--space-sm); display: block; opacity: 0.5;"></i>
+			<div class="search-results-empty" aria-live="polite">
+				<i class="fas fa-search" aria-hidden="true"></i>
 				Nenhum paciente encontrado
 			</div>
 		}

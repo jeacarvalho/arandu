@@ -76,36 +76,60 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Patient list interactions
-    const patientCards = document.querySelectorAll('a[href^="/patient/"]');
-    patientCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.transition = 'transform 0.2s ease';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    // Search functionality for patient list
+    // Search keyboard navigation for patient search
     const searchInput = document.getElementById('patient-search');
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const patientItems = document.querySelectorAll('a[href^="/patient/"]');
-            
-            patientItems.forEach(item => {
-                const patientName = item.querySelector('h3').textContent.toLowerCase();
-                const patientNotes = item.querySelector('p.text-gray-600')?.textContent.toLowerCase() || '';
-                
-                if (patientName.includes(searchTerm) || patientNotes.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
+        let activeIndex = -1;
+
+        function getSearchResults() {
+            return Array.from(document.querySelectorAll('#search-results [data-search-result="true"]'));
+        }
+
+        function updateActiveResult(index) {
+            const results = getSearchResults();
+            results.forEach((result, currentIndex) => {
+                const isActive = currentIndex === index;
+                result.classList.toggle('is-active', isActive);
+                result.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                if (isActive) {
+                    result.focus();
                 }
             });
+        }
+
+        searchInput.addEventListener('keydown', function(event) {
+            const results = getSearchResults();
+            if (!results.length) {
+                return;
+            }
+
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                activeIndex = (activeIndex + 1) % results.length;
+                updateActiveResult(activeIndex);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                activeIndex = activeIndex <= 0 ? results.length - 1 : activeIndex - 1;
+                updateActiveResult(activeIndex);
+            } else if (event.key === 'Enter' && activeIndex >= 0) {
+                event.preventDefault();
+                results[activeIndex].click();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                document.getElementById('search-results').innerHTML = '';
+                activeIndex = -1;
+                searchInput.blur();
+            }
+        });
+
+        searchInput.addEventListener('input', function() {
+            activeIndex = -1;
+        });
+
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            if (event.target && event.target.id === 'search-results') {
+                activeIndex = -1;
+            }
         });
     }
 });

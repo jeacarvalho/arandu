@@ -34,12 +34,12 @@ func SearchResults(results []SearchResultItem) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"search-results\" style=\"position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 var(--radius-xl) var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--neutral-100); max-height: 400px; overflow-y: auto; z-index: 50;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"search-results\" class=\"search-results-dropdown\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(results) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div style=\"padding: var(--space-sm);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"search-results-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -57,7 +57,7 @@ func SearchResults(results []SearchResultItem) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" style=\"display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-lg); text-decoration: none; border-radius: var(--radius-lg); transition: background-color 0.15s ease;\" onmouseover=\"this.style.backgroundColor='var(--neutral-50)';\" onmouseout=\"this.style.backgroundColor='transparent';\"><div style=\"width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--primary-600); flex-shrink: 0;\"><i class=\"fas fa-user\" style=\"font-size: 0.75rem;\"></i></div><div style=\"font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; color: var(--neutral-900);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"search-result-link\" role=\"option\" data-search-result=\"true\" tabindex=\"-1\"><div class=\"search-result-avatar\"><i class=\"fas fa-user\" aria-hidden=\"true\"></i></div><div class=\"search-result-text\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -80,7 +80,7 @@ func SearchResults(results []SearchResultItem) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div style=\"padding: var(--space-xl); text-align: center; color: var(--neutral-400); font-size: 0.875rem;\"><i class=\"fas fa-search\" style=\"margin-bottom: var(--space-sm); display: block; opacity: 0.5;\"></i> Nenhum paciente encontrado</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"search-results-empty\" aria-live=\"polite\"><i class=\"fas fa-search\" aria-hidden=\"true\"></i> Nenhum paciente encontrado</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
