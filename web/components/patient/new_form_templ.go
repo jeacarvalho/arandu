@@ -82,7 +82,7 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patient/create\" method=\"POST\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;\"><i class=\"fas fa-user-plus\"></i></div><div><h2 class=\"card-title\">Dados Pessoais</h2><p class=\"card-subtitle\">Informações mínimas para iniciar o acompanhamento</p></div></div><div style=\"padding: var(--space-xl);\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-name\">Nome Completo *</label> <input id=\"patient-name\" type=\"text\" name=\"name\" required autocomplete=\"name\" placeholder=\"Ex: Maria da Silva\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patients/create\" method=\"POST\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;\"><i class=\"fas fa-user-plus\"></i></div><div><h2 class=\"card-title\">Dados Pessoais</h2><p class=\"card-subtitle\">Informações mínimas para iniciar o acompanhamento</p></div></div><div style=\"padding: var(--space-xl);\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-name\">Nome Completo *</label> <input id=\"patient-name\" type=\"text\" name=\"name\" required autocomplete=\"name\" placeholder=\"Ex: Maria da Silva\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

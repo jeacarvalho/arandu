@@ -10,6 +10,8 @@ import (
 	"arandu/internal/infrastructure/auth"
 	"arandu/internal/infrastructure/repository/sqlite"
 	authComponents "arandu/web/components/auth"
+
+	"github.com/google/uuid"
 )
 
 type AuthHandler struct {
@@ -175,7 +177,7 @@ func (h *AuthHandler) findOrCreateUser(email string) (string, error) {
 		// Novo usuário via Google OAuth - criar tenant e usuário automaticamente
 		log.Printf("Novo usuário Google: %s - criando tenant e usuário", email)
 
-		tenantID = fmt.Sprintf("tenant-%d", time.Now().UnixNano())
+		tenantID = uuid.New().String()
 		dbPath := fmt.Sprintf("storage/tenants/clinical_%s.db", tenantID)
 
 		// Criar tenant
@@ -188,7 +190,7 @@ func (h *AuthHandler) findOrCreateUser(email string) (string, error) {
 		}
 
 		// Criar usuário (sem senha pois é OAuth)
-		userID = fmt.Sprintf("user-%d", time.Now().UnixNano())
+		userID = uuid.New().String()
 		_, err = h.centralDB.Exec(
 			`INSERT INTO users (id, email, password_hash, tenant_id) VALUES (?, ?, NULL, ?)`,
 			userID, email, tenantID,
@@ -202,7 +204,7 @@ func (h *AuthHandler) findOrCreateUser(email string) (string, error) {
 		return "", fmt.Errorf("failed to query user: %w", err)
 	}
 
-	sessionID := fmt.Sprintf("google-session-%d", time.Now().Unix())
+	sessionID := uuid.New().String()
 	expiresAt = time.Now().Add(7 * 24 * time.Hour).Unix()
 
 	_, err = h.centralDB.Exec(

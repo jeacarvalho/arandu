@@ -3,20 +3,17 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
-	"os"
-	"path/filepath"
 	"sync"
 	"time"
 
 	"arandu/internal/infrastructure/repository/sqlite/migrations"
+	"arandu/internal/platform/storage"
 
 	_ "modernc.org/sqlite"
 )
 
 const (
-	TenantDBPrefix    = "clinical_"
-	TenantDBExtension = ".db"
-	IdleTimeout       = 10 * time.Minute
+	IdleTimeout = 10 * time.Minute
 )
 
 type TenantPool struct {
@@ -24,13 +21,16 @@ type TenantPool struct {
 	conns        map[string]*sql.DB
 	storage      string
 	migrationsFs interface{}
+	pathResolver *storage.PathResolver
 }
 
-func NewTenantPool(storage string, migrationsFs interface{}) *TenantPool {
+func NewTenantPool(storagePath string, migrationsFs interface{}) *TenantPool {
+	pr := storage.NewPathResolver(storagePath)
 	return &TenantPool{
 		conns:        make(map[string]*sql.DB),
-		storage:      storage,
+		storage:      storagePath,
 		migrationsFs: migrationsFs,
+		pathResolver: pr,
 	}
 }
 
@@ -63,12 +63,11 @@ func (tp *TenantPool) GetConnection(tenantID string) (*sql.DB, error) {
 }
 
 func (tp *TenantPool) createConnection(tenantID string) (*sql.DB, error) {
-	tenantsDir := filepath.Join(tp.storage, "tenants")
-	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
-		return nil, fmt.Errorf("failed to create tenants directory: %w", err)
+	if err := tp.pathResolver.EnsureTenantDir(tenantID); err != nil {
+		return nil, fmt.Errorf("failed to create tenant directory: %w", err)
 	}
 
-	dbPath := filepath.Join(tenantsDir, TenantDBPrefix+tenantID+TenantDBExtension)
+	dbPath := tp.pathResolver.ResolveTenantPath(tenantID)
 
 	dsn := dbPath + "?_journal_mode=WAL"
 	db, err := sql.Open("sqlite", dsn)

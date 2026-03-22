@@ -4,11 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"os"
-	"path/filepath"
 	"time"
 
 	"arandu/internal/infrastructure/repository/sqlite/migrations"
+	"arandu/internal/platform/storage"
 
 	"github.com/google/uuid"
 	_ "modernc.org/sqlite"
@@ -22,25 +21,25 @@ type Tenant struct {
 }
 
 type TenantService struct {
-	centralDB *sql.DB
-	storage   string
+	centralDB    *sql.DB
+	pathResolver *storage.PathResolver
 }
 
-func NewTenantService(centralDB *sql.DB, storage string) *TenantService {
+func NewTenantService(centralDB *sql.DB, storagePath string) *TenantService {
 	return &TenantService{
-		centralDB: centralDB,
-		storage:   storage,
+		centralDB:    centralDB,
+		pathResolver: storage.NewPathResolver(storagePath),
 	}
 }
 
 func (s *TenantService) ProvisionNewTenant(ctx context.Context, userID string) (string, error) {
 	tenantID := uuid.New().String()
-	dbPath := filepath.Join(s.storage, "tenants", fmt.Sprintf("clinical_%s.db", tenantID))
 
-	tenantsDir := filepath.Join(s.storage, "tenants")
-	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
-		return "", fmt.Errorf("failed to create tenants directory: %w", err)
+	if err := s.pathResolver.EnsureTenantDir(tenantID); err != nil {
+		return "", fmt.Errorf("failed to create tenant directory: %w", err)
 	}
+
+	dbPath := s.pathResolver.ResolveTenantPath(tenantID)
 
 	db, err := sql.Open("sqlite", dbPath+"?_journal_mode=WAL")
 	if err != nil {
@@ -125,13 +124,17 @@ func (s *TenantService) TenantExists(ctx context.Context, tenantID string) (bool
 }
 
 func (s *TenantService) GetTenantDBPath(tenantID string) string {
-	return filepath.Join(s.storage, "tenants", fmt.Sprintf("clinical_%s.db", tenantID))
+	return s.pathResolver.ResolveTenantPath(tenantID)
+}
+
+func (s *TenantService) GetTenantsDir() string {
+	return s.pathResolver.GetTenantsDir()
 }
 
 func (s *TenantService) ValidateTenantDB(ctx context.Context, tenantID string) error {
 	dbPath := s.GetTenantDBPath(tenantID)
 
-	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+	if !s.pathResolver.TenantDBExists(tenantID) {
 		return fmt.Errorf("tenant database file does not exist: %s", dbPath)
 	}
 

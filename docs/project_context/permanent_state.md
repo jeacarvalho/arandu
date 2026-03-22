@@ -2,14 +2,16 @@
 
 **Criado em:** seg 16 mar 2026 20:48:36 -03
 <<<<<<< Updated upstream
-**Última atualização:** sáb 21 mar 2026 23:01:25 -03
+**Última atualização:** dom 22 mar 2026 00:40:55 -03
 =======
-**Última atualização:** sáb 21 mar 2026 23:01:25 -03
+**Última atualização:** dom 22 mar 2026 00:40:55 -03
 >>>>>>> Stashed changes
 
 ## 📋 Histórico de Implementações
 
 | Data | Tarefa | Requirement | Status |
+| 2026-03-22 | Implementação do Serviço de Auditoria (Control Plane) | REQ-08-01-02 (Auditoria e Conformidade) | ✅ Concluída |
+| 2026-03-22 | Refatoração de Armazenamento (Directory Hashing) | REQ-07-03-02 (Evolução de Infraestrutura) | ✅ Concluída |
 | 2026-03-21 |  | REQ-08-02-01 (Padronização de Logs) | ✅ Concluída |
 | 2026-03-21 |  | REQ-08-01-01 | ✅ Concluída |
 | 2026-03-21 |  | REQ-08-02-01 (Padronização de Logs Estruturados) | ✅ Concluída |

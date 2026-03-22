@@ -96,7 +96,11 @@ func main() {
 	// Use context-aware repos for biopsychosocial (requires interface-based with context)
 	biopsychosocialService := services.NewBiopsychosocialService(medicationRepo, vitalsRepo)
 
-	patientService := services.NewPatientService(patientRepo)
+	// Create audit service (uses central DB)
+	auditService := services.NewAuditService(centralDB.DB)
+	defer auditService.Close()
+
+	patientService := services.NewPatientServiceWithAudit(patientRepo, auditService)
 	sessionService := services.NewSessionService(sessionRepo)
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)

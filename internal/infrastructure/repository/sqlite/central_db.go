@@ -120,6 +120,34 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS tenants;
 `,
 		},
+		{
+			Version: "0002",
+			Name:    "add_audit_logs",
+			UpSQL: `
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id TEXT PRIMARY KEY,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    user_id TEXT NOT NULL,
+    tenant_id TEXT NOT NULL,
+    action TEXT NOT NULL,
+    resource_id TEXT,
+    ip_address TEXT,
+    user_agent TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_tenant ON audit_logs(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp);
+CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_logs(action);
+`,
+			DownSQL: `
+DROP INDEX IF EXISTS idx_audit_action;
+DROP INDEX IF EXISTS idx_audit_timestamp;
+DROP INDEX IF EXISTS idx_audit_user;
+DROP INDEX IF EXISTS idx_audit_tenant;
+DROP TABLE IF EXISTS audit_logs;
+`,
+		},
 	}
 
 	m.migrations = centralMigrations

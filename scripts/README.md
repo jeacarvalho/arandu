@@ -112,6 +112,7 @@ run ./scripts/arandu_checkpoint.sh; run ./scripts/arandu_guard.sh ; run ./script
 
 ## 🔄 Fluxo Completo de Exemplo
 
+run ./scripts/safe_deploy.sh
 ```bash
 # 1. Iniciar sessão
 ./scripts/arandu_start_session.sh
