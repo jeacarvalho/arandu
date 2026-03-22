@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** sáb 21 mar 2026 00:40:01 -03
+**Gerado em:** sáb 21 mar 2026 23:01:26 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -36,6 +36,7 @@
 - cap-07-03-gestao-acesso-multi-tenancy.md
 - cap-07-04-recuperação-Informação-Performance.md
 - cap-08-01-evolucao-base-clinica.md
+- cap-08-02-observabilidade-diagnostico.md
 - cap-09-01-analise-clinica.md
 - cap-10-01-base-clinica-coletiva.md
 
@@ -67,18 +68,20 @@
 - req-07-04-01-paginação-Infinite-scroll.md
 - req-07-04-02-busca-contextual-prontuario.md
 - req-08-01-01-evolucao-base.md
+- req-08-02-01-padronização-logs-estruturados.md
+- req-08-03-01-auditoria-acessos-clinicos.md
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 28
+**Total de requirements:** 30
 
 ## 🛠️ Tarefas recentes
 
-- task_20260320_233022
-- task_20260320_230909
-- task_20260320_230256
-- task_20260320_223251
-- task_20260320_171514
+- task_20260321_222837
+- task_20260321_221743
+- task_20260321_212325
+- task_20260321_200340
+- task_20260321_175334
 
 ## 📚 Sistema de Aprendizados
 
@@ -97,13 +100,13 @@ Arquivos principais:
 ## 📊 Status do Sistema
 
 - Visions: 10
-- Capabilities: 19
-- Requirements: 28
+- Capabilities: 20
+- Requirements: 30
 - Learnings: Sistema consolidado (4 arquivos principais + archive)
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 15
-- **Requirements implementados:** 15
-- **Última atualização permanente:** ** sáb 21 mar 2026 00:40:00 -03
+- **Tarefas concluídas:** 18
+- **Requirements implementados:** 18
+- **Última atualização permanente:** ** sáb 21 mar 2026 23:01:25 -03
 

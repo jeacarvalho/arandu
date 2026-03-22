@@ -7,17 +7,19 @@ import (
 )
 
 var (
-	ErrNoTenantDB = errors.New("no tenant database in context")
-	ErrNoTenantID = errors.New("no tenant ID in context")
-	ErrNoUserID   = errors.New("no user ID in context")
+	ErrNoTenantDB  = errors.New("no tenant database in context")
+	ErrNoTenantID  = errors.New("no tenant ID in context")
+	ErrNoUserID    = errors.New("no user ID in context")
+	ErrNoRequestID = errors.New("no request ID in context")
 )
 
 type contextKey string
 
 const (
-	tenantDBKey contextKey = "tenant_db"
-	tenantIDKey contextKey = "tenant_id"
-	userIDKey   contextKey = "user_id"
+	tenantDBKey  contextKey = "tenant_db"
+	tenantIDKey  contextKey = "tenant_id"
+	userIDKey    contextKey = "user_id"
+	requestIDKey contextKey = "request_id"
 )
 
 func WithTenantDB(ctx context.Context, db *sql.DB) context.Context {
@@ -54,4 +56,16 @@ func GetUserID(ctx context.Context) (string, error) {
 		return "", ErrNoUserID
 	}
 	return userID, nil
+}
+
+func WithRequestID(ctx context.Context, requestID string) context.Context {
+	return context.WithValue(ctx, requestIDKey, requestID)
+}
+
+func GetRequestID(ctx context.Context) (string, error) {
+	requestID, ok := ctx.Value(requestIDKey).(string)
+	if !ok || requestID == "" {
+		return "", ErrNoRequestID
+	}
+	return requestID, nil
 }
