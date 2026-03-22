@@ -368,7 +368,7 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	patient, err := h.patientService.GetPatientByID(r.Context(), sess.PatientID)
 	if err != nil {
 		log.Printf("Error getting patient for wizard: %v", err)
-		http.Redirect(w, r, "/patient/"+sess.PatientID, http.StatusSeeOther)
+		http.Redirect(w, r, "/patients/"+sess.PatientID, http.StatusSeeOther)
 		return
 	}
 

@@ -32,6 +32,9 @@ func NewAuthHandler(centralDB *sqlite.CentralDB) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	// Log para debug
+	log.Printf("[AuthHandler.Login] Method: %s, Path: %s", r.Method, r.URL.Path)
+
 	if r.Method == http.MethodGet {
 		data := authComponents.LoginData{
 			Error: "",

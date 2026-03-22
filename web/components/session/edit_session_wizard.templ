@@ -20,7 +20,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Adicione detalhes da sessão para { data.PatientName }</p>
 			</div>
 			<div class="header-actions">
-				<a href={ templ.URL("/patient/" + data.PatientID) } class="btn btn-outline">
+				<a href={ templ.URL("/patients/" + data.PatientID) } class="btn btn-outline">
 					<i class="fas fa-times btn-icon"></i>Cancelar
 				</a>
 				<button type="submit" form="session-form" class="btn btn-primary">
@@ -148,7 +148,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 	</div>
 
 	<div class="form-actions" style="margin-top: var(--space-2xl); padding-top: var(--space-xl); border-top: 1px solid var(--neutral-200);">
-		<a href={ templ.URL("/patient/" + data.PatientID) } class="btn btn-outline">
+		<a href={ templ.URL("/patients/" + data.PatientID) } class="btn btn-outline">
 			<i class="fas fa-times btn-icon"></i>Cancelar
 		</a>
 		<button type="submit" form="session-form" class="btn btn-primary">

@@ -119,11 +119,53 @@ func parseFilterType(filterStr string) *timeline.EventType {
 	case "intervention":
 		filter := timeline.EventTypeIntervention
 		return &filter
+	case "session":
+		filter := timeline.EventTypeSession
+		return &filter
 	case "all":
 		return nil
 	default:
 		return nil
 	}
+}
+
+func (h *TimelineHandler) LoadMoreEvents(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	patientID := extractPatientIDFromTimelinePath(r.URL.Path)
+	if patientID == "" {
+		http.Error(w, "Patient ID is required", http.StatusBadRequest)
+		return
+	}
+
+	filterType := parseFilterType(r.URL.Query().Get("filter"))
+
+	limit := 20
+	offset := 0
+
+	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
+		if parsedOffset, err := strconv.Atoi(offsetStr); err == nil && parsedOffset >= 0 {
+			offset = parsedOffset
+		}
+	}
+
+	events, err := h.timelineService.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
+	if err != nil {
+		log.Printf("Error loading more events: %v", err)
+		http.Error(w, "Failed to load more events", http.StatusInternalServerError)
+		return
+	}
+
+	data := patientComponents.TimelinePageData{
+		PatientID: patientID,
+		Events:    events,
+		Filter:    filterType,
+		Limit:     limit,
+		Offset:    offset,
+	}
+
+	// Render apenas o conteúdo da timeline (sem filtros)
+	patientComponents.TimelineContent(data).Render(ctx, w)
 }
 
 func (h *TimelineHandler) SearchPatientHistory(w http.ResponseWriter, r *http.Request) {
