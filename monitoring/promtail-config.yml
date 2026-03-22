@@ -1,0 +1,110 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Scrape logs from Docker containers
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'
+      - source_labels: ['__meta_docker_container_label_logging']
+        target_label: 'logging'
+    # Parse JSON logs and extract only allowed labels
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            msg: msg
+            method: method
+            path: path
+            status: status
+            tenant_id: tenant_id
+            version: version
+            request_id: request_id
+            duration_ms: duration_ms
+            app: app
+            commit: commit
+      - labels:
+          level:
+          method:
+          path:
+          status:
+          tenant_id:
+          version:
+          app:
+      # Drop sensitive fields - NEVER log these
+      - drop:
+          source: msg
+          expression: ".*patient.*|.*session.*|.*observation.*|.*diagnosis.*|.*clinical.*|.*content.*|.*name.*|.*email.*"
+          drop_counter_reason: "potential_phi_content"
+      # Drop any log that contains clinical data patterns
+      - drop:
+          expression: ".*(content|observation|intervention|medication|vitals|diagnosis|prognosis|symptom).*"
+          drop_counter_reason: "clinical_content"
+      # Only keep logs from the arandu application
+      - match:
+          selector: '{container="arandu"}'
+          stages:
+            - labels:
+                level:
+                method:
+                path:
+                status:
+                tenant_id:
+                version:
+                request_id:
+                duration_ms:
+      # Drop everything else
+      - drop:
+          expression: ".*"
+          drop_counter_reason: "non_arandu_container"
+
+  # File-based scraping as backup
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: arandu-logs
+          __path__: /var/lib/docker/containers/*/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            method: method
+            path: path
+            status: status
+            tenant_id: tenant_id
+            version: version
+            request_id: request_id
+            duration_ms: duration_ms
+            app: app
+      - labels:
+          level:
+          method:
+          path:
+          status:
+          tenant_id:
+          version:
+          app:
+      # Strict filtering - only allow technical fields
+      - drop:
+          source: msg
+          expression: ".*"
+          drop_counter_reason: "msg_content_blocked"
+      - drop:
+          expression: ".*patient.*|.*session.*|.*observation.*|.*clinical.*"
+          drop_counter_reason: "phi_pattern_detected"

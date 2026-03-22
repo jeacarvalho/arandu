@@ -68,14 +68,47 @@ dev:
 	@$(HOME)/go/bin/templ generate --watch &
 	@go run cmd/arandu/main.go
 
+# Monitoring stack
+monitor-up:
+	@echo "🚀 Iniciando stack de monitoramento..."
+	@docker-compose -f docker-compose.monitoring.yml up -d
+	@echo "⏳ Aguardando serviços iniciarem..."
+	@sleep 5
+	@echo "✅ Grafana: http://localhost:3000 (admin/arandu2024)"
+	@echo "✅ Loki: http://localhost:3100"
+
+monitor-down:
+	@echo "🛑 Parando stack de monitoramento..."
+	@docker-compose -f docker-compose.monitoring.yml down
+	@echo "✅ Stack parado"
+
+monitor-logs:
+	@docker-compose -f docker-compose.monitoring.yml logs -f
+
+monitor-status:
+	@docker-compose -f docker-compose.monitoring.yml ps
+
+monitor-clean:
+	@echo "🧹 Removendo stack e volumes..."
+	@docker-compose -f docker-compose.monitoring.yml down -v
+	@echo "✅ Stack e volumes removidos"
+
 # Ajuda
 help:
 	@echo "Comandos disponíveis:"
-	@echo "  make build    - Compilar templates e binário"
-	@echo "  make templ    - Compilar apenas templates"
-	@echo "  make deploy   - Deploy seguro (build + start)"
-	@echo "  make clean    - Limpar arquivos gerados"
-	@echo "  make test     - Executar testes"
-	@echo "  make golint   - Executar lint"
-	@echo "  make dev      - Modo desenvolvimento com hot reload"
-	@echo "  make help     - Mostrar esta ajuda"
+	@echo " make build - Compilar templates e binário"
+	@echo " make templ - Compilar apenas templates"
+	@echo " make deploy - Deploy seguro (build + start)"
+	@echo " make clean - Limpar arquivos gerados"
+	@echo " make test - Executar testes"
+	@echo " make golint - Executar lint"
+	@echo " make dev - Modo desenvolvimento com hot reload"
+	@echo ""
+	@echo " Monitoring:"
+	@echo " make monitor-up - Iniciar stack (Loki, Promtail, Grafana)"
+	@echo " make monitor-down - Parar stack"
+	@echo " make monitor-logs - Ver logs em tempo real"
+	@echo " make monitor-status - Status dos containers"
+	@echo " make monitor-clean - Remover stack e volumes"
+	@echo ""
+	@echo " make help - Mostrar esta ajuda"

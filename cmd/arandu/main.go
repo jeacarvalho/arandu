@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -11,6 +11,7 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/infrastructure/ai"
 	"arandu/internal/infrastructure/repository/sqlite"
+	"arandu/internal/platform/logger"
 	"arandu/internal/platform/middleware"
 	"arandu/internal/web"
 	"arandu/internal/web/handlers"
@@ -21,51 +22,56 @@ import (
 func main() {
 	// Load environment variables from .env file
 	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: No .env file found or error loading: %v", err)
+		logger.Warn("No .env file found or error loading")
 	}
 
+	// Log startup information (version, commit e build_time são adicionados automaticamente pelo logger)
+	logger.Info("Starting Arandu")
+
 	// Initialize Control Plane (Central DB)
-	log.Printf("Initializing Control Plane (Central DB)...")
+	logger.Info("Initializing Control Plane (Central DB)")
 	centralDB, err := sqlite.NewCentralDB("storage")
 	if err != nil {
-		log.Fatalf("Failed to initialize central database: %v", err)
+		logger.Error("Failed to initialize central database", logger.String("error", err.Error()))
+		os.Exit(1)
 	}
 	defer centralDB.Close()
 
 	// Apply central migrations
-	log.Printf("Applying central database migrations...")
+	logger.Info("Applying central database migrations")
 	if err := centralDB.Migrate(nil); err != nil {
-		log.Printf("Warning: Failed to apply central migrations: %v", err)
+		logger.Warn("Failed to apply central migrations", logger.String("error", err.Error()))
 	}
 
 	// Ensure tenants directory exists
 	tenantsDir := "storage/tenants"
 	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
-		log.Printf("Warning: Failed to create tenants directory: %v", err)
+		logger.Warn("Failed to create tenants directory", logger.String("error", err.Error()))
 	} else {
-		log.Printf("Tenants directory ready: %s", tenantsDir)
+		logger.Info("Tenants directory ready", logger.String("path", tenantsDir))
 	}
 
 	// Use production database (Data Plane)
 	dbPath := "arandu.db"
-	log.Printf("Using database: %s", dbPath)
+	logger.Info("Using database", logger.String("path", dbPath))
 	db, err := sqlite.NewDB(dbPath)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		logger.Error("Failed to connect to database", logger.String("error", err.Error()))
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	// Initialize database schema
-	log.Printf("Initializing database schema...")
+	logger.Info("Initializing database schema")
 
 	// Apply database migrations
 	if err := db.Migrate(); err != nil {
-		log.Printf("Warning: Failed to apply database migrations: %v", err)
+		logger.Warn("Failed to apply database migrations", logger.String("error", err.Error()))
 	}
 
 	// Initialize Tenant Pool for multi-tenant connections (must be before repositories)
 	tenantPool := sqlite.NewTenantPool("storage", nil)
-	log.Printf("Tenant pool initialized")
+	logger.Info("Tenant pool initialized")
 
 	// Create base repositories (single-tenant for AI service)
 	observationRepoBase := sqlite.NewObservationRepository(db)
@@ -140,13 +146,13 @@ func main() {
 	// Initialize AI service
 	geminiAPIKey := os.Getenv("GEMINI_API_KEY")
 	if geminiAPIKey == "" {
-		log.Printf("Warning: GEMINI_API_KEY not set. AI features will be disabled.")
+		logger.Warn("GEMINI_API_KEY not set. AI features will be disabled.")
 		geminiAPIKey = "dummy-key-for-initialization" // Use dummy key to allow initialization
 	}
 
 	geminiClient, err := ai.NewGeminiClient(geminiAPIKey)
 	if err != nil {
-		log.Printf("Warning: Failed to initialize Gemini client: %v", err)
+		logger.Warn("Failed to initialize Gemini client", logger.String("error", err.Error()))
 	}
 
 	// Create cache for AI responses (24 hour TTL)
@@ -166,11 +172,11 @@ func main() {
 
 	// Auth handler with central DB for OAuth
 	authHandler := handlers.NewAuthHandler(centralDB)
-	log.Printf("Auth handler initialized")
+	logger.Info("Auth handler initialized")
 
 	// Create auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(centralDB, tenantPool)
-	log.Printf("Auth middleware initialized")
+	logger.Info("Auth middleware initialized")
 
 	mux := http.NewServeMux()
 
@@ -240,9 +246,12 @@ func main() {
 
 	// Combined route for patient details and new sessions
 	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Route /patients/ called: %s, Method: %s", r.URL.Path, r.Method)
+		logger.InfoContext(r.Context(), "Route /patients/ called",
+			logger.String("path", r.URL.Path),
+			logger.String("method", r.Method),
+		)
 		if strings.HasSuffix(r.URL.Path, "/sessions/new") {
-			log.Printf(" -> Routing to NewSession")
+			logger.InfoContext(r.Context(), "Routing to NewSession")
 			sessionHandler.NewSession(w, r)
 		} else if strings.Contains(r.URL.Path, "/history/load-more") && r.Method == "GET" {
 			timelineHandler.LoadMoreEvents(w, r)
@@ -269,7 +278,7 @@ func main() {
 		} else if strings.Contains(r.URL.Path, "/goals/") && strings.HasSuffix(r.URL.Path, "/close") && r.Method == "POST" {
 			sessionHandler.CloseGoalWithNote(w, r)
 		} else {
-			log.Printf(" -> Routing to patientHandler.Show")
+			logger.InfoContext(r.Context(), "Routing to patientHandler.Show")
 			patientHandler.Show(w, r)
 		}
 	})
@@ -312,20 +321,33 @@ func main() {
 	// Apply auth middleware to all routes
 	protectedHandler := authMiddleware.Middleware(corsHandler)
 
+	// Apply RequestID middleware first (must be before auth)
+	handlerWithRequestID := middleware.RequestIDMiddleware(protectedHandler)
+
+	// Apply telemetry middleware after RequestID (so it has access to request_id)
+	telemetryMiddleware := middleware.NewTelemetryMiddleware("/static/")
+	handlerWithTelemetry := telemetryMiddleware.Middleware(handlerWithRequestID)
+
 	// Create a recovery middleware
 	recoveryHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf("PANIC recovered: %v", err)
+				logger.ErrorContext(r.Context(), "PANIC recovered",
+					logger.String("error", fmt.Sprintf("%v", err)),
+				)
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
-		protectedHandler.ServeHTTP(w, r)
+		handlerWithTelemetry.ServeHTTP(w, r)
 	})
 
 	port := ":8080"
-	log.Printf("Starting server on http://localhost%s (accessible from network)", port)
+	logger.Info("Starting server",
+		logger.String("address", "http://localhost"+port),
+		logger.String("accessibility", "network"),
+	)
 	if err := http.ListenAndServe(port, recoveryHandler); err != nil {
-		log.Fatalf("Server failed: %v", err)
+		logger.Error("Server failed", logger.String("error", err.Error()))
+		os.Exit(1)
 	}
 }
