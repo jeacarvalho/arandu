@@ -1,0 +1,100 @@
+package patient
+
+import (
+	"fmt"
+	"github.com/seu-user/arandu/internal/domain/patient"
+)
+
+// AnamnesisView é o container principal da página de Anamnese
+templ AnamnesisView(p patient.Patient, a patient.Anamnesis) {
+	<div class="anamnesis-container fade-in">
+		<header class="mb-12">
+			<nav class="breadcrumb mb-4">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s", p.ID)) } class="text-sm text-arandu-primary opacity-60">
+					<i class="fas fa-chevron-left mr-2"></i> Voltar ao Perfil
+				</a>
+			</nav>
+			<h1 class="font-clinical text-3xl font-semibold text-arandu-dark">{ p.Name } — Anamnese</h1>
+			<p class="text-arandu-primary opacity-60">História profunda e fundamentos do caso clínico.</p>
+		</header>
+
+		<div class="content-layout">
+			<!-- Menu de Navegação Interna (Desktop: Sidebar / Mobile: Tabs) -->
+			<aside class="anamnesis-nav">
+				<ul class="nav-list">
+					<li><a href="#queixa" class="nav-link active">Queixa Principal</a></li>
+					<li><a href="#pessoal" class="nav-link">História Pessoal</a></li>
+					<li><a href="#familiar" class="nav-link">História Familiar</a></li>
+					<li><a href="#mental" class="nav-link">Exame Mental</a></li>
+				</ul>
+			</aside>
+
+			<!-- Secções de Escrita Fluida -->
+			<main class="anamnesis-sections">
+				@AnamnesisSection(p.ID, "chief_complaint", "Queixa Principal", a.ChiefComplaint)
+				@AnamnesisSection(p.ID, "personal_history", "História Pessoal e Social", a.PersonalHistory)
+				@AnamnesisSection(p.ID, "family_history", "História Familiar", a.FamilyHistory)
+				@AnamnesisSection(p.ID, "mental_state_exam", "Exame das Funções Mentais", a.MentalStateExam)
+			</main>
+		</div>
+	</div>
+
+	<style>
+		.anamnesis-nav { margin-bottom: 2rem; }
+		.nav-list { list-style: none; display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; border-bottom: 1px solid var(--arandu-soft); }
+		.nav-link { text-decoration: none; color: var(--arandu-primary); font-weight: 600; font-size: 0.9rem; white-space: nowrap; opacity: 0.6; }
+		.nav-link.active { opacity: 1; border-bottom: 2px solid var(--arandu-active); }
+
+		@media (min-width: 1024px) {
+			.content-layout { display: grid; grid-template-columns: 250px 1fr; gap: 4rem; }
+			.nav-list { flex-direction: column; border-bottom: none; position: sticky; top: 100px; }
+			.nav-link { padding: 0.5rem 0; display: block; }
+		}
+	</style>
+}
+
+// AnamnesisSection implementa o padrão "Silent Input" com autosave
+templ AnamnesisSection(patientID string, sectionID string, title string, content string) {
+	<section id={ sectionID } class="clinical-card mb-8">
+		<div class="flex justify-between items-center mb-4">
+			<h2 class="silent-label">{ title }</h2>
+			
+			<!-- Indicador de Gravação Silenciosa -->
+			<div 
+				id={ fmt.Sprintf("indicator-%s", sectionID) } 
+				class="save-indicator htmx-indicator"
+			>
+				<i class="fas fa-check-circle text-arandu-active"></i> 
+				<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
+			</div>
+		</div>
+
+		<div class="input-wrapper">
+			<textarea 
+				name="content"
+				class="silent-textarea font-clinical"
+				placeholder="Comece a descrever..."
+				hx-patch={ string(templ.URL(fmt.Sprintf("/patients/%s/anamnesis/%s", patientID, sectionID))) }
+				hx-trigger="keyup changed delay:1s"
+				hx-indicator={ fmt.Sprintf("#indicator-%s", sectionID) }
+			>{ content }</textarea>
+		</div>
+	</section>
+
+	<style>
+		.save-indicator { 
+			opacity: 0; 
+			transition: opacity 0.5s ease; 
+			display: flex; 
+			items-center: center; 
+			gap: 4px;
+		}
+		/* O HTMX adiciona a classe .htmx-request durante o PATCH */
+		.htmx-request.save-indicator, 
+		.htmx-added.save-indicator { 
+			opacity: 1; 
+		}
+		
+		.input-wrapper { position: relative; }
+	</style>
+}
