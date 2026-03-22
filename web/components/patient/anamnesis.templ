@@ -1,0 +1,124 @@
+package patient
+
+import (
+	"fmt"
+)
+
+type AnamnesisViewModel struct {
+	PatientID          string
+	PatientName       string
+	ChiefComplaint    string
+	PersonalHistory   string
+	FamilyHistory     string
+	MentalStateExam   string
+	UpdatedAt         string
+}
+
+type AnamnesisSectionViewModel struct {
+	PatientID  string
+	SectionID  string
+	Title      string
+	Content    string
+}
+
+templ AnamnesisView(anamnesis AnamnesisViewModel) {
+	<div class="anamnesis-container fade-in">
+		<header class="mb-12">
+			<nav class="breadcrumb mb-4">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s", anamnesis.PatientID)) } class="back-link">
+					<i class="fas fa-chevron-left mr-2"></i> Voltar ao Perfil
+				</a>
+			</nav>
+			<h1 class="font-clinical text-3xl font-semibold text-arandu-dark">{ anamnesis.PatientName } — Anamnese</h1>
+			<p class="anamnesis-subtitle">História profunda e fundamentos do caso clínico.</p>
+		</header>
+
+		<div class="anamnesis-layout">
+			<nav class="anamnesis-nav">
+				<ul class="nav-list">
+					<li><a href="#queixa" class="nav-link active" data-section="queixa">
+						<i class="fas fa-comment-medical nav-icon"></i>
+						Queixa Principal
+					</a></li>
+					<li><a href="#pessoal" class="nav-link" data-section="pessoal">
+						<i class="fas fa-user-circle nav-icon"></i>
+						História Pessoal
+					</a></li>
+					<li><a href="#familiar" class="nav-link" data-section="familiar">
+						<i class="fas fa-users nav-icon"></i>
+						História Familiar
+					</a></li>
+					<li><a href="#mental" class="nav-link" data-section="mental">
+						<i class="fas fa-brain nav-icon"></i>
+						Exame Mental
+					</a></li>
+				</ul>
+			</nav>
+
+			<main class="anamnesis-sections">
+				@AnamnesisSection(AnamnesisSectionViewModel{
+					PatientID: anamnesis.PatientID,
+					SectionID: "queixa",
+					Title:     "Queixa Principal",
+					Content:   anamnesis.ChiefComplaint,
+				})
+				@AnamnesisSection(AnamnesisSectionViewModel{
+					PatientID: anamnesis.PatientID,
+					SectionID: "pessoal",
+					Title:     "História Pessoal e Social",
+					Content:   anamnesis.PersonalHistory,
+				})
+				@AnamnesisSection(AnamnesisSectionViewModel{
+					PatientID: anamnesis.PatientID,
+					SectionID: "familiar",
+					Title:     "História Familiar",
+					Content:   anamnesis.FamilyHistory,
+				})
+				@AnamnesisSection(AnamnesisSectionViewModel{
+					PatientID: anamnesis.PatientID,
+					SectionID: "mental",
+					Title:     "Exame das Funções Mentais",
+					Content:   anamnesis.MentalStateExam,
+				})
+			</main>
+		</div>
+	</div>
+}
+
+templ AnamnesisSection(section AnamnesisSectionViewModel) {
+	<section id={ section.SectionID } class="anamnesis-section clinical-card mb-8">
+		<div class="section-header flex justify-between items-center mb-4">
+			<h2 class="silent-label">{ section.Title }</h2>
+			<div 
+				id={ fmt.Sprintf("indicator-%s", section.SectionID) } 
+				class="save-indicator htmx-indicator"
+			>
+				<i class="fas fa-check-circle text-arandu-active"></i> 
+				<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
+			</div>
+		</div>
+
+		<div class="input-wrapper">
+			<textarea 
+				name="content"
+				class="silent-textarea font-clinical"
+				placeholder="Comece a descrever..."
+				hx-patch={ string(templ.URL(fmt.Sprintf("/patients/%s/anamnesis/%s", section.PatientID, section.SectionID))) }
+				hx-trigger="keyup changed delay:1s"
+				hx-indicator={ string(templ.URL(fmt.Sprintf("#indicator-%s", section.SectionID))) }
+				rows="6"
+			>{ section.Content }</textarea>
+		</div>
+	</section>
+}
+
+templ AnamnesisSectionSaved(sectionID string) {
+	<div 
+		id={ fmt.Sprintf("indicator-%s", sectionID) } 
+		class="save-indicator htmx-indicator"
+		style="opacity: 1;"
+	>
+		<i class="fas fa-check-circle text-arandu-active"></i> 
+		<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
+	</div>
+}
