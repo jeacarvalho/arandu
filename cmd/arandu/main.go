@@ -84,8 +84,8 @@ func main() {
 	vitalsRepo := sqlite.NewContextAwareVitalsRepository(repoFactory)
 	goalRepo := sqlite.NewContextAwareGoalRepository(repoFactory)
 
-	// Use base repo for timeline (requires specific type)
-	timelineRepoBase := sqlite.NewTimelineRepository(db)
+	// Use context-aware repo for timeline
+	timelineRepo := sqlite.NewContextAwareTimelineRepository(repoFactory)
 
 	// Use context-aware repos for biopsychosocial (requires interface-based with context)
 	biopsychosocialService := services.NewBiopsychosocialService(medicationRepo, vitalsRepo)
@@ -95,7 +95,7 @@ func main() {
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-	timelineService := services.NewTimelineService(timelineRepoBase)
+	timelineService := services.NewTimelineServiceContext(timelineRepo)
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
@@ -129,7 +129,7 @@ func main() {
 	}
 
 	// Create new handlers with dependency injection
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
@@ -192,7 +192,7 @@ func main() {
 	// TODO: Migrate to templ
 	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
 	mux.HandleFunc("/patients/search", patientHandler.Search)
-	mux.HandleFunc("/patient/create", patientHandler.CreatePatient)
+	mux.HandleFunc("/patients/create", patientHandler.CreatePatient)
 
 	// Session routes - using the actual method names from the new handlers
 	mux.HandleFunc("/session/", func(w http.ResponseWriter, r *http.Request) {
@@ -239,20 +239,14 @@ func main() {
 	})
 
 	// Combined route for patient details and new sessions
-	mux.HandleFunc("/patient/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Route /patient/ called: %s, Method: %s", r.URL.Path, r.Method)
-		if strings.HasSuffix(r.URL.Path, "/sessions/new") {
-			log.Printf("  -> Routing to NewSession")
-			sessionHandler.NewSession(w, r)
-		} else {
-			log.Printf("  -> Routing to patientHandler.Show")
-			patientHandler.Show(w, r)
-		}
-	})
-
-	// Combined patient routes (plural)
 	mux.HandleFunc("/patients/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.Path, "/history/search") && r.Method == "GET" {
+		log.Printf("Route /patients/ called: %s, Method: %s", r.URL.Path, r.Method)
+		if strings.HasSuffix(r.URL.Path, "/sessions/new") {
+			log.Printf(" -> Routing to NewSession")
+			sessionHandler.NewSession(w, r)
+		} else if strings.Contains(r.URL.Path, "/history/load-more") && r.Method == "GET" {
+			timelineHandler.LoadMoreEvents(w, r)
+		} else if strings.Contains(r.URL.Path, "/history/search") && r.Method == "GET" {
 			timelineHandler.SearchPatientHistory(w, r)
 		} else if strings.Contains(r.URL.Path, "/history") && r.Method == "GET" {
 			timelineHandler.ShowPatientHistory(w, r)
@@ -275,7 +269,8 @@ func main() {
 		} else if strings.Contains(r.URL.Path, "/goals/") && strings.HasSuffix(r.URL.Path, "/close") && r.Method == "POST" {
 			sessionHandler.CloseGoalWithNote(w, r)
 		} else {
-			http.NotFound(w, r)
+			log.Printf(" -> Routing to patientHandler.Show")
+			patientHandler.Show(w, r)
 		}
 	})
 

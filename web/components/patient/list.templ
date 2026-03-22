@@ -42,7 +42,7 @@ templ PatientList(data PatientListData) {
 		<div class="patient-list">
 			for i, p := range data.Patients {
 				<a 
-					href={ templ.URL("/patient/" + p.ID) } 
+					href={ templ.URL("/patients/" + p.ID) } 
 					class="patient-card patient-card-link"
 					if i == len(data.Patients) - 1 && len(data.Patients) == data.PageSize {
 						hx-get={ "/patients?offset=" + strconv.Itoa(data.Offset + data.PageSize) }

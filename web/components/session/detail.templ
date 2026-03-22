@@ -26,7 +26,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 		<div class="form-error">
 			<i class="fas fa-exclamation-circle"></i>
 			<p>{ errorMsg }</p>
-			<a href={ templ.URL("/patient/" + patientID) } class="mt-4 btn btn-outline btn-sm">Voltar para o paciente</a>
+			<a href={ templ.URL("/patients/" + patientID) } class="mt-4 btn btn-outline btn-sm">Voltar para o paciente</a>
 		</div>
 	} else {
 		<div class="content-header">

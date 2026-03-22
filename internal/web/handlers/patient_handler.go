@@ -12,6 +12,7 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+	"arandu/internal/domain/timeline"
 
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
@@ -107,6 +108,12 @@ type PatientHandler struct {
 	sessionService         SessionService
 	insightService         InsightService
 	biopsychosocialService BiopsychosocialService
+	timelineService        TimelineServicePort
+}
+
+// TimelineServicePort defines the interface for timeline operations
+type TimelineServicePort interface {
+	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error)
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -115,12 +122,14 @@ func NewPatientHandler(
 	sessionService SessionService,
 	insightService InsightService,
 	biopsychosocialService BiopsychosocialService,
+	timelineService TimelineServicePort,
 ) *PatientHandler {
 	return &PatientHandler{
 		patientService:         patientService,
 		sessionService:         sessionService,
 		insightService:         insightService,
 		biopsychosocialService: biopsychosocialService,
+		timelineService:        timelineService,
 	}
 }
 
@@ -289,7 +298,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 1. Extração de Parâmetros
-	id := extractIDFromPath(r.URL.Path, "/patient/")
+	id := extractIDFromPath(r.URL.Path, "/patients/")
 	if id == "" {
 		h.renderError(w, r, "ID do paciente é obrigatório", http.StatusBadRequest)
 		return
@@ -571,6 +580,42 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 			len(medicationItems), vitalsItem != nil, avgItem != nil)
 	}
 
+	// Buscar eventos da timeline (5 mais recentes)
+	var timelineEvents []patientComponents.TimelineEventItem
+	if h.timelineService != nil {
+		events, err := h.timelineService.GetPatientTimeline(r.Context(), id, nil, 5, 0)
+		if err != nil {
+			log.Printf("Erro ao buscar timeline: %v", err)
+		} else {
+			timelineEvents = make([]patientComponents.TimelineEventItem, 0, len(events))
+			for _, event := range events {
+				// Determinar ícone e cor baseado no tipo
+				icon := "fa-circle"
+				color := "var(--clinical-teal)"
+				switch event.Type {
+				case timeline.EventTypeSession:
+					icon = "fa-calendar-check"
+					color = "var(--primary-600)"
+				case timeline.EventTypeObservation:
+					icon = "fa-eye"
+					color = "var(--accent-600)"
+				case timeline.EventTypeIntervention:
+					icon = "fa-hand-holding-medical"
+					color = "var(--secondary-600)"
+				}
+
+				timelineEvents = append(timelineEvents, patientComponents.TimelineEventItem{
+					ID:      event.ID,
+					Type:    string(event.Type),
+					Date:    event.Date.Format("02/01/2006"),
+					Content: truncateText(event.Content, 50),
+					Icon:    icon,
+					Color:   color,
+				})
+			}
+		}
+	}
+
 	// Map to templ components
 	patientDetail := patientComponents.PatientDetailItem{
 		ID:         patientData.ID,
@@ -579,6 +624,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:  patientData.CreatedAt.Format("02/01/2006 às 15:04"),
 		Themes:     themeVM,
 		BioContext: bioContext,
+		Timeline:   timelineEvents,
 	}
 
 	sessionItems := make([]patientComponents.SessionItem, len(sessions))
@@ -609,6 +655,14 @@ func getString(m map[string]interface{}, key string) string {
 
 func formatFloat(f float64, decimals int) string {
 	return strconv.FormatFloat(f, 'f', decimals, 64)
+}
+
+// truncateText truncates text to maxLength characters, adding "..." if truncated
+func truncateText(text string, maxLength int) string {
+	if len(text) <= maxLength {
+		return text
+	}
+	return text[:maxLength] + "..."
 }
 
 // NewPatient handles GET /patients/new - shows new patient form
@@ -684,7 +738,7 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to patient detail page
-	http.Redirect(w, r, "/patient/"+patient.ID, http.StatusSeeOther)
+	http.Redirect(w, r, "/patients/"+patient.ID, http.StatusSeeOther)
 }
 
 // Helper function to convert interface{} insights to InsightViewModel

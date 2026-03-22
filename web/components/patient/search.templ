@@ -11,7 +11,7 @@ templ SearchResults(results []SearchResultItem) {
 			<div class="search-results-list">
 				for _, r := range results {
 					<a 
-						href={ templ.URL("/patient/" + r.ID) }
+						href={ templ.URL("/patients/" + r.ID) }
 						class="search-result-link"
 						role="option"
 						data-search-result="true"

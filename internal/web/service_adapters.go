@@ -143,13 +143,19 @@ type InterventionServiceAdapter struct {
 	service *services.InterventionService
 }
 
-// TimelineServiceAdapter adapts services.TimelineService to handlers.TimelineService interface
+// TimelineServiceContextAware defines the interface for timeline services
+type TimelineServiceContextAware interface {
+	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error)
+	SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error)
+}
+
+// TimelineServiceAdapter adapts timeline services to handlers.TimelineService interface
 type TimelineServiceAdapter struct {
-	service *services.TimelineService
+	service TimelineServiceContextAware
 }
 
 // NewTimelineServiceAdapter creates a new adapter
-func NewTimelineServiceAdapter(service *services.TimelineService) *TimelineServiceAdapter {
+func NewTimelineServiceAdapter(service TimelineServiceContextAware) *TimelineServiceAdapter {
 	return &TimelineServiceAdapter{service: service}
 }
 

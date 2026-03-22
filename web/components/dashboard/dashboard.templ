@@ -95,7 +95,7 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 							<div class="patients-list-container">
 								for _, p := range patients {
 									<a 
-										href={ templ.URL("/patient/" + p.ID) } 
+										href={ templ.URL("/patients/" + p.ID) } 
 										class="patient-item"
 									>
 										<div class="patient-avatar">

@@ -49,9 +49,9 @@ func SearchResults(results []SearchResultItem) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 templ.SafeURL
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patient/" + r.ID))
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + r.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/search.templ`, Line: 14, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/search.templ`, Line: 14, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -64,7 +64,7 @@ func SearchResults(results []SearchResultItem) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/search.templ`, Line: 22, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/search.templ`, Line: 23, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {

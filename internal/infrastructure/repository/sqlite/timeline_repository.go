@@ -23,36 +23,48 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 	var args []interface{}
 
 	if filterType == nil {
-		// Sem filtro - buscar observações e intervenções (não inclui sessões)
+		// Sem filtro - buscar sessões, observações e intervenções
 		query = `
-			SELECT 
-				'observation' as type,
-				o.id,
-				o.created_at as event_date,
-				o.content,
-				o.created_at,
-				json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
-			FROM observations o
-			INNER JOIN sessions s ON o.session_id = s.id
-			WHERE s.patient_id = ?
-			
-			UNION ALL
-			
-			SELECT 
-				'intervention' as type,
-				i.id,
-				i.created_at as event_date,
-				i.content,
-				i.created_at,
-				json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
-			FROM interventions i
-			INNER JOIN sessions s ON i.session_id = s.id
-			WHERE s.patient_id = ?
-			
-			ORDER BY event_date DESC
-			LIMIT ? OFFSET ?
-		`
-		args = []interface{}{patientID, patientID, limit, offset}
+SELECT
+'session' as type,
+s.id,
+s.date as event_date,
+s.summary as content,
+s.created_at,
+json_object('session_id', s.id) as metadata
+FROM sessions s
+WHERE s.patient_id = ?
+
+UNION ALL
+
+SELECT
+'observation' as type,
+o.id,
+o.created_at as event_date,
+o.content,
+o.created_at,
+json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
+FROM observations o
+INNER JOIN sessions s ON o.session_id = s.id
+WHERE s.patient_id = ?
+
+UNION ALL
+
+SELECT
+'intervention' as type,
+i.id,
+i.created_at as event_date,
+i.content,
+i.created_at,
+json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
+FROM interventions i
+INNER JOIN sessions s ON i.session_id = s.id
+WHERE s.patient_id = ?
+
+ORDER BY event_date DESC
+LIMIT ? OFFSET ?
+`
+		args = []interface{}{patientID, patientID, patientID, limit, offset}
 	} else {
 		// Com filtro - buscar apenas um tipo
 		switch *filterType {
@@ -90,37 +102,65 @@ func (r *TimelineRepository) GetTimelineByPatientID(ctx context.Context, patient
 			`
 			args = []interface{}{patientID, limit, offset}
 
-		default:
-			// Fallback para sem filtro (apenas observações e intervenções)
+		case timeline.EventTypeSession:
 			query = `
-				SELECT 
-					'observation' as type,
-					o.id,
-					o.created_at as event_date,
-					o.content,
-					o.created_at,
-					json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
-				FROM observations o
-				INNER JOIN sessions s ON o.session_id = s.id
-				WHERE s.patient_id = ?
-				
-				UNION ALL
-				
-				SELECT 
-					'intervention' as type,
-					i.id,
-					i.created_at as event_date,
-					i.content,
-					i.created_at,
-					json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
-				FROM interventions i
-				INNER JOIN sessions s ON i.session_id = s.id
-				WHERE s.patient_id = ?
-				
-				ORDER BY event_date DESC
-				LIMIT ? OFFSET ?
-			`
-			args = []interface{}{patientID, patientID, limit, offset}
+SELECT
+'session' as type,
+s.id,
+s.date as event_date,
+s.summary as content,
+s.created_at,
+json_object('session_id', s.id) as metadata
+FROM sessions s
+WHERE s.patient_id = ?
+ORDER BY s.date DESC
+LIMIT ? OFFSET ?
+`
+			args = []interface{}{patientID, limit, offset}
+
+		default:
+			// Fallback para sem filtro (sessões, observações e intervenções)
+			query = `
+SELECT
+'session' as type,
+s.id,
+s.date as event_date,
+s.summary as content,
+s.created_at,
+json_object('session_id', s.id) as metadata
+FROM sessions s
+WHERE s.patient_id = ?
+
+UNION ALL
+
+SELECT
+'observation' as type,
+o.id,
+o.created_at as event_date,
+o.content,
+o.created_at,
+json_object('observation_id', o.id, 'session_id', o.session_id) as metadata
+FROM observations o
+INNER JOIN sessions s ON o.session_id = s.id
+WHERE s.patient_id = ?
+
+UNION ALL
+
+SELECT
+'intervention' as type,
+i.id,
+i.created_at as event_date,
+i.content,
+i.created_at,
+json_object('intervention_id', i.id, 'session_id', i.session_id) as metadata
+FROM interventions i
+INNER JOIN sessions s ON i.session_id = s.id
+WHERE s.patient_id = ?
+
+ORDER BY event_date DESC
+LIMIT ? OFFSET ?
+`
+			args = []interface{}{patientID, patientID, patientID, limit, offset}
 		}
 	}
 
