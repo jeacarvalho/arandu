@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** sáb 21 mar 2026 23:01:26 -03
+**Gerado em:** dom 22 mar 2026 00:40:55 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -68,20 +68,21 @@
 - req-07-04-01-paginação-Infinite-scroll.md
 - req-07-04-02-busca-contextual-prontuario.md
 - req-08-01-01-evolucao-base.md
+- req-08-01-02-servico-auditoria-centralizada .md
 - req-08-02-01-padronização-logs-estruturados.md
 - req-08-03-01-auditoria-acessos-clinicos.md
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 30
+**Total de requirements:** 31
 
 ## 🛠️ Tarefas recentes
 
+- task_20260322_002402
+- task_20260322_000812
+- task_20260321_231201
 - task_20260321_222837
 - task_20260321_221743
-- task_20260321_212325
-- task_20260321_200340
-- task_20260321_175334
 
 ## 📚 Sistema de Aprendizados
 
@@ -101,12 +102,12 @@ Arquivos principais:
 
 - Visions: 10
 - Capabilities: 20
-- Requirements: 30
+- Requirements: 31
 - Learnings: Sistema consolidado (4 arquivos principais + archive)
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 18
-- **Requirements implementados:** 18
-- **Última atualização permanente:** ** sáb 21 mar 2026 23:01:25 -03
+- **Tarefas concluídas:** 20
+- **Requirements implementados:** 20
+- **Última atualização permanente:** ** dom 22 mar 2026 00:40:55 -03
 

@@ -54,9 +54,16 @@ func TestTenantService_ProvisionNewTenant(t *testing.T) {
 		t.Errorf("Expected status 'active', got %s", status)
 	}
 
-	expectedPath := filepath.Join(storagePath, "tenants", "clinical_"+tenantID+".db")
-	if dbPath != expectedPath {
-		t.Errorf("Expected db_path %s, got %s", expectedPath, dbPath)
+	if dbPath == "" {
+		t.Error("db_path should not be empty")
+	}
+
+	if len(tenantID) >= 4 {
+		expectedDir := tenantID[:2] + "/" + tenantID[2:4]
+		expectedPathRel := filepath.Join("storage", "tenants", expectedDir, "clinical_"+tenantID+".db")
+		if dbPath != expectedPathRel {
+			t.Errorf("Expected db_path %s, got %s", expectedPathRel, dbPath)
+		}
 	}
 
 	// Verify tenant DB file exists
@@ -224,10 +231,9 @@ func TestTenantService_ValidateTenantDB(t *testing.T) {
 	tenantID := "test-tenant-validate"
 	dbPath := service.GetTenantDBPath(tenantID)
 
-	// Create directory
-	tenantsDir := filepath.Join(storagePath, "tenants")
-	if err := os.MkdirAll(tenantsDir, 0755); err != nil {
-		t.Fatalf("Failed to create tenants directory: %v", err)
+	// Create directory using pathResolver
+	if err := service.pathResolver.EnsureTenantDir(tenantID); err != nil {
+		t.Fatalf("Failed to create tenant directory: %v", err)
 	}
 
 	// Create empty DB file

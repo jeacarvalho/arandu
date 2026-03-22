@@ -110,12 +110,18 @@ var (
 
 // PatientService implements the application service for patient operations
 type PatientService struct {
-	repo patient.Repository
+	repo         patient.Repository
+	auditService *AuditService
 }
 
 // NewPatientService creates a new PatientService
 func NewPatientService(repo patient.Repository) *PatientService {
-	return &PatientService{repo: repo}
+	return &PatientService{repo: repo, auditService: nil}
+}
+
+// NewPatientServiceWithAudit creates a new PatientService with audit support
+func NewPatientServiceWithAudit(repo patient.Repository, audit *AuditService) *PatientService {
+	return &PatientService{repo: repo, auditService: audit}
 }
 
 // CreatePatient creates a new patient with enhanced validation and error handling
@@ -160,7 +166,12 @@ func (s *PatientService) CreatePatient(ctx context.Context, input CreatePatientI
 		return nil, fmt.Errorf("%w: %v", ErrRepository, err)
 	}
 
-	// Step 7: Return created patient
+	// Step 7: Log audit (async)
+	if s.auditService != nil {
+		s.auditService.Log(ctx, AuditActionCreatePatient, p.ID)
+	}
+
+	// Step 8: Return created patient
 	return p, nil
 }
 
@@ -197,6 +208,11 @@ func (s *PatientService) GetPatientByID(ctx context.Context, id string) (*patien
 
 	if p == nil {
 		return nil, ErrPatientNotFound
+	}
+
+	// Log audit (async)
+	if s.auditService != nil {
+		s.auditService.Log(ctx, AuditActionAccessPatient, p.ID)
 	}
 
 	return p, nil
