@@ -43,7 +43,7 @@ func TestSessionRepositoryIntegration(t *testing.T) {
 	ctx := context.Background()
 
 	// Create a patient to associate sessions with
-	p, err := patient.NewPatient("Test Patient", "Test Notes")
+	p, err := patient.NewPatient("Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Test Notes")
 	if err != nil {
 		t.Fatalf("Failed to create patient: %v", err)
 	}
@@ -116,7 +116,7 @@ func TestSessionRepositoryIntegration(t *testing.T) {
 	t.Run("List sessions by patient", func(t *testing.T) {
 		// Clear existing sessions for this patient by updating the patient ID
 		// Since we can't delete, we'll create a new patient for this test
-		newPatient, err := patient.NewPatient("Test Patient 2", "Notes 2")
+		newPatient, err := patient.NewPatient("Test Patient 2", "Female", "Hispanic", "Teacher", "Master's", "Notes 2")
 		if err != nil {
 			t.Fatalf("Failed to create new patient: %v", err)
 		}

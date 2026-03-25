@@ -60,9 +60,16 @@ func (am *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		userEmail, err := am.getUserEmail(session.UserID)
+		if err != nil {
+			am.renderMaintenancePage(w, fmt.Errorf("failed to get user email: %w", err))
+			return
+		}
+
 		ctx := appcontext.WithTenantID(r.Context(), session.TenantID)
 		ctx = appcontext.WithTenantDB(ctx, db)
 		ctx = appcontext.WithUserID(ctx, session.UserID)
+		ctx = appcontext.WithUserEmail(ctx, userEmail)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -76,9 +83,11 @@ func isPublicRoute(r *http.Request) bool {
 		"/login",
 		"/logout",
 		"/test",
+		"/favicon.ico",
 		"/auth/login",
 		"/auth/google",
 		"/auth/google/callback",
+		"/auth/signup",
 	}
 
 	publicPrefixPaths := []string{
@@ -181,4 +190,19 @@ func GetTenantDB(ctx context.Context) (*sql.DB, error) {
 
 func GetUserID(ctx context.Context) (string, error) {
 	return appcontext.GetUserID(ctx)
+}
+
+func (am *AuthMiddleware) getUserEmail(userID string) (string, error) {
+	var email string
+	query := `SELECT email FROM users WHERE id = ?`
+
+	err := am.centralDB.QueryRow(query, userID).Scan(&email)
+	if err == sql.ErrNoRows {
+		return "", fmt.Errorf("user not found")
+	}
+	if err != nil {
+		return "", fmt.Errorf("failed to query user email: %w", err)
+	}
+
+	return email, nil
 }

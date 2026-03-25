@@ -1,0 +1,37 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Arandu — Prontuário</title><link href="/static/css/style.css?v=20260324_v6" rel="stylesheet"><script src="https://unpkg.com/htmx.org@1.9.10"></script><script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></head><body><div class="app-container" x-data="{ sidebarOpen: window.innerWidth >= 768 }"><header class="top-bar"><!-- Left: Menu Toggle & Logo --><div class="top-bar-left"><!-- Hamburger Menu - Only visible on mobile --><button @click="sidebarOpen = !sidebarOpen" class="hamburger-menu" x-show="window.innerWidth < 768"><i class="fas fa-bars"></i></button><!-- Logo --><a href="/dashboard" class="top-bar-logo"><div class="top-bar-logo-icon"><i class="fas fa-brain"></i></div><span class="top-bar-logo-text">Arandu</span></a></div><!-- Center: Search Bar --><div class="top-bar-search-container"><input id="patient-search" type="text" name="q" placeholder="Buscar paciente..." hx-get="/patients/search" hx-trigger="keyup changed delay:500ms" hx-target="#search-results" autocomplete="off" aria-label="Buscar paciente" aria-controls="search-results" aria-autocomplete="list" class="search-bar-silent"> <i class="fas fa-search top-bar-search-icon"></i><div id="search-results" class="search-results-container"></div></div><!-- Right: User Profile --><div class="top-bar-right top-bar-right-container"><div class="slp-top-bar-user"><div class="slp-top-bar-user-avatar"><i class="fas fa-user-md"></i></div><span class="slp-top-bar-user-name">arandu_e2e@test.com</span></div></div></header><!-- Mobile Overlay / Drawer Background --><div x-show="sidebarOpen" @click="sidebarOpen = false" class="sidebar-overlay" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div><!-- Sidebar Drawer - Always hidden, triggered by hamburger --><aside class="sidebar-drawer" :class="sidebarOpen ? 'sidebar-open' : ''"><!-- Sidebar Header - Minimal, only subtitle --><div class="sidebar-header"><div class="sidebar-subtitle">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click="sidebarOpen = false" class="sidebar-close-btn" x-show="window.innerWidth < 768"><i class="fas fa-times"></i></button></div><!-- Navigation --><nav class="sidebar-nav"><a href="/dashboard" class="sidebar-nav-item"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a> <a href="/patients" class="sidebar-nav-item"><i class="fas fa-users"></i> <span>Pacientes</span></a> <a href="/patients/new" class="sidebar-nav-item"><i class="fas fa-user-plus"></i> <span>Novo Paciente</span></a></nav><!-- Logout --><div class="sidebar-nav-footer"><a href="/logout" class="sidebar-nav-item sidebar-nav-logout"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></a></div></aside><main class="main-content"><div class="timeline-page"><!-- Header --><div class="timeline-header"><div class="timeline-header-row"><a href="/patients" class="timeline-back-btn"><i class="fas fa-arrow-left"></i></a><div class="timeline-title-group"><h1 class="timeline-title">Prontuário do Paciente</h1><p class="timeline-subtitle">Histórico clínico longitudinal organizado cronologicamente</p></div></div></div><!-- Search --><div class="timeline-search"><div class="relative"><input type="text" name="q" placeholder="Buscar no histórico clínico (ex: transferência, luto, ansiedade...)" hx-get="/patients/5100b938-8565-444b-bcb0-a70d88c97374/history/search" hx-trigger="keyup changed delay:500ms, search" hx-target="#timeline-content" hx-swap="innerHTML" hx-indicator="#search-loading" class="timeline-search-input"><div class="timeline-search-icon"><i class="fas fa-search"></i></div><div id="search-loading" class="htmx-indicator timeline-search-spinner"><i class="fas fa-spinner fa-spin"></i></div></div><p class="timeline-search-hint">Pesquise por termos específicos em todas as observações e intervenções deste paciente.</p></div><div id="filters-and-content"><!-- Filters --><div class="timeline-filters"><div class="timeline-filters-buttons"><button hx-get="/patients/5100b938-8565-444b-bcb0-a70d88c97374/history?filter=all" hx-target="#filters-and-content" hx-swap="innerHTML" class="timeline-filter-btn { getButtonClass(data.Filter == nil) }">Todos</button> <button hx-get="/patients/5100b938-8565-444b-bcb0-a70d88c97374/history?filter=observation" hx-target="#filters-and-content" hx-swap="innerHTML" class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }">Observações</button> <button hx-get="/patients/5100b938-8565-444b-bcb0-a70d88c97374/history?filter=intervention" hx-target="#filters-and-content" hx-swap="innerHTML" class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }">Intervenções</button></div></div><!-- Timeline --><div class="timeline-container"><div class="timeline-line"></div><div id="timeline-content" class="timeline-content"><div class="timeline-empty"><div class="timeline-empty-icon"><i class="fas fa-calendar-day"></i></div><p class="timeline-empty-text">Nenhum evento clínico registrado ainda.</p></div></div></div></div></div></main></div><script>
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
+				}
+				
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+
+			// Smooth page transitions
+			document.addEventListener('DOMContentLoaded', function() {
+				// Fade in on page load
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+
+				// Smooth navigation (for links without hx-boost)
+				document.addEventListener('click', function(e) {
+					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
+						e.preventDefault();
+						document.body.style.opacity = '0.7';
+						setTimeout(() => {
+							window.location.href = e.target.getAttribute('href');
+						}, 200);
+					}
+				});
+			});
+		</script></body></html>
+200

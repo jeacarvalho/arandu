@@ -15,101 +15,95 @@ type SessionFormValues struct {
 }
 
 templ NewSessionForm(data NewSessionFormData) {
-	<div style="margin-bottom: var(--space-xl);">
-		<div style="display: flex; align-items: center; gap: var(--space-md);">
-			<a href={ templ.URL("/patients/" + data.FormData.PatientID) } style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;">
+	<div class="new-form-container">
+		<div class="new-form-row">
+			<a href={ templ.URL("/patients/" + data.FormData.PatientID) } class="new-form-back">
 				<i class="fas fa-arrow-left"></i>
 			</a>
 			<div>
-				<h1 style="font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">
-					Nova Sessão
-				</h1>
-				<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;">
-					{data.PatientName}
-				</p>
+				<h1 class="new-form-title">Nova Sessão</h1>
+				<p class="new-form-subtitle">{ data.PatientName }</p>
 			</div>
 		</div>
 	</div>
 
 	<div class="session-with-sidebar">
 		<!-- Main Form Card -->
-		<div style="background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;">
+		<div class="new-form-card">
 			if data.Error != "" {
-				<div style="padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);">
-					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;">
-						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+				<div class="new-form-error">
+					<p class="new-form-error-text">
+						<i class="fas fa-exclamation-circle new-form-error-icon"></i>
 						{ data.Error }
 					</p>
 				</div>
 			}
 
 			if data.ServerError != "" {
-				<div style="padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);">
-					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;">
-						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+				<div class="new-form-error">
+					<p class="new-form-error-text">
+						<i class="fas fa-exclamation-circle new-form-error-icon"></i>
 						{ data.ServerError }
 					</p>
 				</div>
 			}
 
-			<form action="/session" method="POST" style="padding: var(--space-xl);">
+			<form action="/session" method="POST" class="new-form-pad">
 				<input type="hidden" name="patient_id" value={ data.FormData.PatientID }>
 
-				<div style="margin-bottom: var(--space-xl);">
-					<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
-						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+				<div class="mb-xl">
+					<div class="flex flex-center gap-md mb-lg">
+						<div class="card-icon card-icon-primary">
 							<i class="fas fa-calendar"></i>
 						</div>
 						<div>
-							<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Dados da Sessão</h2>
+							<h2 class="section-title">Dados da Sessão</h2>
 						</div>
 					</div>
 
-					<div style="background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);">
-						<div style="margin-bottom: var(--space-md);">
-							<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">
-								Data da Sessão
-							</label>
+					<div class="bg-neutral-50 p-lg rounded-lg">
+						<div class="mb-md">
+							<label class="label-uppercase">Data da Sessão</label>
 							<input 
 								type="date" 
 								name="date" 
 								required 
 								value={ data.FormData.Date }
-								style="width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 1rem; color: var(--neutral-800); outline: none; transition: all 0.15s ease;"
+								class="input-base"
 							>
 						</div>
 					</div>
 				</div>
 
-				<div style="margin-bottom: var(--space-xl);">
-					<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
-						<div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;">
+				<div class="mb-xl">
+					<div class="flex flex-center gap-md mb-lg">
+						<div class="card-icon card-icon-purple">
 							<i class="fas fa-file-medical-alt"></i>
 						</div>
 						<div>
-							<h2 style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">Resumo da Sessão</h2>
+							<h2 class="section-title">Resumo da Sessão</h2>
 						</div>
 					</div>
 
-					<div style="background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);">
-						<div style="margin-bottom: var(--space-md);">
+					<div class="bg-neutral-50 p-lg rounded-lg">
+						<div class="mb-md">
 							<textarea 
 								name="summary" 
 								rows="8" 
 								placeholder="Resumo da sessão:&#10;&#10;- O que foi discutido&#10;- Intervenções realizadas&#10;- Progresso observado&#10;- Planos para a próxima sessão"
-								style="width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); outline: none; resize: vertical; transition: all 0.15s ease;"
+								class="textarea-base"
 							>{ data.FormData.Summary }</textarea>
 						</div>
 					</div>
 				</div>
 
-				<div style="display: flex; justify-content: flex-end; gap: var(--space-md); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);">
-					<a href={ templ.URL("/patients/" + data.FormData.PatientID) } style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: var(--neutral-600); transition: all 0.15s ease;">
-						<i class="fas fa-times"></i>
+				<div class="new-form-actions">
+					<a href={ templ.URL("/patients/" + data.FormData.PatientID) } class="btn-outline-light">
+						<i class="fas fa-times btn-icon-left"></i>
 						Cancelar
 					</a>
-					<button type="submit" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: var(--primary-600); border: none; border-radius: var(--radius-lg); font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: white; cursor: pointer; transition: all 0.15s ease;">
-						<i class="fas fa-save"></i>
+					<button type="submit" class="btn-primary-solid">
+						<i class="fas fa-save btn-icon-left"></i>
 						Salvar Sessão
 					</button>
 				</div>
@@ -120,11 +114,11 @@ templ NewSessionForm(data NewSessionFormData) {
 		<aside class="session-sidebar">
 			<div class="session-sidebar-card">
 				<div class="session-sidebar-header">
-					<i class="fas fa-bullseye" style="color: var(--primary-500);"></i>
+					<i class="fas fa-bullseye goals-sidebar-icon"></i>
 					<h4>Metas Terapêuticas</h4>
 				</div>
 				
-				<ul id="session-goals-list" class="session-goals-list" style="margin-bottom: var(--space-md);">
+				<ul id="session-goals-list" class="session-goals-list mb-md">
 					for _, goalData := range data.Goals {
 						<li class="session-goal-item" id={ "session-goal-" + goalData.ID }>
 							<div class="session-goal-content">
@@ -143,12 +137,11 @@ templ NewSessionForm(data NewSessionFormData) {
 				
 				<!-- Formulário para adicionar meta -->
 				<form 
-					class="inline-form"
+					class="inline-form goals-form-mt"
 					hx-post={ "/patients/" + data.FormData.PatientID + "/goals" }
 					hx-target="#session-goals-list"
 					hx-swap="beforeend"
 					hx-on::after-request="if(event.detail.successful) this.reset()"
-					style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);"
 				>
 					<div class="silent-form-group">
 						<label class="silent-label">
@@ -163,7 +156,7 @@ templ NewSessionForm(data NewSessionFormData) {
 							required
 						>
 					</div>
-					<div class="form-actions" style="margin-top: var(--space-sm);">
+					<div class="form-actions form-actions-mt-sm">
 						<button type="submit" class="btn btn-primary btn-sm">
 							<i class="fas fa-plus btn-icon"></i>
 							Adicionar Meta

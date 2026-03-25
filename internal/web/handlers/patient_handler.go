@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -83,6 +84,12 @@ type BiopsychosocialService interface {
 	GetAverageVitals(ctx context.Context, patientID string, days int) (interface{}, error)
 }
 
+// AnamnesisService defines the interface for anamnesis operations
+type AnamnesisService interface {
+	GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error)
+	SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error
+}
+
 // BiopsychosocialServiceFuncs is a helper type that implements BiopsychosocialService using functions
 type BiopsychosocialServiceFuncs struct {
 	GetMedicationsFunc   func(ctx context.Context, patientID string) ([]interface{}, error)
@@ -109,6 +116,7 @@ type PatientHandler struct {
 	insightService         InsightService
 	biopsychosocialService BiopsychosocialService
 	timelineService        TimelineServicePort
+	anamnesisService       AnamnesisService
 }
 
 // TimelineServicePort defines the interface for timeline operations
@@ -123,6 +131,7 @@ func NewPatientHandler(
 	insightService InsightService,
 	biopsychosocialService BiopsychosocialService,
 	timelineService TimelineServicePort,
+	anamnesisService AnamnesisService,
 ) *PatientHandler {
 	return &PatientHandler{
 		patientService:         patientService,
@@ -130,6 +139,7 @@ func NewPatientHandler(
 		insightService:         insightService,
 		biopsychosocialService: biopsychosocialService,
 		timelineService:        timelineService,
+		anamnesisService:       anamnesisService,
 	}
 }
 
@@ -182,7 +192,7 @@ func (h *PatientHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 
 	// Render full page with layout
 	errorComponent := layoutComponents.ErrorFragment(errorData)
-	layoutComponents.BaseWithContent("Erro", errorComponent).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Erro", errorComponent).Render(r.Context(), w)
 }
 
 // getInsights retrieves insights for the sidebar (mock implementation)
@@ -277,7 +287,7 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// For full page requests, render with layout
 		patientList := patientComponents.PatientList(listData)
-		layoutComponents.BaseWithContent("Pacientes", patientList).Render(r.Context(), w)
+		layoutComponents.BaseWithContext(r.Context(), "Pacientes", patientList).Render(r.Context(), w)
 	}
 }
 
@@ -315,11 +325,8 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get sessions
-	sessions, err := h.sessionService.ListSessionsByPatient(r.Context(), id)
-	if err != nil {
-		sessions = []*session.Session{}
-	}
+	// Get sessions (not used in new profile view)
+	_, _ = h.sessionService.ListSessionsByPatient(r.Context(), id)
 
 	// Get theme frequency for the patient
 	themes, err := h.patientService.GetThemeFrequency(r.Context(), id, 10)
@@ -616,31 +623,15 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Map to templ components
-	patientDetail := patientComponents.PatientDetailItem{
-		ID:         patientData.ID,
-		Name:       patientData.Name,
-		Notes:      patientData.Notes,
-		CreatedAt:  patientData.CreatedAt.Format("02/01/2006 às 15:04"),
-		Themes:     themeVM,
-		BioContext: bioContext,
-		Timeline:   timelineEvents,
-	}
-
-	sessionItems := make([]patientComponents.SessionItem, len(sessions))
-	for i, s := range sessions {
-		sessionItems[i] = patientComponents.SessionItem{
-			ID:            s.ID,
-			SessionNumber: i + 1,
-			Date:          s.Date.Format("02/01/2006"),
-			Summary:       s.Summary,
-		}
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	detail := patientComponents.PatientDetail(patientDetail, sessionItems)
-	layoutComponents.BaseWithContent(patientData.Name, detail).Render(r.Context(), w)
+	// Criar sidebar específica para paciente
+	patientSidebar := layoutComponents.PatientSidebar(id)
+
+	// Criar componente de perfil do paciente
+	patientProfile := patientComponents.PatientProfileView(patientData, bioContext)
+
+	layoutComponents.BaseWithContentAndEmailAndSidebar(patientData.Name, "", patientSidebar, patientProfile).Render(r.Context(), w)
 }
 
 // Helper functions for biopsychosocial context
@@ -687,7 +678,7 @@ func (h *PatientHandler) NewPatient(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := patientComponents.NewPatientForm(formData)
-	layoutComponents.BaseWithContent("Novo Paciente", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Novo Paciente", form).Render(r.Context(), w)
 }
 
 // NewPatientViewData is a ViewModel for the new patient form
@@ -699,8 +690,12 @@ type NewPatientViewData struct {
 
 // PatientFormValues holds form data for patient creation/update
 type PatientFormValues struct {
-	Name  string
-	Notes string
+	Name       string
+	Gender     string
+	Ethnicity  string
+	Occupation string
+	Education  string
+	Notes      string
 }
 
 // CreatePatient handles POST /patient/create - creates a new patient
@@ -716,6 +711,10 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
+	gender := r.FormValue("gender")
+	ethnicity := r.FormValue("ethnicity")
+	occupation := r.FormValue("occupation")
+	education := r.FormValue("education")
 	notes := r.FormValue("notes")
 
 	if name == "" {
@@ -727,8 +726,12 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 
 	// Create patient using service
 	input := services.CreatePatientInput{
-		Name:  name,
-		Notes: notes,
+		Name:       name,
+		Gender:     gender,
+		Ethnicity:  ethnicity,
+		Occupation: occupation,
+		Education:  education,
+		Notes:      notes,
 	}
 
 	patient, err := h.patientService.CreatePatient(ctx, input)
@@ -854,4 +857,112 @@ func (h *PatientHandler) Search(w http.ResponseWriter, r *http.Request) {
 
 	// Render search results fragment for HTMX
 	patientComponents.SearchResults(results).Render(ctx, w)
+}
+
+// ShowAnamnesis handles GET /patients/{id}/anamnesis - displays the anamnesis page
+func (h *PatientHandler) ShowAnamnesis(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract patient ID from URL path
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 3 {
+		http.Error(w, "Invalid patient ID", http.StatusBadRequest)
+		return
+	}
+	patientID := pathParts[2]
+
+	ctx := r.Context()
+
+	// Get patient data
+	patient, err := h.patientService.GetPatientByID(ctx, patientID)
+	if err != nil {
+		h.renderError(w, r, "Patient not found", http.StatusNotFound)
+		return
+	}
+
+	// Get anamnesis data
+	anamnesis, err := h.anamnesisService.GetAnamnesis(ctx, patientID)
+	if err != nil {
+		// Create empty anamnesis if not found
+		anamnesis, _ = createEmptyAnamnesis(patientID)
+	}
+
+	// Map to view model
+	anamnesisVM := patientComponents.AnamnesisViewModel{
+		PatientID:       patientID,
+		PatientName:     patient.Name,
+		ChiefComplaint:  anamnesis.ChiefComplaint,
+		PersonalHistory: anamnesis.PersonalHistory,
+		FamilyHistory:   anamnesis.FamilyHistory,
+		MentalStateExam: anamnesis.MentalStateExam,
+		UpdatedAt:       anamnesis.UpdatedAt.Format("02/01/2006 15:04"),
+	}
+
+	// Render full page with layout
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	layoutComponents.BaseWithContentAndEmailAndSidebar(
+		"Anamnese - "+patient.Name,
+		"", // userEmail vazio por enquanto
+		layoutComponents.PatientSidebar(patientID),
+		patientComponents.AnamnesisView(anamnesisVM),
+	).Render(ctx, w)
+}
+
+// UpdateAnamnesisSection handles PATCH /patients/{id}/anamnesis/{section} - updates a specific section via HTMX
+func (h *PatientHandler) UpdateAnamnesisSection(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPatch {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract patient ID and section from URL path
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 5 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	patientID := pathParts[2]
+	section := pathParts[4]
+
+	// Parse form data
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		return
+	}
+	content := r.Form.Get("content")
+
+	ctx := r.Context()
+
+	// Get existing anamnesis or create new one
+	anamnesis, err := h.anamnesisService.GetAnamnesis(ctx, patientID)
+	if err != nil {
+		anamnesis, _ = createEmptyAnamnesis(patientID)
+	}
+
+	// Update the specific section
+	if err := anamnesis.UpdateSection(section, content); err != nil {
+		http.Error(w, "Invalid section", http.StatusBadRequest)
+		return
+	}
+
+	// Save the updated anamnesis
+	if err := h.anamnesisService.SaveAnamnesis(ctx, anamnesis); err != nil {
+		http.Error(w, "Failed to save anamnesis", http.StatusInternalServerError)
+		return
+	}
+
+	// Return HTMX fragment with success indicator
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("HX-Reswap", "none")
+
+	// Return a simple success indicator
+	fmt.Fprintf(w, `<span class="htmx-indicator text-green-600">✓ Gravado</span>`)
+}
+
+// createEmptyAnamnesis creates a new empty anamnesis for a patient
+func createEmptyAnamnesis(patientID string) (*patient.Anamnesis, error) {
+	return patient.NewAnamnesis(patientID)
 }

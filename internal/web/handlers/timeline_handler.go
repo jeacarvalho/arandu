@@ -92,7 +92,7 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 		// Para busca, apenas o conteúdo (já que a busca não muda os filtros)
 		patientComponents.FiltersAndContent(data).Render(ctx, w)
 	} else {
-		layoutComponents.BaseWithContent("Prontuário", patientComponents.TimelineContainer(data)).Render(ctx, w)
+		layoutComponents.BaseWithContext(ctx, "Prontuário", patientComponents.TimelineContainer(data)).Render(ctx, w)
 	}
 }
 

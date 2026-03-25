@@ -17,12 +17,12 @@ type CentralDB struct {
 
 func NewCentralDB(storagePath string) (*CentralDB, error) {
 	centralPath := filepath.Join(storagePath, CentralDBName)
-
 	if err := os.MkdirAll(storagePath, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create storage directory: %w", err)
 	}
 
 	dsn := centralPath + "?_journal_mode=WAL"
+
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open central database: %w", err)

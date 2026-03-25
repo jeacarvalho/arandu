@@ -1,6 +1,11 @@
 package patient
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+)
 
 type TherapeuticPlanReportData struct {
 	PatientName string
@@ -181,4 +186,28 @@ func hasGoalsWithStatus(goals []GoalReportItemVM, status string) bool {
 		}
 	}
 	return false
+}
+
+func getCSSVersion() string {
+	if info, err := os.Stat("web/static/css/style.css"); err == nil {
+		return strconv.FormatInt(info.ModTime().Unix(), 10)
+	}
+	return strconv.FormatInt(time.Now().Unix(), 10)
+}
+
+templ TherapeuticPlanReportPage(data TherapeuticPlanReportData) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Relatório de Plano Terapêutico - { data.PatientName }</title>
+		<link href={ templ.URL("/static/css/style.css?v=" + getCSSVersion()) } rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		@TherapeuticPlanReport(data)
+	</body>
+	</html>
 }

@@ -46,7 +46,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Get timeline for patient with all event types", func(t *testing.T) {
 		// Create a patient
-		p, err := patient.NewPatient("Test Patient", "Test Notes")
+		p, err := patient.NewPatient("Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Test Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -113,7 +113,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Get timeline with filter", func(t *testing.T) {
 		// Create another patient
-		p, err := patient.NewPatient("Test Patient 2", "Test Notes 2")
+		p, err := patient.NewPatient("Test Patient 2", "Female", "Hispanic", "Teacher", "Master's", "Test Notes 2")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -183,7 +183,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Search in patient history", func(t *testing.T) {
 		// Create a patient
-		p, err := patient.NewPatient("Search Test Patient", "Test Notes")
+		p, err := patient.NewPatient("Search Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Test Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -264,7 +264,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Chronological parity - events ordered correctly", func(t *testing.T) {
 		// Create a patient
-		p, err := patient.NewPatient("Chronology Test Patient", "Test Notes")
+		p, err := patient.NewPatient("Chronology Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Test Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -338,7 +338,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Isolation - timeline only shows events from selected patient", func(t *testing.T) {
 		// Create patient 1
-		p1, err := patient.NewPatient("Isolation Patient 1", "Notes 1")
+		p1, err := patient.NewPatient("Isolation Patient 1", "Male", "Caucasian", "Developer", "Bachelor's", "Notes 1")
 		if err != nil {
 			t.Fatalf("Failed to create patient 1: %v", err)
 		}
@@ -347,7 +347,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 		}
 
 		// Create patient 2
-		p2, err := patient.NewPatient("Isolation Patient 2", "Notes 2")
+		p2, err := patient.NewPatient("Isolation Patient 2", "Female", "Hispanic", "Teacher", "Master's", "Notes 2")
 		if err != nil {
 			t.Fatalf("Failed to create patient 2: %v", err)
 		}
@@ -433,7 +433,7 @@ func TestTimelineRepositoryIntegration(t *testing.T) {
 
 	t.Run("Performance - timeline with 50 events loads efficiently", func(t *testing.T) {
 		// Create patient
-		p, err := patient.NewPatient("Performance Test Patient", "Notes")
+		p, err := patient.NewPatient("Performance Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -515,7 +515,7 @@ func BenchmarkTimelineRepository_GetTimelineByPatientID(b *testing.B) {
 	ctx := context.Background()
 
 	// Create patient
-	p, _ := patient.NewPatient("Benchmark Patient", "Notes")
+	p, _ := patient.NewPatient("Benchmark Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Notes")
 	patientRepo.Save(ctx, p)
 
 	// Create session

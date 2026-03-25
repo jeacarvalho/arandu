@@ -79,7 +79,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label-sota\">Meses</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Padrões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Hipóteses</div></div></div><!-- Estrutura de Duas Colunas --><div class=\"sota-two-columns\"><!-- Coluna Esquerda - Fluxo Narrativo --><div class=\"sota-narrative-column\"><!-- Pacientes Ativos --><div class=\"patients-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label-sota\">Meses</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Padrões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Hipóteses</div></div></div><!-- Estrutura de Duas Colunas --><div class=\"sota-two-columns\"><!-- Coluna Esquerda - Fluxo Narrativo --><div class=\"sota-narrative-column\"><!-- Pacientes Ativos --><div class=\"patients-card clinical-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -148,19 +148,19 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 			return templ_7745c5c3_Err
 		}
 		if len(sessions) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div><h2 style=\"font-family: var(--font-clinical); font-size: 1.25rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);\">Sessões Recentes</h2><div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"clinical-card\"><h2 class=\"dashboard-section-heading\">Sessões Recentes</h2><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, session := range sessions {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"session-notebook-card\"><div class=\"session-badge\">Sessão #")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"session-notebook-card clinical-card\"><div class=\"session-badge\">Sessão #")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(session.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 131, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 131, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -173,13 +173,13 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(session.Summary)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 134, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 134, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"session-tags\"><span class=\"session-tag\">Observação</span> <span class=\"session-tag\">Reflexão</span></div><div style=\"font-family: var(--font-clinical); font-size: 0.75rem; color: var(--arandu-soft);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"session-tags\"><span class=\"session-tag\">Observação</span> <span class=\"session-tag\">Reflexão</span></div><div class=\"dashboard-meta-date\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -215,7 +215,7 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Coluna Direita - Métricas e Cronologia --><div class=\"sota-metrics-column\"><!-- Linha do Tempo --><div class=\"stat-card-sota\"><h2 style=\"font-family: var(--font-clinical); font-size: 1.125rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);\">Linha do Tempo</h2><div class=\"timeline-container\"><div class=\"timeline-marker\"></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeira consulta</div><div class=\"timeline-event-date\">15 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Início da terapia</div><div class=\"timeline-event-date\">22 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeiro insight significativo</div><div class=\"timeline-event-date\">05 Fev 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Última sessão</div><div class=\"timeline-event-date\">18 Mar 2024</div></div></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div><!-- Painel de Insights (IA) --><div class=\"insights-panel\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><!-- Coluna Direita - Métricas e Cronologia --><div class=\"sota-metrics-column\"><!-- Linha do Tempo --><div class=\"stat-card-sota clinical-card\"><h2 class=\"dashboard-section-heading-sm\">Linha do Tempo</h2><div class=\"timeline-container\"><div class=\"timeline-marker\"></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeira consulta</div><div class=\"timeline-event-date\">15 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Início da terapia</div><div class=\"timeline-event-date\">22 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeiro insight significativo</div><div class=\"timeline-event-date\">05 Fev 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Última sessão</div><div class=\"timeline-event-date\">18 Mar 2024</div></div></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card clinical-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div><!-- Painel de Insights (IA) --><div class=\"insights-panel\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -25,29 +25,33 @@ type patientQueries struct {
 	searchFTS     string
 	countAll      string
 	findPaginated string
+
+	// Anamnesis operations
+	getAnamnesis  string
+	saveAnamnesis string
 }
 
 // newPatientQueries creates and returns a patientQueries struct with all queries initialized
 func newPatientQueries() *patientQueries {
 	return &patientQueries{
-		save: `INSERT INTO patients (id, name, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+		save: `INSERT INTO patients (id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-		findByID: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE id = ?`,
+		findByID: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE id = ?`,
 
-		findAll: `SELECT id, name, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
+		findAll: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
 
-		update: `UPDATE patients SET name = ?, notes = ?, updated_at = ? WHERE id = ?`,
+		update: `UPDATE patients SET name = ?, gender = ?, ethnicity = ?, occupation = ?, education = ?, notes = ?, updated_at = ? WHERE id = ?`,
 
 		delete: `DELETE FROM patients WHERE id = ?`,
 
 		// Search patients by name (case-insensitive, partial match)
-		findByName: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
+		findByName: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
 
 		// Search with pagination (using LIKE for backward compatibility)
-		search: `SELECT id, name, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
+		search: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
 
 		// FTS5 search with pagination (simple version without content=)
-		searchFTS: `SELECT p.id, p.name, p.notes, p.created_at, p.updated_at 
+		searchFTS: `SELECT p.id, p.name, p.gender, p.ethnicity, p.occupation, p.education, p.notes, p.created_at, p.updated_at 
 			FROM patients p 
 			INNER JOIN patients_fts f ON p.id = f.patient_id 
 			WHERE patients_fts MATCH ? 
@@ -58,7 +62,11 @@ func newPatientQueries() *patientQueries {
 		countAll: `SELECT COUNT(*) FROM patients`,
 
 		// Paginated results
-		findPaginated: `SELECT id, name, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+		findPaginated: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+
+		// Anamnesis operations
+		getAnamnesis:  `SELECT patient_id, chief_complaint, personal_history, family_history, mental_state_exam, updated_at FROM patient_anamnesis WHERE patient_id = ?`,
+		saveAnamnesis: `INSERT OR REPLACE INTO patient_anamnesis (patient_id, chief_complaint, personal_history, family_history, mental_state_exam, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
 	}
 }
 
@@ -163,7 +171,7 @@ func (r *PatientRepository) Save(ctx context.Context, p *patient.Patient) error 
 		Valid: !p.UpdatedAt.IsZero(),
 	}
 
-	_, err := r.db.ExecContext(ctx, r.queries.save, p.ID, p.Name, p.Notes, p.CreatedAt, updatedAt)
+	_, err := r.db.ExecContext(ctx, r.queries.save, p.ID, p.Name, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.CreatedAt, updatedAt)
 	return err
 }
 
@@ -179,7 +187,7 @@ func (r *PatientRepository) FindByID(ctx context.Context, id string) (*patient.P
 	row := r.db.QueryRowContext(ctx, r.queries.findByID, id)
 
 	var p patient.Patient
-	err := row.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
+	err := row.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -202,7 +210,7 @@ func (r *PatientRepository) FindAll(ctx context.Context) ([]*patient.Patient, er
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -219,7 +227,7 @@ func (r *PatientRepository) Update(ctx context.Context, p *patient.Patient) erro
 		return err
 	}
 
-	_, err := r.db.ExecContext(ctx, r.queries.update, p.Name, p.Notes, p.UpdatedAt, p.ID)
+	_, err := r.db.ExecContext(ctx, r.queries.update, p.Name, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.UpdatedAt, p.ID)
 	return err
 }
 
@@ -257,7 +265,7 @@ func (r *PatientRepository) FindByName(ctx context.Context, name string) ([]*pat
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -306,7 +314,7 @@ func (r *PatientRepository) Search(ctx context.Context, query string, limit, off
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -348,7 +356,7 @@ func (r *PatientRepository) FindPaginated(ctx context.Context, limit, offset int
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -548,5 +556,54 @@ func (r *PatientRepository) isFTS5Available(ctx context.Context) (bool, error) {
 func (r *PatientRepository) InitSchema() error {
 	// Schema creation is now handled by migrations
 	// This method exists only for interface compatibility during transition
+	return nil
+}
+
+// GetAnamnesis implements patient.AnamnesisRepository interface
+func (r *PatientRepository) GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error) {
+	if patientID == "" {
+		return nil, fmt.Errorf("patient ID cannot be empty")
+	}
+
+	var anamnesis patient.Anamnesis
+	err := r.db.QueryRowContext(ctx, r.queries.getAnamnesis, patientID).Scan(
+		&anamnesis.PatientID,
+		&anamnesis.ChiefComplaint,
+		&anamnesis.PersonalHistory,
+		&anamnesis.FamilyHistory,
+		&anamnesis.MentalStateExam,
+		&anamnesis.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Return empty anamnesis if not found
+			return patient.NewAnamnesis(patientID)
+		}
+		return nil, fmt.Errorf("failed to get anamnesis: %w", err)
+	}
+
+	return &anamnesis, nil
+}
+
+// SaveAnamnesis implements patient.AnamnesisRepository interface
+func (r *PatientRepository) SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error {
+	if err := anamnesis.Validate(); err != nil {
+		return fmt.Errorf("anamnesis validation failed: %w", err)
+	}
+
+	_, err := r.db.ExecContext(ctx, r.queries.saveAnamnesis,
+		anamnesis.PatientID,
+		anamnesis.ChiefComplaint,
+		anamnesis.PersonalHistory,
+		anamnesis.FamilyHistory,
+		anamnesis.MentalStateExam,
+		anamnesis.UpdatedAt,
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to save anamnesis: %w", err)
+	}
+
 	return nil
 }

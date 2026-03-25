@@ -15,6 +15,7 @@ import (
 	"arandu/internal/platform/middleware"
 	"arandu/internal/web"
 	"arandu/internal/web/handlers"
+	"arandu/web/components/dashboard"
 
 	"github.com/joho/godotenv"
 )
@@ -138,8 +139,11 @@ func main() {
 		},
 	}
 
+	// Create anamnesis service adapter
+	anamnesisServiceAdapter := web.NewAnamnesisServiceAdapter(patientRepo)
+
 	// Create new handlers with dependency injection
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
@@ -190,6 +194,7 @@ func main() {
 	mux.HandleFunc("/auth/google", authHandler.ServeHTTP)
 	mux.HandleFunc("/auth/google/callback", authHandler.ServeHTTP)
 	mux.HandleFunc("/logout", authHandler.ServeHTTP)
+	mux.HandleFunc("/auth/signup", authHandler.ServeHTTP)
 
 	// Dashboard
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -273,6 +278,10 @@ func main() {
 			biopsychosocialHandler.RecordVitals(w, r)
 		} else if strings.Contains(r.URL.Path, "/medications/") && r.Method == "PUT" {
 			biopsychosocialHandler.UpdateMedicationStatus(w, r)
+		} else if strings.Contains(r.URL.Path, "/anamnesis/") && r.Method == "PATCH" {
+			patientHandler.UpdateAnamnesisSection(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/anamnesis") && r.Method == "GET" {
+			patientHandler.ShowAnamnesis(w, r)
 		} else if strings.Contains(r.URL.Path, "/analysis/synthesis") && r.Method == "POST" {
 			aiHandler.GeneratePatientSynthesis(w, r)
 		} else if strings.Contains(r.URL.Path, "/plan/report") && r.Method == "GET" {
@@ -294,16 +303,54 @@ func main() {
 		w.Write([]byte(jsonResponse))
 	})
 
-	// File server with cache control for CSS files
-	fs := http.FileServer(http.Dir("web/static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Disable cache for CSS files during development
-		if strings.HasSuffix(r.URL.Path, ".css") {
-			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-			w.Header().Set("Pragma", "no-cache")
-			w.Header().Set("Expires", "0")
+	// Favicon - return 204 No Content to avoid log pollution
+	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	// Screenshot test endpoint (bypasses auth for visual testing)
+	mux.HandleFunc("/screenshot/dashboard", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		stats := dashboard.Stats{
+			TotalPatients:    12,
+			NewThisWeek:      2,
+			ActiveThisMonth:  8,
+			TotalSessions:    47,
+			SessionsThisWeek: 5,
+			SessionsToday:    1,
 		}
-		fs.ServeHTTP(w, r)
+		patients := []dashboard.PatientItem{
+			{ID: "1", Name: "Maria Silva", CreatedAt: "10/01/2024"},
+			{ID: "2", Name: "João Santos", CreatedAt: "15/02/2024"},
+			{ID: "3", Name: "Ana Costa", CreatedAt: "01/03/2024"},
+		}
+		sessions := []dashboard.SessionItem{
+			{ID: "1", PatientName: "Maria Silva", Date: "20/03/2024", Summary: "Exploramos questões sobre autoeficácia e mecanismos de enfrentamento adaptativos."},
+			{ID: "2", PatientName: "João Santos", Date: "19/03/2024", Summary: "Discussão sobre gestão de estresse no trabalho e técnicas de respiração."},
+		}
+		dashboard.Dashboard(stats, patients, sessions).Render(r.Context(), w)
+	})
+
+	// File server with cache busting for development
+	staticDir := http.Dir("web/static")
+	mux.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Disable all caching during development - always check file modification time
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		w.Header().Set("Vary", "Accept-Encoding")
+
+		// For CSS/JS files, add version header based on mtime
+		if strings.HasSuffix(r.URL.Path, ".css") || strings.HasSuffix(r.URL.Path, ".js") {
+			if info, err := staticDir.Open(r.URL.Path); err == nil {
+				if stat, ok := info.(os.FileInfo); ok {
+					w.Header().Set("X-CSS-Version", fmt.Sprintf("%d", stat.ModTime().Unix()))
+				}
+				info.Close()
+			}
+		}
+
+		http.FileServer(staticDir).ServeHTTP(w, r)
 	})))
 
 	// Create CORS middleware

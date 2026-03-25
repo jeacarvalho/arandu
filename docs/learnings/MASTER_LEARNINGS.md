@@ -715,6 +715,162 @@ WHERE id = ?;
 
 ---
 
+## 🔧 Debugging, Scripts e E2E Audit
+
+### 1. Execução de Scripts Bash em Ambiente de Agente
+
+**Problema:** Scripts bash que funcionam no terminal podem "travar" quando executados via ferramentas de agente (Bash tool). O output pode não aparecer, ou o script pode parecer que não заверçou.
+
+**Sintomas:**
+- Output vazio mesmo com `echo` no início do script
+- Script parece nunca terminar
+- Comandos como `curl` não retornam output visível
+
+**Solução - Técnica de Nohup:**
+```bash
+# Em vez de:
+./script.sh
+
+# Usar:
+nohup bash scripts/arandu_e2e_audit.sh > /tmp/audit_run.log 2>&1 &
+echo "Audit started with PID: $!"
+
+# Depois verificar output:
+sleep 60
+cat /tmp/audit_run.log
+```
+
+**Lição aprendida:** background com nohup + redirecionamento + verificação posterior é mais confiável que execução síncrona.
+
+**Referência:** Sessão E2E Audit - 24/03/2026
+
+### 2. Regeneração de Templates Templ
+
+**Problema:** Após editar arquivos `.templ`, o código Go gerado não é atualizado automaticamente.
+
+**Solução:**
+```bash
+# Usar o binário correto (verificar localização):
+~/go/bin/templ generate
+
+# OU via Makefile:
+make templ
+
+# OU go generate:
+go generate ./...
+```
+
+**Importante:** Apenas executar `go build` ou `go run` NÃO regenera os templates. O `templ generate` deve ser executado explicitamente após alterações em `.templ`.
+
+**Como verificar se regeneration foi necessária:**
+```bash
+# Comparar timestamps:
+ls -la web/components/patient/timeline.templ web/components/patient/timeline_templ.go
+
+# Se .templ for mais novo, precisa regenerar
+```
+
+**Referência:** Timeline inline styles fix - 24/03/2026
+
+### 3. Validação de Inline Styles via Audit Script
+
+**Contexto:** O E2E audit valida que páginas não contenham `style="` inline, garantindo conformidade com o Design System.
+
+**Verificação manual pós-regeneration:**
+```bash
+# Após templ generate, verificar se inline styles foram removidos:
+grep -o 'style="' web/components/patient/timeline_templ.go | wc -l
+# Se retornar 0, está correto
+```
+
+**Fluxo de correção de inline styles:**
+1. Editar o arquivo `.templ` original (não o `.go`)
+2. Usar classes CSS em vez de atributos style
+3. Adicionar classes ao `style.css` se necessário
+4. Executar `~/go/bin/templ generate`
+5. Rebuild: `make build`
+6. Testar via audit script
+
+**Referência:** Timeline page inline styles - 24/03/2026
+
+### 4. Cookie de Sessão para Testes de Integração
+
+**Problema:** O audit script precisa de um cookie de sessão válido para testar rotas autenticadas.
+
+**Solução - Abordagem Direct Value:**
+```bash
+# O formato correto é passar o valor diretamente:
+curl -b "arandu_session=$cookie_value" http://localhost:8080/patients
+
+# NÃO usar formato de arquivo:
+curl -b cookies.txt ...  # NÃO FUNCIONA
+```
+
+**Obter sessão válida:**
+```bash
+# Do banco central:
+sqlite3 storage/arandu_central.db "SELECT id FROM sessions LIMIT 1;"
+```
+
+**Referência:** E2E audit setup - 24/03/2026
+
+### 5. Caminho do Tenant Database (Multi-tenancy)
+
+**Problema:** Ao testar rotas autenticadas, o tenant DB deve existir. O caminho usa formato com hash.
+
+**Formato:**
+```
+storage/tenants/xx/yy/clinical_<tenant_id>.db
+```
+
+**Exemplo:** `storage/tenants/62/6e/clinical_626eac12-0d34-4794-a100-b379afa0a1fc.db`
+
+**Verificação:**
+```bash
+ls storage/tenants/*/clinical_*.db
+```
+
+**Referência:** E2E audit tenant setup - 24/03/2026
+
+### 6. KILL de Múltiplos Processos de Servidor
+
+**Problema:** Ao iniciar o servidor para testes, pode haver múltiplos PIDs的情形 (processos órfãos).
+
+**Solução:**
+```bash
+# Verificar se há processos:
+pgrep -f "arandu"
+
+# Matar com suporte a múltiplos PIDs:
+existing_pids=$(pgrep -f "arandu")
+if [ -n "$existing_pids" ]; then
+    echo "$existing_pids" | xargs -r kill
+fi
+```
+
+**Referência:** kill_existing_server no audit script - 24/03/2026
+
+### 7. Exit Code em Scripts Bash comOperador OR
+
+**Problema:** Construções como `|| ((failed++))` não funcionam corretamente para capturar falhas.
+
+**Solução correta:**
+```bash
+# Errado:
+test_route "GET" "/path" "name" "true" || ((failed++))
+
+# Correto (forma explícita):
+test_route "GET" "/path" "name" "true" || failed=$((failed + 1))
+
+# Ou usando retorno explícito:
+test_route "GET" "/path" "name" "true"
+failed=$((failed + $?))
+```
+
+**Referência:** E2E audit failure counting - 24/03/2026
+
+---
+
 ## 📁 Referências e Arquivos Originais
 
 ### Arquivos Consolidados Neste Documento:

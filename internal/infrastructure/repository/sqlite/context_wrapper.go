@@ -134,6 +134,24 @@ func (r *ContextAwarePatientRepository) GetThemeFrequency(ctx context.Context, p
 	return tempRepo.GetThemeFrequency(ctx, patientID, limit)
 }
 
+func (r *ContextAwarePatientRepository) GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewPatientRepository(&DB{db})
+	return tempRepo.GetAnamnesis(ctx, patientID)
+}
+
+func (r *ContextAwarePatientRepository) SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewPatientRepository(&DB{db})
+	return tempRepo.SaveAnamnesis(ctx, anamnesis)
+}
+
 type ContextAwareSessionRepository struct {
 	factory *ContextAwareRepositoryFactory
 }

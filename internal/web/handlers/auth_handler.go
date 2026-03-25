@@ -12,6 +12,7 @@ import (
 	authComponents "arandu/web/components/auth"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
@@ -59,7 +60,27 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Write([]byte("Login functionality coming soon"))
+		sessionID, err := h.authenticateUser(email, password)
+		if err != nil {
+			data := authComponents.LoginData{
+				Error: err.Error(),
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Login(data).Render(r.Context(), w)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "arandu_session",
+			Value:    sessionID,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+			MaxAge:   86400 * 7,
+		})
+
+		http.Redirect(w, r, "/dashboard", http.StatusFound)
 		return
 	}
 
@@ -166,6 +187,42 @@ func (h *AuthHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+func (h *AuthHandler) authenticateUser(email, password string) (string, error) {
+	var userID, tenantID, passwordHash string
+
+	query := `SELECT id, tenant_id, password_hash FROM users WHERE email = ? LIMIT 1`
+	err := h.centralDB.QueryRow(query, email).Scan(&userID, &tenantID, &passwordHash)
+
+	if err == sql.ErrNoRows {
+		return "", fmt.Errorf("usuário não encontrado")
+	} else if err != nil {
+		return "", fmt.Errorf("erro ao buscar usuário: %w", err)
+	}
+
+	if passwordHash == "" {
+		return "", fmt.Errorf("usuário não possui senha cadastrada")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
+	if err != nil {
+		return "", fmt.Errorf("senha incorreta")
+	}
+
+	sessionID := uuid.New().String()
+	expiresAt := time.Now().Add(7 * 24 * time.Hour).Unix()
+
+	_, err = h.centralDB.Exec(
+		`INSERT INTO sessions (id, user_id, tenant_id, expires_at) VALUES (?, ?, ?, ?)`,
+		sessionID, userID, tenantID, expiresAt,
+	)
+	if err != nil {
+		return "", fmt.Errorf("failed to create session: %w", err)
+	}
+
+	log.Printf("✅ Login bem-sucedido para usuário=%s", email)
+	return sessionID, nil
+}
+
 func (h *AuthHandler) findOrCreateUser(email string) (string, error) {
 	var userID, tenantID string
 	var expiresAt int64
@@ -232,6 +289,79 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
+func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
+	log.Printf("[Signup] Method: %s", r.Method)
+
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte("<html><body><h1>Signup</h1><form method='POST'><input name='email' placeholder='Email'/><input name='password' type='password' placeholder='Password'/><button type='submit'>Cadastrar</button></form></body></html>"))
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		log.Printf("[Signup] Email: %s, Password length: %d", email, len(password))
+
+		if email == "" || password == "" {
+			log.Printf("[Signup] Empty email or password")
+			http.Error(w, "Email e senha são obrigatórios", http.StatusBadRequest)
+			return
+		}
+
+		var existingID string
+		err := h.centralDB.QueryRow("SELECT id FROM users WHERE email = ?", email).Scan(&existingID)
+		if err == nil {
+			log.Printf("[Signup] User already exists: %s", email)
+			http.Error(w, "Usuário já existe", http.StatusConflict)
+			return
+		}
+		if err != sql.ErrNoRows {
+			log.Printf("[Signup] Error checking user: %v", err)
+			http.Error(w, "Erro ao verificar usuário", http.StatusInternalServerError)
+			return
+		}
+
+		log.Printf("[Signup] Creating new user: %s", email)
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Erro ao criar hash da senha", http.StatusInternalServerError)
+			return
+		}
+
+		tenantID := uuid.New().String()
+		dbPath := fmt.Sprintf("storage/tenants/clinical_%s.db", tenantID)
+
+		_, err = h.centralDB.Exec(
+			`INSERT INTO tenants (id, db_path, status) VALUES (?, ?, 'active')`,
+			tenantID, dbPath,
+		)
+		if err != nil {
+			http.Error(w, "Erro ao criar tenant", http.StatusInternalServerError)
+			return
+		}
+
+		userID := uuid.New().String()
+		_, err = h.centralDB.Exec(
+			`INSERT INTO users (id, email, password_hash, tenant_id) VALUES (?, ?, ?, ?)`,
+			userID, email, string(passwordHash), tenantID,
+		)
+		if err != nil {
+			http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
+			return
+		}
+
+		log.Printf("✅ Usuário criado: %s com tenant: %s", email, tenantID)
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte(fmt.Sprintf("<html><body><h1>Usuário criado!</h1><p>Email: %s</p><p>Tenant: %s</p><a href='/login'>Ir para Login</a></body></html>", email, tenantID)))
+		return
+	}
+
+	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+}
+
 func (h *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/login":
@@ -244,6 +374,8 @@ func (h *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.GoogleCallback(w, r)
 	case "/logout":
 		h.Logout(w, r)
+	case "/auth/signup":
+		h.Signup(w, r)
 	default:
 		http.NotFound(w, r)
 	}

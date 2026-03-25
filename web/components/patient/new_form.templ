@@ -7,15 +7,19 @@ type NewPatientFormData struct {
 }
 
 type PatientFormValues struct {
-	Name  string
-	Notes string
+	Name      string
+	Gender    string
+	Ethnicity string
+	Occupation string
+	Education string
+	Notes     string
 }
 
 templ NewPatientForm(data NewPatientFormData) {
 	<div class="form-container">
-		<div class="content-header" style="margin-bottom: var(--space-xl);">
+		<div class="content-header">
 			<div class="header-title">
-				<div style="display: flex; align-items: center; gap: var(--space-md);">
+				<div class="header-title-row">
 					<a
 						href="/patients"
 						class="btn btn-ghost btn-sm"
@@ -24,8 +28,8 @@ templ NewPatientForm(data NewPatientFormData) {
 						<i class="fas fa-arrow-left btn-icon"></i>
 					</a>
 					<div>
-						<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Novo Paciente</h1>
-						<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">
+						<h1>Novo Paciente</h1>
+						<p class="header-subtitle">
 							Cadastre um novo paciente para iniciar o acompanhamento clínico
 						</p>
 					</div>
@@ -33,37 +37,27 @@ templ NewPatientForm(data NewPatientFormData) {
 			</div>
 		</div>
 
-		<div class="card">
+		<div class="clinical-notebook-form">
 			if data.Error != "" {
-				<div class="form-error" role="alert" aria-live="polite" style="margin-bottom: var(--space-lg);">
-					<p style="margin: 0;">
-						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+				<div class="form-error" role="alert" aria-live="polite">
+					<p>
+						<i class="fas fa-exclamation-circle"></i>
 						{ data.Error }
 					</p>
 				</div>
 			}
 
 			if data.ServerError != "" {
-				<div class="form-error" role="alert" aria-live="polite" style="margin-bottom: var(--space-lg);">
-					<p style="margin: 0;">
-						<i class="fas fa-exclamation-circle" style="margin-right: var(--space-sm);"></i>
+				<div class="form-error" role="alert" aria-live="polite">
+					<p>
+						<i class="fas fa-exclamation-circle"></i>
 						{ data.ServerError }
 					</p>
 				</div>
 			}
 
 			<form action="/patients/create" method="POST">
-				<div class="card-header">
-					<div class="card-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;">
-						<i class="fas fa-user-plus"></i>
-					</div>
-					<div>
-						<h2 class="card-title">Dados Pessoais</h2>
-						<p class="card-subtitle">Informações mínimas para iniciar o acompanhamento</p>
-					</div>
-				</div>
-
-				<div style="padding: var(--space-xl);">
+				<div class="identity-section">
 					<div class="silent-form-group">
 						<label class="silent-label" for="patient-name">
 							Nome Completo *
@@ -76,51 +70,98 @@ templ NewPatientForm(data NewPatientFormData) {
 							autocomplete="name"
 							placeholder="Ex: Maria da Silva"
 							value={ data.FormData.Name }
-							class="silent-input"
+							class="silent-input patient-name-input"
 							aria-describedby="patient-name-help"
 						/>
-						<p id="patient-name-help" class="small" style="margin-top: var(--space-sm); margin-bottom: 0;">
+						<p id="patient-name-help" class="small">
 							Use o nome pelo qual o paciente deve ser identificado no prontuário.
 						</p>
 					</div>
 
-					<div class="card-header" style="padding: 0; margin-bottom: var(--space-lg);">
-						<div class="card-icon" style="background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;">
-							<i class="fas fa-sticky-note"></i>
+					<div class="biopsychosocial-grid">
+						<div class="silent-form-group">
+							<label class="silent-label" for="patient-gender">
+								Identidade de Gênero
+							</label>
+							<input
+								id="patient-gender"
+								type="text"
+								name="gender"
+								autocomplete="sex"
+								placeholder="Ex: Feminino, Masculino, Não-binário"
+								class="silent-input"
+							/>
 						</div>
-						<div>
-							<h2 class="card-title">Notas Clínicas</h2>
-							<p class="card-subtitle">Contexto inicial para consulta rápida durante as sessões</p>
+
+						<div class="silent-form-group">
+							<label class="silent-label" for="patient-ethnicity">
+								Etnia/Raça
+							</label>
+							<input
+								id="patient-ethnicity"
+								type="text"
+								name="ethnicity"
+								placeholder="Ex: Branca, Preta, Parda, Amarela, Indígena"
+								class="silent-input"
+							/>
+						</div>
+
+						<div class="silent-form-group">
+							<label class="silent-label" for="patient-occupation">
+								Ocupação
+							</label>
+							<input
+								id="patient-occupation"
+								type="text"
+								name="occupation"
+								placeholder="Ex: Estudante, Advogado, Autônomo"
+								class="silent-input"
+							/>
+						</div>
+
+						<div class="silent-form-group">
+							<label class="silent-label" for="patient-education">
+								Escolaridade
+							</label>
+							<input
+								id="patient-education"
+								type="text"
+								name="education"
+								placeholder="Ex: Ensino Médio, Superior, Pós-graduação"
+								class="silent-input"
+							/>
 						</div>
 					</div>
+				</div>
 
-					<div class="silent-form-group" style="margin-bottom: 0;">
+				<div class="anamnesis-section">
+					<div class="silent-form-group">
 						<label class="silent-label" for="patient-notes">
 							Observações Iniciais
 						</label>
 						<textarea
 							id="patient-notes"
 							name="notes"
-							rows="6"
+							rows="8"
 							placeholder="Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores"
-							class="silent-textarea"
+							class="silent-textarea clinical-textarea"
 							aria-describedby="patient-notes-help"
 						>{ data.FormData.Notes }</textarea>
-						<p id="patient-notes-help" class="small" style="margin-top: var(--space-sm); margin-bottom: 0;">
+						<p id="patient-notes-help" class="small">
 							Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.
 						</p>
 					</div>
+				</div>
 
-					<div class="form-actions">
-						<a href="/patients" class="btn btn-outline">
-							<i class="fas fa-times btn-icon"></i>
-							Cancelar
-						</a>
-						<button type="submit" class="btn btn-primary">
-							<i class="fas fa-user-plus btn-icon"></i>
-							Cadastrar Paciente
-						</button>
-					</div>
+				<div class="form-actions">
+					<a href="/patients" class="btn btn-outline">
+						<i class="fas fa-times btn-icon"></i>
+						Cancelar
+					</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="fas fa-user-plus btn-icon"></i>
+						Cadastrar Paciente
+					</button>
 				</div>
 			</form>
 		</div>

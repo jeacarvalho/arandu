@@ -154,3 +154,85 @@ func TestContextChaining(t *testing.T) {
 		t.Errorf("DB mismatch: err=%v", err)
 	}
 }
+
+func TestWithUserEmail(t *testing.T) {
+	ctx := context.Background()
+
+	// Test setting user email
+	email := "test@example.com"
+	ctx = WithUserEmail(ctx, email)
+
+	// Test retrieving user email
+	retrievedEmail, err := GetUserEmail(ctx)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	if retrievedEmail != email {
+		t.Errorf("Expected email %s, got %s", email, retrievedEmail)
+	}
+}
+
+func TestGetUserEmail_NoEmailInContext(t *testing.T) {
+	ctx := context.Background()
+
+	// Test getting email when none is set
+	_, err := GetUserEmail(ctx)
+	if err != ErrNoUserEmail {
+		t.Errorf("Expected ErrNoUserEmail, got %v", err)
+	}
+}
+
+func TestWithUserEmail_Overwrite(t *testing.T) {
+	ctx := context.Background()
+
+	// Set first email
+	ctx = WithUserEmail(ctx, "first@example.com")
+
+	// Overwrite with second email
+	secondEmail := "second@example.com"
+	ctx = WithUserEmail(ctx, secondEmail)
+
+	// Should get the second email
+	retrievedEmail, err := GetUserEmail(ctx)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	if retrievedEmail != secondEmail {
+		t.Errorf("Expected email %s, got %s", secondEmail, retrievedEmail)
+	}
+}
+
+func TestContextChainingWithEmail(t *testing.T) {
+	ctx := context.Background()
+	tenantID := "tenant-chain"
+	userID := "user-chain"
+	userEmail := "user@example.com"
+	db := &sql.DB{}
+
+	ctx = WithTenantID(ctx, tenantID)
+	ctx = WithUserID(ctx, userID)
+	ctx = WithUserEmail(ctx, userEmail)
+	ctx = WithTenantDB(ctx, db)
+
+	tid, err := GetTenantID(ctx)
+	if err != nil || tid != tenantID {
+		t.Errorf("tenant ID mismatch: err=%v, got=%s", err, tid)
+	}
+
+	uid, err := GetUserID(ctx)
+	if err != nil || uid != userID {
+		t.Errorf("user ID mismatch: err=%v, got=%s", err, uid)
+	}
+
+	email, err := GetUserEmail(ctx)
+	if err != nil || email != userEmail {
+		t.Errorf("email mismatch: err=%v, got=%s", err, email)
+	}
+
+	retrievedDB, err := GetTenantDB(ctx)
+	if err != nil || retrievedDB != db {
+		t.Errorf("DB mismatch: err=%v", err)
+	}
+}

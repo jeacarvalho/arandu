@@ -1,11 +1,38 @@
 package layout
 
+import (
+	goContext "context"
+	appcontext "arandu/internal/platform/context"
+)
+
 type PageData struct {
 	PageTitle  string
 	ActivePage string
 }
 
-templ BaseWithContent(pageTitle string, content templ.Component) {
+// ContextType define o tipo de contexto para a sidebar
+type ContextType string
+
+const (
+	ContextDashboard ContextType = "dashboard"
+	ContextPatient   ContextType = "patient"
+)
+
+// BaseWithContextAndSidebar é uma função auxiliar que permite sidebar contextual
+func BaseWithContextAndSidebar(ctx goContext.Context, pageTitle string, sidebarComponent templ.Component, content templ.Component) templ.Component {
+	// Get user email from context
+	userEmail, err := appcontext.GetUserEmail(ctx)
+	if err != nil {
+		// Use default email if not available
+		userEmail = "user@example.com"
+	}
+
+	// Retornar o componente que já inclui o email
+	return BaseWithContentAndEmailAndSidebar(pageTitle, userEmail, sidebarComponent, content)
+}
+
+// BaseWithContentAndEmailAndSidebar é uma versão que recebe sidebar como parâmetro
+templ BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sidebarComponent templ.Component, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="pt-BR">
 	<head>
@@ -17,14 +44,20 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260319_grid" rel="stylesheet">
+		<link href="/static/css/style.css?v=20260324_v6" rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<div class="app-container" x-data="{ sidebarOpen: false }">
-			@TopBar()
+		<div class="app-container" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
+			@TopBarWithEmail(userEmail)
+			if sidebarComponent != nil {
+				@sidebarComponent
+			} else {
+				@Sidebar()
+			}
 			<main class="main-content">
 				@content
 			</main>
@@ -43,29 +76,172 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 					}
 				});
 			});
-			
-			// Carregar Alpine.js dinamicamente após DOM estar pronto
+
+			// Smooth page transitions
 			document.addEventListener('DOMContentLoaded', function() {
-				// Verificar se já foi carregado
-				if (typeof Alpine !== 'undefined') {
-					console.log('Alpine.js já carregado');
-					return;
+				// Fade in on page load
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+
+				// Smooth navigation (for links without hx-boost)
+				document.addEventListener('click', function(e) {
+					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
+						e.preventDefault();
+						document.body.style.opacity = '0.7';
+						setTimeout(() => {
+							window.location.href = e.target.getAttribute('href');
+						}, 200);
+					}
+				});
+			});
+		</script>
+	</body>
+	</html>
+}
+
+// BaseWithContext é uma função auxiliar que busca o email do contexto e renderiza o layout
+func BaseWithContext(ctx goContext.Context, pageTitle string, content templ.Component) templ.Component {
+	// Get user email from context
+	userEmail, err := appcontext.GetUserEmail(ctx)
+	if err != nil {
+		// Use default email if not available
+		userEmail = "user@example.com"
+	}
+
+	// Retornar o componente que já inclui o email
+	return BaseWithContentAndEmail(pageTitle, userEmail, content)
+}
+
+// BaseWithContentAndEmail é uma versão do BaseWithContent que recebe o email como parâmetro
+templ BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			Arandu
+			if pageTitle != "" {
+				— { pageTitle }
+			}
+		</title>
+		<link href="/static/css/style.css?v=20260324_v6" rel="stylesheet">
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="app-container" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
+			@TopBarWithEmail(userEmail)
+			@Sidebar()
+			<main class="main-content">
+				@content
+			</main>
+		</div>
+		<script>
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
 				}
 				
-				// Carregar Alpine.js
-				console.log('Carregando Alpine.js dinamicamente...');
-				const script = document.createElement('script');
-				script.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';
-				script.defer = true;
-				script.onload = function() {
-					console.log('Alpine.js carregado com sucesso');
-					// Alpine.js se auto-inicializa quando carregado
-					// Não é necessário chamar Alpine.initTree() explicitamente
-				};
-				script.onerror = function() {
-					console.error('Falha ao carregar Alpine.js');
-				};
-				document.head.appendChild(script);
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+
+			// Smooth page transitions
+			document.addEventListener('DOMContentLoaded', function() {
+				// Fade in on page load
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+
+				// Smooth navigation (for links without hx-boost)
+				document.addEventListener('click', function(e) {
+					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
+						e.preventDefault();
+						document.body.style.opacity = '0.7';
+						setTimeout(() => {
+							window.location.href = e.target.getAttribute('href');
+						}, 200);
+					}
+				});
+			});
+		</script>
+	</body>
+	</html>
+}
+
+templ BaseWithContent(pageTitle string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			Arandu
+			if pageTitle != "" {
+				— { pageTitle }
+			}
+		</title>
+		<link href="/static/css/style.css?v=20260324_v6" rel="stylesheet">
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="app-container" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
+			@TopBar()
+			@Sidebar()
+			<main class="main-content">
+				@content
+			</main>
+		</div>
+		<script>
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
+				}
+				
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+
+			// Smooth page transitions
+			document.addEventListener('DOMContentLoaded', function() {
+				// Fade in on page load
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+
+				// Smooth navigation (for links without hx-boost)
+				document.addEventListener('click', function(e) {
+					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
+						e.preventDefault();
+						document.body.style.opacity = '0.7';
+						setTimeout(() => {
+							window.location.href = e.target.getAttribute('href');
+						}, 200);
+					}
+				});
 			});
 		</script>
 	</body>
@@ -84,36 +260,48 @@ templ Base(pageTitle string) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260319_grid" rel="stylesheet">
+		<link href="/static/css/style.css?v=20260324_v6" rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
-	<body>
+	<body style="opacity: 1;">
 		@Layout()
 		<script>
-			// Carregar Alpine.js dinamicamente após DOM estar pronto
-			document.addEventListener('DOMContentLoaded', function() {
-				// Verificar se já foi carregado
-				if (typeof Alpine !== 'undefined') {
-					console.log('Alpine.js já carregado');
-					return;
+			document.addEventListener('alpine:init', () => {
+				const saved = localStorage.getItem('arandu-sidebar-open');
+				if (saved !== null) {
+					Alpine.store('sidebar', { open: saved === 'true' });
 				}
 				
-				// Carregar Alpine.js
-				console.log('Carregando Alpine.js dinamicamente...');
-				const script = document.createElement('script');
-				script.src = 'https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js';
-				script.defer = true;
-				script.onload = function() {
-					console.log('Alpine.js carregado com sucesso');
-					// Alpine.js se auto-inicializa quando carregado
-					// Não é necessário chamar Alpine.initTree() explicitamente
-				};
-				script.onerror = function() {
-					console.error('Falha ao carregar Alpine.js');
-				};
-				document.head.appendChild(script);
+				Alpine.effect(() => {
+					const open = Alpine.store('sidebar')?.open;
+					if (open !== undefined) {
+						localStorage.setItem('arandu-sidebar-open', open);
+					}
+				});
+			});
+
+			// Smooth page transitions
+			document.addEventListener('DOMContentLoaded', function() {
+				// Fade in on page load
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+
+				// Smooth navigation (for links without hx-boost)
+				document.addEventListener('click', function(e) {
+					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
+						e.preventDefault();
+						document.body.style.opacity = '0.7';
+						setTimeout(() => {
+							window.location.href = e.target.getAttribute('href');
+						}, 200);
+					}
+				});
 			});
 		</script>
 	</body>
@@ -121,8 +309,9 @@ templ Base(pageTitle string) {
 }
 
 templ Layout() {
-	<div class="app-container" x-data="{ sidebarOpen: false }">
+	<div class="app-container" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
 		@TopBar()
+		@Sidebar()
 		<main class="main-content">
 			{ children... }
 		</main>
@@ -144,7 +333,7 @@ templ Layout() {
 	</script>
 }
 
-templ TopBar() {
+templ Sidebar() {
 	<!-- Mobile Overlay / Drawer Background -->
 	<div 
 		x-show="sidebarOpen" 
@@ -163,25 +352,19 @@ templ TopBar() {
 		class="sidebar-drawer"
 		:class="sidebarOpen ? 'sidebar-open' : ''"
 	>
-		<!-- Sidebar Header -->
+		<!-- Sidebar Header - Minimal, only subtitle -->
 		<div class="sidebar-header">
-			<div class="sidebar-header-content">
-				<div class="sidebar-logo">
-					<div class="sidebar-logo-icon">
-						<i class="fas fa-brain"></i>
-					</div>
-					<span class="sidebar-logo-text">Arandu</span>
-				</div>
-				<button 
-					@click="sidebarOpen = false"
-					class="sidebar-close-btn"
-				>
-					<i class="fas fa-times"></i>
-				</button>
-			</div>
 			<div class="sidebar-subtitle">
 				Inteligência Clínica
 			</div>
+			<!-- Close button only visible on mobile -->
+			<button 
+				@click="sidebarOpen = false"
+				class="sidebar-close-btn"
+				x-show="window.innerWidth < 768"
+			>
+				<i class="fas fa-times"></i>
+			</button>
 		</div>
 		
 		<!-- Navigation -->
@@ -210,15 +393,20 @@ templ TopBar() {
 			</a>
 		</div>
 	</aside>
+}
+
+templ TopBar() {
+	@Sidebar()
 
 	<!-- Top Bar -->
 	<header class="top-bar">
 		<!-- Left: Menu Toggle & Logo -->
 		<div class="top-bar-left">
-			<!-- Hamburger Menu -->
+			<!-- Hamburger Menu - Only visible on mobile -->
 			<button 
 				@click="sidebarOpen = !sidebarOpen"
 				class="hamburger-menu"
+				x-show="window.innerWidth < 768"
 			>
 				<i class="fas fa-bars"></i>
 			</button>
@@ -235,29 +423,90 @@ templ TopBar() {
 		</div>
 
 		<!-- Center: Search Bar -->
-			<div style="flex: 1; max-width: 400px; margin: 0 var(--space-lg); position: relative;">
-				<input
-					id="patient-search"
-					type="text"
-					name="q"
-					placeholder="Buscar paciente..."
-					hx-get="/patients/search"
-					hx-trigger="keyup changed delay:500ms"
-					hx-target="#search-results"
-					autocomplete="off"
-					aria-label="Buscar paciente"
-					aria-controls="search-results"
-					aria-autocomplete="list"
-					style="width: 100%; padding: 8px 16px 8px 36px; background: var(--neutral-50); border: 1px solid transparent; border-radius: 20px; font-family: var(--font-sans); font-size: 14px; color: var(--neutral-800); outline: none; transition: all 0.2s ease;"
-					onfocus="this.style.background='white'; this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.05)';"
-					onblur="this.style.background='var(--neutral-50)'; this.style.borderColor='transparent'; this.style.boxShadow='none';"
+		<div class="top-bar-search-container">
+			<input
+				id="patient-search"
+				type="text"
+				name="q"
+				placeholder="Buscar paciente..."
+				hx-get="/patients/search"
+				hx-trigger="keyup changed delay:500ms"
+				hx-target="#search-results"
+				autocomplete="off"
+				aria-label="Buscar paciente"
+				aria-controls="search-results"
+				aria-autocomplete="list"
+				class="search-bar-silent"
 			/>
-			<i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--neutral-400); font-size: 12px;"></i>
-			<div id="search-results" style="position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px;"></div>
+			<i class="fas fa-search top-bar-search-icon"></i>
+			<div id="search-results" class="search-results-container"></div>
 		</div>
 
 		<!-- Right: Actions -->
-		<div class="top-bar-right" style="display: flex; align-items: center;">
+		<div class="top-bar-right top-bar-right-container">
 		</div>
 	</header>
 }
+
+templ TopBarContent(userEmail string) {
+	<header class="top-bar">
+		<!-- Left: Menu Toggle & Logo -->
+		<div class="top-bar-left">
+			<!-- Hamburger Menu - Only visible on mobile -->
+			<button 
+				@click="sidebarOpen = !sidebarOpen"
+				class="hamburger-menu"
+				x-show="window.innerWidth < 768"
+			>
+				<i class="fas fa-bars"></i>
+			</button>
+			
+			<!-- Logo -->
+			<a href="/dashboard" class="top-bar-logo">
+				<div class="top-bar-logo-icon">
+					<i class="fas fa-brain"></i>
+				</div>
+				<span class="top-bar-logo-text">
+					Arandu
+				</span>
+			</a>
+		</div>
+
+		<!-- Center: Search Bar -->
+		<div class="top-bar-search-container">
+			<input
+				id="patient-search"
+				type="text"
+				name="q"
+				placeholder="Buscar paciente..."
+				hx-get="/patients/search"
+				hx-trigger="keyup changed delay:500ms"
+				hx-target="#search-results"
+				autocomplete="off"
+				aria-label="Buscar paciente"
+				aria-controls="search-results"
+				aria-autocomplete="list"
+				class="search-bar-silent"
+			/>
+			<i class="fas fa-search top-bar-search-icon"></i>
+			<div id="search-results" class="search-results-container"></div>
+		</div>
+
+		<!-- Right: User Profile -->
+		<div class="top-bar-right top-bar-right-container">
+			<div class="slp-top-bar-user">
+				<div class="slp-top-bar-user-avatar">
+					<i class="fas fa-user-md"></i>
+				</div>
+				<span class="slp-top-bar-user-name">{ userEmail }</span>
+			</div>
+		</div>
+	</header>
+}
+
+// TopBarWithEmail é uma versão do TopBar que mostra o email do usuário
+templ TopBarWithEmail(userEmail string) {
+	@TopBarContent(userEmail)
+}
+
+

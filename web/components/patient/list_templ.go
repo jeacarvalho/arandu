@@ -45,7 +45,7 @@ func PatientList(data PatientListData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"content-header\" style=\"margin-bottom: var(--space-xl);\"><div class=\"header-title\"><div><h1 style=\"font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);\">Pacientes</h1><p class=\"header-subtitle\" style=\"font-size: 0.875rem; color: var(--neutral-500);\">Gerencie seus pacientes e acompanhe a evolução clínica</p></div><div class=\"header-actions\"><a href=\"/patients/new\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i>Novo Paciente</a></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"content-header\"><div class=\"header-title\"><div><h1 class=\"page-title\">Pacientes</h1><p class=\"header-subtitle\">Gerencie seus pacientes e acompanhe a evolução clínica</p></div><div class=\"header-actions\"><a href=\"/patients/new\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i>Novo Paciente</a></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -174,7 +174,7 @@ func PatientList(data PatientListData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(data.Patients) == data.PageSize {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"loading-indicator-patients\" class=\"htmx-indicator patient-list-feedback\"><div class=\"patient-list-feedback-icon\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p class=\"patient-list-feedback-text\">A carregar mais pacientes...</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"loading-indicator-patients\" class=\"htmx-indicator patient-list-feedback\"><div class=\"patient-list-feedback-icon\"><i class=\"fas fa-spinner fa-spin spinner-lg\"></i></div><p class=\"patient-list-feedback-text\">A carregar mais pacientes...</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

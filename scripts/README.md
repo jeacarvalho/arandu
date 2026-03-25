@@ -88,7 +88,42 @@ Stack Técnica: SQLite (FTS5), Go, Migrations SQL.
 ./scripts/arandu_conclude_task.sh 20260313_215938 "Erro na implementação da validação" --failure
 ```
 
-**Saída:**
+**Saída:**# TASK 20260323_203720
+
+Title: Refatoração do Layout Unificado (SLP)
+
+## Status
+**AGUARDANDO_DETALHES_DO_USUARIO** - NÃO inicie trabalho até que o usuário edite este arquivo
+
+## Objetivo
+
+Refatoração do Layout Unificado (SLP)
+
+## Descrição
+
+Tarefa criada sem requirement específico.
+
+## Instruções para o Agente
+
+**CRÍTICO: NÃO leia, edite ou execute qualquer ação nesta tarefa até que o usuário tenha editado este arquivo com os detalhes completos.**
+
+1. Aguarde o usuário fornecer detalhes da tarefa neste arquivo
+2. Quando o usuário editar este arquivo com os detalhes completos (removendo esta seção de instruções), inicie a implementação
+3. Siga o padrão de referenciar requirements quando aplicável
+
+**Verificação obrigatória antes de iniciar:**
+- Esta seção "Instruções para o Agente" deve ter sido removida/replaceada pelo usuário
+- O arquivo deve conter uma descrição detalhada da tarefa fornecida pelo usuário
+- O status deve ter sido atualizado para "PRONTO_PARA_IMPLEMENTACAO" ou similar
+
+## Checklist de Integridade (OBRIGATÓRIO)
+- [ ] O componente usa .templ e herda de Layout?
+- [ ] A tipografia Source Serif 4 foi aplicada ao conteúdo clínico?
+- [ ] Executei 'templ generate' e o código Go compilou?
+- [ ] Testei a rota atual e as rotas vizinhas (Regressão)?
+- [ ] O banco de dados foi atualizado via migration .up.sql?
+
+
 - Tarefa arquivada
 - Aprendizado registrado em `docs/learnings/task_YYYYMMDD_HHMMSS.md`
 - Contexto do projeto atualizado
@@ -96,11 +131,11 @@ Stack Técnica: SQLite (FTS5), Go, Migrations SQL.
 ---
 
 ### 5. **Finalizar Sessão**
-run ./scripts/arandu_checkpoint.sh; run ./scripts/arandu_guard.sh ; run ./scripts/arandu_validate_handlers.sh; run ./scripts/arandu_update_context.sh
+run ./scripts/safe_deploy.sh; run ./scripts/arandu_checkpoint.sh; run ./scripts/arandu_guard.sh ; run ./scripts/arandu_validate_handlers.sh; run ./scripts/arandu_update_context.sh
 
 
 ```bash
-./scripts/arandu_end_session.sh
+run ./scripts/arandu_end_session.sh
 ```
 **Descrição:** Finaliza a sessão de trabalho atual.
 
@@ -115,22 +150,22 @@ run ./scripts/arandu_checkpoint.sh; run ./scripts/arandu_guard.sh ; run ./script
 run ./scripts/safe_deploy.sh
 ```bash
 # 1. Iniciar sessão
-./scripts/arandu_start_session.sh
+run ./scripts/arandu_start_session.sh
 
 # 2. Criar tarefa para requirement específico
-./scripts/arandu_create_task.sh "Implementar criação de paciente" req-01-00-01
+run ./scripts/arandu_create_task.sh "Implementar criação de paciente" req-01-00-01
 
 # 3. Processar tarefa (gerar prompt)
-./scripts/arandu_process_task.sh 20260313_215938
+run ./scripts/arandu_process_task.sh 20260313_215938
 
 # 4. Implementar manualmente baseado no prompt
 # ... trabalho de implementação ...
 
 # 5. Concluir tarefa com aprendizado
-./scripts/arandu_conclude_task.sh 20260313_215938 "Entidade Patient com validação implementada" --success
+run ./scripts/arandu_conclude_task.sh 20260313_215938 "Entidade Patient com validação implementada" --success
 
 # 6. Finalizar sessão
-./scripts/arandu_end_session.sh
+run ./scripts/arandu_end_session.sh
 ```
 
 ---

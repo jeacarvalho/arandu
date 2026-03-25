@@ -12,34 +12,32 @@ type TimelinePageData struct {
 
 templ TimelineContent(data TimelinePageData) {
 	<!-- Timeline -->
-	<div style="position: relative;">
-		<div style="position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);"></div>
+	<div class="timeline-container">
+		<div class="timeline-line"></div>
 		
-		<div id="timeline-content" style="display: flex; flex-direction: column; gap: var(--space-xl);">
+		<div id="timeline-content" class="timeline-content">
 			if len(data.Events) == 0 {
-				<div style="text-align: center; padding: var(--space-2xl) 0;">
-					<div style="color: var(--neutral-400); margin-bottom: var(--space-md);">
-						<i class="fas fa-calendar-day" style="font-size: 3rem;"></i>
+				<div class="timeline-empty">
+					<div class="timeline-empty-icon">
+						<i class="fas fa-calendar-day"></i>
 					</div>
-					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);">
+					<p class="timeline-empty-text">
 						Nenhum evento clínico registrado ainda.
 					</p>
 				</div>
 			} else {
 				for _, event := range data.Events {
-					<div style="position: relative;">
-						<div style="position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }"></div>
+					<div class="timeline-event">
+						<div class="timeline-dot { getEventDotClass(event.Type) }"></div>
 						
-						<div 
-							style="border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }"
-						>
-							<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);">
-								<div style="display: flex; align-items: center;">
-									<span style="display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }">
-										<i class="{ getEventIcon(event.Type) }" style="margin-right: var(--space-xs);"></i>
+						<div class="timeline-event-card { getEventBorderClass(event.Type) }">
+							<div class="timeline-event-header">
+								<div>
+									<span class="timeline-event-type { getEventBadgeClass(event.Type) }">
+										<i class="{ getEventIcon(event.Type) }"></i>
 										{ getEventTypeLabel(event.Type) }
 									</span>
-									<span style="margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+									<span class="timeline-event-time">
 										{ event.Date.Format("15:04") }
 									</span>
 								</div>
@@ -47,22 +45,20 @@ templ TimelineContent(data TimelinePageData) {
 								if event.Metadata["session_id"] != "" {
 									<a 
 										href={ "/session/" + event.Metadata["session_id"] }
-										style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;"
-										onmouseover="this.style.color='var(--primary-800)';"
-										onmouseout="this.style.color='var(--primary-600)';"
+										class="timeline-event-link"
 									>
-										<i class="fas fa-external-link-alt" style="margin-right: 2px;"></i>
+										<i class="fas fa-external-link-alt"></i>
 										Ver sessão
 									</a>
 								}
 							</div>
 							
-							<div style="font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;">
+							<div class="timeline-event-content">
 								{ event.Content }
 							</div>
 							
-							<div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);">
-								<div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">
+							<div class="timeline-event-footer">
+								<div class="timeline-event-meta">
 									Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
 								</div>
 							</div>
@@ -72,17 +68,17 @@ templ TimelineContent(data TimelinePageData) {
 				
 				<!-- Loading Indicator -->
 				if len(data.Events) == data.Limit {
-					<div id="loading-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-xl);">
-						<div style="color: var(--neutral-400);">
-							<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+					<div id="loading-indicator" class="htmx-indicator timeline-loading">
+						<div>
+							<i class="fas fa-spinner fa-spin"></i>
 						</div>
-						<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
+						<p class="timeline-loading-text">
 							A carregar mais registros...
 						</p>
 					</div>
 				} else if len(data.Events) > 0 && len(data.Events) < data.Limit {
-					<div style="text-align: center; padding: var(--space-xl);">
-						<p style="font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);">
+					<div class="timeline-end">
+						<p class="timeline-end-text">
 							Fim dos registros históricos
 						</p>
 					</div>
@@ -94,15 +90,13 @@ templ TimelineContent(data TimelinePageData) {
 
 templ FiltersAndContent(data TimelinePageData) {
 	<!-- Filters -->
-	<div style="margin-bottom: var(--space-xl);">
-		<div style="display: flex; gap: var(--space-sm);">
+	<div class="timeline-filters">
+		<div class="timeline-filters-buttons">
 			<button
 				hx-get={ "/patients/" + data.PatientID + "/history?filter=all" }
 				hx-target="#filters-and-content"
 				hx-swap="innerHTML"
-				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter == nil) }"
-				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				class="timeline-filter-btn { getButtonClass(data.Filter == nil) }"
 			>
 				Todos
 			</button>
@@ -110,9 +104,7 @@ templ FiltersAndContent(data TimelinePageData) {
 				hx-get={ "/patients/" + data.PatientID + "/history?filter=observation" }
 				hx-target="#filters-and-content"
 				hx-swap="innerHTML"
-				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }"
-				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }"
 			>
 				Observações
 			</button>
@@ -120,9 +112,7 @@ templ FiltersAndContent(data TimelinePageData) {
 				hx-get={ "/patients/" + data.PatientID + "/history?filter=intervention" }
 				hx-target="#filters-and-content"
 				hx-swap="innerHTML"
-				style="padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }"
-				onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';"
-				onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+				class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }"
 			>
 				Intervenções
 			</button>
@@ -133,18 +123,18 @@ templ FiltersAndContent(data TimelinePageData) {
 }
 
 templ TimelineContainer(data TimelinePageData) {
-	<div style="padding: var(--space-lg); max-width: 72rem; margin: 0 auto;">
+	<div class="timeline-page">
 		<!-- Header -->
-		<div style="margin-bottom: var(--space-xl);">
-			<div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
-				<a href="/patients" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;">
+		<div class="timeline-header">
+			<div class="timeline-header-row">
+				<a href="/patients" class="timeline-back-btn">
 					<i class="fas fa-arrow-left"></i>
 				</a>
-				<div style="flex: 1;">
-					<h1 style="font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;">
+				<div class="timeline-title-group">
+					<h1 class="timeline-title">
 						Prontuário do Paciente
 					</h1>
-					<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;">
+					<p class="timeline-subtitle">
 						Histórico clínico longitudinal organizado cronologicamente
 					</p>
 				</div>
@@ -152,8 +142,8 @@ templ TimelineContainer(data TimelinePageData) {
 		</div>
 
 		<!-- Search -->
-		<div style="margin-bottom: var(--space-xl);">
-			<div style="position: relative;">
+		<div class="timeline-search">
+			<div class="relative">
 				<input 
 					type="text" 
 					name="q" 
@@ -163,30 +153,16 @@ templ TimelineContainer(data TimelinePageData) {
 					hx-target="#timeline-content" 
 					hx-swap="innerHTML" 
 					hx-indicator="#search-loading"
-					style="
-						width: 100%;
-						padding: var(--space-lg);
-						padding-left: 3rem;
-						font-family: var(--font-sans);
-						font-size: 1rem;
-						border: 1px solid var(--neutral-200);
-						border-radius: var(--radius-lg);
-						background: white;
-						color: var(--neutral-800);
-						box-shadow: var(--shadow-sm);
-						transition: all var(--transition-fast);
-					"
-					onfocus="this.style.borderColor='var(--primary-400)'; this.style.boxShadow='var(--shadow-md)';"
-					onblur="this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='var(--shadow-sm)';"
+					class="timeline-search-input"
 				>
-				<div style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neutral-400);">
+				<div class="timeline-search-icon">
 					<i class="fas fa-search"></i>
 				</div>
-				<div id="search-loading" class="htmx-indicator" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);">
-					<i class="fas fa-spinner fa-spin" style="color: var(--neutral-400);"></i>
+				<div id="search-loading" class="htmx-indicator timeline-search-spinner">
+					<i class="fas fa-spinner fa-spin"></i>
 				</div>
 			</div>
-			<p style="font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);">
+			<p class="timeline-search-hint">
 				Pesquise por termos específicos em todas as observações e intervenções deste paciente.
 			</p>
 		</div>
@@ -211,12 +187,11 @@ func getFilterParam(filter *timeline.EventType) string {
 	}
 }
 
-func getButtonStyle(isActive bool) string {
+func getButtonClass(isActive bool) string {
 	if isActive {
-		return "background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
-	} else {
-		return "background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
+		return "active"
 	}
+	return ""
 }
 
 func getEventTypeLabel(eventType timeline.EventType) string {
@@ -245,41 +220,41 @@ func getEventIcon(eventType timeline.EventType) string {
 	}
 }
 
-func getEventBadgeStyle(eventType timeline.EventType) string {
+func getEventBadgeClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "background: var(--primary-50); color: var(--primary-800);"
+		return "bg-primary-50 text-primary-800"
 	case timeline.EventTypeObservation:
-		return "background: var(--insight-50); color: var(--insight-800);"
+		return "bg-insight-50 text-insight-800"
 	case timeline.EventTypeIntervention:
-		return "background: var(--clinical-50); color: var(--clinical-800);"
+		return "bg-clinical-50 text-clinical-800"
 	default:
-		return "background: var(--neutral-50); color: var(--neutral-800);"
+		return "bg-neutral-50 text-neutral-800"
 	}
 }
 
-func getEventDotStyle(eventType timeline.EventType) string {
+func getEventDotClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "background: var(--primary-600);"
+		return "bg-primary-600"
 	case timeline.EventTypeObservation:
-		return "background: var(--insight-600);"
+		return "bg-insight-600"
 	case timeline.EventTypeIntervention:
-		return "background: var(--clinical-600);"
+		return "bg-clinical-600"
 	default:
-		return "background: var(--neutral-600);"
+		return "bg-neutral-600"
 	}
 }
 
-func getEventBorderStyle(eventType timeline.EventType) string {
+func getEventBorderClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "border-left: 4px solid var(--primary-600);"
+		return "border-l-4 border-primary-600"
 	case timeline.EventTypeObservation:
-		return "border-left: 4px solid var(--insight-600);"
+		return "border-l-4 border-insight-600"
 	case timeline.EventTypeIntervention:
-		return "border-left: 4px solid var(--clinical-600);"
+		return "border-l-4 border-clinical-600"
 	default:
-		return "border-left: 4px solid var(--neutral-600);"
+		return "border-l-4 border-neutral-600"
 	}
 }

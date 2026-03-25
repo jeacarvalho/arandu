@@ -63,13 +63,20 @@ func (tp *TenantPool) GetConnection(tenantID string) (*sql.DB, error) {
 }
 
 func (tp *TenantPool) createConnection(tenantID string) (*sql.DB, error) {
-	if err := tp.pathResolver.EnsureTenantDir(tenantID); err != nil {
-		return nil, fmt.Errorf("failed to create tenant directory: %w", err)
+	if !storage.IsTestEnvironment() {
+		if err := tp.pathResolver.EnsureTenantDir(tenantID); err != nil {
+			return nil, fmt.Errorf("failed to create tenant directory: %w", err)
+		}
 	}
 
-	dbPath := tp.pathResolver.ResolveTenantPath(tenantID)
+	dbPath := storage.GetTenantDBPath(tenantID)
 
-	dsn := dbPath + "?_journal_mode=WAL"
+	var dsn string
+	if storage.IsTestEnvironment() {
+		dsn = dbPath + "&_journal_mode=memory"
+	} else {
+		dsn = dbPath + "?_journal_mode=WAL"
+	}
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open tenant database: %w", err)

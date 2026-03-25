@@ -100,5 +100,5 @@ func (h *DashboardHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	dashboard := dashboardComponents.Dashboard(stats, patientItems, sessionItems)
-	layoutComponents.BaseWithContent("Dashboard", dashboard).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Dashboard", dashboard).Render(r.Context(), w)
 }

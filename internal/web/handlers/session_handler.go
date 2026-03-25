@@ -156,7 +156,7 @@ func (h *SessionHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 
 	// Render full page with layout
 	errorComponent := layoutComponents.ErrorFragment(errorData)
-	layoutComponents.BaseWithContent("Erro", errorComponent).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Erro", errorComponent).Render(r.Context(), w)
 }
 
 // Show handles GET /session/{id} - shows session details
@@ -238,7 +238,7 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	detail := sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "")
-	layoutComponents.BaseWithContent("Sessão "+sessionDetail.Date, detail).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Sessão "+sessionDetail.Date, detail).Render(r.Context(), w)
 }
 
 // NewSession handles GET /patient/{id}/sessions/new - shows new session form
@@ -303,7 +303,7 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render form with base layout
 	form := sessionComponents.NewSessionForm(formData)
-	layoutComponents.BaseWithContent("Nova Sessão", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Nova Sessão", form).Render(r.Context(), w)
 }
 
 // CreateSession handles POST /sessions - creates a new session
@@ -388,7 +388,7 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	// Render the edit page directly
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContent("Completar Sessão", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Completar Sessão", form).Render(r.Context(), w)
 }
 
 // EditSession handles GET /sessions/edit/{id} - shows edit session form
@@ -506,7 +506,7 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContent("Editar Sessão", form).Render(r.Context(), w)
+	layoutComponents.BaseWithContext(r.Context(), "Editar Sessão", form).Render(r.Context(), w)
 }
 
 // UpdateSession handles POST /sessions/update - updates an existing session
@@ -899,23 +899,8 @@ func (h *SessionHandler) TherapeuticPlanReport(w http.ResponseWriter, r *http.Re
 		Goals:       goalItems,
 	}
 
-	// Render with full HTML layout including CSS
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	html := `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Relatório de Plano Terapêutico - ` + patientInfo.Name + `</title>
-	<link href="/static/css/style.css?v=20260321_report" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-</head>
-<body>
-`
-	w.Write([]byte(html))
-	patientComponents.TherapeuticPlanReport(reportData).Render(ctx, w)
-	w.Write([]byte(`</body></html>`))
+	patientComponents.TherapeuticPlanReportPage(reportData).Render(ctx, w)
 }
 
 func goalStatusLabel(status patient.GoalStatus) string {

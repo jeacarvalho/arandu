@@ -17,11 +17,11 @@ type PatientListData struct {
 }
 
 templ PatientList(data PatientListData) {
-	<div class="content-header" style="margin-bottom: var(--space-xl);">
+	<div class="content-header">
 		<div class="header-title">
 			<div>
-				<h1 style="font-size: 1.5rem; font-weight: 600; color: var(--neutral-800);">Pacientes</h1>
-				<p class="header-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Gerencie seus pacientes e acompanhe a evolução clínica</p>
+				<h1 class="page-title">Pacientes</h1>
+				<p class="header-subtitle">Gerencie seus pacientes e acompanhe a evolução clínica</p>
 			</div>
 			<div class="header-actions">
 				<a href="/patients/new" class="btn btn-primary">
@@ -75,7 +75,7 @@ templ PatientList(data PatientListData) {
 			if len(data.Patients) == data.PageSize {
 				<div id="loading-indicator-patients" class="htmx-indicator patient-list-feedback">
 					<div class="patient-list-feedback-icon">
-						<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+						<i class="fas fa-spinner fa-spin spinner-lg"></i>
 					</div>
 					<p class="patient-list-feedback-text">
 						A carregar mais pacientes...

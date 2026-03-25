@@ -9,35 +9,47 @@ import (
 )
 
 type Patient struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Notes     string    `json:"notes"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	Gender     string    `json:"gender"`
+	Ethnicity  string    `json:"ethnicity"`
+	Occupation string    `json:"occupation"`
+	Education  string    `json:"education"`
+	Notes      string    `json:"notes"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
-func NewPatient(name string, notes string) (*Patient, error) {
+func NewPatient(name, gender, ethnicity, occupation, education, notes string) (*Patient, error) {
 	if name == "" {
 		return nil, errors.New("patient name cannot be empty")
 	}
 
 	patient := &Patient{
-		ID:        uuid.New().String(),
-		Name:      name,
-		Notes:     notes,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ID:         uuid.New().String(),
+		Name:       name,
+		Gender:     gender,
+		Ethnicity:  ethnicity,
+		Occupation: occupation,
+		Education:  education,
+		Notes:      notes,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
 	}
 
 	return patient, nil
 }
 
-func (p *Patient) Update(name, notes string) error {
+func (p *Patient) Update(name, gender, ethnicity, occupation, education, notes string) error {
 	if name == "" {
 		return errors.New("patient name cannot be empty")
 	}
 
 	p.Name = name
+	p.Gender = gender
+	p.Ethnicity = ethnicity
+	p.Occupation = occupation
+	p.Education = education
 	p.Notes = notes
 	p.UpdatedAt = time.Now()
 
