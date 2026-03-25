@@ -8,21 +8,12 @@ package auth
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"os"
-	"strconv"
-	"time"
-)
-
 type LoginData struct {
 	Error string
 }
 
 func getCSSVersion() string {
-	if info, err := os.Stat("web/static/css/style.css"); err == nil {
-		return strconv.FormatInt(info.ModTime().Unix(), 10)
-	}
-	return strconv.FormatInt(time.Now().Unix(), 10)
+	return "20260325_v3"
 }
 
 func Login(data LoginData) templ.Component {
@@ -53,7 +44,7 @@ func Login(data LoginData) templ.Component {
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/static/css/style.css?v=" + getCSSVersion()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/login.templ`, Line: 27, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/login.templ`, Line: 18, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -71,7 +62,7 @@ func Login(data LoginData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/login.templ`, Line: 215, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/login.templ`, Line: 206, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

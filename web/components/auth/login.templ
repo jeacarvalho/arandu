@@ -1,20 +1,11 @@
 package auth
 
-import (
-	"os"
-	"strconv"
-	"time"
-)
-
 type LoginData struct {
 	Error string
 }
 
 func getCSSVersion() string {
-	if info, err := os.Stat("web/static/css/style.css"); err == nil {
-		return strconv.FormatInt(info.ModTime().Unix(), 10)
-	}
-	return strconv.FormatInt(time.Now().Unix(), 10)
+	return "20260325_v3"
 }
 
 templ Login(data LoginData) {

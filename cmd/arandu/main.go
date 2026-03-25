@@ -52,33 +52,13 @@ func main() {
 		logger.Info("Tenants directory ready", logger.String("path", tenantsDir))
 	}
 
-	// Use production database (Data Plane)
-	dbPath := "arandu.db"
-	logger.Info("Using database", logger.String("path", dbPath))
-	db, err := sqlite.NewDB(dbPath)
-	if err != nil {
-		logger.Error("Failed to connect to database", logger.String("error", err.Error()))
-		os.Exit(1)
-	}
-	defer db.Close()
-
-	// Initialize database schema
-	logger.Info("Initializing database schema")
-
-	// Apply database migrations
-	if err := db.Migrate(); err != nil {
-		logger.Warn("Failed to apply database migrations", logger.String("error", err.Error()))
-	}
+	// Use central database for repository factory (multi-tenant data plane)
+	db := &sqlite.DB{centralDB.DB}
+	logger.Info("Using central database for data plane")
 
 	// Initialize Tenant Pool for multi-tenant connections (must be before repositories)
 	tenantPool := sqlite.NewTenantPool("storage", nil)
 	logger.Info("Tenant pool initialized")
-
-	// Create base repositories (single-tenant for AI service)
-	observationRepoBase := sqlite.NewObservationRepository(db)
-	interventionRepoBase := sqlite.NewInterventionRepository(db)
-	vitalsRepoBase := sqlite.NewVitalsRepository(db)
-	medicationRepoBase := sqlite.NewMedicationRepository(db)
 
 	// Create context-aware repository factory for multi-tenant support (clinical services)
 	repoFactory := sqlite.NewContextAwareRepositoryFactory(db, tenantPool)
@@ -166,14 +146,14 @@ func main() {
 	// Create cache for AI responses (24 hour TTL)
 	cache := ai.NewCache(24 * time.Hour)
 
-	// Create AI service with base repositories (single-tenant)
+	// Create AI service with context-aware repositories (multi-tenant)
 	aiService := services.NewAIService(
 		geminiClient,
 		cache,
-		observationRepoBase,
-		interventionRepoBase,
-		vitalsRepoBase,
-		medicationRepoBase,
+		observationRepo,
+		interventionRepo,
+		vitalsRepo,
+		medicationRepo,
 	)
 
 	aiHandler := handlers.NewAIHandler(aiService)

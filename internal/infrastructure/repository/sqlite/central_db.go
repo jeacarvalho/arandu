@@ -21,7 +21,7 @@ func NewCentralDB(storagePath string) (*CentralDB, error) {
 		return nil, fmt.Errorf("failed to create storage directory: %w", err)
 	}
 
-	dsn := centralPath + "?_journal_mode=WAL"
+	dsn := centralPath + "?_journal_mode=WAL&_busy_timeout=5000"
 
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {

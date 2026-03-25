@@ -91,7 +91,7 @@ templ AnamnesisSection(section AnamnesisSectionViewModel) {
 			<h2 class="silent-label">{ section.Title }</h2>
 			<div 
 				id={ fmt.Sprintf("indicator-%s", section.SectionID) } 
-				class="save-indicator htmx-indicator"
+				class="save-indicator opacity-0 transition-opacity duration-300"
 			>
 				<i class="fas fa-check-circle text-arandu-active"></i> 
 				<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
@@ -104,7 +104,8 @@ templ AnamnesisSection(section AnamnesisSectionViewModel) {
 				class="silent-textarea font-clinical"
 				placeholder="Comece a descrever..."
 				hx-patch={ string(templ.URL(fmt.Sprintf("/patients/%s/anamnesis/%s", section.PatientID, section.SectionID))) }
-				hx-trigger="keyup changed delay:1s"
+				hx-trigger="keyup changed delay:2s, blur"
+				hx-swap="outerHTML"
 				hx-indicator={ string(templ.URL(fmt.Sprintf("#indicator-%s", section.SectionID))) }
 				rows="6"
 			>{ section.Content }</textarea>
@@ -115,8 +116,7 @@ templ AnamnesisSection(section AnamnesisSectionViewModel) {
 templ AnamnesisSectionSaved(sectionID string) {
 	<div 
 		id={ fmt.Sprintf("indicator-%s", sectionID) } 
-		class="save-indicator htmx-indicator"
-		style="opacity: 1;"
+		class="save-indicator opacity-100 transition-opacity duration-300"
 	>
 		<i class="fas fa-check-circle text-arandu-active"></i> 
 		<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>

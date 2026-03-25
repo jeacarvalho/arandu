@@ -80,7 +80,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css?v=20260324_v6\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title><link href=\"/static/css/style.css?v=20260325_v3\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,7 +169,7 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"/static/css/style.css?v=20260324_v6\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"/static/css/style.css?v=20260325_v3\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -237,7 +237,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</title><link href=\"/static/css/style.css?v=20260324_v6\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</title><link href=\"/static/css/style.css?v=20260325_v3\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -305,7 +305,7 @@ func Base(pageTitle string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</title><link href=\"/static/css/style.css?v=20260324_v6\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body style=\"opacity: 1;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</title><link href=\"/static/css/style.css?v=20260325_v3\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body style=\"opacity: 1;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -258,6 +258,15 @@ func (r *ContextAwareObservationRepository) Delete(ctx context.Context, id strin
 	return tempRepo.Delete(ctx, id)
 }
 
+func (r *ContextAwareObservationRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*observation.Observation, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.FindByPatientIDAndTimeframe(ctx, patientID, startTime)
+}
+
 type ContextAwareInterventionRepository struct {
 	factory *ContextAwareRepositoryFactory
 }
@@ -318,6 +327,15 @@ func (r *ContextAwareInterventionRepository) Delete(ctx context.Context, id stri
 	}
 	tempRepo := NewInterventionRepository(&DB{db})
 	return tempRepo.Delete(ctx, id)
+}
+
+func (r *ContextAwareInterventionRepository) FindByPatientIDAndTimeframe(ctx context.Context, patientID string, startTime time.Time) ([]*intervention.Intervention, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.FindByPatientIDAndTimeframe(ctx, patientID, startTime)
 }
 
 type ContextAwareInsightRepository struct {

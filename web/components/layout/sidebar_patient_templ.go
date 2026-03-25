@@ -8,6 +8,8 @@ package layout
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "fmt"
+
 // PatientSidebar é a sidebar específica para contexto de paciente
 func PatientSidebar(patientID string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -30,7 +32,59 @@ func PatientSidebar(patientID string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\"></div><!-- Sidebar Drawer - Always hidden, triggered by hamburger --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header - Minimal, only subtitle --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Perfil do Paciente</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation - Patient Context --><nav class=\"sidebar-nav\"><a href=\"/patients/{ patientID }\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-md\"></i> <span>Resumo</span></a> <a href=\"/patients/{ patientID }/anamnesis\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"/patients/{ patientID }/history\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a> <a href=\"/patients/{ patientID }/goals\" class=\"sidebar-nav-item\"><i class=\"fas fa-bullseye\"></i> <span>Plano Terapêutico</span></a><!-- Back to Dashboard --><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-arrow-left\"></i> <span>Voltar ao Dashboard</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\"></div><!-- Sidebar Drawer - Always hidden, triggered by hamburger --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header - Minimal, only subtitle --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Perfil do Paciente</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation - Patient Context --><nav class=\"sidebar-nav\"><a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 templ.SafeURL
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s", patientID)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/sidebar_patient.templ`, Line: 42, Col: 62}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-md\"></i> <span>Resumo</span></a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 templ.SafeURL
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/anamnesis", patientID)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/sidebar_patient.templ`, Line: 47, Col: 72}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 templ.SafeURL
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/history", patientID)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/sidebar_patient.templ`, Line: 52, Col: 70}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 templ.SafeURL
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/goals", patientID)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/sidebar_patient.templ`, Line: 57, Col: 68}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"sidebar-nav-item\"><i class=\"fas fa-bullseye\"></i> <span>Plano Terapêutico</span></a><!-- Back to Dashboard --><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-arrow-left\"></i> <span>Voltar ao Dashboard</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

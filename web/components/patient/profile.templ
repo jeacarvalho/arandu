@@ -1,6 +1,10 @@
 package patient
 
-import "arandu/internal/domain/patient"
+import (
+	"fmt"
+
+	"arandu/internal/domain/patient"
+)
 
 // PatientProfileView é o componente principal do perfil do paciente
 templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
@@ -109,15 +113,15 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 			</div>
 			
 			<div class="quick-actions-container">
-				<a href="/patients/{p.ID}/sessions/new" class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
 					<i class="fas fa-calendar-plus quick-action-icon"></i> Nova Sessão
 				</a>
 				
-				<a href="/patients/{p.ID}/anamnesis" class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
 					<i class="fas fa-history quick-action-icon"></i> Completar Anamnese
 				</a>
 				
-				<a href="/patients/{p.ID}/goals" class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
 					<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 				</a>
 			</div>
