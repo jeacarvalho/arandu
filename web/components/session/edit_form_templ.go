@@ -40,7 +40,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md);\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mb-xl\"><div class=\"flex flex-center gap-md\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,32 +53,32 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" style=\"width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;\"><i class=\"fas fa-arrow-left\"></i></a><div><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Editar Sessão</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"back-button\"><i class=\"fas fa-arrow-left\"></i></a><div><h1 class=\"page-title\">Editar Sessão</h1><p class=\"page-subtitle\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 25, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 22, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></div></div><div class=\"session-with-sidebar\"><div style=\"background: white; border: 1px solid var(--neutral-100); border-radius: var(--radius-xl); overflow: hidden;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></div></div><div class=\"session-with-sidebar\"><div class=\"card-form\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div style=\"padding: var(--space-md) var(--space-lg); background: var(--error-50); border-bottom: 1px solid var(--error-100);\"><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--error-700); margin: 0;\"><i class=\"fas fa-exclamation-circle\" style=\"margin-right: var(--space-sm);\"></i> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"p-xy-lg bg-error-50 border-error\"><p class=\"text-error error-text\"><i class=\"fas fa-exclamation-circle error-icon\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 37, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 33, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -96,65 +96,65 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/session/" + data.SessionID + "/update"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 42, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 38, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" method=\"POST\" style=\"padding: var(--space-xl);\"><input type=\"hidden\" name=\"patient_id\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" method=\"POST\" class=\"card-form-pad\"><input type=\"hidden\" name=\"patient_id\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.PatientID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 43, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 39, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-calendar\"></i></div><div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Dados da Sessão</h2></div></div><div style=\"background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);\"><div style=\"margin-bottom: var(--space-md);\"><label style=\"display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);\">Data da Sessão</label> <input type=\"date\" name=\"date\" required value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><div class=\"mb-xl\"><div class=\"flex flex-center gap-md mb-lg\"><div class=\"card-icon card-icon-primary\"><i class=\"fas fa-calendar\"></i></div><div><h2 class=\"section-title\">Dados da Sessão</h2></div></div><div class=\"bg-neutral-50 p-lg rounded-lg\"><div class=\"mb-md\"><label class=\"label-uppercase\">Data da Sessão</label> <input type=\"date\" name=\"date\" required value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Date)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 64, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 53, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" style=\"width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 1rem; color: var(--neutral-800); outline: none; transition: all 0.15s ease;\"></div></div></div><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><div style=\"width: 40px; height: 40px; background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white;\"><i class=\"fas fa-file-medical-alt\"></i></div><div><h2 style=\"font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Resumo da Sessão</h2></div></div><div style=\"background: var(--neutral-50); border-radius: var(--radius-lg); padding: var(--space-lg);\"><div style=\"margin-bottom: var(--space-md);\"><textarea name=\"summary\" rows=\"6\" placeholder=\"Resumo da sessão (o que foi discutido, intervenções realizadas, progresso, etc.)\" style=\"width: 100%; padding: var(--space-md) var(--space-lg); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--neutral-800); outline: none; resize: vertical; transition: all 0.15s ease;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"input-base\"></div></div></div><div class=\"mb-xl\"><div class=\"flex flex-center gap-md mb-lg\"><div class=\"card-icon card-icon-purple\"><i class=\"fas fa-file-medical-alt\"></i></div><div><h2 class=\"section-title\">Resumo da Sessão</h2></div></div><div class=\"bg-neutral-50 p-lg rounded-lg\"><div class=\"mb-md\"><label class=\"label-uppercase\">Resumo</label> <textarea name=\"summary\" rows=\"6\" placeholder=\"Resumo da sessão...\" class=\"textarea-base\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Summary)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 88, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 70, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</textarea></div></div></div><div style=\"display: flex; justify-content: flex-end; gap: var(--space-md); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-100);\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</textarea></div></div></div><div class=\"flex flex-between border-top-light pt-lg mb-xl\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 templ.SafeURL
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + data.FormData.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 94, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 76, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" style=\"display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: white; border: 1px solid var(--neutral-200); border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: var(--neutral-600); transition: all 0.15s ease;\"><i class=\"fas fa-times\"></i> Cancelar</a> <button type=\"submit\" style=\"display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) var(--space-xl); background: var(--primary-600); border: none; border-radius: var(--radius-lg); font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem; color: white; cursor: pointer; transition: all 0.15s ease;\"><i class=\"fas fa-save\"></i> Salvar Alterações</button></div></form></div><!-- Sidebar --><aside class=\"session-sidebar\"><!-- Observações Clínicas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-sticky-note\" style=\"color: var(--clinical-teal);\"></i><h4>Observações Clínicas</h4></div><div id=\"observations-list\" style=\"margin-bottom: var(--space-md);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"btn-outline-light\"><i class=\"fas fa-times btn-icon-left\"></i> Cancelar</a> <button type=\"submit\" class=\"btn-primary-solid\"><i class=\"fas fa-save btn-icon-left\"></i> Salvar Alterações</button></div><!-- Observações Clínicas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-sticky-note icon-teal\"></i><h3 class=\"section-title\">Observações Clínicas</h3></div><div id=\"observations-list\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -170,7 +170,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 				}
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div style=\"text-align: center; color: var(--neutral-400); padding: var(--space-lg);\"><i class=\"fas fa-sticky-note\" style=\"font-size: 1.5rem; margin-bottom: var(--space-sm); opacity: 0.5;\"></i><p style=\"font-size: 0.875rem; font-style: italic;\">Nenhuma observação registrada</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"text-center text-muted p-lg\"><i class=\"fas fa-sticky-note icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhuma observação registrada</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -183,7 +183,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- Intervenções Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-hands-helping\" style=\"color: var(--clinical-purple);\"></i><h4>Intervenções</h4></div><div id=\"interventions-list\" style=\"margin-bottom: var(--space-md);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- Intervenções Terapêuticas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-hands-helping icon-purple\"></i><h3 class=\"section-title\">Intervenções Terapêuticas</h3></div><div id=\"interventions-list\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -199,7 +199,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 				}
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div style=\"text-align: center; color: var(--neutral-400); padding: var(--space-lg);\"><i class=\"fas fa-hands-helping\" style=\"font-size: 1.5rem; margin-bottom: var(--space-sm); opacity: 0.5;\"></i><p style=\"font-size: 0.875rem; font-style: italic;\">Nenhuma intervenção registrada</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"text-center text-muted p-lg\"><i class=\"fas fa-hands-helping icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhuma intervenção registrada</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -212,79 +212,151 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- Metas em Foco --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye\" style=\"color: var(--primary-500);\"></i><h4>Metas Terapêuticas</h4></div><!-- Lista de metas --><ul id=\"session-goals-list\" class=\"session-goals-list\" style=\"margin-bottom: var(--space-md);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- Metas Terapêuticas --><div class=\"card\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-bullseye icon-primary\"></i><h3 class=\"section-title\">Metas Terapêuticas</h3></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, goalData := range data.Goals {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li class=\"session-goal-item\" id=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("session-goal-" + goalData.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 168, Col: 70}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"><div class=\"session-goal-content\"><span class=\"session-goal-indicator\"></span> <span class=\"session-goal-title\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(goalData.Title)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 171, Col: 57}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</span></div><button type=\"button\" class=\"session-goal-achieve\" title=\"Marcar como alcançada\" hx-put=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.FormData.PatientID + "/goals/" + goalData.ID + "/status?status=achieved")
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 177, Col: 109}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#session-goals-sidebar\" hx-swap=\"innerHTML\"><i class=\"fas fa-check\"></i></button></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+		if len(data.Goals) > 0 {
+			for _, g := range data.Goals {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li class=\"goal-item\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(g.Title)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 143, Col: 39}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</ul><div class=\"empty-state\"><p class=\"font-italic text-muted\">Nenhuma meta definida</p></div><form hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(data.Goals) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"session-goals-empty\"><p>Nenhuma meta definida</p></div>")
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/patients/" + data.FormData.PatientID + "/goals"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 150, Col: 81}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions form-actions-mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></form></div><!-- Sidebar --><aside class=\"session-sidebar\"><!-- Observações Clínicas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-sticky-note icon-teal\"></i><h4>Observações Clínicas</h4></div><div id=\"observations-list\" class=\"mb-md\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(data.Observations) > 0 {
+			for _, o := range data.Observations {
+				templ_7745c5c3_Err = ObservationItem(ObservationItemData{
+					ID:        o.ID,
+					Content:   o.Content,
+					CreatedAt: o.CreatedAt,
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"text-center text-muted p-lg\"><i class=\"fas fa-sticky-note icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhuma observação registrada</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Formulário para adicionar meta --><form class=\"inline-form\" hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div><form class=\"inline-form\" hx-post=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/observations"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 187, Col: 97}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" hx-target=\"#observations-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Intervenções Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-hands-helping icon-purple\"></i><h4>Intervenções</h4></div><div id=\"interventions-list\" class=\"mb-md\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(data.Interventions) > 0 {
+			for _, i := range data.Interventions {
+				templ_7745c5c3_Err = InterventionItem(InterventionItemData{
+					ID:        i.ID,
+					Content:   i.Content,
+					CreatedAt: i.CreatedAt,
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"text-center text-muted p-lg\"><i class=\"fas fa-hands-helping icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhuma intervenção registrada</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><form class=\"inline-form\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.FormData.PatientID + "/goals")
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/interventions"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 196, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 220, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" style=\"margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions\" style=\"margin-top: var(--space-sm);\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></aside></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" hx-target=\"#interventions-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Intervenção</label> <textarea name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-secondary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Metas Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye icon-primary\"></i><h4>Metas Terapêuticas</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(data.Goals) > 0 {
+			for _, g := range data.Goals {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li class=\"goal-item\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(g.Title)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 240, Col: 38}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</ul><div class=\"session-goals-empty\"><p>Nenhuma meta definida</p></div><form class=\"inline-form\" hx-post=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/patients/" + data.FormData.PatientID + "/goals"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 247, Col: 100}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></aside></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

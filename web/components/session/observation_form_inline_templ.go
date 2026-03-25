@@ -42,7 +42,7 @@ func ObservationFormInline(sessionID string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#observations-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions\" style=\"margin-top: var(--space-md);\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#observations-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions form-actions-mt-md\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

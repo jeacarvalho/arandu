@@ -76,9 +76,9 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 		<div class="sota-two-columns">
 			<!-- Coluna Esquerda - Fluxo Narrativo -->
 			<div class="sota-narrative-column">
-				<!-- Pacientes Ativos -->
-				<div class="patients-card">
-					<div class="patients-card-header">
+			<!-- Pacientes Ativos -->
+			<div class="patients-card clinical-card">
+				<div class="patients-card-header">
 						<div class="patients-card-title">
 							<div class="patients-card-icon">
 								<i class="fas fa-user-friends"></i>
@@ -118,26 +118,26 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 					</div>
 				</div>
 
-				<!-- Sessões Recentes (Cards no estilo Caderno) -->
-				if len(sessions) > 0 {
+			<!-- Sessões Recentes (Cards no estilo Caderno) -->
+			if len(sessions) > 0 {
+				<div class="clinical-card">
+					<h2 class="dashboard-section-heading">
+						Sessões Recentes
+					</h2>
 					<div>
-						<h2 style="font-family: var(--font-clinical); font-size: 1.25rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);">
-							Sessões Recentes
-						</h2>
-						<div>
-							for _, session := range sessions {
-								<div class="session-notebook-card">
-									<div class="session-badge">
-										Sessão #{ session.ID }
-									</div>
-									<div class="session-clinical-report">
-										{ session.Summary }
-									</div>
+						for _, session := range sessions {
+							<div class="session-notebook-card clinical-card">
+								<div class="session-badge">
+									Sessão #{ session.ID }
+								</div>
+								<div class="session-clinical-report">
+									{ session.Summary }
+								</div>
 									<div class="session-tags">
 										<span class="session-tag">Observação</span>
 										<span class="session-tag">Reflexão</span>
 									</div>
-									<div style="font-family: var(--font-clinical); font-size: 0.75rem; color: var(--arandu-soft);">
+									<div class="dashboard-meta-date">
 										{ session.Date } • Paciente: { session.PatientName }
 									</div>
 								</div>
@@ -149,11 +149,11 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 
 			<!-- Coluna Direita - Métricas e Cronologia -->
 			<div class="sota-metrics-column">
-				<!-- Linha do Tempo -->
-				<div class="stat-card-sota">
-					<h2 style="font-family: var(--font-clinical); font-size: 1.125rem; font-weight: 600; color: var(--arandu-dark); margin-bottom: var(--space-lg);">
-						Linha do Tempo
-					</h2>
+			<!-- Linha do Tempo -->
+			<div class="stat-card-sota clinical-card">
+				<h2 class="dashboard-section-heading-sm">
+					Linha do Tempo
+				</h2>
 					<div class="timeline-container">
 						<div class="timeline-marker"></div>
 						<div class="timeline-event">
@@ -195,9 +195,9 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 					</div>
 				</div>
 
-				<!-- Ações Rápidas -->
-				<div class="quick-actions-card">
-					<div class="quick-actions-header">
+			<!-- Ações Rápidas -->
+			<div class="quick-actions-card clinical-card">
+				<div class="quick-actions-header">
 						<div class="quick-actions-icon">
 							<i class="fas fa-bolt"></i>
 						</div>

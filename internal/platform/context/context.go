@@ -11,6 +11,7 @@ var (
 	ErrNoTenantID  = errors.New("no tenant ID in context")
 	ErrNoUserID    = errors.New("no user ID in context")
 	ErrNoRequestID = errors.New("no request ID in context")
+	ErrNoUserEmail = errors.New("no user email in context")
 )
 
 type contextKey string
@@ -20,6 +21,7 @@ const (
 	tenantIDKey  contextKey = "tenant_id"
 	userIDKey    contextKey = "user_id"
 	requestIDKey contextKey = "request_id"
+	userEmailKey contextKey = "user_email"
 )
 
 func WithTenantDB(ctx context.Context, db *sql.DB) context.Context {
@@ -68,4 +70,16 @@ func GetRequestID(ctx context.Context) (string, error) {
 		return "", ErrNoRequestID
 	}
 	return requestID, nil
+}
+
+func WithUserEmail(ctx context.Context, email string) context.Context {
+	return context.WithValue(ctx, userEmailKey, email)
+}
+
+func GetUserEmail(ctx context.Context) (string, error) {
+	email, ok := ctx.Value(userEmailKey).(string)
+	if !ok || email == "" {
+		return "", ErrNoUserEmail
+	}
+	return email, nil
 }

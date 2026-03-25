@@ -9,15 +9,14 @@ type ObservationItemData struct {
 templ ObservationItem(obs ObservationItemData) {
 	<div 
 		id={ "observation-" + obs.ID }
-		class="observation-item card-hover"
-		style="padding: var(--space-md); border-left: 3px solid var(--primary-500); background: var(--neutral-50); margin-bottom: var(--space-md);"
+		class="observation-item card-hover obs-item"
 	>
 		<div class="clinical-content source-serif">{ obs.Content }</div>
-		<div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm);">
-			<div style="font-size: 0.75rem; color: var(--neutral-500);">
-				<i class="fas fa-clock" style="margin-right: var(--space-xs);"></i>{ obs.CreatedAt }
+		<div class="obs-item-row">
+			<div class="obs-item-date">
+				<i class="fas fa-clock obs-item-icon"></i>{ obs.CreatedAt }
 			</div>
-			<div style="display: flex; gap: var(--space-xs); align-items: center;">
+			<div class="obs-item-actions">
 				<div class="badge badge-primary">Observação</div>
 				<button 
 					class="btn btn-icon btn-sm"

@@ -10,8 +10,12 @@ import (
 
 // CreatePatientInput represents the input data for creating a patient
 type CreatePatientInput struct {
-	Name  string `json:"name"`
-	Notes string `json:"notes,omitempty"`
+	Name       string `json:"name"`
+	Gender     string `json:"gender,omitempty"`
+	Ethnicity  string `json:"ethnicity,omitempty"`
+	Occupation string `json:"occupation,omitempty"`
+	Education  string `json:"education,omitempty"`
+	Notes      string `json:"notes,omitempty"`
 }
 
 // Validate validates the CreatePatientInput
@@ -24,16 +28,24 @@ func (input *CreatePatientInput) Validate() error {
 		return fmt.Errorf("patient name cannot exceed 255 characters")
 	}
 
-	if len(input.Notes) > 5000 {
-		return fmt.Errorf("patient notes cannot exceed 5000 characters")
+	if len(input.Gender) > 100 {
+		return fmt.Errorf("gender cannot exceed 100 characters")
 	}
 
-	// Additional application-level validation
-	// Example: Name cannot contain special characters (except spaces, hyphens, apostrophes)
-	for _, r := range input.Name {
-		if !isValidNameRune(r) {
-			return fmt.Errorf("patient name contains invalid character: %q", r)
-		}
+	if len(input.Ethnicity) > 100 {
+		return fmt.Errorf("ethnicity cannot exceed 100 characters")
+	}
+
+	if len(input.Occupation) > 100 {
+		return fmt.Errorf("occupation cannot exceed 100 characters")
+	}
+
+	if len(input.Education) > 100 {
+		return fmt.Errorf("education cannot exceed 100 characters")
+	}
+
+	if len(input.Notes) > 5000 {
+		return fmt.Errorf("patient notes cannot exceed 5000 characters")
 	}
 
 	return nil
@@ -58,6 +70,10 @@ func isValidNameRune(r rune) bool {
 // Sanitize sanitizes the input data
 func (input *CreatePatientInput) Sanitize() {
 	input.Name = strings.TrimSpace(input.Name)
+	input.Gender = strings.TrimSpace(input.Gender)
+	input.Ethnicity = strings.TrimSpace(input.Ethnicity)
+	input.Occupation = strings.TrimSpace(input.Occupation)
+	input.Education = strings.TrimSpace(input.Education)
 	input.Notes = strings.TrimSpace(input.Notes)
 
 	// Normalize multiple spaces to single space
@@ -66,9 +82,13 @@ func (input *CreatePatientInput) Sanitize() {
 
 // UpdatePatientInput represents the input data for updating a patient
 type UpdatePatientInput struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Notes string `json:"notes,omitempty"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Gender     string `json:"gender,omitempty"`
+	Ethnicity  string `json:"ethnicity,omitempty"`
+	Occupation string `json:"occupation,omitempty"`
+	Education  string `json:"education,omitempty"`
+	Notes      string `json:"notes,omitempty"`
 }
 
 // Validate validates the UpdatePatientInput
@@ -83,8 +103,12 @@ func (input *UpdatePatientInput) Validate() error {
 
 	// Reuse CreatePatientInput validation for name and notes
 	createInput := CreatePatientInput{
-		Name:  input.Name,
-		Notes: input.Notes,
+		Name:       input.Name,
+		Gender:     input.Gender,
+		Ethnicity:  input.Ethnicity,
+		Occupation: input.Occupation,
+		Education:  input.Education,
+		Notes:      input.Notes,
 	}
 
 	return createInput.Validate()
@@ -94,6 +118,10 @@ func (input *UpdatePatientInput) Validate() error {
 func (input *UpdatePatientInput) Sanitize() {
 	input.ID = strings.TrimSpace(input.ID)
 	input.Name = strings.TrimSpace(input.Name)
+	input.Gender = strings.TrimSpace(input.Gender)
+	input.Ethnicity = strings.TrimSpace(input.Ethnicity)
+	input.Occupation = strings.TrimSpace(input.Occupation)
+	input.Education = strings.TrimSpace(input.Education)
 	input.Notes = strings.TrimSpace(input.Notes)
 
 	// Normalize multiple spaces to single space
@@ -154,7 +182,7 @@ func (s *PatientService) CreatePatient(ctx context.Context, input CreatePatientI
 	// }
 
 	// Step 5: Create domain entity
-	p, err := patient.NewPatient(input.Name, input.Notes)
+	p, err := patient.NewPatient(input.Name, input.Gender, input.Ethnicity, input.Occupation, input.Education, input.Notes)
 	if err != nil {
 		// Domain validation error
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
@@ -272,7 +300,7 @@ func (s *PatientService) UpdatePatient(ctx context.Context, input UpdatePatientI
 	}
 
 	// Step 5: Update domain entity
-	if err := p.Update(input.Name, input.Notes); err != nil {
+	if err := p.Update(input.Name, input.Gender, input.Ethnicity, input.Occupation, input.Education, input.Notes); err != nil {
 		// Domain validation error
 		return fmt.Errorf("%w: %v", ErrInvalidInput, err)
 	}

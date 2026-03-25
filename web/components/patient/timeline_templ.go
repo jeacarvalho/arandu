@@ -39,38 +39,38 @@ func TimelineContent(data TimelinePageData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Timeline --><div style=\"position: relative;\"><div style=\"position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);\"></div><div id=\"timeline-content\" style=\"display: flex; flex-direction: column; gap: var(--space-xl);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Timeline --><div class=\"timeline-container\"><div class=\"timeline-line\"></div><div id=\"timeline-content\" class=\"timeline-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(data.Events) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div style=\"text-align: center; padding: var(--space-2xl) 0;\"><div style=\"color: var(--neutral-400); margin-bottom: var(--space-md);\"><i class=\"fas fa-calendar-day\" style=\"font-size: 3rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500);\">Nenhum evento clínico registrado ainda.</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"timeline-empty\"><div class=\"timeline-empty-icon\"><i class=\"fas fa-calendar-day\"></i></div><p class=\"timeline-empty-text\">Nenhum evento clínico registrado ainda.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
 			for _, event := range data.Events {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div style=\"position: relative;\"><div style=\"position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; { getEventDotStyle(event.Type) }\"></div><div style=\"border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; { getEventBorderStyle(event.Type) }\"><div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);\"><div style=\"display: flex; align-items: center;\"><span style=\"display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; { getEventBadgeStyle(event.Type) }\"><i class=\"{ getEventIcon(event.Type) }\" style=\"margin-right: var(--space-xs);\"></i> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"timeline-event\"><div class=\"timeline-dot { getEventDotClass(event.Type) }\"></div><div class=\"timeline-event-card { getEventBorderClass(event.Type) }\"><div class=\"timeline-event-header\"><div><span class=\"timeline-event-type { getEventBadgeClass(event.Type) }\"><i class=\"{ getEventIcon(event.Type) }\"></i> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getEventTypeLabel(event.Type))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 40, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 38, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span> <span style=\"margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span> <span class=\"timeline-event-time\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(event.Date.Format("15:04"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 43, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 41, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -88,38 +88,38 @@ func TimelineContent(data TimelinePageData) templ.Component {
 					var templ_7745c5c3_Var4 templ.SafeURL
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + event.Metadata["session_id"])
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 49, Col: 59}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 47, Col: 59}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" style=\"font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;\" onmouseover=\"this.style.color='var(--primary-800)';\" onmouseout=\"this.style.color='var(--primary-600)';\"><i class=\"fas fa-external-link-alt\" style=\"margin-right: 2px;\"></i> Ver sessão</a>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"timeline-event-link\"><i class=\"fas fa-external-link-alt\"></i> Ver sessão</a>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div style=\"font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"timeline-event-content\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(event.Content)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 61, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 57, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div style=\"margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);\"><div style=\"font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);\">Registrado em ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"timeline-event-footer\"><div class=\"timeline-event-meta\">Registrado em ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(event.CreatedAt.Format("02/01/2006 às 15:04"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 66, Col: 71}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 62, Col: 71}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -135,12 +135,12 @@ func TimelineContent(data TimelinePageData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(data.Events) == data.Limit {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"loading-indicator\" class=\"htmx-indicator\" style=\"text-align: center; padding: var(--space-xl);\"><div style=\"color: var(--neutral-400);\"><i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem;\"></i></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">A carregar mais registros...</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"loading-indicator\" class=\"htmx-indicator timeline-loading\"><div><i class=\"fas fa-spinner fa-spin\"></i></div><p class=\"timeline-loading-text\">A carregar mais registros...</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else if len(data.Events) > 0 && len(data.Events) < data.Limit {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div style=\"text-align: center; padding: var(--space-xl);\"><p style=\"font-family: var(--font-serif); font-style: italic; font-size: 0.875rem; color: var(--neutral-500);\">Fim dos registros históricos</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"timeline-end\"><p class=\"timeline-end-text\">Fim dos registros históricos</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -175,46 +175,46 @@ func FiltersAndContent(data TimelinePageData) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<!-- Filters --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; gap: var(--space-sm);\"><button hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<!-- Filters --><div class=\"timeline-filters\"><div class=\"timeline-filters-buttons\"><button hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=all")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 100, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 96, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter == nil) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Todos</button> <button hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" class=\"timeline-filter-btn { getButtonClass(data.Filter == nil) }\">Todos</button> <button hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=observation")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 110, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 104, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Observações</button> <button hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" class=\"timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }\">Observações</button> <button hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history?filter=intervention")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 120, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 112, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" style=\"padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-lg); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); { getButtonStyle(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }\" onmouseover=\"this.style.transform='translateY(-1px)'; this.style.boxShadow='var(--shadow-sm)';\" onmouseout=\"this.style.transform='translateY(0)'; this.style.boxShadow='none';\">Intervenções</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" hx-target=\"#filters-and-content\" hx-swap=\"innerHTML\" class=\"timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }\">Intervenções</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -247,20 +247,20 @@ func TimelineContainer(data TimelinePageData) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div style=\"padding: var(--space-lg); max-width: 72rem; margin: 0 auto;\"><!-- Header --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);\"><a href=\"/patients\" style=\"width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); color: var(--neutral-600); text-decoration: none;\"><i class=\"fas fa-arrow-left\"></i></a><div style=\"flex: 1;\"><h1 style=\"font-family: var(--font-clinical); font-size: 2rem; font-weight: 600; color: var(--neutral-800); margin-bottom: 0;\">Prontuário do Paciente</h1><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0;\">Histórico clínico longitudinal organizado cronologicamente</p></div></div></div><!-- Search --><div style=\"margin-bottom: var(--space-xl);\"><div style=\"position: relative;\"><input type=\"text\" name=\"q\" placeholder=\"Buscar no histórico clínico (ex: transferência, luto, ansiedade...)\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"timeline-page\"><!-- Header --><div class=\"timeline-header\"><div class=\"timeline-header-row\"><a href=\"/patients\" class=\"timeline-back-btn\"><i class=\"fas fa-arrow-left\"></i></a><div class=\"timeline-title-group\"><h1 class=\"timeline-title\">Prontuário do Paciente</h1><p class=\"timeline-subtitle\">Histórico clínico longitudinal organizado cronologicamente</p></div></div></div><!-- Search --><div class=\"timeline-search\"><div class=\"relative\"><input type=\"text\" name=\"q\" placeholder=\"Buscar no histórico clínico (ex: transferência, luto, ansiedade...)\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/history/search")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 161, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/timeline.templ`, Line: 151, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" hx-trigger=\"keyup changed delay:500ms, search\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" hx-indicator=\"#search-loading\" style=\"\n\t\t\t\t\t\twidth: 100%;\n\t\t\t\t\t\tpadding: var(--space-lg);\n\t\t\t\t\t\tpadding-left: 3rem;\n\t\t\t\t\t\tfont-family: var(--font-sans);\n\t\t\t\t\t\tfont-size: 1rem;\n\t\t\t\t\t\tborder: 1px solid var(--neutral-200);\n\t\t\t\t\t\tborder-radius: var(--radius-lg);\n\t\t\t\t\t\tbackground: white;\n\t\t\t\t\t\tcolor: var(--neutral-800);\n\t\t\t\t\t\tbox-shadow: var(--shadow-sm);\n\t\t\t\t\t\ttransition: all var(--transition-fast);\n\t\t\t\t\t\" onfocus=\"this.style.borderColor='var(--primary-400)'; this.style.boxShadow='var(--shadow-md)';\" onblur=\"this.style.borderColor='var(--neutral-200)'; this.style.boxShadow='var(--shadow-sm)';\"><div style=\"position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neutral-400);\"><i class=\"fas fa-search\"></i></div><div id=\"search-loading\" class=\"htmx-indicator\" style=\"position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);\"><i class=\"fas fa-spinner fa-spin\" style=\"color: var(--neutral-400);\"></i></div></div><p style=\"font-family: var(--font-sans); font-size: 0.875rem; color: var(--neutral-500); margin-top: var(--space-sm);\">Pesquise por termos específicos em todas as observações e intervenções deste paciente.</p></div><div id=\"filters-and-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" hx-trigger=\"keyup changed delay:500ms, search\" hx-target=\"#timeline-content\" hx-swap=\"innerHTML\" hx-indicator=\"#search-loading\" class=\"timeline-search-input\"><div class=\"timeline-search-icon\"><i class=\"fas fa-search\"></i></div><div id=\"search-loading\" class=\"htmx-indicator timeline-search-spinner\"><i class=\"fas fa-spinner fa-spin\"></i></div></div><p class=\"timeline-search-hint\">Pesquise por termos específicos em todas as observações e intervenções deste paciente.</p></div><div id=\"filters-and-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -290,12 +290,11 @@ func getFilterParam(filter *timeline.EventType) string {
 	}
 }
 
-func getButtonStyle(isActive bool) string {
+func getButtonClass(isActive bool) string {
 	if isActive {
-		return "background: var(--primary-600); color: white; border: 1px solid var(--primary-600);"
-	} else {
-		return "background: white; color: var(--neutral-700); border: 1px solid var(--neutral-200);"
+		return "active"
 	}
+	return ""
 }
 
 func getEventTypeLabel(eventType timeline.EventType) string {
@@ -324,42 +323,42 @@ func getEventIcon(eventType timeline.EventType) string {
 	}
 }
 
-func getEventBadgeStyle(eventType timeline.EventType) string {
+func getEventBadgeClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "background: var(--primary-50); color: var(--primary-800);"
+		return "bg-primary-50 text-primary-800"
 	case timeline.EventTypeObservation:
-		return "background: var(--insight-50); color: var(--insight-800);"
+		return "bg-insight-50 text-insight-800"
 	case timeline.EventTypeIntervention:
-		return "background: var(--clinical-50); color: var(--clinical-800);"
+		return "bg-clinical-50 text-clinical-800"
 	default:
-		return "background: var(--neutral-50); color: var(--neutral-800);"
+		return "bg-neutral-50 text-neutral-800"
 	}
 }
 
-func getEventDotStyle(eventType timeline.EventType) string {
+func getEventDotClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "background: var(--primary-600);"
+		return "bg-primary-600"
 	case timeline.EventTypeObservation:
-		return "background: var(--insight-600);"
+		return "bg-insight-600"
 	case timeline.EventTypeIntervention:
-		return "background: var(--clinical-600);"
+		return "bg-clinical-600"
 	default:
-		return "background: var(--neutral-600);"
+		return "bg-neutral-600"
 	}
 }
 
-func getEventBorderStyle(eventType timeline.EventType) string {
+func getEventBorderClass(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
-		return "border-left: 4px solid var(--primary-600);"
+		return "border-l-4 border-primary-600"
 	case timeline.EventTypeObservation:
-		return "border-left: 4px solid var(--insight-600);"
+		return "border-l-4 border-insight-600"
 	case timeline.EventTypeIntervention:
-		return "border-left: 4px solid var(--clinical-600);"
+		return "border-l-4 border-clinical-600"
 	default:
-		return "border-left: 4px solid var(--neutral-600);"
+		return "border-l-4 border-neutral-600"
 	}
 }
 

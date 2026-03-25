@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** dom 22 mar 2026 00:40:55 -03
+**Gerado em:** ter 24 mar 2026 22:20:28 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -24,6 +24,8 @@
 - cap-01-02-observacoes-clinicas.md
 - cap-01-03-intervencoes-terapeuticas.md
 - cap-01-04-contexto-biopsicossocial-farmacologico.md
+- cap-01-05-gestao-plano-terapeutico.md
+- cap-01-06-avaliacao-inicial-anamnese.md
 - cap-02-01-historico-paciente.md
 - cap-02-02-linha-tempo-clinica.md
 - cap-03-01-organizacao-observacoes.md
@@ -37,6 +39,7 @@
 - cap-07-04-recuperação-Informação-Performance.md
 - cap-08-01-evolucao-base-clinica.md
 - cap-08-02-observabilidade-diagnostico.md
+- cap-08-03-auditoria-conformidade.md
 - cap-09-01-analise-clinica.md
 - cap-10-01-base-clinica-coletiva.md
 
@@ -53,6 +56,7 @@
 - req-01-03-01-registrar-intervencao.md
 - req-01-04-01-registro-historico-farmacologico-sinais-vitais.md
 - req-01-05-01-planeamento-terapeutico-definicao-metas.md
+- req-01-06-01-anamnese-clinica-multidimensional.md
 - req-02-01-01-visualizar-historico.md
 - req-02-02-01-linha-tempo.md
 - req-03-01-01-classificar-observacao.md
@@ -74,15 +78,15 @@
 - req-09-01-01-analise-ia.md
 - req-10-01-01-base-anonimizada.md
 
-**Total de requirements:** 31
+**Total de requirements:** 32
 
 ## 🛠️ Tarefas recentes
 
-- task_20260322_002402
-- task_20260322_000812
-- task_20260321_231201
-- task_20260321_222837
-- task_20260321_221743
+- task_20260324_135406
+- task_20260323_203720
+- task_20260323_194257
+- task_20260323_102958
+- task_20260322_010755
 
 ## 📚 Sistema de Aprendizados
 
@@ -101,13 +105,13 @@ Arquivos principais:
 ## 📊 Status do Sistema
 
 - Visions: 10
-- Capabilities: 20
-- Requirements: 31
+- Capabilities: 23
+- Requirements: 32
 - Learnings: Sistema consolidado (4 arquivos principais + archive)
 
 ## 📈 Progresso do Projeto
 
 - **Tarefas concluídas:** 20
 - **Requirements implementados:** 20
-- **Última atualização permanente:** ** dom 22 mar 2026 00:40:55 -03
+- **Última atualização permanente:** ** ter 24 mar 2026 22:20:27 -03
 

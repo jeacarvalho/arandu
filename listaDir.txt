@@ -1,0 +1,694 @@
+[0;34m=== AUDITORIA DE ESTRUTURA ARANDU ===[0m
+Data: ter 24 mar 2026 13:01:09 -03
+
+[1;33m--- Mapeamento de Directórios e Ficheiros ---[0m
+.
+ |-bin
+ | |-arandu
+ |-arandu_central.db
+ |-web
+ | |-handlers
+ | | |-handler.go
+ | |-components
+ | | |-dashboard
+ | | | |-dashboard_templ.go
+ | | | |-dashboard.templ
+ | | |-patient
+ | | | |-timeline.templ
+ | | | |-goal_closure_modal_templ.go
+ | | | |-goal_list.templ
+ | | | |-therapeutic_plan_report_templ.go
+ | | | |-add_goal_form.templ
+ | | | |-list.templ
+ | | | |-medication_list_templ.go
+ | | | |-theme_cloud.templ
+ | | | |-goal_list_templ.go
+ | | | |-biopsychosocial_viewmodel.go
+ | | | |-biopsychosocial_preview.templ
+ | | | |-vitals_widget.templ
+ | | | |-new_form_templ.go
+ | | | |-search.templ
+ | | | |-vitals_widget_templ.go
+ | | | |-timeline_templ.go
+ | | | |-detail_templ.go
+ | | | |-search_templ.go
+ | | | |-therapeutic_plan_report.templ
+ | | | |-biopsychosocial_panel.templ
+ | | | |-anamnesis.templ
+ | | | |-medication_list.templ
+ | | | |-anamnesis_templ.go
+ | | | |-goal_closure_modal.templ
+ | | | |-theme_cloud_templ.go
+ | | | |-add_goal_form_templ.go
+ | | | |-profile.templ
+ | | | |-list_templ.go
+ | | | |-detail.templ
+ | | | |-theme_cloud.go
+ | | | |-biopsychosocial_preview_templ.go
+ | | | |-profile_templ.go
+ | | | |-new_form.templ
+ | | | |-biopsychosocial_panel_templ.go
+ | | |-auth
+ | | | |-login.templ
+ | | | |-login_templ.go
+ | | |-layout
+ | | | |-error_templ.go
+ | | | |-sidebar_patient.templ
+ | | | |-layout.templ
+ | | | |-error.templ
+ | | | |-layout_templ.go
+ | | | |-sidebar_patient_templ.go
+ | | |-ai
+ | | | |-insight_card.templ
+ | | | |-generate_insight_button.templ
+ | | | |-generate_insight_button_templ.go
+ | | | |-insight_card_templ.go
+ | | |-session
+ | | | |-observation_item.templ
+ | | | |-observation_form_inline.templ
+ | | | |-edit_form.templ
+ | | | |-goals_sidebar_templ.go
+ | | | |-intervention_edit_form.templ
+ | | | |-goals_sidebar.templ
+ | | | |-intervention_form_templ.go
+ | | | |-edit_session_wizard.templ
+ | | | |-intervention_item.templ
+ | | | |-intervention_form_inline.templ
+ | | | |-edit_session_wizard_templ.go
+ | | | |-session_list_templ.go
+ | | | |-new_form_templ.go
+ | | | |-edit_form_templ.go
+ | | | |-intervention_item_templ.go
+ | | | |-intervention_form_inline_templ.go
+ | | | |-session_list.templ
+ | | | |-observation_form.templ
+ | | | |-detail_templ.go
+ | | | |-observation_form_templ.go
+ | | | |-observation_item_templ.go
+ | | | |-observation_edit_form.templ
+ | | | |-observation_edit_form_templ.go
+ | | | |-intervention_edit_form_templ.go
+ | | | |-detail.templ
+ | | | |-new_form.templ
+ | | | |-observation_form_inline_templ.go
+ | | | |-intervention_form.templ
+ | |-static
+ | | |-test-network.html
+ | | |-test-final.html
+ | | |-final-test.html
+ | | |-simple-test.html
+ | | |-test-alpine.html
+ | | |-test-line68.html
+ | | |-js
+ | | | |-patients.js
+ | | | |-interactions.js
+ | | |-debug-error.html
+ | | |-test-patient-sim.html
+ | | |-test-js-error.html
+ | | |-check-errors.html
+ | | |-test-bio-context.html
+ | | |-simple-context.html
+ | | |-css
+ | | | |-tailwind.css
+ | | | |-style.css
+ | | |-test-fetch.html
+ | | |-debug-bio-context.html
+ |-scripts
+ | |-others
+ | | |-sobe_app.sh
+ | | |-create_vision.sh
+ | | |-create_req.sh
+ | | |-create_struct.sh
+ | | |-create_cap.sh
+ | | |-test_full_flow.sh
+ | | |-test_observation_edit.sh
+ | | |-copia_docs.sh
+ | |-capture_with_cookies.py
+ | |-arandu_migrate_to_hashed_storage.sh
+ | |-arandu_checkpoint.sh
+ | |-backup
+ | | |-arandu_update_context.sh
+ | | |-arandu_start_session.sh
+ | | |-arandu_update_context_v2.sh
+ | | |-arandu_conclude_task.sh
+ | |-arandu_update_context.sh
+ | |-init_design_system.sh
+ | |-arandu_process_task.sh
+ | |-verify_onboarding.sh
+ | |-arandu_migrate_to_uuid.sh
+ | |-arandu_start_session.sh
+ | |-arandu_validate_handlers.sh
+ | |-arandu_update_context_v2.sh
+ | |-arandu_end_session.sh
+ | |-arandu_guard.sh
+ | |-generate_massive_clinical_data.py
+ | |-arandu_update_context_old.sh
+ | |-README.md
+ | |-arandu_screenshot.sh
+ | |-arandu_conclude_task.sh
+ | |-arandu_create_task.sh
+ | |-start-monitoring.sh
+ | |-generate_massive_data.py
+ | |-safe_deploy.sh
+ |-arandu
+ |-work
+ | |-tasks
+ | |-archive
+ | | |-task_20260317_140558
+ | | | |-task.md
+ | | |-task_20260317_220659
+ | | | |-task.md
+ | | |-task_20260320_223251
+ | | | |-task.md
+ | | |-task_20260313_221358
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260313_193204
+ | | | |-task.md
+ | | |-task_20260320_153638
+ | | | |-task.md
+ | | |-task_20260317_214109
+ | | | |-task.md
+ | | |-task_20260318_104646
+ | | | |-task.md
+ | | |-task_20260315_131839
+ | | | |-task.md
+ | | |-task_20260323_194257
+ | | | |-task.md
+ | | |-task_20260313_232014
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260317_163805
+ | | | |-task.md
+ | | |-task_20260315_201217
+ | | | |-learnings.md
+ | | | |-task.md
+ | | |-task_20260318_232641
+ | | | |-task.md
+ | | |-task_20260321_212325
+ | | | |-task.md
+ | | |-task_20260313_192946
+ | | | |-task.md
+ | | |-task_20260313_231712
+ | | | |-task.md
+ | | |-task_20260313_223659
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260315_191104
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260315_194932
+ | | | |-task.md
+ | | |-task_20260323_203720
+ | | | |-task.md
+ | | |-task_20260320_233022
+ | | | |-task.md
+ | | |-task_20260313_192951
+ | | | |-task.md
+ | | |-task_20260316_175916
+ | | | |-task.md
+ | | |-task_20260313_215938
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260321_175334
+ | | | |-task.md
+ | | |-task_20260316_092337
+ | | | |-task.md
+ | | |-task_20260314_221708
+ | | | |-task.md
+ | | | |-learning.md
+ | | |-task_20260321_200340
+ | | | |-task.md
+ | | |-task_20260313_222423
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260318_150801
+ | | | |-task.md
+ | | |-task_20260316_153842
+ | | | |-task.md
+ | | |-task_20260322_005408
+ | | | |-task.md
+ | | |-task_20260315_154905
+ | | | |-task.md
+ | | | |-verification.md
+ | | |-task_20260321_231201
+ | | | |-task.md
+ | | |-task_20260317_094000
+ | | | |-task.md
+ | | |-task_20260320_171514
+ | | | |-task.md
+ | | |-task_20260313_192852
+ | | | |-task.md
+ | | |-task_20260322_010755
+ | | | |-exemplo-implementacao.html
+ | | | |-task.md
+ | | |-task_20260322_002402
+ | | | |-task.md
+ | | |-task_20260318_230628
+ | | | |-task.md
+ | | |-task_20260323_102958
+ | | | |-task.md
+ | | |-task_20260320_230909
+ | | | |-task.md
+ | | |-task_20260314_222910
+ | | | |-task.md
+ | | |-task_20260317_175418
+ | | | |-task.md
+ | | |-task_20260322_000812
+ | | | |-task.md
+ | | |-task_20260317_161759
+ | | | |-task.md
+ | | |-task_20260313_224928
+ | | | |-task.md
+ | | | |-implementation.md
+ | | |-task_20260315_143141
+ | | | |-task.md
+ | | |-task_20260317_153710
+ | | | |-task.md
+ | | |-task_20260320_230256
+ | | | |-task.md
+ | | |-task_20260321_222837
+ | | | |-task.md
+ | | |-task_20260314_194416
+ | | | |-task.md
+ | | |-task_20260313_185952
+ | | | |-task.md
+ | | |-task_20260318_211140
+ | | | |-task.md
+ | | |-task_20260321_221743
+ | | | |-task.md
+ | |-README.md
+ |-validate_implementation.go.bak
+ |-arandu.db
+ |-lista_diretorios_arquivos.sh
+ |-internal
+ | |-web
+ | | |-dummy_renderer.go
+ | | |-templ_renderer.go
+ | | |-handlers
+ | | | |-ai_handler.go
+ | | | |-intervention_handler.go
+ | | | |-new_patient_test.go
+ | | | |-timeline_handler.go
+ | | | |-observation_handler.go
+ | | | |-observation_handler_test.go
+ | | | |-auth_handler.go
+ | | | |-patient_handler.go
+ | | | |-dashboard_handler.go
+ | | | |-biopsychosocial_handler.go
+ | | | |-timeline_handler_test.go
+ | | | |-patient_handler_timeline_test.go
+ | | | |-session_handler.go
+ | | |-service_adapters.go
+ | | |-logging_renderer.go
+ | |-e2e
+ | | |-uuid_v4_test.go
+ | | |-storage
+ | | | |-tenants
+ | |-domain
+ | | |-insight
+ | | | |-insight_test.go
+ | | | |-insight.go
+ | | |-observation
+ | | | |-observation_test.go
+ | | | |-observation.go
+ | | |-intervention
+ | | | |-intervention.go
+ | | | |-intervention_test.go
+ | | |-shared
+ | | | |-user_test.go
+ | | | |-user.go
+ | | | |-tenant_test.go
+ | | | |-tenant.go
+ | | |-patient
+ | | | |-goal_test.go
+ | | | |-anamnesis.go
+ | | | |-patient_test.go
+ | | | |-anamnesis_test.go
+ | | | |-goal.go
+ | | | |-patient.go
+ | | | |-medication_test.go
+ | | | |-vitals_test.go
+ | | | |-vitals.go
+ | | | |-medication.go
+ | | |-timeline
+ | | | |-timeline.go
+ | | | |-timeline_test.go
+ | | |-session
+ | | | |-repository.go
+ | | | |-session_test.go
+ | | | |-entity.go
+ | | | |-session.go
+ | |-platform
+ | | |-context
+ | | | |-context.go
+ | | | |-context_test.go
+ | | |-logger
+ | | | |-logger.go
+ | | | |-logger_test.go
+ | | |-version
+ | | | |-version.go
+ | | |-middleware
+ | | | |-request_id.go
+ | | | |-telemetry.go
+ | | | |-auth.go
+ | | | |-telemetry_test.go
+ | | | |-auth_test.go
+ | | | |-request_id_test.go
+ | | |-storage
+ | | | |-path_resolver.go
+ | | | |-path_resolver_test.go
+ | | | |-storage
+ | |-application
+ | | |-services
+ | | | |-biopsychosocial_service.go
+ | | | |-observation_service_test.go
+ | | | |-timeline_service.go
+ | | | |-session_service.go
+ | | | |-tenant_service.go
+ | | | |-create_session_service.go
+ | | | |-session_service_test.go
+ | | | |-insight_service.go
+ | | | |-audit_service_test.go
+ | | | |-timeline_service_context.go
+ | | | |-ai_service_test.go
+ | | | |-timeline_service_context_test.go
+ | | | |-ai_service.go
+ | | | |-observation_service.go
+ | | | |-audit_service.go
+ | | | |-tenant_service_test.go
+ | | | |-goal_service.go
+ | | | |-storage
+ | | | |-create_session_service_test.go
+ | | | |-intervention_service.go
+ | | | |-patient_service_test.go
+ | | | |-patient_service.go
+ | |-infrastructure
+ | | |-repository
+ | | | |-sqlite
+ | | |-auth
+ | | | |-google_provider_test.go
+ | | | |-google_provider.go
+ | | |-ai
+ | | | |-gemini_client.go
+ | | | |-cache_test.go
+ | | | |-cache.go
+ |-docker-compose.monitoring.yml
+ |-design
+ | |-components
+ | | |-card.md
+ | | |-buttons.md
+ | | |-editor-clinico.md
+ | |-README.md
+ | |-tailwind.config.js
+ | |-css
+ | | |-base.css
+ | |-wireframes
+ | | |-main_layout.md
+ | | |-session_editor.md
+ |-screenshots
+ | |-dashboard_104611.png
+ | |-dashboard_v2.png
+ | |-dashboard_authenticated.png
+ | |-dashboard_final.png
+ | |-login_20260323_230118.png
+ |-go.sum
+ |-listaDir.txt
+ |-init_db.sql
+ |-go.mod
+ |-tests
+ | |-e2e
+ | | |-http_patient_flow_test.go
+ | | |-e2e_full_workflow_test.go
+ | | |-onboarding_test.go
+ | | |-session_edit_test.go
+ | | |-biopsychosocial_test.go
+ | | |-observation_edit_test.go
+ | | |-storage
+ | | | |-tenants
+ |-ANTI_PATTERNS.md
+ |-monitoring
+ | |-promtail-config.yml
+ | |-loki-config.yml
+ | |-grafana
+ | | |-provisioning
+ | | | |-datasources
+ | | | |-dashboards
+ | | |-dashboards
+ | | | |-arandu-ops.json
+ | |-README.md
+ | |-TROUBLESHOOTING.md
+ |-PLANO_PROTECAO_AGENTES.md
+ |-TEMP_PLANO_MIGRACAO.md
+ |-server.log
+ |-docs
+ | |-strategy
+ | | |-versioning_sota_strategy.md
+ | | |-responsive_sota_strategy.md
+ | |-capabilities
+ | | |-cap-01-04-contexto-biopsicossocial-farmacologico.md
+ | | |-cap-07-01-gestao-agenda.md
+ | | |-cap-08-01-evolucao-base-clinica.md
+ | | |-cap-03-02-organizacao-intervencoes.md
+ | | |-cap-10-01-base-clinica-coletiva.md
+ | | |-cap-09-01-analise-clinica.md
+ | | |-cap-03-01-organizacao-observacoes.md
+ | | |-cap-02-01-historico-paciente.md
+ | | |-cap-08-03-auditoria-conformidade.md
+ | | |-cap-07-04-recuperação-Informação-Performance.md
+ | | |-cap-01-00-gestao-pacientes.md
+ | | |-cap-01-01-registro-sessoes.md
+ | | |-cap-04-01-identificacao-padroes.md
+ | | |-cap-05-01-assistente-reflexivo.md
+ | | |-cap-01-06-avaliacao-inicial-anamnese.md
+ | | |-cap-01-05-gestao-plano-terapeutico.md
+ | | |-cap-01-02-observacoes-clinicas.md
+ | | |-cap-08-02-observabilidade-diagnostico.md
+ | | |-cap-06-01-comparacao-casos.md
+ | | |-cap-02-02-linha-tempo-clinica.md
+ | | |-cap-01-03-intervencoes-terapeuticas.md
+ | | |-cap-07-03-gestao-acesso-multi-tenancy.md
+ | | |-cap-07-02-gestao-atendimentos.md
+ | |-design-system.md
+ | |-domain
+ | | |-patient.md
+ | | |-session.md
+ | |-agent_context
+ | | |-project_state.md
+ | |-requirements
+ | | |-req-08-02-01-padronização-logs-estruturados.md
+ | | |-req-07-04-02-busca-contextual-prontuario.md
+ | | |-req-01-02-01-adicionar-observacao.md
+ | | |-req-07-03-03-migracao-multi-tenant.md
+ | | |-req-01-01-01-criar-sessao.md
+ | | |-req-01-06-01-anamnese-clinica-multidimensional.md
+ | | |-req-01-00-02-editar-paciente.md
+ | | |-req-08-01-02-servico-auditoria-centralizada .md
+ | | |-req-07-04-01-paginação-Infinite-scroll.md
+ | | |-req-01-01-03-listar-sessoes.md
+ | | |-req-05-01-01-consulta-ia.md
+ | | |-req-02-01-01-visualizar-historico.md
+ | | |-req-01-05-01-planeamento-terapeutico-definicao-metas.md
+ | | |-req-01-03-01-registrar-intervencao.md
+ | | |-req-01-02-02-editar-observacao.md
+ | | |-req-03-02-01-classificar-intervencao.md
+ | | |-req-06-01-01-comparar-casos.md
+ | | |-req-09-01-01-analise-ia.md
+ | | |-req-07-03-01-autenticacao-usuario.md
+ | | |-req-01-04-01-registro-historico-farmacologico-sinais-vitais.md
+ | | |-req-07-03-02-orquestracao-conexao-db.md
+ | | |-req-07-02-01-registrar-atendimento.md
+ | | |-req-01-01-02-editar-sessao.md
+ | | |-req-01-00-03-buscar-localizar-pacientes.md
+ | | |-req-01-00-01-criar-paciente.md
+ | | |-req-08-01-01-evolucao-base.md
+ | | |-req-07-01-01-gerenciar-agenda.md
+ | | |-req-02-02-01-linha-tempo.md
+ | | |-req-08-03-01-auditoria-acessos-clinicos.md
+ | | |-req-04-01-01-detectar-padroes.md
+ | | |-req-03-01-01-classificar-observacao.md
+ | | |-req-10-01-01-base-anonimizada.md
+ | |-learnings
+ | | |-ARCHITECTURE_PATTERNS.md
+ | | |-archive
+ | | | |-task_20260313_215938.md
+ | | | |-req-01-00-01.md
+ | | | |-task_20260315_174000.md
+ | | | |-logbook-sota.md
+ | | | |-req-01-02-02.md
+ | | | |-SEED_DATA_MASSIVE_20260317.md
+ | | | |-SEED_DATA_20260317.md
+ | | | |-task_20260315_131839.md
+ | | | |-task_20260313_192946.md
+ | | | |-req-01-01-02.md
+ | | | |-req-01-04-01.md
+ | | | |-task_20260314_194416.md
+ | | | |-task_20260317_220659.md
+ | | | |-req-01-01-01.md
+ | | | |-task_20260313_193204.md
+ | | | |-task_20260314_221708.md
+ | | | |-task_20260315_154905.md
+ | | | |-task_20260315_191104.md
+ | | |-README.md
+ | | |-TEMPL_GUIDE.md
+ | | |-SQLITE_BEST_PRACTICES.md
+ | | |-MASTER_LEARNINGS.md
+ | |-vision
+ | | |-vision-03-organizacao-conhecimento-clinico.md
+ | | |-vision-05-assistencia-reflexiva-ia.md
+ | | |-vision-08-base-clinica-evolutiva.md
+ | | |-vision-10-aprendizado-clinico-coletivo.md
+ | | |-vision-07-organizacao-operacional-consultorio.md
+ | | |-vision-01-registro-pratica-clinica.md
+ | | |-vision-04-descoberta-padroes-clinicos.md
+ | | |-vision-09-inteligencia-clinica-ampliada.md
+ | | |-vision-06-comparacao-casos-clinicos.md
+ | | |-vision-02-memoria-clinica-longitudinal.md
+ | |-project_context
+ | | |-permanent_state.md
+ | |-architecture
+ | | |-ROUTE_CONVENTIONS.md
+ | | |-standardized_layout_protocol.md
+ | | |-system_structure.md
+ | | |-AGENT_GUIDE.md
+ | | |-WEB_LAYER_PATTERN.md
+ | | |-README.md
+ | |-dvp.md
+ |-cmd
+ | |-arandu
+ | | |-arandu
+ | | |-main.go
+ | |-version_test
+ | | |-main.go
+ |-README_GEMINI.md
+ |-Makefile
+ |-storage
+ | |-arandu_central.db
+ | |-tenants
+ | | |-d5
+ | | | |-ed
+ | | |-de
+ | | | |-fa
+ | | |-b9
+ | | | |-67
+ | | |-62
+ | | | |-6e
+ |-migrations
+ | |-002_create_sessions_table.sql
+
+[1;33m--- Detector de Possíveis Duplicidades (Mesmo nome em pastas diferentes) ---[0m
+[0;31m⚠ Duplicado detectado: arandu[0m
+./bin/arandu
+./arandu
+./cmd/arandu
+./cmd/arandu/arandu
+[0;31m⚠ Duplicado detectado: arandu_central.db[0m
+./arandu_central.db
+./storage/arandu_central.db
+[0;31m⚠ Duplicado detectado: arandu_conclude_task.sh[0m
+./scripts/backup/arandu_conclude_task.sh
+./scripts/arandu_conclude_task.sh
+[0;31m⚠ Duplicado detectado: arandu_start_session.sh[0m
+./scripts/backup/arandu_start_session.sh
+./scripts/arandu_start_session.sh
+[0;31m⚠ Duplicado detectado: arandu_update_context.sh[0m
+./scripts/backup/arandu_update_context.sh
+./scripts/arandu_update_context.sh
+[0;31m⚠ Duplicado detectado: arandu_update_context_v2.sh[0m
+./scripts/backup/arandu_update_context_v2.sh
+./scripts/arandu_update_context_v2.sh
+[0;31m⚠ Duplicado detectado: detail.templ[0m
+./web/components/patient/detail.templ
+./web/components/session/detail.templ
+[0;31m⚠ Duplicado detectado: detail_templ.go[0m
+./web/components/patient/detail_templ.go
+./web/components/session/detail_templ.go
+[0;31m⚠ Duplicado detectado: implementation.md[0m
+./work/archive/task_20260313_221358/implementation.md
+./work/archive/task_20260313_232014/implementation.md
+./work/archive/task_20260313_223659/implementation.md
+./work/archive/task_20260315_191104/implementation.md
+./work/archive/task_20260313_215938/implementation.md
+./work/archive/task_20260313_222423/implementation.md
+./work/archive/task_20260313_224928/implementation.md
+[0;31m⚠ Duplicado detectado: main.go[0m
+./cmd/arandu/main.go
+./cmd/version_test/main.go
+[0;31m⚠ Duplicado detectado: new_form.templ[0m
+./web/components/patient/new_form.templ
+./web/components/session/new_form.templ
+[0;31m⚠ Duplicado detectado: new_form_templ.go[0m
+./web/components/patient/new_form_templ.go
+./web/components/session/new_form_templ.go
+[0;31m⚠ Duplicado detectado: README.md[0m
+./scripts/README.md
+./work/README.md
+./design/README.md
+./monitoring/README.md
+./docs/learnings/README.md
+./docs/architecture/README.md
+[0;31m⚠ Duplicado detectado: task.md[0m
+./work/archive/task_20260317_140558/task.md
+./work/archive/task_20260317_220659/task.md
+./work/archive/task_20260320_223251/task.md
+./work/archive/task_20260313_221358/task.md
+./work/archive/task_20260313_193204/task.md
+./work/archive/task_20260320_153638/task.md
+./work/archive/task_20260317_214109/task.md
+./work/archive/task_20260318_104646/task.md
+./work/archive/task_20260315_131839/task.md
+./work/archive/task_20260323_194257/task.md
+./work/archive/task_20260313_232014/task.md
+./work/archive/task_20260317_163805/task.md
+./work/archive/task_20260315_201217/task.md
+./work/archive/task_20260318_232641/task.md
+./work/archive/task_20260321_212325/task.md
+./work/archive/task_20260313_192946/task.md
+./work/archive/task_20260313_231712/task.md
+./work/archive/task_20260313_223659/task.md
+./work/archive/task_20260315_191104/task.md
+./work/archive/task_20260315_194932/task.md
+./work/archive/task_20260323_203720/task.md
+./work/archive/task_20260320_233022/task.md
+./work/archive/task_20260313_192951/task.md
+./work/archive/task_20260316_175916/task.md
+./work/archive/task_20260313_215938/task.md
+./work/archive/task_20260321_175334/task.md
+./work/archive/task_20260316_092337/task.md
+./work/archive/task_20260314_221708/task.md
+./work/archive/task_20260321_200340/task.md
+./work/archive/task_20260313_222423/task.md
+./work/archive/task_20260318_150801/task.md
+./work/archive/task_20260316_153842/task.md
+./work/archive/task_20260322_005408/task.md
+./work/archive/task_20260315_154905/task.md
+./work/archive/task_20260321_231201/task.md
+./work/archive/task_20260317_094000/task.md
+./work/archive/task_20260320_171514/task.md
+./work/archive/task_20260313_192852/task.md
+./work/archive/task_20260322_010755/task.md
+./work/archive/task_20260322_002402/task.md
+./work/archive/task_20260318_230628/task.md
+./work/archive/task_20260323_102958/task.md
+./work/archive/task_20260320_230909/task.md
+./work/archive/task_20260314_222910/task.md
+./work/archive/task_20260317_175418/task.md
+./work/archive/task_20260322_000812/task.md
+./work/archive/task_20260317_161759/task.md
+./work/archive/task_20260313_224928/task.md
+./work/archive/task_20260315_143141/task.md
+./work/archive/task_20260317_153710/task.md
+./work/archive/task_20260320_230256/task.md
+./work/archive/task_20260321_222837/task.md
+./work/archive/task_20260314_194416/task.md
+./work/archive/task_20260313_185952/task.md
+./work/archive/task_20260318_211140/task.md
+./work/archive/task_20260321_221743/task.md
+
+[1;33m--- Resumo de Quantidades ---[0m
+Total de Ficheiros Go:    156
+Total de Templates Templ: 37
+Total de Requisitos (.md):37
+Total de Migrações SQL:   22
+
+[0;34m=====================================[0m

@@ -108,7 +108,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"btn btn-outline\"><i class=\"fas fa-edit btn-icon\"></i>Editar</a> <button class=\"btn btn-primary\"><i class=\"fas fa-plus btn-icon\"></i>Nova Observação</button></div></div></div><div class=\"form-grid\" style=\"margin-bottom: var(--space-2xl);\"><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); color: white;\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div id=\"observations-list\" style=\"margin-top: var(--space-lg);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"btn btn-outline\"><i class=\"fas fa-edit btn-icon\"></i>Editar</a> <button class=\"btn btn-primary\"><i class=\"fas fa-plus btn-icon\"></i>Nova Observação</button></div></div></div><div class=\"form-grid mb-2xl\"><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-primary\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div id=\"observations-list\" class=\"mt-lg\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -124,7 +124,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 					}
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div style=\"margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"border-top-md mt-lg\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -132,7 +132,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div id=\"interventions-list\" style=\"margin-top: var(--space-lg);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-secondary\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div id=\"interventions-list\" class=\"mt-lg\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -148,7 +148,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 					}
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div style=\"margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--neutral-200);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"border-top-md mt-lg\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -156,7 +156,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;\"><i class=\"fas fa-file-medical-alt\"></i></div><div><h2 class=\"card-title\">Resumo da Sessão</h2><p class=\"card-subtitle\">Síntese e reflexões clínicas</p></div></div><div class=\"clinical-content\" style=\"padding: var(--space-xl);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-purple\"><i class=\"fas fa-file-medical-alt\"></i></div><div><h2 class=\"card-title\">Resumo da Sessão</h2><p class=\"card-subtitle\">Síntese e reflexões clínicas</p></div></div><div class=\"clinical-content p-xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -171,7 +171,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div style=\"text-align: center; color: var(--neutral-400);\"><i class=\"fas fa-file-medical-alt\" style=\"font-size: 2rem; margin-bottom: var(--space-md); opacity: 0.5;\"></i><p style=\"font-style: italic;\">Nenhum resumo registrado</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"text-center text-muted\"><i class=\"fas fa-file-medical-alt icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhum resumo registrado</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

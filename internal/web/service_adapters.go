@@ -250,3 +250,29 @@ func (a *GoalServiceAdapter) FindByID(ctx context.Context, id string) (*patient.
 func (a *GoalServiceAdapter) FindByPatientID(ctx context.Context, patientID string) ([]*patient.TherapeuticGoal, error) {
 	return a.repo.FindByPatientID(ctx, patientID)
 }
+
+// AnamnesisServiceAdapter adapts repository to handlers.AnamnesisService interface
+type AnamnesisServiceAdapter struct {
+	repo interface {
+		GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error)
+		SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error
+	}
+}
+
+// NewAnamnesisServiceAdapter creates a new adapter
+func NewAnamnesisServiceAdapter(repo interface {
+	GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error)
+	SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error
+}) *AnamnesisServiceAdapter {
+	return &AnamnesisServiceAdapter{repo: repo}
+}
+
+// GetAnamnesis implements handlers.AnamnesisService interface
+func (a *AnamnesisServiceAdapter) GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error) {
+	return a.repo.GetAnamnesis(ctx, patientID)
+}
+
+// SaveAnamnesis implements handlers.AnamnesisService interface
+func (a *AnamnesisServiceAdapter) SaveAnamnesis(ctx context.Context, anamnesis *patient.Anamnesis) error {
+	return a.repo.SaveAnamnesis(ctx, anamnesis)
+}

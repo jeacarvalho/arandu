@@ -39,7 +39,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("Create and retrieve patient", func(t *testing.T) {
 		// Create a patient using domain constructor
-		p, err := patient.NewPatient("Test Patient", "Test Notes")
+		p, err := patient.NewPatient("Test Patient", "Male", "Caucasian", "Developer", "Bachelor's", "Test Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -89,6 +89,10 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		for i := 1; i <= 3; i++ {
 			p, err := patient.NewPatient(
 				"Patient "+string(rune('A'+i-1)),
+				"Male",
+				"Caucasian",
+				"Developer",
+				"Bachelor's",
 				"Notes "+string(rune('A'+i-1)),
 			)
 			if err != nil {
@@ -129,7 +133,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("Update patient", func(t *testing.T) {
 		// Create a patient
-		p, err := patient.NewPatient("Original Name", "Original Notes")
+		p, err := patient.NewPatient("Original Name", "Male", "Caucasian", "Developer", "Bachelor's", "Original Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -142,7 +146,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		originalUpdatedAt := p.UpdatedAt
 		time.Sleep(1 * time.Millisecond) // Ensure timestamp changes
 
-		if err := p.Update("Updated Name", "Updated Notes"); err != nil {
+		if err := p.Update("Updated Name", "Female", "Hispanic", "Teacher", "Master's", "Updated Notes"); err != nil {
 			t.Fatalf("Failed to update patient: %v", err)
 		}
 
@@ -170,7 +174,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 	t.Run("Delete patient", func(t *testing.T) {
 		// Create a patient
-		p, err := patient.NewPatient("To Delete", "Delete Notes")
+		p, err := patient.NewPatient("To Delete", "Male", "Caucasian", "Developer", "Bachelor's", "Delete Notes")
 		if err != nil {
 			t.Fatalf("Failed to create patient: %v", err)
 		}
@@ -230,7 +234,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 		}
 
 		for _, pt := range patients {
-			p, err := patient.NewPatient(pt.name, pt.notes)
+			p, err := patient.NewPatient(pt.name, "Male", "Caucasian", "Developer", "Bachelor's", pt.notes)
 			if err != nil {
 				t.Fatalf("Failed to create patient: %v", err)
 			}
@@ -286,7 +290,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 		// Create 5 patients
 		for i := 1; i <= 5; i++ {
-			p, err := patient.NewPatient(fmt.Sprintf("Patient %d", i), fmt.Sprintf("Notes %d", i))
+			p, err := patient.NewPatient(fmt.Sprintf("Patient %d", i), "Male", "Caucasian", "Developer", "Bachelor's", fmt.Sprintf("Notes %d", i))
 			if err != nil {
 				t.Fatalf("Failed to create patient: %v", err)
 			}
@@ -329,7 +333,7 @@ func TestPatientRepositoryIntegration(t *testing.T) {
 
 		// Create 10 patients
 		for i := 1; i <= 10; i++ {
-			p, err := patient.NewPatient(fmt.Sprintf("Patient %d", i), fmt.Sprintf("Notes %d", i))
+			p, err := patient.NewPatient(fmt.Sprintf("Patient %d", i), "Male", "Caucasian", "Developer", "Bachelor's", fmt.Sprintf("Notes %d", i))
 			if err != nil {
 				t.Fatalf("Failed to create patient: %v", err)
 			}
