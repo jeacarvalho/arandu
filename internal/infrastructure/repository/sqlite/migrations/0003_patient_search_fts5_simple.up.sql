@@ -12,10 +12,10 @@ CREATE VIRTUAL TABLE IF NOT EXISTS patients_fts USING fts5(
 
 -- Popula a tabela FTS5 com dados existentes
 INSERT INTO patients_fts(patient_id, name, notes)
-SELECT id, name, notes FROM patients;
+SELECT id, name, COALESCE(notes, '') FROM patients;
 
 -- Trigger simples para novos pacientes
 CREATE TRIGGER IF NOT EXISTS patients_ai_simple AFTER INSERT ON patients BEGIN
     INSERT INTO patients_fts(patient_id, name, notes) 
-    VALUES (new.id, new.name, new.notes);
+    VALUES (new.id, new.name, COALESCE(new.notes, ''));
 END;

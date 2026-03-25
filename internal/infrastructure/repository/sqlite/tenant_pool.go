@@ -75,7 +75,7 @@ func (tp *TenantPool) createConnection(tenantID string) (*sql.DB, error) {
 	if storage.IsTestEnvironment() {
 		dsn = dbPath + "&_journal_mode=memory"
 	} else {
-		dsn = dbPath + "?_journal_mode=WAL"
+		dsn = dbPath + "?_journal_mode=WAL&_busy_timeout=5000"
 	}
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
@@ -107,7 +107,11 @@ func (tp *TenantPool) runMigrations(db *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to create migration manager: %w", err)
 	}
-	return manager.Migrate()
+	err = manager.Migrate()
+	if err != nil {
+		fmt.Printf("⚠️ Tenant migration error: %v\n", err)
+	}
+	return err
 }
 
 func (tp *TenantPool) CloseConnection(tenantID string) error {

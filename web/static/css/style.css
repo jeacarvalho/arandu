@@ -2539,28 +2539,36 @@ header {
 
 /* Desktop styles - Sidebar persistent by default */
 @media (min-width: 768px) {
-    .sidebar-drawer {
-        top: 0;
-        height: 100vh;
-        width: 280px;
-        /* Sidebar always visible on desktop */
-        transform: translateX(0);
+    /* Hide mobile toggle and overlay on desktop */
+    .hamburger-menu {
+        display: none !important;
     }
     
-    /* Hamburger menu hidden on desktop when sidebar is persistent */
-    .hamburger-menu {
-        display: none;
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    /* Sidebar always visible on desktop - ignore Alpine.js */
+    .sidebar-drawer {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 280px !important;
+        transform: none !important;
+        z-index: 100 !important;
     }
     
     /* Close button hidden on desktop */
     .sidebar-close-btn {
-        display: none;
+        display: none !important;
     }
     
     /* Main content has margin for persistent sidebar */
     .main-content {
-        margin-left: 280px;
+        margin-left: 280px !important;
         padding-top: 80px;
+        width: calc(100% - 280px) !important;
     }
     
     .top-bar {
@@ -6174,6 +6182,163 @@ header {
 
 .anamnesis-section {
     margin-bottom: var(--space-2xl);
+}
+
+.anamnesis-container {
+    padding: var(--space-lg);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.anamnesis-layout {
+    display: flex;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+}
+
+.anamnesis-nav {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.anamnesis-sections {
+    flex: 1;
+    min-width: 0;
+}
+
+.anamnesis-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+}
+
+.anamnesis-nav {
+    position: sticky;
+    top: var(--space-xl);
+    height: fit-content;
+}
+
+.anamnesis-nav .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.anamnesis-nav .nav-list li {
+    margin-bottom: var(--space-sm);
+}
+
+.anamnesis-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    color: var(--neutral-600);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.anamnesis-nav .nav-link:hover,
+.anamnesis-nav .nav-link.active {
+    background: var(--arandu-bg);
+    color: var(--arandu-dark);
+}
+
+.anamnesis-nav .nav-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.anamnesis-sections {
+    min-width: 0;
+}
+
+.anamnesis-subtitle {
+    color: var(--neutral-500);
+    font-size: 1rem;
+    margin-top: var(--space-sm);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+}
+
+.input-wrapper {
+    margin-top: var(--space-md);
+}
+
+.silent-textarea {
+    width: 100%;
+    font-family: var(--font-clinical);
+    font-size: 1.125rem;
+    line-height: 1.8;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--neutral-200);
+    border-radius: 0;
+    padding: var(--space-md) 0;
+    min-height: 150px;
+    resize: vertical;
+    transition: border-color var(--transition-fast);
+}
+
+.silent-textarea:focus {
+    outline: none;
+    border-bottom-color: var(--arandu-active);
+}
+
+.silent-textarea::placeholder {
+    color: var(--neutral-400);
+    font-style: italic;
+}
+
+.save-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.75rem;
+    color: var(--arandu-active);
+}
+
+.silent-label {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .anamnesis-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .anamnesis-nav {
+        position: static;
+        margin-bottom: var(--space-xl);
+    }
+    
+    .anamnesis-nav .nav-list {
+        display: flex;
+        gap: var(--space-sm);
+        overflow-x: auto;
+        padding-bottom: var(--space-sm);
+    }
+    
+    .anamnesis-nav .nav-list li {
+        margin-bottom: 0;
+    }
+    
+    .anamnesis-nav .nav-link {
+        white-space: nowrap;
+        padding: var(--space-sm) var(--space-md);
+    }
 }
 
 .clinical-textarea {

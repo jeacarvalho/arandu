@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -42,20 +43,27 @@ func (am *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		log.Printf("[AUTH DEBUG] Path: %s, Method: %s", r.URL.Path, r.Method)
+
 		session, err := am.getSession(r)
 		if err != nil || session == nil {
+			log.Printf("[AUTH DEBUG] getSession error: %v", err)
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
 		if session.ExpiresAt.Before(time.Now()) {
+			log.Printf("[AUTH DEBUG] Session expired: %v", session.ExpiresAt)
 			am.clearSession(w)
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
+		log.Printf("[AUTH DEBUG] Session valid for tenant: %s", session.TenantID)
+
 		db, err := am.pool.GetConnection(session.TenantID)
 		if err != nil {
+			log.Printf("[AUTH DEBUG] GetConnection error: %v", err)
 			am.renderMaintenancePage(w, err)
 			return
 		}

@@ -2,14 +2,15 @@
 
 **Criado em:** seg 16 mar 2026 20:48:36 -03
 <<<<<<< Updated upstream
-**Última atualização:** ter 24 mar 2026 22:20:27 -03
+**Última atualização:** qua 25 mar 2026 00:45:02 -03
 =======
-**Última atualização:** ter 24 mar 2026 22:20:27 -03
+**Última atualização:** qua 25 mar 2026 00:45:02 -03
 >>>>>>> Stashed changes
 
 ## 📋 Histórico de Implementações
 
 | Data | Tarefa | Requirement | Status |
+| 2026-03-25 | Refinação da Anamnese Multidimensional (SOTA) | REQ-01-06-01 (Anamnese Clínica Multidimensional) | ✅ Concluída |
 | 2026-03-22 | Implementação do Serviço de Auditoria (Control Plane) | REQ-08-01-02 (Auditoria e Conformidade) | ✅ Concluída |
 | 2026-03-22 | Refatoração de Armazenamento (Directory Hashing) | REQ-07-03-02 (Evolução de Infraestrutura) | ✅ Concluída |
 | 2026-03-21 |  | REQ-08-02-01 (Padronização de Logs) | ✅ Concluída |

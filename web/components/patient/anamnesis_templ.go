@@ -184,7 +184,7 @@ func AnamnesisSection(section AnamnesisSectionViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"save-indicator htmx-indicator\"><i class=\"fas fa-check-circle text-arandu-active\"></i> <span class=\"text-[10px] uppercase font-bold text-arandu-active\">Gravado</span></div></div><div class=\"input-wrapper\"><textarea name=\"content\" class=\"silent-textarea font-clinical\" placeholder=\"Comece a descrever...\" hx-patch=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"save-indicator opacity-0 transition-opacity duration-300\"><i class=\"fas fa-check-circle text-arandu-active\"></i> <span class=\"text-[10px] uppercase font-bold text-arandu-active\">Gravado</span></div></div><div class=\"input-wrapper\"><textarea name=\"content\" class=\"silent-textarea font-clinical\" placeholder=\"Comece a descrever...\" hx-patch=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -197,14 +197,14 @@ func AnamnesisSection(section AnamnesisSectionViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-trigger=\"keyup changed delay:1s\" hx-indicator=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-trigger=\"keyup changed delay:2s, blur\" hx-swap=\"outerHTML\" hx-indicator=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("#indicator-%s", section.SectionID))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 108, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 109, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -217,7 +217,7 @@ func AnamnesisSection(section AnamnesisSectionViewModel) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(section.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 110, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 111, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -259,13 +259,13 @@ func AnamnesisSectionSaved(sectionID string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("indicator-%s", sectionID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 117, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 118, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"save-indicator htmx-indicator\" style=\"opacity: 1;\"><i class=\"fas fa-check-circle text-arandu-active\"></i> <span class=\"text-[10px] uppercase font-bold text-arandu-active\">Gravado</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"save-indicator opacity-100 transition-opacity duration-300\"><i class=\"fas fa-check-circle text-arandu-active\"></i> <span class=\"text-[10px] uppercase font-bold text-arandu-active\">Gravado</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -10,9 +10,6 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"os"
-	"strconv"
-	"time"
 )
 
 type TherapeuticPlanReportData struct {
@@ -64,7 +61,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 41, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 38, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -77,7 +74,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.ReportDate)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 42, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 39, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -90,7 +87,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data.Goals)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 49, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 46, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -103,7 +100,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "achieved")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 53, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 50, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -116,7 +113,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "in_progress")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 57, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 54, Col: 108}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +126,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", countGoalsByStatus(data.Goals, "archived")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 61, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 58, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -237,7 +234,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(goal.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 132, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 129, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -290,7 +287,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(goal.StatusLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 143, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 140, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -308,7 +305,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(goal.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 150, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 147, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -327,7 +324,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(goal.ClosureNote)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 157, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 154, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -345,7 +342,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(goal.ClosedAt)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 160, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 157, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -368,7 +365,7 @@ func GoalReportCard(goal GoalReportItemVM) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(goal.CreatedAt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 167, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 164, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -402,10 +399,7 @@ func hasGoalsWithStatus(goals []GoalReportItemVM, status string) bool {
 }
 
 func getCSSVersion() string {
-	if info, err := os.Stat("web/static/css/style.css"); err == nil {
-		return strconv.FormatInt(info.ModTime().Unix(), 10)
-	}
-	return strconv.FormatInt(time.Now().Unix(), 10)
+	return "20260325_v3"
 }
 
 func TherapeuticPlanReportPage(data TherapeuticPlanReportData) templ.Component {
@@ -436,7 +430,7 @@ func TherapeuticPlanReportPage(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 204, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 198, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -449,7 +443,7 @@ func TherapeuticPlanReportPage(data TherapeuticPlanReportData) templ.Component {
 		var templ_7745c5c3_Var19 templ.SafeURL
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/static/css/style.css?v=" + getCSSVersion()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 205, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/therapeutic_plan_report.templ`, Line: 199, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {

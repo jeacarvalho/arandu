@@ -1,5 +1,7 @@
 package layout
 
+import "fmt"
+
 // PatientSidebar é a sidebar específica para contexto de paciente
 templ PatientSidebar(patientID string) {
 	<!-- Mobile Overlay / Drawer Background -->
@@ -37,22 +39,22 @@ templ PatientSidebar(patientID string) {
 		
 		<!-- Navigation - Patient Context -->
 		<nav class="sidebar-nav">
-			<a href="/patients/{ patientID }" class="sidebar-nav-item">
+			<a href={ templ.URL(fmt.Sprintf("/patients/%s", patientID)) } class="sidebar-nav-item">
 				<i class="fas fa-user-md"></i>
 				<span>Resumo</span>
 			</a>
 			
-			<a href="/patients/{ patientID }/anamnesis" class="sidebar-nav-item">
+			<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", patientID)) } class="sidebar-nav-item">
 				<i class="fas fa-history"></i>
 				<span>Anamnese</span>
 			</a>
 			
-			<a href="/patients/{ patientID }/history" class="sidebar-nav-item">
+			<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", patientID)) } class="sidebar-nav-item">
 				<i class="fas fa-file-medical"></i>
 				<span>Prontuário</span>
 			</a>
 			
-			<a href="/patients/{ patientID }/goals" class="sidebar-nav-item">
+			<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", patientID)) } class="sidebar-nav-item">
 				<i class="fas fa-bullseye"></i>
 				<span>Plano Terapêutico</span>
 			</a>
