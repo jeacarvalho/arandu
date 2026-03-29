@@ -50,7 +50,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><p class=\"patient-subtitle font-clinical\">Perfil clínico do paciente</p></div><a href=\"/patients/{p.ID}/sessions/new\" class=\"patient-action-button\" hx-boost=\"true\" hx-target=\"body\" hx-swap=\"innerHTML\"><i class=\"fas fa-calendar-plus\"></i> Nova Sessão</a></div></div><!-- Grid de Conteúdo: 2 colunas em desktop, 1 em mobile --><!-- CRÍTICO: grid-cols-1 md:grid-cols-2 = responsivo --><div class=\"patient-profile-grid grid grid-cols-1 md:grid-cols-2 gap-6\"><!-- Card 1: Identidade Biopsicossocial (65% em desktop) --><div class=\"clinical-card grid-card-identity md:col-span-1\"><div class=\"section-header\"><div class=\"section-icon\"><i class=\"fas fa-id-card\"></i></div><div><h2 class=\"section-title font-clinical\">Identidade Biopsicossocial</h2></div></div><!-- Dados de Identidade em grid interno --><div class=\"identity-grid grid grid-cols-2 gap-4 mt-4\"><div class=\"identity-field\"><label class=\"identity-label font-clinical\">Gênero</label><div class=\"identity-value font-clinical\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><p class=\"patient-subtitle font-clinical\">Perfil clínico do paciente</p></div><a href=\"/patients/{p.ID}/sessions/new\" class=\"patient-action-button\" hx-boost=\"true\" hx-target=\"main\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\"><i class=\"fas fa-calendar-plus\"></i> Nova Sessão</a></div></div><!-- Grid de Conteúdo: 2 colunas em desktop, 1 em mobile --><!-- CRÍTICO: grid-cols-1 md:grid-cols-2 = responsivo --><div class=\"patient-profile-grid grid grid-cols-1 md:grid-cols-2 gap-6\"><!-- Card 1: Identidade Biopsicossocial (65% em desktop) --><div class=\"clinical-card grid-card-identity md:col-span-1\"><div class=\"section-header\"><div class=\"section-icon\"><i class=\"fas fa-id-card\"></i></div><div><h2 class=\"section-title font-clinical\">Identidade Biopsicossocial</h2></div></div><!-- Dados de Identidade em grid interno --><div class=\"identity-grid grid grid-cols-2 gap-4 mt-4\"><div class=\"identity-field\"><label class=\"identity-label font-clinical\">Gênero</label><div class=\"identity-value font-clinical\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -141,7 +141,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"body\" hx-swap=\"innerHTML\"><i class=\"fas fa-calendar-plus quick-action-icon\"></i> Nova Sessão</a> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"main\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\"><i class=\"fas fa-calendar-plus quick-action-icon\"></i> Nova Sessão</a> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -154,7 +154,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"body\" hx-swap=\"innerHTML\"><i class=\"fas fa-history quick-action-icon\"></i> Completar Anamnese</a> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"main\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\"><i class=\"fas fa-history quick-action-icon\"></i> Completar Anamnese</a> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -167,7 +167,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"body\" hx-swap=\"innerHTML\"><i class=\"fas fa-bullseye quick-action-icon\"></i> Definir Metas</a></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"quick-action-link font-clinical\" hx-boost=\"true\" hx-target=\"main\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\"><i class=\"fas fa-bullseye quick-action-icon\"></i> Definir Metas</a></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -93,7 +93,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 				</div>
 			</div>
 			<div style="padding: var(--space-xl);">
-				<div id="observations-list" style="margin-bottom: var(--space-xl);">
+				<div id="observations-list-wizard" style="margin-bottom: var(--space-xl);">
 					if len(data.Observations) > 0 {
 						for _, o := range data.Observations {
 							@ObservationItem(ObservationItemData{
@@ -110,7 +110,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 					}
 				</div>
 				
-				@ObservationFormInline(data.SessionID)
+				@ObservationFormInline(data.SessionID, "observations-list-wizard")
 			</div>
 		</div>
 
@@ -125,7 +125,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 				</div>
 			</div>
 			<div style="padding: var(--space-xl);">
-				<div id="interventions-list" style="margin-bottom: var(--space-xl);">
+				<div id="interventions-list-wizard" style="margin-bottom: var(--space-xl);">
 					if len(data.Interventions) > 0 {
 						for _, i := range data.Interventions {
 							@InterventionItem(InterventionItemData{
@@ -142,7 +142,7 @@ templ EditSessionWizard(data EditSessionWizardData) {
 					}
 				</div>
 				
-				@InterventionFormInline(data.SessionID)
+				@InterventionFormInline(data.SessionID, "interventions-list-wizard")
 			</div>
 		</div>
 	</div>

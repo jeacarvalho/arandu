@@ -174,7 +174,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></div></form></div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div style=\"padding: var(--space-xl);\"><div id=\"observations-list\" style=\"margin-bottom: var(--space-xl);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></div></form></div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%); color: white;\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div style=\"padding: var(--space-xl);\"><div id=\"observations-list-wizard\" style=\"margin-bottom: var(--space-xl);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -199,11 +199,11 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ObservationFormInline(data.SessionID).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ObservationFormInline(data.SessionID, "observations-list-wizard").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div style=\"padding: var(--space-xl);\"><div id=\"interventions-list\" style=\"margin-bottom: var(--space-xl);\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon\" style=\"background: linear-gradient(135deg, var(--clinical-purple) 0%, #7c3aed 100%); color: white;\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div style=\"padding: var(--space-xl);\"><div id=\"interventions-list-wizard\" style=\"margin-bottom: var(--space-xl);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -228,7 +228,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = InterventionFormInline(data.SessionID).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = InterventionFormInline(data.SessionID, "interventions-list-wizard").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -87,7 +87,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-sticky-note icon-teal"></i>
 						<h3 class="section-title">Observações Clínicas</h3>
 					</div>
-					<div id="observations-list" class="mb-md">
+				<div id="observations-list-main" class="mb-md">
 						if len(data.Observations) > 0 {
 							for _, o := range data.Observations {
 								@ObservationItem(ObservationItemData{
@@ -103,7 +103,7 @@ templ EditSessionForm(data EditSessionFormData) {
 							</div>
 						}
 					</div>
-					@ObservationFormInline(data.SessionID)
+					@ObservationFormInline(data.SessionID, "observations-list-main")
 				</div>
 
 				<!-- Intervenções Terapêuticas -->
@@ -112,7 +112,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-hands-helping icon-purple"></i>
 						<h3 class="section-title">Intervenções Terapêuticas</h3>
 					</div>
-					<div id="interventions-list" class="mb-md">
+				<div id="interventions-list-main" class="mb-md">
 						if len(data.Interventions) > 0 {
 							for _, i := range data.Interventions {
 								@InterventionItem(InterventionItemData{
@@ -128,7 +128,7 @@ templ EditSessionForm(data EditSessionFormData) {
 							</div>
 						}
 					</div>
-					@InterventionFormInline(data.SessionID)
+					@InterventionFormInline(data.SessionID, "interventions-list-main")
 				</div>
 
 				<!-- Metas Terapêuticas -->
@@ -137,7 +137,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-bullseye icon-primary"></i>
 						<h3 class="section-title">Metas Terapêuticas</h3>
 					</div>
-					<ul id="session-goals-list" class="session-goals-list mb-md">
+				<ul id="session-goals-list-main" class="session-goals-list mb-md">
 						if len(data.Goals) > 0 {
 							for _, g := range data.Goals {
 								<li class="goal-item">{ g.Title }</li>
@@ -147,13 +147,16 @@ templ EditSessionForm(data EditSessionFormData) {
 					<div class="empty-state">
 						<p class="font-italic text-muted">Nenhuma meta definida</p>
 					</div>
-					<form hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list" hx-swap="beforeend" class="mt-md pt-md border-top-light">
+					<form hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list-main" hx-swap="beforeend" hx-indicator="#goals-main-loading" hx-disabled-elt="this button[type='submit']" class="mt-md pt-md border-top-light">
 						<div class="silent-form-group">
 							<label class="silent-label"><i class="fas fa-plus-circle"></i> Nova Meta</label>
 							<input type="text" name="title" placeholder="Descreva a meta terapêutica..." class="silent-input" required>
 						</div>
 						<div class="form-actions form-actions-mt-sm">
 							<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus btn-icon"></i> Adicionar Meta</button>
+							<span id="goals-main-loading" class="htmx-indicator text-xs text-neutral-500 ml-2" aria-live="polite">
+								<i class="fas fa-spinner fa-spin mr-1"></i>Salvando...
+							</span>
 						</div>
 					</form>
 				</div>
@@ -168,7 +171,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-sticky-note icon-teal"></i>
 					<h4>Observações Clínicas</h4>
 				</div>
-				<div id="observations-list" class="mb-md">
+				<div id="observations-list-sidebar" class="mb-md">
 					if len(data.Observations) > 0 {
 						for _, o := range data.Observations {
 							@ObservationItem(ObservationItemData{
@@ -184,7 +187,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/observations") } hx-target="#observations-list" hx-swap="beforeend" hx-on::after-request="this.reset()">
+				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/observations") } hx-target="#observations-list-sidebar" hx-swap="beforeend" hx-on::after-request="this.reset()">
 					<div class="silent-form-group">
 						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Observação</label>
 						<textarea name="content" placeholder="Digite sua percepção clínica aqui..." rows="3" class="silent-textarea" required></textarea>
@@ -201,7 +204,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-hands-helping icon-purple"></i>
 					<h4>Intervenções</h4>
 				</div>
-				<div id="interventions-list" class="mb-md">
+				<div id="interventions-list-sidebar" class="mb-md">
 					if len(data.Interventions) > 0 {
 						for _, i := range data.Interventions {
 							@InterventionItem(InterventionItemData{
@@ -217,7 +220,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/interventions") } hx-target="#interventions-list" hx-swap="beforeend" hx-on::after-request="this.reset()">
+				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/interventions") } hx-target="#interventions-list-sidebar" hx-swap="beforeend" hx-on::after-request="this.reset()">
 					<div class="silent-form-group">
 						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Intervenção</label>
 						<textarea name="content" placeholder="Descreva a técnica ou intervenção realizada..." rows="3" class="silent-textarea" required></textarea>
@@ -234,7 +237,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-bullseye icon-primary"></i>
 					<h4>Metas Terapêuticas</h4>
 				</div>
-				<ul id="session-goals-list" class="session-goals-list mb-md">
+				<ul id="session-goals-list-sidebar" class="session-goals-list mb-md">
 					if len(data.Goals) > 0 {
 						for _, g := range data.Goals {
 							<li class="goal-item">{ g.Title }</li>
@@ -244,13 +247,16 @@ templ EditSessionForm(data EditSessionFormData) {
 				<div class="session-goals-empty">
 					<p>Nenhuma meta definida</p>
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list" hx-swap="beforeend" hx-on::after-request="if(event.detail.successful) this.reset()" class="mt-md pt-md border-top-light">
+				<form class="inline-form" hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list-sidebar" hx-swap="beforeend" hx-indicator="#goals-sidebar-loading" hx-disabled-elt="this button[type='submit']" hx-on::after-request="if(event.detail.successful) this.reset()" class="mt-md pt-md border-top-light">
 					<div class="silent-form-group">
 						<label class="silent-label"><i class="fas fa-plus-circle"></i> Nova Meta</label>
 						<input type="text" name="title" placeholder="Descreva a meta terapêutica..." class="silent-input" required>
 					</div>
 					<div class="form-actions mt-sm">
 						<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus btn-icon"></i> Adicionar Meta</button>
+						<span id="goals-sidebar-loading" class="htmx-indicator text-xs text-neutral-500 ml-2" aria-live="polite">
+							<i class="fas fa-spinner fa-spin mr-1"></i>Salvando...
+						</span>
 					</div>
 				</form>
 			</div>
