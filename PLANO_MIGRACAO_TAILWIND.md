@@ -33,7 +33,7 @@ Migrar toda a interface do projeto de CSS customizado para Tailwind CSS, mantend
 ### Fase 1: Setup e Configuração
 - [x] 1.1 Configurar Tailwind CSS completo no build (PostCSS)
 - [x] 1.2 Configurar variáveis do design system (via @theme no Tailwind v4)
-- [ ] 1.3 Integrar Tailwind no layout base (substituir style.css)
+- [x] 1.3 Integrar Tailwind no layout base (substituir style.css)
 
 ### Fase 2: Componentes de Layout
 - [ ] 2.1 Layout base (`layout.templ` - sidebar, topbar)
@@ -63,13 +63,14 @@ Migrar toda a interface do projeto de CSS customizado para Tailwind CSS, mantend
 
 ## Estado Atual
 
-**Fase 1 em andamento** - Tailwind CSS configurado e compilando
+**Fase 1 concluída** - Tailwind CSS integrado ao layout
 
-Última task concluída:
+Tasks concluídas:
 - 1.1: Configurar Tailwind CSS v4.2.2 no build
 - 1.2: Configurar variáveis do design system via @theme
+- 1.3: Integrar Tailwind no layout base
 
-Próximo passo: **Fase 1 - Task 1.3** - Integrar Tailwind no layout base
+Próximo passo: **Fase 2 - Task 2.1** - Componentes de Layout (sidebar, topbar)
 
 ---
 
