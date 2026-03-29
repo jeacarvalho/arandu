@@ -20,7 +20,7 @@ templ GoalsSessionSidebar(data GoalsSessionSidebarData) {
 			<h4 class="session-goals-title">Metas em Foco</h4>
 		</div>
 		
-		<ul id="session-goals-list" class="session-goals-list">
+		<ul id="session-goals-list" class="session-goals-list" role="region" aria-live="polite" aria-label="Metas terapêuticas">
 			for _, goal := range data.Goals {
 				@SessionGoalItemRender(goal, data.PatientID)
 			}
@@ -44,9 +44,11 @@ templ SessionGoalItemRender(goal GoalDataItem, patientID string) {
 			type="button"
 			class="session-goal-achieve"
 			title="Marcar como alcançada"
+			aria-label="Marcar meta como alcançada"
 			hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=achieved" }
 			hx-target="#session-goals-sidebar"
 			hx-swap="innerHTML"
+			hx-disabled-elt="this"
 		>
 			<i class="fas fa-check"></i>
 		</button>
@@ -59,6 +61,7 @@ templ GoalFormInline(patientID string) {
 		hx-post={ "/patients/" + patientID + "/goals" }
 		hx-target="#session-goals-list"
 		hx-swap="beforeend"
+		hx-disabled-elt="this button[type='submit']"
 		hx-on::after-request="if(event.detail.successful) this.reset()"
 	>
 		<div class="silent-form-group">

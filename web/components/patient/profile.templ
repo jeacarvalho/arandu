@@ -20,7 +20,7 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 					<h1 class="patient-name font-clinical">{p.Name}</h1>
 					<p class="patient-subtitle font-clinical">Perfil clínico do paciente</p>
 				</div>
-				<a href="/patients/{p.ID}/sessions/new" class="patient-action-button" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+				<a href="/patients/{p.ID}/sessions/new" class="patient-action-button" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true">
 					<i class="fas fa-calendar-plus"></i> Nova Sessão
 				</a>
 			</div>
@@ -116,15 +116,15 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 				</div>
 				
 				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true">
 						<i class="fas fa-calendar-plus quick-action-icon"></i> Nova Sessão
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true">
 						<i class="fas fa-history quick-action-icon"></i> Completar Anamnese
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true">
 						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 					</a>
 				</div>

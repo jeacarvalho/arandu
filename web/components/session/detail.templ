@@ -57,7 +57,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p class="card-subtitle">Registros e anotações da sessão</p>
 					</div>
 				</div>
-			<div id="observations-list" class="mt-lg">
+			<div id="observations-list" class="mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(observations) > 0 {
 						for _, o := range observations {
 							@ObservationItem(ObservationItemData{
@@ -83,7 +83,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p class="card-subtitle">Ações e técnicas aplicadas</p>
 					</div>
 				</div>
-				<div id="interventions-list" class="mt-lg">
+				<div id="interventions-list" class="mt-lg" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 					if len(interventions) > 0 {
 						for _, i := range interventions {
 							@InterventionItem(InterventionItemData{
@@ -114,7 +114,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 				if session.Summary != "" {
 					{ session.Summary }
 				} else {
-					<div class="text-center text-muted">
+					<div class="text-center text-neutral-600">
 						<i class="fas fa-file-medical-alt icon-lg mb-md opacity-50"></i>
 						<p class="font-italic">Nenhum resumo registrado</p>
 					</div>

@@ -34,7 +34,7 @@ templ BiopsychosocialPanel(data BiopsychosocialPanelViewModel, readOnly bool) {
 				</button>
 				
 				<div class="bio-section-content" :class="{ 'collapsed': !medOpen }">
-					<div id="medication-list">
+					<div id="medication-list" role="region" aria-live="polite" aria-label="Lista de medicamentos">
 						@MedicationList(MedicationListViewModel{
 							Medications: data.Medications,
 							PatientID: data.PatientID,
@@ -46,6 +46,7 @@ templ BiopsychosocialPanel(data BiopsychosocialPanelViewModel, readOnly bool) {
 							hx-post={ "/patients/" + data.PatientID + "/medications" }
 							hx-target="#medication-list"
 							hx-swap="innerHTML"
+							hx-disabled-elt="this button[type='submit']"
 							class="bio-form"
 						>
 							<div class="bio-input-row">

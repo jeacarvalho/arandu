@@ -22,6 +22,7 @@ templ GoalClosureModalInline(goal GoalItemViewModel, patientID string) {
 				hx-post={ "/patients/" + patientID + "/goals/" + goal.ID + "/close" }
 				hx-target="#goal-list"
 				hx-swap="innerHTML"
+				hx-disabled-elt="this button[type='submit']"
 				x-on:htmx:after-request="showModal = false"
 			>
 				<div class="goal-closure-field">
@@ -60,6 +61,7 @@ templ CloseGoalButton(goal GoalItemViewModel, patientID string) {
 		type="button"
 		class="goal-action achieve"
 		title="Concluir meta com nota"
+		aria-label="Concluir meta com nota"
 		x-on:click={ "showModal = true" }
 		x-data
 	>

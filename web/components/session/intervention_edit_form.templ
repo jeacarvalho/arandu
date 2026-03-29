@@ -9,6 +9,7 @@ templ InterventionEditForm(interv InterventionEditData) {
 			hx-put={ templ.URL("/interventions/" + interv.ID) }
 			hx-target={ "#intervention-" + interv.ID }
 			hx-swap="outerHTML"
+			hx-disabled-elt="this button[type='submit']"
 			class="inline-edit-form"
 		>
 			<textarea 

@@ -25,7 +25,7 @@ type GoalListViewModel struct {
 }
 
 templ GoalList(data GoalListViewModel) {
-	<div id="goal-list" class="goal-list-container">
+	<div id="goal-list" class="goal-list-container" role="region" aria-live="polite" aria-label="Lista de metas">
 		if data.Error != "" {
 			<div class="goal-error">{ data.Error }</div>
 		}
@@ -120,9 +120,11 @@ templ GoalItem(goal GoalItemViewModel, patientID string) {
 					type="button"
 					class="goal-action achieve"
 					title="Marcar como alcançada"
+					aria-label="Marcar meta como alcançada"
 					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=achieved" }
 					hx-target="#goal-list"
 					hx-swap="innerHTML"
+					hx-disabled-elt="this"
 				>
 					<i class="fas fa-check"></i>
 				</button>
@@ -130,9 +132,11 @@ templ GoalItem(goal GoalItemViewModel, patientID string) {
 					type="button"
 					class="goal-action archive"
 					title="Arquivar meta"
+					aria-label="Arquivar meta"
 					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived" }
 					hx-target="#goal-list"
 					hx-swap="innerHTML"
+					hx-disabled-elt="this"
 				>
 					<i class="fas fa-archive"></i>
 				</button>
@@ -142,9 +146,11 @@ templ GoalItem(goal GoalItemViewModel, patientID string) {
 					type="button"
 					class="goal-action reopen"
 					title="Reabrir meta"
+					aria-label="Reabrir meta"
 					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress" }
 					hx-target="#goal-list"
 					hx-swap="innerHTML"
+					hx-disabled-elt="this"
 				>
 					<i class="fas fa-undo"></i>
 				</button>
@@ -152,9 +158,11 @@ templ GoalItem(goal GoalItemViewModel, patientID string) {
 					type="button"
 					class="goal-action archive"
 					title="Arquivar meta"
+					aria-label="Arquivar meta"
 					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived" }
 					hx-target="#goal-list"
 					hx-swap="innerHTML"
+					hx-disabled-elt="this"
 				>
 					<i class="fas fa-archive"></i>
 				</button>
@@ -164,9 +172,11 @@ templ GoalItem(goal GoalItemViewModel, patientID string) {
 					type="button"
 					class="goal-action reopen"
 					title="Reabrir meta"
+					aria-label="Reabrir meta"
 					hx-put={ "/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress" }
 					hx-target="#goal-list"
 					hx-swap="innerHTML"
+					hx-disabled-elt="this"
 				>
 					<i class="fas fa-undo"></i>
 				</button>

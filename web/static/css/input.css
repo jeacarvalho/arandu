@@ -94,6 +94,26 @@
   }
 }
 
+@utility section-header {
+  @apply flex items-center gap-4 mb-6;
+}
+
+@utility icon-button {
+  @apply w-10 h-10 rounded-lg flex items-center justify-center;
+}
+
+@utility icon-button-gradient {
+  @apply w-10 h-10 rounded-lg flex items-center justify-center text-white;
+}
+
+@utility card-base {
+  @apply bg-white rounded-xl shadow-sm border border-neutral-100 p-6;
+}
+
+@utility input-base {
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-200 bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+}
+
 @layer base {
   body {
     background-color: var(--color-arandu-bg);

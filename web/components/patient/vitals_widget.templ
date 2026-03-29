@@ -99,6 +99,7 @@ templ VitalsWidget(data VitalsWidgetViewModel, readOnly bool) {
 			hx-post={ "/patients/" + data.PatientID + "/vitals" }
 			hx-target="#vitals-widget"
 			hx-swap="innerHTML"
+			hx-disabled-elt="this button[type='submit']"
 			class="bio-form"
 		>
 			<div class="bio-input-row">

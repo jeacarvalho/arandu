@@ -14,7 +14,7 @@ func truncate(s string, max int) string {
 }
 
 templ SessionList(patientID string, sessions []SessionItem) {
-	<div id="sessions-list" class="sessions-list-container">
+	<div id="sessions-list" class="sessions-list-container" role="region" aria-live="polite" aria-label="Lista de sessões">
 		<div class="sessions-header">
 			<div class="sessions-header-left">
 				<div class="session-card-purple">

@@ -2,12 +2,13 @@ package patient
 
 templ AddGoalForm(patientID string) {
 	<div id="add-goal-form" class="add-goal-form">
-		<form 
-			hx-post={ "/patients/" + patientID + "/goals" }
-			hx-target="#goals-in-progress"
-			hx-swap="afterbegin"
-			class="goal-form"
-		>
+	<form 
+		hx-post={ "/patients/" + patientID + "/goals" }
+		hx-target="#goals-in-progress"
+		hx-swap="afterbegin"
+		hx-disabled-elt="this button[type='submit']"
+		class="goal-form"
+	>
 			<div class="goal-form-input-wrapper">
 				<i class="fas fa-bullseye goal-form-icon"></i>
 				<input 
@@ -40,6 +41,7 @@ templ AddGoalFormInline(patientID string) {
 		hx-post={ "/patients/" + patientID + "/goals" }
 		hx-target="#goals-in-progress"
 		hx-swap="afterbegin"
+		hx-disabled-elt="this button[type='submit']"
 		hx-on:htmx:after-request="if(event.detail.successful) { this.reset(); }"
 		class="goal-form-inline"
 	>
