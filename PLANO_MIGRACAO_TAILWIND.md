@@ -36,7 +36,7 @@ Migrar toda a interface do projeto de CSS customizado para Tailwind CSS, mantend
 - [x] 1.3 Integrar Tailwind no layout base (substituir style.css)
 
 ### Fase 2: Componentes de Layout
-- [ ] 2.1 Layout base (`layout.templ` - sidebar, topbar)
+- [x] 2.1 Layout base (`layout.templ` - sidebar, topbar)
 - [ ] 2.2 Classes utilitárias de estrutura (flex, grid, spacing)
 - [ ] 2.3 Componentes de autenticação (login)
 
@@ -63,14 +63,15 @@ Migrar toda a interface do projeto de CSS customizado para Tailwind CSS, mantend
 
 ## Estado Atual
 
-**Fase 1 concluída** - Tailwind CSS integrado ao layout
+**Fase 2 em andamento** - Componentes de Layout
 
 Tasks concluídas:
 - 1.1: Configurar Tailwind CSS v4.2.2 no build
 - 1.2: Configurar variáveis do design system via @theme
 - 1.3: Integrar Tailwind no layout base
+- 2.1: Layout base (sidebar, topbar migrados para Tailwind)
 
-Próximo passo: **Fase 2 - Task 2.1** - Componentes de Layout (sidebar, topbar)
+Próximo passo: **Fase 2 - Task 2.2** - Classes utilitárias de estrutura
 
 ---
 
