@@ -13,13 +13,9 @@ var (
 )
 
 func GetCSSVersion() string {
-	cssOnce.Do(func() {
-		info, err := os.Stat("web/static/css/style.css")
-		if err != nil {
-			cssVersion = fmt.Sprintf("dev_%d", time.Now().Unix())
-			return
-		}
-		cssVersion = fmt.Sprintf("%d", info.ModTime().Unix())
-	})
-	return cssVersion
+	info, err := os.Stat("web/static/css/tailwind.css")
+	if err != nil {
+		return fmt.Sprintf("dev_%d", time.Now().Unix())
+	}
+	return fmt.Sprintf("%d", info.ModTime().Unix())
 }

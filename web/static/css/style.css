@@ -4238,15 +4238,7 @@ header {
    ESTRUTURA SOTA - Layout de Duas Colunas e Componentes de Informação
    ============================================================================ */
 
-/* Container principal SOTA */
-.sota-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--space-xl);
-    padding-left: calc(var(--space-xl) + 280px); /* Compensação da sidebar */
-    padding-right: var(--space-xl);
-    padding-top: calc(80px + var(--space-xl)); /* Compensação do header fixo */
-}
+/* Container principal SOTA - agora em tailwind.css via input.css */
 
 /* Mobile: Remove compensação quando sidebar some */
 @media (max-width: 768px) {

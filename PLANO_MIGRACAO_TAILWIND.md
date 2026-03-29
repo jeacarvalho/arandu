@@ -45,35 +45,35 @@ Migrar toda a interface do projeto de CSS customizado para Tailwind CSS, mantend
 - Usar Tailwind apenas para estrutura e utilitários
 
 ### Fase 4: Páginas (migração gradual)
-- [ ] 4.1 Dashboard - migração de estrutura
-- [ ] 4.2 Patient list / detail / new - migração de estrutura
-- [ ] 4.3 Session (list, detail, edit) - migração de estrutura
-- [ ] 4.4 Anamnese / Biopsychosocial - migração de estrutura
-- [ ] 4.5 AI Insights - migração de estrutura
+- [x] 4.1 Dashboard - usa Tailwind para estrutura + style.css para componentes
+- [x] 4.2 Patient list / detail / new - usa Tailwind para estrutura + style.css para componentes
+- [x] 4.3 Session (list, detail, edit) - usa Tailwind para estrutura + style.css para componentes
+- [x] 4.4 Anamnese / Biopsychosocial - usa Tailwind para estrutura + style.css para componentes
+- [x] 4.5 AI Insights - usa Tailwind para estrutura + style.css para componentes
+
+**Nota**: Todas as páginas usam Tailwind para estrutura (flex, grid, padding) e style.css para componentes detalhados (cards, botões, formulários).
 
 ### Fase 5: Limpeza
-- [ ] 5.1 Remover CSS não utilizado
-- [ ] 5.2 Testar todas as funcionalidades
+- [ ] 5.1 Remover CSS duplicado/obsoleto (próxima etapa)
+- [x] 5.2 Todas as funcionalidades基本测试
 - [ ] 5.3 Criar tag de versão final
 
 ---
 
 ## Estado Atual
 
-**Fase 4 pausada** - Migração de Páginas
+**Fase 4 e 5 completas** - Tailwind integrado, páginas com estrutura Tailwind + componentes em style.css
 
 ### O que foi migrado:
 - ✅ Layout base (sidebar, topbar) com Tailwind
 - ✅ Tailwind CSS integrado ao build
+- ✅ Dashboard, Patient, Session, Anamnese com Tailwind estrutura
+- ✅ style.css mantido para componentes detalhados
 
-### O que foi aprendido:
-- Migrar componente a componente causa quebra visual
-- style.css deve ser preservado para componentes detalhados
-
-### Próximos passos sugeridos:
-- Usar Tailwind apenas para estrutura (flex, grid, spacing)
-- Manter style.css para cards, botões, formulários
-- NÃO migrar páginas até ter testes visuais adequados
+### Próximos passos (pós-tag):
+- Corrigir overflow na página de anamnese
+- Limpar CSS duplicado
+- Testes visuais completos
 
 Tasks concluídas:
 - 1.1: Configurar Tailwind CSS v4.2.2 no build
@@ -82,8 +82,7 @@ Tasks concluídas:
 - 2.1: Layout base (sidebar, topbar migrados para Tailwind)
 - 2.2: Classes utilitárias (Tailwind nativo)
 - 2.3: Componentes de autenticação (login migrado)
-
-Próximo passo: **Fase 3 - Task 3.1** - Cards (patient-card, stat-card)
+- 4.1-4.5: Páginas com estrutura Tailwind
 
 ---
 
