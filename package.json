@@ -1,0 +1,19 @@
+{
+  "name": "arandu",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "tailwind:build": "npx @tailwindcss/cli -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --minify",
+    "tailwind:watch": "npx @tailwindcss/cli -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --watch",
+    "build:all": "npm run tailwind:build && go generate ./..."
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
+  }
+}
