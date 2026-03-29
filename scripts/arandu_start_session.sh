@@ -64,6 +64,18 @@ Toda tarefa deve referenciar um REQUIREMENT.
 Formato:
 
 REQ-XX-YY-ZZ
+
+# Adicionar no agent_context.md gerado
+cat >> "$SESSION_DIR/agent_context.md" <<EOF
+
+⚠️  ATENÇÃO: VALIDAÇÃO VISUAL OBRIGATÓRIA
+Antes de marcar tarefa como concluída:
+1. Rode: ./scripts/arandu_visual_check.sh
+2. Rode: ./scripts/arandu_screenshot_compare.sh
+3. Revise screenshots em ./screenshots/current/
+4. Preencha checklist em docs/visual_validation_checklist.md
+5. Só então execute: ./scripts/arandu_conclude_task.sh
+
 EOF
 
 echo "✅ Sessão criada"

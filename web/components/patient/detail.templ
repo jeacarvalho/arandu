@@ -112,11 +112,11 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 					<div style="margin-bottom: var(--space-lg);">
 						<label style="display: block; font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-xs);">Notas Clínicas</label>
 						if patient.Notes != "" {
-							<div style="font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--arandu-dark); background: var(--arandu-bg); padding: var(--space-lg); border-radius: var(--radius-lg); border-left: 3px solid var(--arandu-primary);">
+							<div class="font-clinical" style="font-size: 1rem; line-height: 1.75; color: var(--arandu-dark); background: var(--arandu-bg); padding: var(--space-lg); border-radius: var(--radius-lg); border-left: 3px solid var(--arandu-primary);">
 								{ patient.Notes }
 							</div>
 						} else {
-							<div style="font-family: var(--font-clinical); font-size: 0.875rem; color: var(--text-tertiary); font-style: italic; padding: var(--space-lg); background: var(--arandu-bg); border-radius: var(--radius-lg);">
+							<div class="font-clinical" style="font-size: 0.875rem; color: var(--text-tertiary); font-style: italic; padding: var(--space-lg); background: var(--arandu-bg); border-radius: var(--radius-lg);">
 								Nenhuma nota clínica registrada
 							</div>
 						}
@@ -146,7 +146,7 @@ for _, event := range patient.Timeline {
 <div class="timeline-dot" style={ "background: " + event.Color }></div>
 <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-xs);">
 <i class={ "fas " + event.Icon } style={ "color: " + event.Color + "; font-size: 0.75rem;" }></i>
-<div class="timeline-event-content">{ event.Content }</div>
+<div class="timeline-event-content font-clinical">{ event.Content }</div>
 </div>
 <div class="timeline-event-date">{ event.Date }</div>
 </div>

@@ -42,14 +42,14 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"intervention-edit-form card-hover\" style=\"padding: var(--space-lg); border-left: 3px solid var(--secondary-500); background: var(--neutral-50); margin-bottom: var(--space-md);\"><form hx-put=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"intervention-edit-container card-hover\"><form hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/interventions/" + interv.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 10, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 9, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -62,7 +62,7 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("#intervention-" + interv.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 11, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 10, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("intervention-edit-" + interv.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 16, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 15, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -88,7 +88,7 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(interv.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 21, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 20, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -101,7 +101,7 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/interventions/" + interv.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 29, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 28, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -114,7 +114,7 @@ func InterventionEditForm(interv InterventionEditData) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("#intervention-" + interv.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 30, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_edit_form.templ`, Line: 29, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {

@@ -165,7 +165,7 @@ run ./scripts/arandu_process_task.sh 20260313_215938
 run ./scripts/arandu_conclude_task.sh 20260313_215938 "Entidade Patient com validação implementada" --success
 
 # 6. Finalizar sessão
-run ./scripts/arandu_end_session.sh
+run ./scripts/arandu_end_session.sh "
 ```
 
 ---

@@ -102,7 +102,7 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 											<i class="fas fa-user"></i>
 										</div>
 										<div class="patient-info">
-											<div class="patient-name">{ p.Name }</div>
+											<div class="patient-name font-clinical">{ p.Name }</div>
 											<div class="patient-since">Desde { p.CreatedAt }</div>
 										</div>
 										<div class="patient-status"></div>
@@ -130,7 +130,7 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 								<div class="session-badge">
 									Sessão #{ session.ID }
 								</div>
-								<div class="session-clinical-report">
+								<div class="session-clinical-report font-clinical">
 									{ session.Summary }
 								</div>
 									<div class="session-tags">

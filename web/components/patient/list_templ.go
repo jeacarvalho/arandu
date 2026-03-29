@@ -110,14 +110,14 @@ func PatientList(data PatientListData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "><div class=\"patient-card-main\"><div class=\"patient-card-avatar\"><i class=\"fas fa-user\"></i></div><div><div class=\"patient-name\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "><div class=\"patient-card-main\"><div class=\"patient-card-avatar\"><i class=\"fas fa-user\"></i></div><div><div class=\"patient-name font-clinical\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 59, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 59, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -128,14 +128,14 @@ func PatientList(data PatientListData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if p.Notes != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"patient-notes patient-notes-inline\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"patient-notes patient-notes-inline font-clinical\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Notes)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 61, Col: 65}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/list.templ`, Line: 61, Col: 79}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -146,7 +146,7 @@ func PatientList(data PatientListData) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"patient-empty-note\">Nenhuma observação registrada</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"patient-empty-note font-clinical\">Nenhuma observação registrada</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

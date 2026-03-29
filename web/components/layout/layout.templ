@@ -55,14 +55,16 @@ templ BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, side
 	<body>
 		<div class="min-h-screen bg-arandu-bg" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
 			@TopBarWithEmail(userEmail)
-			if sidebarComponent != nil {
-				@sidebarComponent
-			} else {
-				@Sidebar()
-			}
-			<main class="flex-1 p-6 ml-0 md:ml-0 transition-all duration-300">
-				@content
-			</main>
+			<div class="flex pt-16">
+				if sidebarComponent != nil {
+					@sidebarComponent
+				} else {
+					@Sidebar()
+				}
+				<main class="flex-1 p-6 transition-all duration-300">
+					@content
+				</main>
+			</div>
 		</div>
 		<script>
 			document.addEventListener('alpine:init', () => {
@@ -140,10 +142,12 @@ templ BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.
 	<body>
 		<div class="min-h-screen bg-arandu-bg" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
 			@TopBarWithEmail(userEmail)
-			@Sidebar()
-			<main class="flex-1 p-6 ml-0 md:ml-0 transition-all duration-300">
-				@content
-			</main>
+			<div class="flex pt-16">
+				@Sidebar()
+				<main class="flex-1 p-6 transition-all duration-300">
+					@content
+				</main>
+			</div>
 		</div>
 		<script>
 			document.addEventListener('alpine:init', () => {
@@ -204,50 +208,16 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
-	<body>
+<body>
 		<div class="min-h-screen bg-arandu-bg" x-data="{ sidebarOpen: window.innerWidth >= 768 }">
 			@TopBar()
-			@Sidebar()
-			<main class="flex-1 p-6 ml-0 md:ml-0 transition-all duration-300">
-				@content
-			</main>
+			<div class="flex pt-16">
+				@Sidebar()
+				<main class="flex-1 p-6 transition-all duration-300">
+					@content
+				</main>
+			</div>
 		</div>
-		<script>
-			document.addEventListener('alpine:init', () => {
-				const saved = localStorage.getItem('arandu-sidebar-open');
-				if (saved !== null) {
-					Alpine.store('sidebar', { open: saved === 'true' });
-				}
-				
-				Alpine.effect(() => {
-					const open = Alpine.store('sidebar')?.open;
-					if (open !== undefined) {
-						localStorage.setItem('arandu-sidebar-open', open);
-					}
-				});
-			});
-
-			// Smooth page transitions
-			document.addEventListener('DOMContentLoaded', function() {
-				// Fade in on page load
-				document.body.style.opacity = '0';
-				requestAnimationFrame(() => {
-					document.body.style.transition = 'opacity 0.3s ease';
-					document.body.style.opacity = '1';
-				});
-
-				// Smooth navigation (for links without hx-boost)
-				document.addEventListener('click', function(e) {
-					if (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {
-						e.preventDefault();
-						document.body.style.opacity = '0.7';
-						setTimeout(() => {
-							window.location.href = e.target.getAttribute('href');
-						}, 200);
-					}
-				});
-			});
-		</script>
 	</body>
 	</html>
 }

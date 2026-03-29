@@ -7,6 +7,7 @@ import (
 )
 
 // PatientProfileView é o componente principal do perfil do paciente
+// Layout otimizado: grid 2 colunas em desktop, 1 coluna em mobile
 templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 	<div class="sota-container">
 		<!-- Header -->
@@ -16,8 +17,8 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 					<i class="fas fa-arrow-left"></i>
 				</a>
 				<div class="patient-header-content">
-					<h1 class="patient-name">{p.Name}</h1>
-					<p class="patient-subtitle">Perfil clínico do paciente</p>
+					<h1 class="patient-name font-clinical">{p.Name}</h1>
+					<p class="patient-subtitle font-clinical">Perfil clínico do paciente</p>
 				</div>
 				<a href="/patients/{p.ID}/sessions/new" class="patient-action-button" hx-boost="true" hx-target="body" hx-swap="innerHTML">
 					<i class="fas fa-calendar-plus"></i> Nova Sessão
@@ -25,107 +26,110 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 			</div>
 		</div>
 
-		<!-- Grid de Identidade Biopsicossocial -->
-		<div class="sota-grid-system">
-		<!-- Informações Básicas -->
-		<div class="clinical-card grid-card-1">
-			<div class="section-header">
-				<div class="section-icon">
-					<i class="fas fa-id-card"></i>
+		<!-- Grid de Conteúdo: 2 colunas em desktop, 1 em mobile -->
+		<!-- CRÍTICO: grid-cols-1 md:grid-cols-2 = responsivo -->
+		<div class="patient-profile-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+			
+			<!-- Card 1: Identidade Biopsicossocial (65% em desktop) -->
+			<div class="clinical-card grid-card-identity md:col-span-1">
+				<div class="section-header">
+					<div class="section-icon">
+						<i class="fas fa-id-card"></i>
+					</div>
+					<div>
+						<h2 class="section-title font-clinical">Identidade Biopsicossocial</h2>
+					</div>
 				</div>
-				<div>
-					<h2 class="section-title">Identidade Biopsicossocial</h2>
-				</div>
-			</div>
 				
-				<!-- Dados de Identidade -->
-				<div class="identity-grid">
+				<!-- Dados de Identidade em grid interno -->
+				<div class="identity-grid grid grid-cols-2 gap-4 mt-4">
 					<div class="identity-field">
-						<label class="identity-label">Gênero</label>
-						<div class="identity-value">{p.Gender}</div>
+						<label class="identity-label font-clinical">Gênero</label>
+						<div class="identity-value font-clinical">{p.Gender}</div>
 					</div>
 					<div class="identity-field">
-						<label class="identity-label">Etnia</label>
-						<div class="identity-value">{p.Ethnicity}</div>
+						<label class="identity-label font-clinical">Etnia</label>
+						<div class="identity-value font-clinical">{p.Ethnicity}</div>
 					</div>
 					<div class="identity-field">
-						<label class="identity-label">Ocupação</label>
-						<div class="identity-value">{p.Occupation}</div>
+						<label class="identity-label font-clinical">Ocupação</label>
+						<div class="identity-value font-clinical">{p.Occupation}</div>
 					</div>
 					<div class="identity-field">
-						<label class="identity-label">Escolaridade</label>
-						<div class="identity-value">{p.Education}</div>
+						<label class="identity-label font-clinical">Escolaridade</label>
+						<div class="identity-value font-clinical">{p.Education}</div>
 					</div>
 				</div>
 			</div>
 
-		<!-- Notas de Triagem -->
-		<div class="clinical-card grid-card-1">
-			<div class="section-header">
-				<div class="section-icon triage">
-					<i class="fas fa-sticky-note"></i>
-				</div>
-				<div>
-					<h2 class="section-title">Notas de Triagem</h2>
-				</div>
-			</div>
-			
-			<div class="clinical-notes">
-				{p.Notes}
-			</div>
-		</div>
-
-		<!-- Linha do Tempo Resumida -->
-		<div class="clinical-card grid-card-1">
-			<div class="section-header">
-				<div class="section-icon timeline">
-					<i class="fas fa-route"></i>
-				</div>
-				<h2 class="section-title">Linha do Tempo</h2>
-			</div>
-			
-			<div class="timeline-container">
-				<div class="timeline-marker"></div>
-				<div class="timeline-event">
-					<div class="timeline-dot"></div>
-					<div class="timeline-event-header">
-						<i class="fas fa-calendar-check timeline-event-icon"></i>
-						<div class="timeline-event-content">Cadastro realizado</div>
+			<!-- Card 2: Notas de Triagem (35% em desktop) -->
+			<div class="clinical-card grid-card-notes md:col-span-1">
+				<div class="section-header">
+					<div class="section-icon triage">
+						<i class="fas fa-sticky-note"></i>
 					</div>
-					<div class="timeline-event-date">{p.CreatedAt.Format("02/01/2006")}</div>
+					<div>
+						<h2 class="section-title font-clinical">Notas de Triagem</h2>
+					</div>
+				</div>
+				
+				<div class="clinical-notes font-clinical mt-4 min-h-[120px]">
+					{p.Notes}
 				</div>
 			</div>
-			
-			<div class="timeline-action">
-					<a href="/patients/{p.ID}/history" class="timeline-link">
-					<i class="fas fa-history"></i> Ver histórico completo
-				</a>
-			</div>
-		</div>
 
-		<!-- Ações Rápidas -->
-		<div class="clinical-card grid-card-1">
-			<div class="section-header">
-				<div class="section-icon quick-actions">
-					<i class="fas fa-bolt"></i>
+			<!-- Card 3: Linha do Tempo (FULL WIDTH) -->
+			<div class="clinical-card grid-card-timeline md:col-span-2">
+				<div class="section-header">
+					<div class="section-icon timeline">
+						<i class="fas fa-route"></i>
+					</div>
+					<h2 class="section-title font-clinical">Linha do Tempo</h2>
 				</div>
-				<h2 class="section-title quick-actions">Ações Rápidas</h2>
+				
+				<div class="timeline-container mt-4">
+					<div class="timeline-marker"></div>
+					<div class="timeline-event">
+						<div class="timeline-dot"></div>
+						<div class="timeline-event-header">
+							<i class="fas fa-calendar-check timeline-event-icon"></i>
+							<div class="timeline-event-content font-clinical">Cadastro realizado</div>
+						</div>
+						<div class="timeline-event-date font-clinical">{p.CreatedAt.Format("02/01/2006")}</div>
+					</div>
+				</div>
+				
+				<div class="timeline-action mt-4">
+					<a href="/patients/{p.ID}/history" class="timeline-link font-clinical">
+						<i class="fas fa-history"></i> Ver histórico completo
+					</a>
+				</div>
+			</div>
+
+			<!-- Card 4: Ações Rápidas (FULL WIDTH) -->
+			<div class="clinical-card grid-card-actions md:col-span-2">
+				<div class="section-header">
+					<div class="section-icon quick-actions">
+						<i class="fas fa-bolt"></i>
+					</div>
+					<h2 class="section-title font-clinical">Ações Rápidas</h2>
+				</div>
+				
+				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+						<i class="fas fa-calendar-plus quick-action-icon"></i> Nova Sessão
+					</a>
+					
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+						<i class="fas fa-history quick-action-icon"></i> Completar Anamnese
+					</a>
+					
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="body" hx-swap="innerHTML">
+						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
+					</a>
+				</div>
 			</div>
 			
-			<div class="quick-actions-container">
-				<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
-					<i class="fas fa-calendar-plus quick-action-icon"></i> Nova Sessão
-				</a>
-				
-				<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
-					<i class="fas fa-history quick-action-icon"></i> Completar Anamnese
-				</a>
-				
-				<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link" hx-boost="true" hx-target="body" hx-swap="innerHTML">
-					<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
-				</a>
-			</div>
-		</div>
 		</div>
 	</div>
 }
