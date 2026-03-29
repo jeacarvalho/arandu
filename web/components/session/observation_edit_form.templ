@@ -8,8 +8,7 @@ type ObservationEditFormData struct {
 templ ObservationEditForm(data ObservationEditFormData) {
 	<div 
 		id={ "observation-" + data.ID }
-		class="observation-item card-hover"
-		style="padding: var(--space-lg); border-left: 3px solid var(--primary-500); background: var(--neutral-50); margin-bottom: var(--space-md);"
+		class="observation-edit-container card-hover"
 	>
 		<form 
 			hx-put={ templ.URL("/observations/" + data.ID) }

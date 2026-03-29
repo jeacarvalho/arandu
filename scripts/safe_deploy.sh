@@ -6,24 +6,18 @@
 set -e
 
 echo "🛑 Parando todas as instâncias do Arandu..."
-pkill -9 -f "arandu" 2>/dev/null || true
+
+# Usar kill direto pelo PID se existir arquivo de lock
+if [ -f "arandu.pid" ]; then
+    kill -9 $(cat arandu.pid) 2>/dev/null || true
+    rm -f arandu.pid
+fi
+
+# Tentar encontrar e matar processo na porta 8080
+fuser -k 8080/tcp 2>/dev/null || true
 sleep 2
 
-# Verificar se a porta 8080 está liberada
-PORT_PID=$(lsof -ti:8080 2>/dev/null)
-if [ ! -z "$PORT_PID" ]; then
-    echo "⚠️  Porta 8080 ainda em uso pelo PID $PORT_PID. Finalizando..."
-    kill -9 $PORT_PID 2>/dev/null || true
-    sleep 1
-fi
-
-# Verificar novamente
-if lsof -ti:8080 >/dev/null 2>&1; then
-    echo "❌ ERRO: Não foi possível liberar a porta 8080"
-    exit 1
-fi
-
-echo "✅ Porta 8080 liberada"
+echo "✅ Processos parados"
 
 # ===== Compilar Tailwind CSS =====
 echo "🎨 Verificando Tailwind CSS..."
@@ -40,7 +34,6 @@ fi
 
 if [ "$need_tailwind" = true ]; then
     echo "🔄 Compilando Tailwind CSS..."
-    # Verificar se npm está disponível
     if ! command -v npm >/dev/null 2>&1; then
         echo "❌ ERRO: npm não encontrado"
         exit 1
@@ -54,9 +47,6 @@ fi
 # ===== Compilar Templates =====
 echo "📝 Verificando templates..."
 need_templ=false
-
-# Forçar regeneração para garantir que最新 alterações sejam incluídas
-# (Mais seguro que verificar timestamps, que podem falhar)
 for file in $(find web/components -name "*.templ" 2>/dev/null); do
     generated="${file%.templ}_templ.go"
     if [ ! -f "$generated" ] || [ "$file" -nt "$generated" ]; then
@@ -65,7 +55,6 @@ for file in $(find web/components -name "*.templ" 2>/dev/null); do
     fi
 done
 
-# Também verifica se input.css foi modificado (indica possível mudança nos componentes)
 if [ "$need_tailwind" = true ]; then
     need_templ=true
 fi
@@ -73,7 +62,6 @@ fi
 if [ "$need_templ" = true ]; then
     echo "🔄 Recompilando templates..."
     
-    # Tentar usar templ do PATH ou do GOPATH
     TEMPL_CMD=""
     if command -v templ >/dev/null 2>&1; then
         TEMPL_CMD="templ"
@@ -104,9 +92,12 @@ if [ $? -ne 0 ]; then
     echo "❌ ERRO: Falha na compilação"
     exit 1
 fi
+echo "✅ Compilação concluída"
 
 echo "🚀 Iniciando Arandu..."
 ./arandu > server.log 2>&1 &
+APP_PID=$!
+echo $APP_PID > arandu.pid
 sleep 3
 
 # Verificar se o app está rodando

@@ -107,11 +107,15 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = TopBarWithEmail(userEmail).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"flex pt-16\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,7 +130,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"flex-1 p-6 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +138,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</main></div></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -177,52 +181,52 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 130, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 132, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</title><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 133, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 135, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" rel=\"stylesheet\"><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" rel=\"stylesheet\"><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 templ.SafeURL
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 134, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 136, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -230,11 +234,15 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex pt-16\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = Sidebar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<main class=\"flex-1 p-6 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -242,7 +250,7 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</main></div></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -271,52 +279,52 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 197, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 201, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</title><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 templ.SafeURL
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 200, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 204, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" rel=\"stylesheet\"><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" rel=\"stylesheet\"><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 templ.SafeURL
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 201, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 205, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -324,11 +332,15 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"flex pt-16\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = Sidebar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<main class=\"flex-1 p-6 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +348,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</main></div><script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</main></div></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -365,52 +377,52 @@ func Base(pageTitle string) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 264, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 234, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</title><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 templ.SafeURL
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 267, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 237, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" rel=\"stylesheet\"><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" rel=\"stylesheet\"><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 templ.SafeURL
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 268, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 238, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body style=\"opacity: 1;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body style=\"opacity: 1;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -418,7 +430,7 @@ func Base(pageTitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<script>\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target.tagName === 'A' && e.target.getAttribute('href') && !e.target.getAttribute('hx-boost')) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = e.target.getAttribute('href');\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -447,7 +459,7 @@ func Layout() templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"app-container\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -455,11 +467,15 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"flex pt-16\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = Sidebar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<main class=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<main class=\"flex-1 p-6 ml-0 md:ml-0 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -467,7 +483,7 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</main></div><script>\n\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</main></div></div><script>\n\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -496,7 +512,7 @@ func Sidebar() templ.Component {
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\"></div><!-- Sidebar Drawer - Always hidden, triggered by hamburger --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header - Minimal, only subtitle --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"sidebar-nav\"><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-chart-line\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-users\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-plus\"></i> <span>Novo Paciente</span></a><!-- Quick Access - Patient Context Links --><a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 bg-black/50 z-40 md:hidden\"></div><!-- Sidebar Drawer --><aside class=\"fixed md:static top-16 md:top-0 left-0 h-[calc(100vh-4rem)] md:h-screen w-72 md:w-[280px] bg-gradient-to-b from-arandu-primary to-arandu-dark text-white p-6 flex flex-col shadow-xl z-50 transform transition-transform duration-300 -translate-x-full md:translate-x-0\" :class=\"sidebarOpen ? 'translate-x-0' : ''\"><!-- Sidebar Header --><div class=\"mb-8 pb-4 border-b border-white/10\"><div class=\"text-white/70 text-sm font-medium\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 md:hidden\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"flex-1 flex flex-col gap-1\"><a href=\"/dashboard\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-chart-line w-5\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-users w-5\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-user-plus w-5\"></i> <span>Novo Paciente</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-history w-5\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-file-medical w-5\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"pt-4 border-t border-white/10\"><a href=\"/logout\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-sign-out-alt w-5\"></i> <span>Sair</span></a></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -525,11 +541,7 @@ func TopBar() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Sidebar().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<!-- Top Bar --><header class=\"top-bar\"><!-- Left: Menu Toggle & Logo --><div class=\"top-bar-left\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"hamburger-menu\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"top-bar-logo\"><div class=\"top-bar-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"top-bar-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"top-bar-search-container\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" class=\"search-bar-silent\"> <i class=\"fas fa-search top-bar-search-icon\"></i><div id=\"search-results\" class=\"search-results-container\"></div></div><!-- Right: Actions --><div class=\"top-bar-right top-bar-right-container\"></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<!-- Top Bar --><header class=\"fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-neutral-200 flex items-center px-4 gap-4\"><!-- Left: Menu Toggle & Logo --><div class=\"flex items-center gap-3\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"w-10 h-10 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600 md:hidden\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars text-lg\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"flex items-center gap-2\"><div class=\"w-8 h-8 bg-gradient-to-br from-arandu-primary to-arandu-dark rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-brain\"></i></div><span class=\"text-xl font-bold text-neutral-800 hidden sm:block\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"flex-1 max-w-xl relative\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" class=\"w-full px-4 py-2 pl-10 bg-neutral-50 border border-transparent rounded-xl text-sm text-neutral-800 placeholder-neutral-400 focus:bg-white focus:border-arandu-soft focus:outline-none focus:ring-2 focus:ring-arandu-soft/20 transition-all\"> <i class=\"fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400\"></i><div id=\"search-results\" class=\"absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-50 hidden\"></div></div><!-- Right: Actions --><div class=\"flex items-center gap-2\"></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -558,20 +570,20 @@ func TopBarContent(userEmail string) templ.Component {
 			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<header class=\"top-bar\"><!-- Left: Menu Toggle & Logo --><div class=\"top-bar-left\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"hamburger-menu\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"top-bar-logo\"><div class=\"top-bar-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"top-bar-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"top-bar-search-container\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" class=\"search-bar-silent\"> <i class=\"fas fa-search top-bar-search-icon\"></i><div id=\"search-results\" class=\"search-results-container\"></div></div><!-- Right: User Profile --><div class=\"top-bar-right top-bar-right-container\"><div class=\"slp-top-bar-user\"><div class=\"slp-top-bar-user-avatar\"><i class=\"fas fa-user-md\"></i></div><span class=\"slp-top-bar-user-name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<header class=\"top-bar\"><!-- Left: Menu Toggle & Logo --><div class=\"top-bar-left\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"hamburger-menu\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"top-bar-logo\"><div class=\"top-bar-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"top-bar-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"top-bar-search-container\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" class=\"search-bar-silent\"> <i class=\"fas fa-search top-bar-search-icon\"></i><div id=\"search-results\" class=\"search-results-container\"></div></div><!-- Right: User Profile --><div class=\"top-bar-right top-bar-right-container\"><div class=\"slp-top-bar-user\"><div class=\"slp-top-bar-user-avatar\"><i class=\"fas fa-user-md\"></i></div><span class=\"slp-top-bar-user-name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(userEmail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 517, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 480, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span></div></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span></div></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

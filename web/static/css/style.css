@@ -4245,6 +4245,7 @@ header {
     padding: var(--space-xl);
     padding-left: calc(var(--space-xl) + 280px); /* Compensação da sidebar */
     padding-right: var(--space-xl);
+    padding-top: calc(80px + var(--space-xl)); /* Compensação do header fixo */
 }
 
 /* Mobile: Remove compensação quando sidebar some */
@@ -4260,6 +4261,36 @@ header {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
     margin-bottom: var(--space-xl);
+}
+
+/* Patient Profile Grid - Layout Otimizado com melhor aproveitamento de espaço */
+.patient-profile-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
+    width: 100%;
+}
+
+.patient-profile-grid .clinical-card {
+    min-height: 220px;
+    padding: var(--space-xl);
+}
+
+.grid-card-identity {
+    grid-column: span 1;
+}
+
+.grid-card-notes {
+    grid-column: span 1;
+}
+
+.grid-card-timeline {
+    grid-column: span 1;
+}
+
+.grid-card-actions {
+    grid-column: span 1;
 }
 
 /* Cards no grid - ocupam 1 ou 2 colunas */
@@ -4686,6 +4717,11 @@ header {
     .grid-card-2 {
         grid-column: span 2;
     }
+
+    /* Patient Profile Grid - Tablet */
+    .patient-profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 480px) {
@@ -4709,6 +4745,18 @@ header {
     
     .session-clinical-report {
         font-size: 1rem;
+    }
+
+    /* Patient Profile Grid - Mobile 1 coluna */
+    .patient-profile-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+        margin-top: var(--space-lg);
+    }
+
+    .patient-profile-grid .clinical-card {
+        min-height: auto;
+        padding: var(--space-lg);
     }
 }
 
@@ -6370,6 +6418,21 @@ header {
     color: var(--neutral-400);
     font-weight: 400;
     line-height: 1.8;
+}
+
+/* Observation/Intervention Edit Form Containers */
+.observation-edit-container {
+    padding: var(--space-lg);
+    border-left: 3px solid var(--primary-500);
+    background: var(--neutral-50);
+    margin-bottom: var(--space-md);
+}
+
+.intervention-edit-container {
+    padding: var(--space-lg);
+    border-left: 3px solid var(--secondary-500);
+    background: var(--neutral-50);
+    margin-bottom: var(--space-md);
 }
 
 /* Mobile Responsive */

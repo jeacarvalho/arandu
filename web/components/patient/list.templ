@@ -56,11 +56,11 @@ templ PatientList(data PatientListData) {
 							<i class="fas fa-user"></i>
 						</div>
 						<div>
-							<div class="patient-name">{ p.Name }</div>
+							<div class="patient-name font-clinical">{ p.Name }</div>
 							if p.Notes != "" {
-								<div class="patient-notes patient-notes-inline">{ p.Notes }</div>
+								<div class="patient-notes patient-notes-inline font-clinical">{ p.Notes }</div>
 							} else {
-								<div class="patient-empty-note">Nenhuma observação registrada</div>
+								<div class="patient-empty-note font-clinical">Nenhuma observação registrada</div>
 							}
 						</div>
 					</div>

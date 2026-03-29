@@ -115,7 +115,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		if patient.Notes != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div style=\"font-family: var(--font-clinical); font-size: 1rem; line-height: 1.75; color: var(--arandu-dark); background: var(--arandu-bg); padding: var(--space-lg); border-radius: var(--radius-lg); border-left: 3px solid var(--arandu-primary);\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"font-clinical\" style=\"font-size: 1rem; line-height: 1.75; color: var(--arandu-dark); background: var(--arandu-bg); padding: var(--space-lg); border-radius: var(--radius-lg); border-left: 3px solid var(--arandu-primary);\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -133,7 +133,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div style=\"font-family: var(--font-clinical); font-size: 0.875rem; color: var(--text-tertiary); font-style: italic; padding: var(--space-lg); background: var(--arandu-bg); border-radius: var(--radius-lg);\">Nenhuma nota clínica registrada</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"font-clinical\" style=\"font-size: 0.875rem; color: var(--text-tertiary); font-style: italic; padding: var(--space-lg); background: var(--arandu-bg); border-radius: var(--radius-lg);\">Nenhuma nota clínica registrada</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -205,14 +205,14 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"></i><div class=\"timeline-event-content\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"></i><div class=\"timeline-event-content font-clinical\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(event.Content)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 149, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 149, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {

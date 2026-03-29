@@ -240,5 +240,22 @@ if [ -f "scripts/arandu_update_context.sh" ]; then
   bash scripts/arandu_update_context.sh
 fi
 
+# Adicionar no arandu_conclude_task.sh antes de mover para archive
+echo ""
+echo "📋 CHECKLIST VISUAL OBRIGATÓRIO"
+echo "================================"
+echo "Responda antes de concluir:"
+echo "1. [ ] A página foi testada em desktop (1920px)?"
+echo "2. [ ] A página foi testada em mobile (375px)?"
+echo "3. [ ] Nenhum elemento está sobreposto?"
+echo "4. [ ] O scroll funciona sem cortar conteúdo?"
+echo "5. [ ] Screenshot foi gerado e revisado?"
+echo ""
+read -p "Todas as verificações foram feitas? (s/n): " VISUAL_CHECK
+if [[ "$VISUAL_CHECK" != "s" && "$VISUAL_CHECK" != "S" ]]; then
+    echo "❌ Tarefa NÃO pode ser concluída sem validação visual"
+    exit 1
+fi
+
 echo
 echo "✨ Tarefa concluída com sucesso!"
