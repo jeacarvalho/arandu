@@ -3,6 +3,7 @@ package layout
 import (
 	goContext "context"
 	appcontext "arandu/internal/platform/context"
+	"arandu/internal/platform/helpers"
 )
 
 type PageData struct {
@@ -44,7 +45,8 @@ templ BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, side
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260325_v3" rel="stylesheet">
+		<link href={ "/static/css/tailwind.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
+		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -128,7 +130,8 @@ templ BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260325_v3" rel="stylesheet">
+		<link href={ "/static/css/tailwind.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
+		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -194,7 +197,8 @@ templ BaseWithContent(pageTitle string, content templ.Component) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260325_v3" rel="stylesheet">
+		<link href={ "/static/css/tailwind.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
+		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -260,7 +264,8 @@ templ Base(pageTitle string) {
 				— { pageTitle }
 			}
 		</title>
-		<link href="/static/css/style.css?v=20260325_v3" rel="stylesheet">
+		<link href={ "/static/css/tailwind.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
+		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -382,6 +387,17 @@ templ Sidebar() {
 			<a href="/patients/new" class="sidebar-nav-item">
 				<i class="fas fa-user-plus"></i>
 				<span>Novo Paciente</span>
+			</a>
+
+			<!-- Quick Access - Patient Context Links -->
+			<a href="/patients" class="sidebar-nav-item">
+				<i class="fas fa-history"></i>
+				<span>Anamnese</span>
+			</a>
+			
+			<a href="/patients" class="sidebar-nav-item">
+				<i class="fas fa-file-medical"></i>
+				<span>Prontuário</span>
 			</a>
 		</nav>
 
