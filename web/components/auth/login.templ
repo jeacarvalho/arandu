@@ -1,11 +1,9 @@
 package auth
 
+import "arandu/internal/platform/helpers"
+
 type LoginData struct {
 	Error string
-}
-
-func getCSSVersion() string {
-	return "20260325_v3"
 }
 
 templ Login(data LoginData) {
@@ -15,8 +13,8 @@ templ Login(data LoginData) {
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Arandu — Login</title>
-		<link href={ templ.URL("/static/css/tailwind.css?v=" + getCSSVersion()) } rel="stylesheet">
-		<link href={ templ.URL("/static/css/style.css?v=" + getCSSVersion()) } rel="stylesheet">
+		<link href={ templ.URL("/static/css/tailwind.css?v=" + helpers.GetCSSVersion()) } rel="stylesheet">
+		<link href={ templ.URL("/static/css/style.css?v=" + helpers.GetCSSVersion()) } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">

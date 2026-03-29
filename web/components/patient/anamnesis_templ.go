@@ -63,14 +63,14 @@ func AnamnesisView(anamnesis AnamnesisViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"back-link\"><i class=\"fas fa-chevron-left mr-2\"></i> Voltar ao Perfil</a></nav><h1 class=\"font-clinical text-3xl font-semibold text-arandu-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"back-link\"><i class=\"fas fa-chevron-left mr-2\"></i> Voltar ao Perfil</a></nav><h1 class=\"anamnesis-title\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(anamnesis.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 32, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/anamnesis.templ`, Line: 32, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

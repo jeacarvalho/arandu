@@ -107,7 +107,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"></head><body><div class=\"min-h-screen bg-arandu-bg app-layout\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -115,7 +115,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"flex pt-16\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"app-layout-body\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,7 +130,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"flex-1 p-6 transition-all duration-300\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"app-main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -512,7 +512,7 @@ func Sidebar() templ.Component {
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 bg-black/50 z-40 md:hidden\"></div><!-- Sidebar Drawer --><aside class=\"fixed md:static top-16 md:top-0 left-0 h-[calc(100vh-4rem)] md:h-screen w-72 md:w-[280px] bg-gradient-to-b from-arandu-primary to-arandu-dark text-white p-6 flex flex-col shadow-xl z-50 transform transition-transform duration-300 -translate-x-full md:translate-x-0\" :class=\"sidebarOpen ? 'translate-x-0' : ''\"><!-- Sidebar Header --><div class=\"mb-8 pb-4 border-b border-white/10\"><div class=\"text-white/70 text-sm font-medium\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 md:hidden\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"flex-1 flex flex-col gap-1\"><a href=\"/dashboard\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-chart-line w-5\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-users w-5\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-user-plus w-5\"></i> <span>Novo Paciente</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-history w-5\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-file-medical w-5\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"pt-4 border-t border-white/10\"><a href=\"/logout\" class=\"flex items-center gap-3 px-4 py-3 text-white/80 no-underline rounded-xl transition-all duration-250 font-medium hover:bg-white/5 hover:text-white hover:translate-x-1\"><i class=\"fas fa-sign-out-alt w-5\"></i> <span>Sair</span></a></div></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\"></div><!-- Sidebar Drawer --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"sidebar-nav\"><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-chart-line\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-users\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-plus\"></i> <span>Novo Paciente</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
