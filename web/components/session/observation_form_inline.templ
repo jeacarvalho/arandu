@@ -1,11 +1,13 @@
 package session
 
-templ ObservationFormInline(sessionID string) {
+templ ObservationFormInline(sessionID string, targetID string) {
 	<form 
 		class="inline-form"
 		hx-post={ templ.URL("/session/" + sessionID + "/observations") }
-		hx-target="#observations-list"
+		hx-target={ "#" + targetID }
 		hx-swap="beforeend"
+		hx-indicator={ "#" + targetID + "-loading" }
+		hx-disabled-elt="this button[type='submit']"
 		hx-on::after-request="this.reset()"
 	>
 		<div class="silent-form-group">
@@ -25,6 +27,9 @@ templ ObservationFormInline(sessionID string) {
 			<button type="submit" class="btn btn-primary btn-sm">
 				<i class="fas fa-plus btn-icon"></i>Adicionar
 			</button>
+			<span id={ targetID + "-loading" } class="htmx-indicator text-xs text-neutral-500 ml-2" aria-live="polite">
+				<i class="fas fa-spinner fa-spin mr-1"></i>Salvando...
+			</span>
 		</div>
 	</form>
 }

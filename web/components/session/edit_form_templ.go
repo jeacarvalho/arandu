@@ -154,7 +154,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"btn-outline-light\"><i class=\"fas fa-times btn-icon-left\"></i> Cancelar</a> <button type=\"submit\" class=\"btn-primary-solid\"><i class=\"fas fa-save btn-icon-left\"></i> Salvar Alterações</button></div><!-- Observações Clínicas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-sticky-note icon-teal\"></i><h3 class=\"section-title\">Observações Clínicas</h3></div><div id=\"observations-list\" class=\"mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"btn-outline-light\"><i class=\"fas fa-times btn-icon-left\"></i> Cancelar</a> <button type=\"submit\" class=\"btn-primary-solid\"><i class=\"fas fa-save btn-icon-left\"></i> Salvar Alterações</button></div><!-- Observações Clínicas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-sticky-note icon-teal\"></i><h3 class=\"section-title\">Observações Clínicas</h3></div><div id=\"observations-list-main\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -179,11 +179,11 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ObservationFormInline(data.SessionID).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ObservationFormInline(data.SessionID, "observations-list-main").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- Intervenções Terapêuticas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-hands-helping icon-purple\"></i><h3 class=\"section-title\">Intervenções Terapêuticas</h3></div><div id=\"interventions-list\" class=\"mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><!-- Intervenções Terapêuticas --><div class=\"card mb-lg\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-hands-helping icon-purple\"></i><h3 class=\"section-title\">Intervenções Terapêuticas</h3></div><div id=\"interventions-list-main\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -208,11 +208,11 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = InterventionFormInline(data.SessionID).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = InterventionFormInline(data.SessionID, "interventions-list-main").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- Metas Terapêuticas --><div class=\"card\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-bullseye icon-primary\"></i><h3 class=\"section-title\">Metas Terapêuticas</h3></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- Metas Terapêuticas --><div class=\"card\"><div class=\"flex flex-center gap-md mb-md\"><i class=\"fas fa-bullseye icon-primary\"></i><h3 class=\"section-title\">Metas Terapêuticas</h3></div><ul id=\"session-goals-list-main\" class=\"session-goals-list mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -250,7 +250,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions form-actions-mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></form></div><!-- Sidebar --><aside class=\"session-sidebar\"><!-- Observações Clínicas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-sticky-note icon-teal\"></i><h4>Observações Clínicas</h4></div><div id=\"observations-list\" class=\"mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#session-goals-list-main\" hx-swap=\"beforeend\" hx-indicator=\"#goals-main-loading\" hx-disabled-elt=\"this button[type='submit']\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions form-actions-mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button> <span id=\"goals-main-loading\" class=\"htmx-indicator text-xs text-neutral-500 ml-2\" aria-live=\"polite\"><i class=\"fas fa-spinner fa-spin mr-1\"></i>Salvando...</span></div></form></div></form></div><!-- Sidebar --><aside class=\"session-sidebar\"><!-- Observações Clínicas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-sticky-note icon-teal\"></i><h4>Observações Clínicas</h4></div><div id=\"observations-list-sidebar\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -278,13 +278,13 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/observations"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 187, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 190, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" hx-target=\"#observations-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Intervenções Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-hands-helping icon-purple\"></i><h4>Intervenções</h4></div><div id=\"interventions-list\" class=\"mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" hx-target=\"#observations-list-sidebar\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Observação</label> <textarea name=\"content\" placeholder=\"Digite sua percepção clínica aqui...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Intervenções Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-hands-helping icon-purple\"></i><h4>Intervenções</h4></div><div id=\"interventions-list-sidebar\" class=\"mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -312,13 +312,13 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/interventions"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 220, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 223, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" hx-target=\"#interventions-list\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Intervenção</label> <textarea name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-secondary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Metas Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye icon-primary\"></i><h4>Metas Terapêuticas</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" hx-target=\"#interventions-list-sidebar\" hx-swap=\"beforeend\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Intervenção</label> <textarea name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions mt-md\"><button type=\"submit\" class=\"btn btn-secondary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button></div></form></div><!-- Metas Terapêuticas --><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye icon-primary\"></i><h4>Metas Terapêuticas</h4></div><ul id=\"session-goals-list-sidebar\" class=\"session-goals-list mb-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -331,7 +331,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(g.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 240, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 243, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -350,13 +350,13 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/patients/" + data.FormData.PatientID + "/goals"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 247, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 250, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></aside></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-target=\"#session-goals-list-sidebar\" hx-swap=\"beforeend\" hx-indicator=\"#goals-sidebar-loading\" hx-disabled-elt=\"this button[type='submit']\" hx-on::after-request=\"if(event.detail.successful) this.reset()\" class=\"mt-md pt-md border-top-light\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button> <span id=\"goals-sidebar-loading\" class=\"htmx-indicator text-xs text-neutral-500 ml-2\" aria-live=\"polite\"><i class=\"fas fa-spinner fa-spin mr-1\"></i>Salvando...</span></div></form></div></aside></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

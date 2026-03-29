@@ -9,10 +9,11 @@ templ SearchResults(results []SearchResultItem) {
 	<div id="search-results" class="search-results-dropdown" role="listbox" aria-label="Resultados da busca de pacientes">
 		if len(results) > 0 {
 			<div class="search-results-list">
-				for _, r := range results {
+				for i, r := range results {
 					<a 
 						href={ templ.URL("/patients/" + r.ID) }
-						class="search-result-link"
+						id={ "search-option-" + string(rune(i)) }
+						class="search-result-link bg-transparent"
 						role="option"
 						data-search-result="true"
 						tabindex="-1"

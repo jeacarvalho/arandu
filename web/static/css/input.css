@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-arandu-primary: #0F6E56;
   --color-arandu-active: #1D9E75;
@@ -61,6 +63,35 @@
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
+}
+
+@layer base {
+  .dark {
+    --color-arandu-bg: #0f172a;
+    --color-arandu-dark: #e2e8f0;
+    --color-arandu-paper: #1e293b;
+    --color-arandu-soft: #064e3b;
+    --color-neutral-50: #1e293b;
+    --color-neutral-100: #334155;
+    --color-neutral-200: #475569;
+    --color-neutral-700: #e2e8f0;
+    --color-neutral-800: #f1f5f9;
+    --color-neutral-900: #ffffff;
+    --color-primary-50: #064e3b;
+    --color-primary-100: #065f46;
+    --color-primary-200: #047857;
+  }
+
+  body {
+    background-color: var(--color-arandu-bg);
+    color: var(--color-arandu-dark);
+    font-family: var(--font-sans);
+  }
+
+  .dark body {
+    background-color: var(--color-arandu-bg);
+    color: var(--color-arandu-dark);
+  }
 }
 
 @layer base {
