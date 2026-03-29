@@ -118,7 +118,7 @@ templ NewSessionForm(data NewSessionFormData) {
 					<h4>Metas Terapêuticas</h4>
 				</div>
 				
-				<ul id="session-goals-list" class="session-goals-list mb-md">
+				<ul id="session-goals-list" class="session-goals-list mb-md" role="region" aria-live="polite" aria-label="Metas terapêuticas">
 					for _, goalData := range data.Goals {
 						<li class="session-goal-item" id={ "session-goal-" + goalData.ID }>
 							<div class="session-goal-content">
@@ -136,13 +136,14 @@ templ NewSessionForm(data NewSessionFormData) {
 				}
 				
 				<!-- Formulário para adicionar meta -->
-				<form 
-					class="inline-form goals-form-mt"
-					hx-post={ "/patients/" + data.FormData.PatientID + "/goals" }
-					hx-target="#session-goals-list"
-					hx-swap="beforeend"
-					hx-on::after-request="if(event.detail.successful) this.reset()"
-				>
+			<form 
+				class="inline-form goals-form-mt"
+				hx-post={ "/patients/" + data.FormData.PatientID + "/goals" }
+				hx-target="#session-goals-list"
+				hx-swap="beforeend"
+				hx-disabled-elt="this button[type='submit']"
+				hx-on::after-request="if(event.detail.successful) this.reset()"
+			>
 					<div class="silent-form-group">
 						<label class="silent-label">
 							<i class="fas fa-plus-circle"></i>

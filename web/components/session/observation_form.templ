@@ -6,6 +6,7 @@ templ ObservationForm(sessionID string) {
 		hx-post={ templ.URL("/session/" + sessionID + "/observations") }
 		hx-target="#observations-list"
 		hx-swap="afterbegin"
+		hx-disabled-elt="this button[type='submit']"
 		hx-on::after-request="this.reset()"
 	>
 		<div class="silent-form-group">

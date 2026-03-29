@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initLoadingStates();
     initToastNotifications();
+    initHTMXFocusManagement();
 });
 
 // Form interactions
@@ -383,3 +384,73 @@ shakeStyle.textContent = `
     }
 `;
 document.head.appendChild(shakeStyle);
+
+// HTMX Focus Management - Alta 3
+function initHTMXFocusManagement() {
+    const focusStyle = document.createElement('style');
+    focusStyle.textContent = `
+        @keyframes focusErrorPulse {
+            0%, 100% { box-shadow: 0 0 0 0 transparent; }
+            50% { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3); }
+        }
+        .focus-error {
+            animation: focusErrorPulse 0.5s ease-in-out 2;
+        }
+    `;
+    document.head.appendChild(focusStyle);
+    
+    document.addEventListener('htmx:afterSwap', function(event) {
+        handleFocusPostSwap(event.detail);
+    });
+    
+    document.addEventListener('htmx:responseError', function(event) {
+        handleErrorFocus(event.detail);
+    });
+}
+
+function handleFocusPostSwap(detail) {
+    const target = detail.target;
+    if (!target) return;
+    
+    setTimeout(() => {
+        const errorInput = target.querySelector('[aria-invalid="true"], .invalid input, .invalid textarea, input[aria-describedby*="error"], textarea[aria-describedby*="error"]');
+        
+        if (errorInput) {
+            errorInput.focus();
+            errorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        
+        const errorAlert = target.querySelector('[role="alert"], .form-error, .error-message');
+        if (errorAlert) {
+            const form = target.closest('form');
+            if (form) {
+                const firstInput = form.querySelector('input:not([type="hidden"]), textarea, select');
+                if (firstInput) {
+                    firstInput.focus();
+                    firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            return;
+        }
+        
+        const newItem = target.querySelector('input, textarea, select');
+        if (newItem && !newItem.matches('[readonly], [disabled]')) {
+            newItem.focus();
+        }
+    }, 50);
+}
+
+function handleErrorFocus(detail) {
+    const target = detail.target;
+    if (!target) return;
+    
+    setTimeout(() => {
+        const firstInput = target.querySelector('input:not([type="hidden"]), textarea, select');
+        if (firstInput) {
+            firstInput.focus();
+            firstInput.classList.add('focus-error');
+            setTimeout(() => firstInput.classList.remove('focus-error'), 2000);
+        }
+    }, 50);
+}

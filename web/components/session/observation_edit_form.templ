@@ -14,6 +14,7 @@ templ ObservationEditForm(data ObservationEditFormData) {
 			hx-put={ templ.URL("/observations/" + data.ID) }
 			hx-target={ "#observation-" + data.ID }
 			hx-swap="outerHTML"
+			hx-disabled-elt="this button[type='submit']"
 			class="inline-edit-form"
 		>
 			<textarea 

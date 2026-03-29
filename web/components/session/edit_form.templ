@@ -87,7 +87,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-sticky-note icon-teal"></i>
 						<h3 class="section-title">Observações Clínicas</h3>
 					</div>
-				<div id="observations-list-main" class="mb-md">
+				<div id="observations-list-main" class="mb-md" role="region" aria-live="polite" aria-label="Observações clínicas">
 						if len(data.Observations) > 0 {
 							for _, o := range data.Observations {
 								@ObservationItem(ObservationItemData{
@@ -97,7 +97,7 @@ templ EditSessionForm(data EditSessionFormData) {
 								})
 							}
 						} else {
-							<div class="text-center text-muted p-lg">
+							<div class="text-center text-neutral-600 p-lg">
 								<i class="fas fa-sticky-note icon-lg mb-md opacity-50"></i>
 								<p class="font-italic">Nenhuma observação registrada</p>
 							</div>
@@ -112,7 +112,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-hands-helping icon-purple"></i>
 						<h3 class="section-title">Intervenções Terapêuticas</h3>
 					</div>
-				<div id="interventions-list-main" class="mb-md">
+				<div id="interventions-list-main" class="mb-md" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 						if len(data.Interventions) > 0 {
 							for _, i := range data.Interventions {
 								@InterventionItem(InterventionItemData{
@@ -122,7 +122,7 @@ templ EditSessionForm(data EditSessionFormData) {
 								})
 							}
 						} else {
-							<div class="text-center text-muted p-lg">
+							<div class="text-center text-neutral-600 p-lg">
 								<i class="fas fa-hands-helping icon-lg mb-md opacity-50"></i>
 								<p class="font-italic">Nenhuma intervenção registrada</p>
 							</div>
@@ -137,7 +137,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						<i class="fas fa-bullseye icon-primary"></i>
 						<h3 class="section-title">Metas Terapêuticas</h3>
 					</div>
-				<ul id="session-goals-list-main" class="session-goals-list mb-md">
+				<ul id="session-goals-list-main" class="session-goals-list mb-md" role="region" aria-live="polite" aria-label="Metas terapêuticas">
 						if len(data.Goals) > 0 {
 							for _, g := range data.Goals {
 								<li class="goal-item">{ g.Title }</li>
@@ -145,7 +145,7 @@ templ EditSessionForm(data EditSessionFormData) {
 						}
 					</ul>
 					<div class="empty-state">
-						<p class="font-italic text-muted">Nenhuma meta definida</p>
+						<p class="font-italic text-neutral-600">Nenhuma meta definida</p>
 					</div>
 					<form hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list-main" hx-swap="beforeend" hx-indicator="#goals-main-loading" hx-disabled-elt="this button[type='submit']" class="mt-md pt-md border-top-light">
 						<div class="silent-form-group">
@@ -171,7 +171,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-sticky-note icon-teal"></i>
 					<h4>Observações Clínicas</h4>
 				</div>
-				<div id="observations-list-sidebar" class="mb-md">
+				<div id="observations-list-sidebar" class="mb-md" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(data.Observations) > 0 {
 						for _, o := range data.Observations {
 							@ObservationItem(ObservationItemData{
@@ -181,13 +181,13 @@ templ EditSessionForm(data EditSessionFormData) {
 							})
 						}
 					} else {
-						<div class="text-center text-muted p-lg">
+						<div class="text-center text-neutral-600 p-lg">
 							<i class="fas fa-sticky-note icon-lg mb-md opacity-50"></i>
 							<p class="font-italic">Nenhuma observação registrada</p>
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/observations") } hx-target="#observations-list-sidebar" hx-swap="beforeend" hx-on::after-request="this.reset()">
+				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/observations") } hx-target="#observations-list-sidebar" hx-swap="beforeend" hx-disabled-elt="this button[type='submit']" hx-on::after-request="this.reset()">
 					<div class="silent-form-group">
 						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Observação</label>
 						<textarea name="content" placeholder="Digite sua percepção clínica aqui..." rows="3" class="silent-textarea" required></textarea>
@@ -204,7 +204,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-hands-helping icon-purple"></i>
 					<h4>Intervenções</h4>
 				</div>
-				<div id="interventions-list-sidebar" class="mb-md">
+				<div id="interventions-list-sidebar" class="mb-md" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 					if len(data.Interventions) > 0 {
 						for _, i := range data.Interventions {
 							@InterventionItem(InterventionItemData{
@@ -214,13 +214,13 @@ templ EditSessionForm(data EditSessionFormData) {
 							})
 						}
 					} else {
-						<div class="text-center text-muted p-lg">
+						<div class="text-center text-neutral-600 p-lg">
 							<i class="fas fa-hands-helping icon-lg mb-md opacity-50"></i>
 							<p class="font-italic">Nenhuma intervenção registrada</p>
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/interventions") } hx-target="#interventions-list-sidebar" hx-swap="beforeend" hx-on::after-request="this.reset()">
+				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/interventions") } hx-target="#interventions-list-sidebar" hx-swap="beforeend" hx-disabled-elt="this button[type='submit']" hx-on::after-request="this.reset()">
 					<div class="silent-form-group">
 						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Intervenção</label>
 						<textarea name="content" placeholder="Descreva a técnica ou intervenção realizada..." rows="3" class="silent-textarea" required></textarea>
@@ -237,7 +237,7 @@ templ EditSessionForm(data EditSessionFormData) {
 					<i class="fas fa-bullseye icon-primary"></i>
 					<h4>Metas Terapêuticas</h4>
 				</div>
-				<ul id="session-goals-list-sidebar" class="session-goals-list mb-md">
+				<ul id="session-goals-list-sidebar" class="session-goals-list mb-md" role="region" aria-live="polite" aria-label="Metas terapêuticas">
 					if len(data.Goals) > 0 {
 						for _, g := range data.Goals {
 							<li class="goal-item">{ g.Title }</li>

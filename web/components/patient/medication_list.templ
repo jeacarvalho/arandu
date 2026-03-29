@@ -40,9 +40,11 @@ templ MedicationList(data MedicationListViewModel) {
 								type="button"
 								class="bio-med-action action-suspend"
 								title="Suspender medicação"
+								aria-label="Suspender medicação"
 								hx-put={ "/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=suspend" }
 								hx-target="#medication-list"
 								hx-swap="innerHTML"
+								hx-disabled-elt="this"
 							>
 								<i class="fas fa-pause"></i>
 							</button>
@@ -52,9 +54,11 @@ templ MedicationList(data MedicationListViewModel) {
 								type="button"
 								class="bio-med-action action-activate"
 								title="Reativar medicação"
+								aria-label="Reativar medicação"
 								hx-put={ "/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=activate" }
 								hx-target="#medication-list"
 								hx-swap="innerHTML"
+								hx-disabled-elt="this"
 							>
 								<i class="fas fa-play"></i>
 							</button>
