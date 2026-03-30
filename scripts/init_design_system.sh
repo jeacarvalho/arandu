@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+# ⚠️  ONE-TIME SETUP SCRIPT - Run once only
+# Initializes design system structure (may have already been run)
 set -euo pipefail
 
 echo "🎨 Inicializando identidade visual do Arandu..."

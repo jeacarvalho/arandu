@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/arandu_trace.sh" "$@"
+
+trace "PROCESS_TASK" "$TASK_ID" "Starting"
+
 # Verificar argumentos
 if [ $# -lt 1 ]; then
   echo "Uso: $0 TASK_ID [--execute]"
