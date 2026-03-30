@@ -1,4 +1,6 @@
 #!/bin/bash
+# ⚠️  ONE-TIME MIGRATION SCRIPT - Run once only, then archive or delete
+# This script was used to migrate storage to hashed directory structure
 set -e
 
 echo "🔄 Script de Migração para Directory Hashing"

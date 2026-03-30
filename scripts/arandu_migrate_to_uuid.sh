@@ -1,4 +1,6 @@
 #!/bin/bash
+# ⚠️  ONE-TIME MIGRATION SCRIPT - Run once only, then archive or delete
+# This script was used to migrate IDs to UUID v4 format
 set -e
 
 echo "🔄 Script de Migração para UUID v4"

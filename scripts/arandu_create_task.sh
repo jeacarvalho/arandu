@@ -2,6 +2,11 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/arandu_trace.sh" "$@"
+
+trace "CREATE_TASK" "$TITLE" "REQ: $REQ_ID"
+
 # Verificar argumentos
 if [ $# -lt 1 ]; then
   echo "Uso: $0 \"titulo da tarefa\" [REQ-ID]"
@@ -81,8 +86,10 @@ Tarefa criada sem requirement específico.
 EOF
 fi
 
+trace "TASK_CREATED" "$TASK_ID" "Title: $TITLE"
 echo "✅ tarefa criada: ${TASK_ID}"
 echo "📁 Tarefa em: $TASK_DIR/task.md"
+[ "$TRACE_ENABLED" = true ] && echo "📍 Trace: $TRACE_FILE"
 echo ""
 echo "📝 Instruções CRÍTICAS:"
 echo "1. Edite $TASK_DIR/task.md para detalhar a tarefa COMPLETAMENTE"
