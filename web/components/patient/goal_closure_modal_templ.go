@@ -81,7 +81,7 @@ func GoalClosureModalInline(goal GoalItemViewModel, patientID string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" x-on:htmx:after-request=\"showModal = false\"><div class=\"goal-closure-field\"><label class=\"goal-closure-label\"><i class=\"fas fa-pen-fancy\"></i> Nota de Desfecho</label><p class=\"goal-closure-hint\">Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.</p><textarea name=\"closure_note\" class=\"goal-closure-textarea\" rows=\"6\" placeholder=\"Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?\"></textarea></div><div class=\"goal-closure-actions\"><button type=\"button\" class=\"goal-closure-btn-cancel\" x-on:click=\"showModal = false\"><i class=\"fas fa-times\"></i> Cancelar</button> <button type=\"submit\" class=\"goal-closure-btn-confirm\"><i class=\"fas fa-check\"></i> Concluir Meta</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this button[type='submit']\" x-on:htmx:after-request=\"showModal = false\"><div class=\"goal-closure-field\"><label class=\"goal-closure-label\"><i class=\"fas fa-pen-fancy\"></i> Nota de Desfecho</label><p class=\"goal-closure-hint\">Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.</p><textarea name=\"closure_note\" class=\"goal-closure-textarea\" rows=\"6\" placeholder=\"Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?\"></textarea></div><div class=\"goal-closure-actions\"><button type=\"button\" class=\"goal-closure-btn-cancel\" x-on:click=\"showModal = false\"><i class=\"fas fa-times\"></i> Cancelar</button> <button type=\"submit\" class=\"goal-closure-btn-confirm\"><i class=\"fas fa-check\"></i> Concluir Meta</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -117,7 +117,7 @@ func CloseGoalButton(goal GoalItemViewModel, patientID string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("showModal = true")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 63, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 64, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

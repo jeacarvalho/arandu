@@ -40,7 +40,7 @@ func GoalsSessionSidebar(data GoalsSessionSidebarData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"session-goals-sidebar\" class=\"session-goals-sidebar\"><div class=\"session-goals-header\"><span class=\"session-goals-icon\"><i class=\"fas fa-bullseye\"></i></span><h4 class=\"session-goals-title\">Metas em Foco</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"session-goals-sidebar\" class=\"session-goals-sidebar\"><div class=\"session-goals-header\"><span class=\"session-goals-icon\"><i class=\"fas fa-bullseye\"></i></span><h4 class=\"session-goals-title\">Metas em Foco</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list\" role=\"region\" aria-live=\"polite\" aria-label=\"Metas terapêuticas\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -128,7 +128,7 @@ func SessionGoalItemRender(goal GoalDataItem, patientID string) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"#session-goals-sidebar\" hx-swap=\"innerHTML\"><i class=\"fas fa-check\"></i></button></li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"#session-goals-sidebar\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-check\"></i></button></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,13 +164,13 @@ func GoalFormInline(patientID string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 59, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 60, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-on::after-request=\"if(event.detail.successful) this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required> <textarea name=\"description\" placeholder=\"Racional clínico (opcional)...\" class=\"silent-textarea\" rows=\"2\"></textarea></div><div class=\"form-actions\" style=\"margin-top: var(--space-md);\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar</button></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-disabled-elt=\"this button[type='submit']\" hx-on::after-request=\"if(event.detail.successful) this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required> <textarea name=\"description\" placeholder=\"Racional clínico (opcional)...\" class=\"silent-textarea\" rows=\"2\"></textarea></div><div class=\"form-actions\" style=\"margin-top: var(--space-md);\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

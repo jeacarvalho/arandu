@@ -73,14 +73,14 @@ func ObservationEditForm(data ObservationEditFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-swap=\"outerHTML\" class=\"inline-edit-form\"><textarea name=\"content\" rows=\"4\" class=\"silent-textarea\" required>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-swap=\"outerHTML\" hx-disabled-elt=\"this button[type='submit']\" class=\"inline-edit-form\"><textarea name=\"content\" rows=\"4\" class=\"silent-textarea\" required>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 24, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 25, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -93,7 +93,7 @@ func ObservationEditForm(data ObservationEditFormData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/observations/" + data.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 32, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 33, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -106,7 +106,7 @@ func ObservationEditForm(data ObservationEditFormData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("#observation-" + data.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 33, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/observation_edit_form.templ`, Line: 34, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

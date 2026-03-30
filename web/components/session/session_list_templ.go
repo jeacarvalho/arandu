@@ -42,7 +42,7 @@ func SessionList(patientID string, sessions []SessionItem) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"sessions-list\" class=\"sessions-list-container\"><div class=\"sessions-header\"><div class=\"sessions-header-left\"><div class=\"session-card-purple\"><i class=\"fas fa-calendar-alt\"></i></div><div><h2 class=\"section-title\">Sessões Clínicas</h2></div></div><div class=\"sessions-badge\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"sessions-list\" class=\"sessions-list-container\" role=\"region\" aria-live=\"polite\" aria-label=\"Lista de sessões\"><div class=\"sessions-header\"><div class=\"sessions-header-left\"><div class=\"session-card-purple\"><i class=\"fas fa-calendar-alt\"></i></div><div><h2 class=\"section-title\">Sessões Clínicas</h2></div></div><div class=\"sessions-badge\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

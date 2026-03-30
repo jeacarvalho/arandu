@@ -998,8 +998,9 @@ templ TopBar() {
 				name="q"
 				placeholder="Buscar paciente..."
 				hx-get="/patients/search"
-				hx-trigger="keyup changed delay:500ms"
+				hx-trigger="keyup changed delay:350ms"
 				hx-target="#search-results"
+				hx-indicator="#search-loading"
 				autocomplete="off"
 				role="combobox"
 				aria-label="Buscar paciente"
@@ -1010,6 +1011,9 @@ templ TopBar() {
 				class="w-full px-4 py-2 pl-10 bg-neutral-50 border border-transparent rounded-xl text-sm text-neutral-800 placeholder-neutral-400 focus:bg-white focus:border-arandu-soft focus:outline-none focus:ring-2 focus:ring-arandu-soft/20 transition-all"
 			/>
 			<i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+			<span id="search-loading" class="htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500" role="status" aria-live="polite">
+				Buscando...
+			</span>
 			<div id="search-results" class="search-results-dropdown absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-50 hidden" role="listbox" aria-label="Resultados da busca de pacientes"></div>
 		</div>
 
@@ -1049,24 +1053,28 @@ templ TopBarContent(userEmail string) {
 		<!-- Center: Search Bar -->
 		<div class="top-bar-search-container">
 			<input
-				id="patient-search"
+				id="patient-search-nav"
 				type="text"
 				name="q"
 				placeholder="Buscar paciente..."
 				hx-get="/patients/search"
-				hx-trigger="keyup changed delay:500ms"
-				hx-target="#search-results"
+				hx-trigger="keyup changed delay:350ms"
+				hx-target="#search-results-nav"
+				hx-indicator="#search-loading-nav"
 				autocomplete="off"
 				role="combobox"
 				aria-label="Buscar paciente"
-				aria-controls="search-results"
+				aria-controls="search-results-nav"
 				aria-autocomplete="list"
 				aria-expanded="false"
 				aria-haspopup="listbox"
 				class="search-bar-silent"
 			/>
 			<i class="fas fa-search top-bar-search-icon"></i>
-			<div id="search-results" class="search-results-dropdown search-results-container" role="listbox" aria-label="Resultados da busca de pacientes"></div>
+			<span id="search-loading-nav" class="htmx-indicator text-xs text-neutral-500" role="status" aria-live="polite">
+				Buscando...
+			</span>
+			<div id="search-results-nav" class="search-results-dropdown search-results-container" role="listbox" aria-label="Resultados da busca de pacientes"></div>
 		</div>
 
 		<!-- Right: User Profile -->

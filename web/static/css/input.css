@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/*
+ * Tailwind Class Ordering Standard
+ * Pattern: layout > spacing > sizing > typography > color > visual effects > state > responsive
+ * Example: class="flex items-center gap-4 p-4 text-sm font-medium text-primary-600 bg-white hover:bg-gray-50 md:p-6"
+ *
+ * 1. layout: flex, grid, block, inline, etc.
+ * 2. spacing: p-, m-, gap-, space-, etc.
+ * 3. sizing: w-, h-, min-w-, max-w-, etc.
+ * 4. typography: text-, font-, leading-, tracking-, etc.
+ * 5. color: text-, bg-, border-, etc.
+ * 6. visual effects: shadow-, rounded-, opacity-, etc.
+ * 7. state: hover:, focus:, active:, disabled:, etc.
+ * 8. responsive: md:, lg:, xl:, etc.
+ */
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -83,14 +98,7 @@
   }
 
   body {
-    background-color: var(--color-arandu-bg);
-    color: var(--color-arandu-dark);
-    font-family: var(--font-sans);
-  }
-
-  .dark body {
-    background-color: var(--color-arandu-bg);
-    color: var(--color-arandu-dark);
+    @apply bg-arandu-bg text-arandu-dark font-sans;
   }
 }
 
@@ -107,19 +115,11 @@
 }
 
 @utility card-base {
-  @apply bg-white rounded-xl shadow-sm border border-neutral-100 p-6;
+  @apply bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700 p-6;
 }
 
 @utility input-base {
   @apply w-full px-4 py-3 rounded-lg border border-neutral-200 bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
-}
-
-@layer base {
-  body {
-    background-color: var(--color-arandu-bg);
-    color: var(--color-arandu-dark);
-    font-family: var(--font-sans);
-  }
 }
 
 /* Login Styles */

@@ -163,7 +163,7 @@ func NewSessionForm(data NewSessionFormData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"btn-outline-light\"><i class=\"fas fa-times btn-icon-left\"></i> Cancelar</a> <button type=\"submit\" class=\"btn-primary-solid\"><i class=\"fas fa-save btn-icon-left\"></i> Salvar Sessão</button></div></form></div><!-- Goals Sidebar --><aside class=\"session-sidebar\"><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye goals-sidebar-icon\"></i><h4>Metas Terapêuticas</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"btn-outline-light\"><i class=\"fas fa-times btn-icon-left\"></i> Cancelar</a> <button type=\"submit\" class=\"btn-primary-solid\"><i class=\"fas fa-save btn-icon-left\"></i> Salvar Sessão</button></div></form></div><!-- Goals Sidebar --><aside class=\"session-sidebar\"><div class=\"session-sidebar-card\"><div class=\"session-sidebar-header\"><i class=\"fas fa-bullseye goals-sidebar-icon\"></i><h4>Metas Terapêuticas</h4></div><ul id=\"session-goals-list\" class=\"session-goals-list mb-md\" role=\"region\" aria-live=\"polite\" aria-label=\"Metas terapêuticas\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -216,13 +216,13 @@ func NewSessionForm(data NewSessionFormData) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.FormData.PatientID + "/goals")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 141, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/new_form.templ`, Line: 141, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-on::after-request=\"if(event.detail.successful) this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions form-actions-mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></aside></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" hx-target=\"#session-goals-list\" hx-swap=\"beforeend\" hx-disabled-elt=\"this button[type='submit']\" hx-on::after-request=\"if(event.detail.successful) this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Nova Meta</label> <input type=\"text\" name=\"title\" placeholder=\"Descreva a meta terapêutica...\" class=\"silent-input\" required></div><div class=\"form-actions form-actions-mt-sm\"><button type=\"submit\" class=\"btn btn-primary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i> Adicionar Meta</button></div></form></div></aside></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

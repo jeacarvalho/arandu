@@ -108,7 +108,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"btn btn-outline\"><i class=\"fas fa-edit btn-icon\"></i>Editar</a> <button class=\"btn btn-primary\"><i class=\"fas fa-plus btn-icon\"></i>Nova Observação</button></div></div></div><div class=\"form-grid mb-2xl\"><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-primary\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div id=\"observations-list\" class=\"mt-lg\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"btn btn-outline\"><i class=\"fas fa-edit btn-icon\"></i>Editar</a> <button class=\"btn btn-primary\"><i class=\"fas fa-plus btn-icon\"></i>Nova Observação</button></div></div></div><div class=\"form-grid mb-2xl\"><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-primary\"><i class=\"fas fa-sticky-note\"></i></div><div><h2 class=\"card-title\">Observações Clínicas</h2><p class=\"card-subtitle\">Registros e anotações da sessão</p></div></div><div id=\"observations-list\" class=\"mt-lg\" role=\"region\" aria-live=\"polite\" aria-label=\"Observações clínicas\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -132,7 +132,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-secondary\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div id=\"interventions-list\" class=\"mt-lg\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"card\"><div class=\"card-header\"><div class=\"card-icon card-icon-secondary\"><i class=\"fas fa-hands-helping\"></i></div><div><h2 class=\"card-title\">Intervenções Terapêuticas</h2><p class=\"card-subtitle\">Ações e técnicas aplicadas</p></div></div><div id=\"interventions-list\" class=\"mt-lg\" role=\"region\" aria-live=\"polite\" aria-label=\"Intervenções terapêuticas\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

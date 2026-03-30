@@ -17,41 +17,45 @@ templ GoalClosureModalInline(goal GoalItemViewModel, patientID string) {
 				</button>
 			</div>
 			
-			<form 
-				class="goal-closure-form"
-				hx-post={ "/patients/" + patientID + "/goals/" + goal.ID + "/close" }
-				hx-target="#goal-list"
-				hx-swap="innerHTML"
-				hx-disabled-elt="this button[type='submit']"
-				x-on:htmx:after-request="showModal = false"
-			>
-				<div class="goal-closure-field">
-					<label class="goal-closure-label">
-						<i class="fas fa-pen-fancy"></i>
-						Nota de Desfecho
-					</label>
-					<p class="goal-closure-hint">
-						Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.
-					</p>
-					<textarea 
-						name="closure_note" 
-						class="goal-closure-textarea"
-						rows="6"
-						placeholder="Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?"
-					></textarea>
-				</div>
-				
-				<div class="goal-closure-actions">
-					<button type="button" class="goal-closure-btn-cancel" x-on:click="showModal = false">
-						<i class="fas fa-times"></i>
-						Cancelar
-					</button>
-					<button type="submit" class="goal-closure-btn-confirm">
-						<i class="fas fa-check"></i>
-						Concluir Meta
-					</button>
-				</div>
-			</form>
+		<form 
+			class="goal-closure-form"
+			hx-post={ "/patients/" + patientID + "/goals/" + goal.ID + "/close" }
+			hx-target="#goal-list"
+			hx-swap="innerHTML"
+			hx-disabled-elt="this button[type='submit']"
+			hx-indicator="#goal-close-loading"
+			x-on:htmx:after-on-load="showModal = false"
+		>
+			<div class="goal-closure-field">
+				<label class="goal-closure-label">
+					<i class="fas fa-pen-fancy"></i>
+					Nota de Desfecho
+				</label>
+				<p class="goal-closure-hint">
+					Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.
+				</p>
+				<textarea 
+					name="closure_note" 
+					class="goal-closure-textarea"
+					rows="6"
+					placeholder="Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?"
+				></textarea>
+			</div>
+			
+			<div class="goal-closure-actions">
+				<button type="button" class="goal-closure-btn-cancel" x-on:click="showModal = false">
+					<i class="fas fa-times"></i>
+					Cancelar
+				</button>
+				<button type="submit" class="goal-closure-btn-confirm">
+					<i class="fas fa-check"></i>
+					Concluir Meta
+				</button>
+				<span id="goal-close-loading" class="htmx-indicator text-xs text-neutral-500" role="status" aria-live="polite">
+					Concluindo meta...
+				</span>
+			</div>
+		</form>
 		</div>
 	</div>
 }

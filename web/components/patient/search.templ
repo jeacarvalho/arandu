@@ -1,5 +1,7 @@
 package patient
 
+import "strconv"
+
 type SearchResultItem struct {
 	ID   string
 	Name string
@@ -12,7 +14,7 @@ templ SearchResults(results []SearchResultItem) {
 				for i, r := range results {
 					<a 
 						href={ templ.URL("/patients/" + r.ID) }
-						id={ "search-option-" + string(rune(i)) }
+						id={ "search-option-" + strconv.Itoa(i) }
 						class="search-result-link bg-transparent"
 						role="option"
 						data-search-result="true"

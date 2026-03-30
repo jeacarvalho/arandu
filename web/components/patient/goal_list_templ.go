@@ -53,7 +53,7 @@ func GoalList(data GoalListViewModel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"goal-list\" class=\"goal-list-container\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"goal-list\" class=\"goal-list-container\" role=\"region\" aria-live=\"polite\" aria-label=\"Lista de metas\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -319,20 +319,20 @@ func GoalItem(goal GoalItemViewModel, patientID string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-check\"></i></button> <button type=\"button\" class=\"goal-action archive\" title=\"Arquivar meta\" hx-put=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-check\"></i></button> <button type=\"button\" class=\"goal-action archive\" title=\"Arquivar meta\" hx-put=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 133, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 134, Col: 88}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-archive\"></i></button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-archive\"></i></button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -345,26 +345,26 @@ func GoalItem(goal GoalItemViewModel, patientID string) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 145, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 147, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-undo\"></i></button> <button type=\"button\" class=\"goal-action archive\" title=\"Arquivar meta\" hx-put=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-undo\"></i></button> <button type=\"button\" class=\"goal-action archive\" title=\"Arquivar meta\" hx-put=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/status?status=archived")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 155, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 158, Col: 88}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-archive\"></i></button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-archive\"></i></button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -377,13 +377,13 @@ func GoalItem(goal GoalItemViewModel, patientID string) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/status?status=in_progress")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 167, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_list.templ`, Line: 171, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-undo\"></i></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-undo\"></i></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
