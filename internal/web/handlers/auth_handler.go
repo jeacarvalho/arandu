@@ -293,8 +293,14 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[Signup] Method: %s", r.Method)
 
 	if r.Method == http.MethodGet {
+		data := authComponents.SignupData{
+			Error:   "",
+			Email:   "",
+			Tenant:  "",
+			Success: false,
+		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write([]byte("<html><body><h1>Signup</h1><form method='POST'><input name='email' placeholder='Email'/><input name='password' type='password' placeholder='Password'/><button type='submit'>Cadastrar</button></form></body></html>"))
+		authComponents.Signup(data).Render(r.Context(), w)
 		return
 	}
 
@@ -305,8 +311,13 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[Signup] Email: %s, Password length: %d", email, len(password))
 
 		if email == "" || password == "" {
-			log.Printf("[Signup] Empty email or password")
-			http.Error(w, "Email e senha são obrigatórios", http.StatusBadRequest)
+			data := authComponents.SignupData{
+				Error:   "Email e senha são obrigatórios",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 
@@ -314,19 +325,37 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		err := h.centralDB.QueryRow("SELECT id FROM users WHERE email = ?", email).Scan(&existingID)
 		if err == nil {
 			log.Printf("[Signup] User already exists: %s", email)
-			http.Error(w, "Usuário já existe", http.StatusConflict)
+			data := authComponents.SignupData{
+				Error:   "Usuário já existe",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 		if err != sql.ErrNoRows {
 			log.Printf("[Signup] Error checking user: %v", err)
-			http.Error(w, "Erro ao verificar usuário", http.StatusInternalServerError)
+			data := authComponents.SignupData{
+				Error:   "Erro ao verificar usuário",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 
 		log.Printf("[Signup] Creating new user: %s", email)
 		passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			http.Error(w, "Erro ao criar hash da senha", http.StatusInternalServerError)
+			data := authComponents.SignupData{
+				Error:   "Erro ao criar hash da senha",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 
@@ -338,7 +367,13 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 			tenantID, dbPath,
 		)
 		if err != nil {
-			http.Error(w, "Erro ao criar tenant", http.StatusInternalServerError)
+			data := authComponents.SignupData{
+				Error:   "Erro ao criar tenant",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 
@@ -348,14 +383,25 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 			userID, email, string(passwordHash), tenantID,
 		)
 		if err != nil {
-			http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
+			data := authComponents.SignupData{
+				Error:   "Erro ao criar usuário",
+				Email:   email,
+				Success: false,
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			authComponents.Signup(data).Render(r.Context(), w)
 			return
 		}
 
 		log.Printf("✅ Usuário criado: %s com tenant: %s", email, tenantID)
 
+		data := authComponents.SignupData{
+			Email:   email,
+			Tenant:  tenantID,
+			Success: true,
+		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write([]byte(fmt.Sprintf("<html><body><h1>Usuário criado!</h1><p>Email: %s</p><p>Tenant: %s</p><a href='/login'>Ir para Login</a></body></html>", email, tenantID)))
+		authComponents.Signup(data).Render(r.Context(), w)
 		return
 	}
 
