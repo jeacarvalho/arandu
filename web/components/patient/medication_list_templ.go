@@ -221,7 +221,7 @@ func MedicationList(data MedicationListViewModel) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-pause\"></i></button> ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-pause\"></i></button> ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -234,13 +234,13 @@ func MedicationList(data MedicationListViewModel) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=activate")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 55, Col: 101}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 56, Col: 101}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\"><i class=\"fas fa-play\"></i></button>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" hx-target=\"#medication-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this\"><i class=\"fas fa-play\"></i></button>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

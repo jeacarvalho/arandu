@@ -36,13 +36,13 @@ func AddGoalForm(patientID string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/add_goal_form.templ`, Line: 6, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/add_goal_form.templ`, Line: 6, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#goals-in-progress\" hx-swap=\"afterbegin\" class=\"goal-form\"><div class=\"goal-form-input-wrapper\"><i class=\"fas fa-bullseye goal-form-icon\"></i> <input type=\"text\" name=\"title\" placeholder=\"Definir nova meta terapêutica...\" class=\"goal-form-input\" autocomplete=\"off\" required></div><textarea name=\"description\" placeholder=\"Racional clínico (opcional)...\" class=\"goal-form-textarea\" rows=\"2\"></textarea><div class=\"goal-form-actions\"><button type=\"submit\" class=\"goal-form-submit\"><i class=\"fas fa-plus\"></i> <span>Adicionar Meta</span></button></div></form></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#goals-in-progress\" hx-swap=\"afterbegin\" hx-disabled-elt=\"this button[type='submit']\" class=\"goal-form\"><div class=\"goal-form-input-wrapper\"><i class=\"fas fa-bullseye goal-form-icon\"></i> <input type=\"text\" name=\"title\" placeholder=\"Definir nova meta terapêutica...\" class=\"goal-form-input\" autocomplete=\"off\" required></div><textarea name=\"description\" placeholder=\"Racional clínico (opcional)...\" class=\"goal-form-textarea\" rows=\"2\"></textarea><div class=\"goal-form-actions\"><button type=\"submit\" class=\"goal-form-submit\"><i class=\"fas fa-plus\"></i> <span>Adicionar Meta</span></button></div></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -78,13 +78,13 @@ func AddGoalFormInline(patientID string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/add_goal_form.templ`, Line: 40, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/add_goal_form.templ`, Line: 41, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#goals-in-progress\" hx-swap=\"afterbegin\" hx-on:htmx:after-request=\"if(event.detail.successful) { this.reset(); }\" class=\"goal-form-inline\"><input type=\"text\" name=\"title\" placeholder=\"Nova meta...\" class=\"goal-form-inline-input\" autocomplete=\"off\" required> <button type=\"submit\" class=\"goal-form-inline-submit\" title=\"Adicionar\"><i class=\"fas fa-plus\"></i></button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#goals-in-progress\" hx-swap=\"afterbegin\" hx-disabled-elt=\"this button[type='submit']\" hx-on:htmx:after-request=\"if(event.detail.successful) { this.reset(); }\" class=\"goal-form-inline\"><input type=\"text\" name=\"title\" placeholder=\"Nova meta...\" class=\"goal-form-inline-input\" autocomplete=\"off\" required> <button type=\"submit\" class=\"goal-form-inline-submit\" title=\"Adicionar\"><i class=\"fas fa-plus\"></i></button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

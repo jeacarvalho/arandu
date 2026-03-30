@@ -7,7 +7,8 @@ templ ObservationForm(sessionID string) {
 		hx-target="#observations-list"
 		hx-swap="afterbegin"
 		hx-disabled-elt="this button[type='submit']"
-		hx-on::after-request="this.reset()"
+		hx-indicator="#obs-loading"
+		hx-on::after-on-load="this.reset()"
 	>
 		<div class="silent-form-group">
 			<label 
@@ -37,6 +38,9 @@ templ ObservationForm(sessionID string) {
 			<button type="button" class="btn btn-outline" onclick="this.closest('form').querySelector('textarea').value = ''">
 				<i class="fas fa-times btn-icon"></i>Limpar
 			</button>
+			<span id="obs-loading" class="htmx-indicator text-xs text-neutral-500" role="status" aria-live="polite">
+				Salvando observação...
+			</span>
 		</div>
 	</form>
 }

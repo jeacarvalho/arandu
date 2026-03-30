@@ -1,0 +1,337 @@
+🚀 Starting E2E Audit - Route Coverage: all
+===============================================
+[0;32m[INFO][0m Checking for existing server on port 8080...
+[1;33m[WARN][0m Found existing server (PIDs: 3791344), killing them...
+[0;32m[INFO][0m Port 8080 is free
+[0;32m[INFO][0m Setting up test environment...
+[0;32m[INFO][0m Environment ready
+[0;32m[INFO][0m Starting Arandu server...
+[0;32m[INFO][0m Waiting for server to be ready...
+{"time":"2026-03-24T21:33:16.277116257-03:00","level":"INFO","msg":"Starting Arandu","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.277154341-03:00","level":"INFO","msg":"Initializing Control Plane (Central DB)","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.277747995-03:00","level":"INFO","msg":"Applying central database migrations","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.277816576-03:00","level":"INFO","msg":"Tenants directory ready","app":"arandu","version":"dev","commit":"unknown","path":"storage/tenants"}
+{"time":"2026-03-24T21:33:16.277823541-03:00","level":"INFO","msg":"Using database","app":"arandu","version":"dev","commit":"unknown","path":"arandu.db"}
+{"time":"2026-03-24T21:33:16.278434151-03:00","level":"INFO","msg":"Initializing database schema","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.278565334-03:00","level":"WARN","msg":"Failed to apply database migrations","app":"arandu","version":"dev","commit":"unknown","error":"failed to apply migration 0008_add_goal_closure_fields: SQL logic error: duplicate column name: closure_note (1)"}
+{"time":"2026-03-24T21:33:16.278572937-03:00","level":"INFO","msg":"Tenant pool initialized","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.279969545-03:00","level":"INFO","msg":"Auth handler initialized","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.279990654-03:00","level":"INFO","msg":"Auth middleware initialized","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-03-24T21:33:16.280184003-03:00","level":"INFO","msg":"Starting server","app":"arandu","version":"dev","commit":"unknown","address":"http://localhost:8080","accessibility":"network"}
+{"time":"2026-03-24T21:33:17.198357231-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m Server is ready
+[0;32m[INFO][0m ==========================================
+[0;32m[INFO][0m Creating test user and session
+[0;32m[INFO][0m ==========================================
+[0;32m[INFO][0m Creating/verifying test user via signup...
+{"time":"2026-03-24T21:33:17.210733864-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/auth/signup","status":409,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m ℹ️ Test user already exists: arandu_e2e@test.com
+[0;32m[INFO][0m Logging in to get valid session...
+{"time":"2026-03-24T21:33:17.294525067-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/login","status":302,"duration_ms":70,"ip":"127.0.0.1"}
+{"time":"2026-03-24T21:33:17.295797635-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/dashboard","status":405,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m Login response code: 405
+[0;32m[INFO][0m ✅ Session cookie created
+[0;32m[INFO][0m ✅ Session ready
+
+==========================================
+  TESTING PUBLIC ROUTES (no auth)
+==========================================
+
+[0;34m[ROUTE][0m Testing: GET /test
+{"time":"2026-03-24T21:33:17.30633819-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m health_check - No ghosting
+[0;34m[ROUTE][0m Testing: GET /login
+{"time":"2026-03-24T21:33:17.316869945-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/login","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [login_page] - No ghosting
+[0;32m[INFO][0m [login_page] - No inline styles
+[0;32m[INFO][0m [login_page] - External CSS loaded
+[0;32m[INFO][0m [login_page] - Skipping layout check (public route)
+[1;33m[WARN][0m [login_page] - No spacing classes found (may cause visual issues)
+[0;32m[INFO][0m [login_page] - Design system validated
+[0;34m[ROUTE][0m Testing: GET /auth/login
+{"time":"2026-03-24T21:33:17.332722919-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/auth/login","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m auth_login - No ghosting
+
+[0;32m[INFO][0m Public routes completed: 3/3 passed
+
+==========================================
+  TESTING DASHBOARD
+==========================================
+
+[0;34m[ROUTE][0m Testing: GET /
+{"time":"2026-03-24T21:33:17.344554603-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/","status":302,"duration_ms":0,"ip":"127.0.0.1"}
+[1;33m[WARN][0m   ⚠ HTTP 302 (redirect)
+[0;34m[ROUTE][0m Testing: GET /dashboard
+{"time":"2026-03-24T21:33:17.355447175-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":2,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [dashboard] - No ghosting
+[0;32m[INFO][0m [dashboard] - No inline styles
+[0;32m[INFO][0m [dashboard] - External CSS loaded
+[0;32m[INFO][0m [dashboard] - Layout structure classes present
+[1;33m[WARN][0m [dashboard] - No spacing classes found (may cause visual issues)
+[0;32m[INFO][0m [dashboard] - Design system validated
+[0;32m[INFO][0m [dashboard] - Fixed header spacing validated
+[0;32m[INFO][0m [dashboard] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /logout
+{"time":"2026-03-24T21:33:17.381720533-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/logout","status":302,"duration_ms":0,"ip":"127.0.0.1"}
+[1;33m[WARN][0m   ⚠ HTTP 302 (redirect)
+
+[0;32m[INFO][0m Dashboard routes completed: 3/3 passed
+
+==========================================
+  TESTING PATIENT ROUTES
+==========================================
+
+[0;32m[INFO][0m Creating patient in in-memory database...
+{"time":"2026-03-24T21:33:17.395009876-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/create","status":303,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m ✅ Created patient: fffcddc9-fb0e-4e99-aed4-2f474af0bf9c
+[0;34m[ROUTE][0m Testing: GET /patients
+{"time":"2026-03-24T21:33:17.40528988-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [patients_list] - No ghosting
+[0;32m[INFO][0m [patients_list] - No inline styles
+[0;32m[INFO][0m [patients_list] - External CSS loaded
+[0;32m[INFO][0m [patients_list] - Layout structure classes present
+[0;32m[INFO][0m [patients_list] - Spacing classes present
+[0;32m[INFO][0m [patients_list] - Design system validated
+[0;32m[INFO][0m [patients_list] - Fixed header spacing validated
+[0;32m[INFO][0m [patients_list] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /patients/new
+{"time":"2026-03-24T21:33:17.432228246-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/new","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [patients_new] - No ghosting
+[0;32m[INFO][0m [patients_new] - No inline styles
+[0;32m[INFO][0m [patients_new] - External CSS loaded
+[0;32m[INFO][0m [patients_new] - Layout structure classes present
+[1;33m[WARN][0m [patients_new] - No spacing classes found (may cause visual issues)
+[0;32m[INFO][0m [patients_new] - Design system validated
+[0;32m[INFO][0m [patients_new] - Fixed header spacing validated
+[0;32m[INFO][0m [patients_new] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /patients/search
+{"time":"2026-03-24T21:33:17.455162453-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/search","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m   ✓ HTMX fragment (skip layout validation)
+[0;32m[INFO][0m [patients_search] - No ghosting
+[0;34m[ROUTE][0m Testing: GET /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c
+{"time":"2026-03-24T21:33:17.465166238-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"4839b54c283a76a1f9043c87119dc3d3","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c","method":"GET"}
+{"time":"2026-03-24T21:33:17.465186526-03:00","level":"INFO","msg":"Routing to patientHandler.Show","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"4839b54c283a76a1f9043c87119dc3d3","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b"}
+{"time":"2026-03-24T21:33:17.465987174-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c","status":200,"duration_ms":1,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [patients_detail] - No ghosting
+[0;32m[INFO][0m [patients_detail] - No inline styles
+[0;32m[INFO][0m [patients_detail] - External CSS loaded
+[0;32m[INFO][0m [patients_detail] - Layout structure classes present
+[1;33m[WARN][0m [patients_detail] - No spacing classes found (may cause visual issues)
+[0;32m[INFO][0m [patients_detail] - Design system validated
+[0;32m[INFO][0m [patients_detail] - Fixed header spacing validated
+[0;32m[INFO][0m [patients_detail] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis
+{"time":"2026-03-24T21:33:17.488671793-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"3691f3718249913c7e0f284d33a91632","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis","method":"GET"}
+{"time":"2026-03-24T21:33:17.488887238-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [patients_anamnesis] - No ghosting
+[0;32m[INFO][0m [patients_anamnesis] - No inline styles
+[0;32m[INFO][0m [patients_anamnesis] - External CSS loaded
+[0;32m[INFO][0m [patients_anamnesis] - Layout structure classes present
+[0;32m[INFO][0m [patients_anamnesis] - Spacing classes present
+[0;32m[INFO][0m [patients_anamnesis] - Design system validated
+[0;32m[INFO][0m [patients_anamnesis] - Fixed header spacing validated
+[0;32m[INFO][0m [patients_anamnesis] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/context
+{"time":"2026-03-24T21:33:17.515121099-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"a6a8b43cb467309e1e8d4f5960165f87","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/context","method":"GET"}
+{"time":"2026-03-24T21:33:17.515394362-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/context","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m patients_context - No ghosting
+[0;34m[ROUTE][0m Testing: GET /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/history
+{"time":"2026-03-24T21:33:17.527819127-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"5a9ed31c63c52cde836bedbe4e4b2551","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/history","method":"GET"}
+{"time":"2026-03-24T21:33:17.52829638-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/history","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [patients_history] - No ghosting
+[0;32m[INFO][0m [patients_history] - No inline styles
+[0;32m[INFO][0m [patients_history] - External CSS loaded
+[0;32m[INFO][0m [patients_history] - Layout structure classes present
+[0;32m[INFO][0m [patients_history] - Spacing classes present
+[0;32m[INFO][0m [patients_history] - Design system validated
+[0;32m[INFO][0m [patients_history] - Fixed header spacing validated
+[0;32m[INFO][0m [patients_history] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/sessions
+{"time":"2026-03-24T21:33:17.550445877-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"ee76d752599524385a728941155bd133","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/sessions","method":"GET"}
+{"time":"2026-03-24T21:33:17.550538595-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/sessions","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m   ✓ HTMX fragment (skip layout validation)
+[0;32m[INFO][0m [patients_sessions] - No ghosting
+[0;34m[ROUTE][0m Testing: PATCH /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis/chief_complaint
+{"time":"2026-03-24T21:33:17.562005155-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"c157a98ece2145e1a335c3207d283922","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis/chief_complaint","method":"PATCH"}
+{"time":"2026-03-24T21:33:17.565672857-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PATCH","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/anamnesis/chief_complaint","status":200,"duration_ms":3,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m patients_anamnesis_update - No ghosting
+[0;34m[ROUTE][0m Testing: POST /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/medications
+{"time":"2026-03-24T21:33:17.575766866-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"1a890ec72cf9e328cefc2fb70d1b73f4","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/medications","method":"POST"}
+{"time":"2026-03-24T21:33:17.584252474-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/medications","status":200,"duration_ms":8,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m patients_medications_add - No ghosting
+[0;34m[ROUTE][0m Testing: POST /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/vitals
+{"time":"2026-03-24T21:33:17.594406247-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"eb4dea38701c55c27398f99469236ee9","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/vitals","method":"POST"}
+{"time":"2026-03-24T21:33:17.599352844-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/vitals","status":200,"duration_ms":5,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m patients_vitals_add - No ghosting
+[0;34m[ROUTE][0m Testing: POST /patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/goals
+{"time":"2026-03-24T21:33:17.6129027-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"079b8f88-dfd3-41bc-b9f2-e53374cb1134","request_id":"5ef0f9ee7ce8495042c6e747e9467a80","user_id":"fb5216ba-e54b-41cb-9216-a68750fd380b","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/goals","method":"POST"}
+{"time":"2026-03-24T21:33:17.616978783-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/fffcddc9-fb0e-4e99-aed4-2f474af0bf9c/goals","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m patients_goals_create - No ghosting
+
+[0;32m[INFO][0m Patient routes completed: 14/14 passed
+
+==========================================
+  TESTING SESSION ROUTES
+==========================================
+
+[0;32m[INFO][0m Creating test session...
+[0;32m[INFO][0m Using patient ID: fffcddc9-fb0e-4e99-aed4-2f474af0bf9c
+{"time":"2026-03-24T21:33:17.635402996-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m Created session ID: ed76ffb2-c08c-43ff-a232-6a85b7be4cde
+[0;34m[ROUTE][0m Testing: GET /session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde
+{"time":"2026-03-24T21:33:17.649253664-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [session_show] - No ghosting
+[0;32m[INFO][0m [session_show] - No inline styles
+[0;32m[INFO][0m [session_show] - External CSS loaded
+[0;32m[INFO][0m [session_show] - Layout structure classes present
+[0;32m[INFO][0m [session_show] - Spacing classes present
+[0;32m[INFO][0m [session_show] - Design system validated
+[0;32m[INFO][0m [session_show] - Fixed header spacing validated
+[0;32m[INFO][0m [session_show] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: GET /session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/edit
+{"time":"2026-03-24T21:33:17.672732698-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m [session_edit] - No ghosting
+[0;32m[INFO][0m [session_edit] - No inline styles
+[0;32m[INFO][0m [session_edit] - External CSS loaded
+[0;32m[INFO][0m [session_edit] - Layout structure classes present
+[0;32m[INFO][0m [session_edit] - Spacing classes present
+[0;32m[INFO][0m [session_edit] - Design system validated
+[0;32m[INFO][0m [session_edit] - Fixed header spacing validated
+[0;32m[INFO][0m [session_edit] - CSS conflicts check completed
+[0;34m[ROUTE][0m Testing: POST /session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/update
+{"time":"2026-03-24T21:33:17.700654347-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/update","status":303,"duration_ms":4,"ip":"127.0.0.1"}
+[1;33m[WARN][0m   ⚠ HTTP 303 (redirect)
+[0;34m[ROUTE][0m Testing: POST /session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/observations
+{"time":"2026-03-24T21:33:17.714579026-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/observations","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m session_observations - No ghosting
+[0;34m[ROUTE][0m Testing: POST /session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/interventions
+{"time":"2026-03-24T21:33:17.728934372-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/interventions","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m session_interventions - No ghosting
+[0;34m[ROUTE][0m Testing: POST /session
+{"time":"2026-03-24T21:33:17.746272588-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m session_create_new - No ghosting
+
+[0;32m[INFO][0m Session routes completed: 7/7 passed
+
+==========================================
+  TESTING OBSERVATION ROUTES
+==========================================
+
+[0;32m[INFO][0m Creating observation via session: ed76ffb2-c08c-43ff-a232-6a85b7be4cde
+{"time":"2026-03-24T21:33:19.284255252-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/observations","status":200,"duration_ms":7,"ip":"127.0.0.1"}
+[0;32m[INFO][0m Created observation: 33c69c00-4280-4b6a-8f5f-4e75c6e35945
+[0;34m[ROUTE][0m Testing: GET /observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945
+{"time":"2026-03-24T21:33:19.306255789-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m observation_show - No ghosting
+[0;34m[ROUTE][0m Testing: GET /observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945/edit
+{"time":"2026-03-24T21:33:19.318135508-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m observation_edit - No ghosting
+[0;34m[ROUTE][0m Testing: PUT /observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945
+{"time":"2026-03-24T21:33:19.333245622-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/observations/33c69c00-4280-4b6a-8f5f-4e75c6e35945","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m observation_update - No ghosting
+
+[0;32m[INFO][0m Observation routes completed: 3/3 passed
+
+==========================================
+  TESTING INTERVENTION ROUTES
+==========================================
+
+[0;32m[INFO][0m Creating intervention via session: ed76ffb2-c08c-43ff-a232-6a85b7be4cde
+{"time":"2026-03-24T21:33:19.350833363-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/ed76ffb2-c08c-43ff-a232-6a85b7be4cde/interventions","status":200,"duration_ms":6,"ip":"127.0.0.1"}
+[0;32m[INFO][0m Created intervention: 7f460477-3ba9-48dc-91a6-5adab01b676a
+[0;34m[ROUTE][0m Testing: GET /interventions/7f460477-3ba9-48dc-91a6-5adab01b676a
+{"time":"2026-03-24T21:33:19.36139072-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/7f460477-3ba9-48dc-91a6-5adab01b676a","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m intervention_show - No ghosting
+[0;34m[ROUTE][0m Testing: GET /interventions/7f460477-3ba9-48dc-91a6-5adab01b676a/edit
+{"time":"2026-03-24T21:33:19.371978238-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/7f460477-3ba9-48dc-91a6-5adab01b676a/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m intervention_edit - No ghosting
+[0;34m[ROUTE][0m Testing: PUT /interventions/7f460477-3ba9-48dc-91a6-5adab01b676a
+{"time":"2026-03-24T21:33:19.389560324-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/interventions/7f460477-3ba9-48dc-91a6-5adab01b676a","status":200,"duration_ms":6,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m intervention_update - No ghosting
+
+[0;32m[INFO][0m Intervention routes completed: 3/3 passed
+
+==========================================
+  TESTING SCREENSHOT ROUTE (no auth)
+==========================================
+
+[0;34m[ROUTE][0m Testing: GET /screenshot/dashboard
+{"time":"2026-03-24T21:33:19.400691505-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/screenshot/dashboard","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+[0;32m[INFO][0m   ✓ HTTP 200 OK
+[0;32m[INFO][0m   ✓ HTMX fragment (skip layout validation)
+[0;32m[INFO][0m [screenshot_dashboard] - No ghosting
+
+[0;32m[INFO][0m Screenshot route completed: 1/1 passed
+
+========================================
+        E2E AUDIT REPORT
+========================================
+
+Total routes tested: 33
+Passed: [0;32m33[0m
+Failed: [0;31m0[0m
+
+[0;32m[INFO][0m Audit logs saved to: tmp/audit_logs/
+total 272
+drwxr-xr-x 2 s015533607 domain users  4096 mar 24 21:33 .
+drwxr-xr-x 3 s015533607 domain users  4096 mar 24 21:33 ..
+-rw-r--r-- 1 s015533607 domain users  5454 mar 24 21:33 route_auth_login.html
+-rw-r--r-- 1 s015533607 domain users 40786 mar 24 21:33 route_dashboard.html
+-rw-r--r-- 1 s015533607 domain users   127 mar 24 21:33 route_health_check.html
+-rw-r--r-- 1 s015533607 domain users   983 mar 24 21:33 route_intervention_edit.html
+-rw-r--r-- 1 s015533607 domain users   646 mar 24 21:33 route_intervention_show.html
+-rw-r--r-- 1 s015533607 domain users   636 mar 24 21:33 route_intervention_update.html
+-rw-r--r-- 1 s015533607 domain users  5454 mar 24 21:33 route_login_page.html
+-rw-r--r-- 1 s015533607 domain users    34 mar 24 21:33 route_logout.html
+-rw-r--r-- 1 s015533607 domain users   907 mar 24 21:33 route_observation_edit.html
+-rw-r--r-- 1 s015533607 domain users   637 mar 24 21:33 route_observation_show.html
+-rw-r--r-- 1 s015533607 domain users   628 mar 24 21:33 route_observation_update.html
+-rw-r--r-- 1 s015533607 domain users  8732 mar 24 21:33 route_patients_anamnesis.html
+-rw-r--r-- 1 s015533607 domain users    67 mar 24 21:33 route_patients_anamnesis_update.html
+-rw-r--r-- 1 s015533607 domain users  3377 mar 24 21:33 route_patients_context.html
+-rw-r--r-- 1 s015533607 domain users   347 mar 24 21:33 route_patients_create.html
+-rw-r--r-- 1 s015533607 domain users  8043 mar 24 21:33 route_patients_detail.html
+-rw-r--r-- 1 s015533607 domain users   528 mar 24 21:33 route_patients_goals_create.html
+
+[0;32m[INFO][0m AUDIT PASSED - All routes validated successfully
+[0;32m[INFO][0m Report generation exit code: 0
+[0;32m[INFO][0m Cleaning up...
+{"time":"2026-03-24T21:34:17.529766462-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":1,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:17.99164044-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/favicon.ico","status":302,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:17.993669008-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:20.996013827-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/logout","status":302,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:21.001117979-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/login","status":200,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:21.104017511-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/favicon.ico","status":302,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:21.108432581-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/login","status":200,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:22.299039654-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/auth/google","status":302,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:27.47061398-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/auth/google/callback?iss=https%3A%2F%2Faccounts.google.com&code=[REDACTED]&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=3&prompt=none&state=arIE013czyPtqZzYap8bAmGyezvD4BwnfwMoeZxeMe0%3D","status":302,"duration_ms":469,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:27.473627205-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:27.996356014-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/favicon.ico","status":302,"duration_ms":0,"ip":"[::1]"}
+{"time":"2026-03-24T21:34:27.99793179-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":0,"ip":"[::1]"}

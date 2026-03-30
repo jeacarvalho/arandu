@@ -41,7 +41,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 					<h1 class="font-clinical text-3xl font-semibold text-arandu-dark mb-0">
 						{ patient.Name }
 					</h1>
-					<p class="font-sans text-sm text-text-tertiary mb-0">
+					<p class="font-sans text-sm text-text-tertiary dark:text-neutral-400 mb-0">
 						Perfil clínico do paciente
 					</p>
 				</div>
@@ -51,6 +51,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 					hx-boost="true"
 					hx-target="main"
 					hx-swap="innerHTML transition:true"
+					hx-push-url="true"
 				>
 					<i class="fas fa-calendar-plus"></i>
 					Nova Sessão
@@ -108,19 +109,19 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 				</div>
 				<div>
 					<div class="mb-6">
-						<label class="block font-sans text-xs font-medium text-text-tertiary uppercase tracking-wider mb-1">Notas Clínicas</label>
+						<label class="block font-sans text-xs font-medium text-text-tertiary dark:text-neutral-400 uppercase tracking-wider mb-1">Notas Clínicas</label>
 						if patient.Notes != "" {
 							<div class="font-clinical text-base leading-7 text-arandu-dark bg-arandu-bg p-6 rounded-lg border-l-4 border-arandu-primary">
 								{ patient.Notes }
 							</div>
 						} else {
-							<div class="font-clinical text-sm text-text-tertiary italic p-6 bg-arandu-bg rounded-lg">
+							<div class="font-clinical text-sm text-text-tertiary dark:text-neutral-400 italic p-6 bg-arandu-bg rounded-lg">
 								Nenhuma nota clínica registrada
 							</div>
 						}
 					</div>
 					<div>
-						<label class="block font-sans text-xs font-medium text-text-tertiary uppercase tracking-wider mb-1">Cadastrado em</label>
+						<label class="block font-sans text-xs font-medium text-text-tertiary dark:text-neutral-400 uppercase tracking-wider mb-1">Cadastrado em</label>
 						<div class="font-clinical text-sm text-text-secondary">
 							{ patient.CreatedAt }
 						</div>
@@ -156,7 +157,7 @@ Ver histórico completo
 </a>
 </div>
 } else {
-<div class="text-center py-8 text-text-quaternary">
+<div class="text-center py-8 text-text-quaternary dark:text-neutral-500">
 <i class="fas fa-clock text-2xl mb-4"></i>
 <p>Nenhum evento registrado</p>
 </div>
@@ -195,7 +196,7 @@ Ver histórico completo
 							<span>Adicionar</span>
 						</button>
 					</div>
-					<div class="text-center py-8 text-text-quaternary">
+					<div class="text-center py-8 text-text-quaternary dark:text-neutral-500">
 						<i class="fas fa-info-circle text-2xl mb-4"></i>
 						<p>Nenhum contexto biológico registrado.</p>
 					</div>
@@ -211,13 +212,13 @@ Ver histórico completo
 						</div>
 						<div>
 							<h2 class="font-clinical text-lg font-semibold text-arandu-dark mb-0">Plano Terapêutico</h2>
-							<p class="font-sans text-xs text-text-tertiary mb-0">Metas e objetivos</p>
+							<p class="font-sans text-xs text-text-tertiary dark:text-neutral-400 mb-0">Metas e objetivos</p>
 						</div>
 					</div>
 				</div>
 				
 				<div id="plan-goals-preview" class="plan-goals-preview">
-					<div class="text-center py-6 text-text-quaternary">
+					<div class="text-center py-6 text-text-quaternary dark:text-neutral-500">
 						<i class="fas fa-bullseye text-2xl mb-3 opacity-50"></i>
 						<p class="font-sans text-sm mb-4">Nenhuma meta definida</p>
 						<a href={ templ.URL("/patients/" + patient.ID + "/plan/report") } target="_blank" class="plan-report-btn">
@@ -246,6 +247,7 @@ Ver histórico completo
 						hx-boost="true"
 						hx-target="main"
 						hx-swap="innerHTML transition:true"
+						hx-push-url="true"
 					>
 						<i class="fas fa-calendar-plus w-5 text-arandu-primary"></i>
 						Nova Sessão
@@ -256,6 +258,7 @@ Ver histórico completo
 						hx-boost="true"
 						hx-target="main"
 						hx-swap="innerHTML transition:true"
+						hx-push-url="true"
 					>
 						<i class="fas fa-history w-5 text-arandu-primary"></i>
 						Ver Histórico
@@ -272,7 +275,7 @@ Ver histórico completo
 					</div>
 					<div>
 						<h2 class="font-clinical text-lg font-semibold text-arandu-dark mb-0">Temas Recorrentes</h2>
-						<p class="font-sans text-xs text-text-tertiary mb-0">{ strconv.Itoa(patient.Themes.TotalCount) } menções</p>
+						<p class="font-sans text-xs text-text-tertiary dark:text-neutral-400 mb-0">{ strconv.Itoa(patient.Themes.TotalCount) } menções</p>
 					</div>
 				</div>
 				if len(patient.Themes.Themes) > 0 {
@@ -286,7 +289,7 @@ Ver histórico completo
 						</div>
 					</div>
 				} else {
-					<div class="text-center py-6 text-text-quaternary">
+					<div class="text-center py-6 text-text-quaternary dark:text-neutral-500">
 						<i class="fas fa-tags text-2xl mb-3 opacity-50"></i>
 						<p class="font-sans text-sm">Nenhum tema identificado ainda</p>
 					</div>

@@ -276,14 +276,14 @@ func VitalsWidget(data VitalsWidgetViewModel, readOnly bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#vitals-widget\" hx-swap=\"innerHTML\" class=\"bio-form\"><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Sono (horas)</label> <input type=\"number\" name=\"sleep_hours\" step=\"0.5\" min=\"0\" max=\"24\" placeholder=\"0-24\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Apetite (1-10)</label> <input type=\"number\" name=\"appetite_level\" min=\"1\" max=\"10\" placeholder=\"1-10\" class=\"bio-input\"></div></div><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Peso (kg)</label> <input type=\"number\" name=\"weight\" step=\"0.1\" placeholder=\"kg\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Atividade/sem</label> <input type=\"number\" name=\"physical_activity\" min=\"0\" max=\"7\" placeholder=\"0-7\" class=\"bio-input\"></div></div><input type=\"hidden\" name=\"date\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-target=\"#vitals-widget\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this button[type='submit']\" class=\"bio-form\"><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Sono (horas)</label> <input type=\"number\" name=\"sleep_hours\" step=\"0.5\" min=\"0\" max=\"24\" placeholder=\"0-24\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Apetite (1-10)</label> <input type=\"number\" name=\"appetite_level\" min=\"1\" max=\"10\" placeholder=\"1-10\" class=\"bio-input\"></div></div><div class=\"bio-input-row\"><div class=\"bio-input-group\"><label class=\"bio-label\">Peso (kg)</label> <input type=\"number\" name=\"weight\" step=\"0.1\" placeholder=\"kg\" class=\"bio-input\"></div><div class=\"bio-input-group\"><label class=\"bio-label\">Atividade/sem</label> <input type=\"number\" name=\"physical_activity\" min=\"0\" max=\"7\" placeholder=\"0-7\" class=\"bio-input\"></div></div><input type=\"hidden\" name=\"date\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 152, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/vitals_widget.templ`, Line: 153, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
