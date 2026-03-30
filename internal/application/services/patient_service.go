@@ -48,6 +48,12 @@ func (input *CreatePatientInput) Validate() error {
 		return fmt.Errorf("patient notes cannot exceed 5000 characters")
 	}
 
+	for _, r := range input.Name {
+		if !isValidNameRune(r) {
+			return fmt.Errorf("patient name contains invalid character: %c", r)
+		}
+	}
+
 	return nil
 }
 

@@ -263,6 +263,17 @@ Ver histórico completo
 						<i class="fas fa-history w-5 text-arandu-primary"></i>
 						Ver Histórico
 					</a>
+					<a 
+						href={ templ.URL("/patients/" + patient.ID + "/anamnesis") } 
+						class="flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors"
+						hx-boost="true"
+						hx-target="main"
+						hx-swap="innerHTML transition:true"
+						hx-push-url="true"
+					>
+						<i class="fas fa-clipboard-list w-5 text-arandu-primary"></i>
+						Anamnese Clínica
+					</a>
 					@aiComponents.GenerateInsightButton(patient.ID)
 				</div>
 			</div>
