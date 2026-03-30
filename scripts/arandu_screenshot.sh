@@ -14,21 +14,28 @@ echo "📸 Capturando screenshots para comparação..."
 ROUTES=("/dashboard" "/patients" "/patients/new" "/login")
 
 for route in "${ROUTES[@]}"; do
+    ROUTE_NAME=$(echo "$route" | tr '/' '_' | sed 's/^_//')
+    if [ -z "$ROUTE_NAME" ]; then
+        ROUTE_NAME="root"
+    fi
+    OUTPUT_FILE="${CURRENT_DIR}/${ROUTE_NAME}.png"
+    BASELINE_FILE="${BASELINE_DIR}/${ROUTE_NAME}.png"
+    
     echo "  → $route"
     playwright screenshot \
         --browser chromium \
         --viewport-size 1440,900 \
         "http://localhost:8080${route}" \
-        "${CURRENT_DIR}${route//\//_}.png" 2>&1 || true
+        "$OUTPUT_FILE" 2>&1 || true
     
     # Se existe baseline, comparar
-    if [ -f "${BASELINE_DIR}${route//\//_}.png" ]; then
+    if [ -f "$BASELINE_FILE" ]; then
         echo "    🔍 Comparando com baseline..."
         # Usar imagemMagick ou similar para diff
         # compare -metric AE baseline.png current.png diff.png
     else
         echo "    📋 Criando baseline..."
-        cp "${CURRENT_DIR}${route//\//_}.png" "${BASELINE_DIR}${route//\//_}.png"
+        cp "$OUTPUT_FILE" "$BASELINE_FILE"
     fi
 done
 
