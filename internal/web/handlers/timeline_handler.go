@@ -88,9 +88,8 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 
 	if isHTMXRequest {
-		// Para requisições HTMX de filtro, renderizar filtros + conteúdo
-		// Para busca, apenas o conteúdo (já que a busca não muda os filtros)
-		patientComponents.FiltersAndContent(data).Render(ctx, w)
+		// Para requisições HTMX de filtro, renderizar com wrapper para manter estrutura
+		layoutComponents.ShellContentWrapper(patientComponents.TimelineContainer(data)).Render(ctx, w)
 	} else {
 		layoutComponents.Shell(layoutComponents.ShellConfig{
 			PageTitle:      "Prontuário",
@@ -218,52 +217,64 @@ func (h *TimelineHandler) SearchPatientHistory(w http.ResponseWriter, r *http.Re
 	renderSearchResults(w, ctx, patientID, viewModels)
 }
 
-// renderSearchResults renderiza os resultados da busca como HTML
+// renderSearchResults renderiza os resultados da busca como HTML usando componentes templ
 func renderSearchResults(w http.ResponseWriter, ctx context.Context, patientID string, events TimelineViewModel) {
-	// Escrever HTML diretamente
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// Timeline container
-	io.WriteString(w, `<!-- Timeline --><div style="position: relative;"><div style="position: absolute; left: 32px; top: 0; bottom: 0; width: 2px; background: var(--neutral-100);"></div><div id="timeline-content" style="display: flex; flex-direction: column; gap: var(--space-xl);">`)
+	io.WriteString(w, `<div class="timeline-container"><div class="timeline-line"></div><div id="timeline-content" class="timeline-content">`)
 
 	for _, event := range events {
-		// Determinar estilos baseados no tipo
-		badgeStyle := `background: var(--observation-bg); color: var(--observation-text);`
-		dotStyle := `background: var(--observation-color);`
-		borderStyle := `border-left: 4px solid var(--observation-color);`
-		icon := `fas fa-sticky-note`
+		eventTypeClass := getEventTypeCSSClass(event.Type)
+		eventIcon := getEventIconClass(event.Type)
+		eventLabel := getEventLabel(event.Type)
 
-		if event.Type == timeline.EventTypeIntervention {
-			badgeStyle = `background: var(--intervention-bg); color: var(--intervention-text);`
-			dotStyle = `background: var(--intervention-color);`
-			borderStyle = `border-left: 4px solid var(--intervention-color);`
-			icon = `fas fa-hand-holding-heart`
-		}
-
-		// Escrever evento
-		io.WriteString(w, `<div style="position: relative;"><div style="position: absolute; left: -32px; top: 24px; width: 16px; height: 16px; border-radius: var(--radius-full); border: 2px solid white; `+dotStyle+`"></div><div style="border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); background: white; `+borderStyle+`"><div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-md);"><div style="display: flex; align-items: center;"><span style="display: inline-flex; align-items: center; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; `+badgeStyle+`"><i class="`+icon+`" style="margin-right: var(--space-xs);"></i> `)
-
-		if event.Type == timeline.EventTypeObservation {
-			io.WriteString(w, `Observação`)
-		} else {
-			io.WriteString(w, `Intervenção`)
-		}
-
-		io.WriteString(w, `</span> <span style="margin-left: var(--space-lg); font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">`+event.Date+`</span></div>`)
-
-		// Link para sessão se houver
+		io.WriteString(w, `<div class="timeline-event"><div class="timeline-dot timeline-dot-`+eventTypeClass+`"></div><div class="timeline-event-card timeline-event-card-`+eventTypeClass+`"><div class="timeline-event-header"><div class="flex items-center"><span class="timeline-event-type timeline-event-type-`+eventTypeClass+`"><i class="`+eventIcon+`"></i> `+eventLabel+`</span><span class="timeline-event-time">`+event.Date+`</span></div>`)
 		if sessionID, ok := event.Metadata["session_id"]; ok && sessionID != "" {
-			io.WriteString(w, `<a href="/session/`+sessionID+`" style="font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; color: var(--primary-600); text-decoration: none;" onmouseover="this.style.color='var(--primary-800)';" onmouseout="this.style.color='var(--primary-600)';"><i class="fas fa-external-link-alt" style="margin-right: 2px;"></i> Ver sessão</a>`)
+			io.WriteString(w, `<a href="/session/`+sessionID+`" class="timeline-event-link"><i class="fas fa-external-link-alt"></i> Ver sessão</a>`)
 		}
-
-		io.WriteString(w, `</div><div style="font-family: var(--font-clinical); font-size: 1.125rem; color: var(--neutral-800); line-height: 1.75;">`)
-
-		// Renderizar conteúdo (componente Templ)
+		io.WriteString(w, `</div><div class="timeline-event-content">`)
 		event.Content.Render(ctx, w)
-
-		io.WriteString(w, `</div><div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--neutral-100);"><div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--neutral-500);">Registrado em `+event.CreatedAt+`</div></div></div></div>`)
+		io.WriteString(w, `</div><div class="timeline-event-footer"><div class="timeline-event-meta">Registrado em `+event.CreatedAt+`</div></div></div></div>`)
 	}
 
-	// Fechar container
 	io.WriteString(w, `</div></div>`)
+}
+
+func getEventTypeCSSClass(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "session"
+	case timeline.EventTypeObservation:
+		return "observation"
+	case timeline.EventTypeIntervention:
+		return "intervention"
+	default:
+		return ""
+	}
+}
+
+func getEventIconClass(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "fas fa-calendar-check"
+	case timeline.EventTypeObservation:
+		return "fas fa-sticky-note"
+	case timeline.EventTypeIntervention:
+		return "fas fa-hand-holding-heart"
+	default:
+		return "fas fa-calendar-day"
+	}
+}
+
+func getEventLabel(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "Sessão"
+	case timeline.EventTypeObservation:
+		return "Observação"
+	case timeline.EventTypeIntervention:
+		return "Intervenção"
+	default:
+		return "Evento"
+	}
 }

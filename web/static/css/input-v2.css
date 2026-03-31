@@ -10,6 +10,7 @@
 /* Source files for class detection */
 @source "../../../web/components/**/*.{templ,go,html}";
 @source "../../../web/pages/**/*.{templ,go,html}";
+@source "../../../internal/web/handlers/**/*.go";
 
 @theme {
   /* Cores Arandu (mantidas do v1) */

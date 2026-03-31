@@ -100,6 +100,13 @@ func (h *DashboardHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	dashboard := dashboardComponents.Dashboard(stats, patientItems, sessionItems)
+
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		layoutComponents.ShellContentWrapper(dashboard).Render(r.Context(), w)
+		return
+	}
+
 	layoutComponents.Shell(layoutComponents.ShellConfig{
 		PageTitle:   "Dashboard",
 		ActivePage:  "dashboard",

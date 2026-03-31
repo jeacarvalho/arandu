@@ -1,6 +1,10 @@
 package patient
 
-import "arandu/internal/domain/timeline"
+import (
+	"strconv"
+
+	"arandu/internal/domain/timeline"
+)
 
 type TimelinePageData struct {
 	PatientID string
@@ -26,11 +30,19 @@ templ TimelineContent(data TimelinePageData) {
 					</p>
 				</div>
 			} else {
-				for _, event := range data.Events {
-					<div class="timeline-event">
-						<div class="timeline-dot { getEventDotClass(event.Type) }"></div>
+				for i, event := range data.Events {
+					<div 
+						class="timeline-event"
+						if i == len(data.Events) - 1 && len(data.Events) == data.Limit {
+							hx-get={ "/patients/" + data.PatientID + "/history/load-more?offset=" + strconv.Itoa(data.Offset + data.Limit) }
+							hx-trigger="revealed"
+							hx-swap="afterend"
+							hx-indicator="#loading-indicator"
+						}
+					>
+						<div class={ "timeline-dot " + getEventDotClass(event.Type) }></div>
 						
-						<div class="timeline-event-card { getEventBorderClass(event.Type) }">
+						<div class={ "timeline-event-card " + getEventBorderClass(event.Type) }>
 							<div class="timeline-event-header">
 								<div>
 									<span class="timeline-event-type { getEventBadgeClass(event.Type) }">

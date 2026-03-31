@@ -242,6 +242,13 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	detail := sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "")
+
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		layoutComponents.ShellContentWrapper(detail).Render(r.Context(), w)
+		return
+	}
+
 	layoutComponents.Shell(layoutComponents.ShellConfig{
 		PageTitle:      "Sessão " + sessionDetail.Date,
 		ActivePage:     "patient-history",
@@ -404,6 +411,13 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	// Render the edit page directly
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	form := sessionComponents.EditSessionForm(formData)
+
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		layoutComponents.ShellContentWrapper(form).Render(r.Context(), w)
+		return
+	}
+
 	layoutComponents.Shell(layoutComponents.ShellConfig{
 		PageTitle:      "Completar Sessão",
 		ActivePage:     "patient-history",
@@ -724,7 +738,7 @@ func (h *SessionHandler) CreateObservation(w http.ResponseWriter, r *http.Reques
 	})
 
 	// Render HTMX fragment
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(ctx, w); err != nil {
 		log.Printf("Error rendering observation item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
@@ -776,7 +790,7 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 	})
 
 	// Render HTMX fragment
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(ctx, w); err != nil {
 		log.Printf("Error rendering intervention item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
@@ -859,7 +873,7 @@ func (h *SessionHandler) CloseGoalWithNote(w http.ResponseWriter, r *http.Reques
 		ArchivedGoals:   archivedGoals,
 	}
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := patientComponents.GoalList(goalListVM).Render(ctx, w); err != nil {
 		log.Printf("Error rendering goal list: %v", err)
 	}

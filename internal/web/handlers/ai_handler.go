@@ -66,7 +66,7 @@ func (h *AIHandler) GeneratePatientSynthesis(w http.ResponseWriter, r *http.Requ
 	generatedAt := resp.GeneratedAt.Format("02/01/2006 15:04")
 	component := aiComponents.InsightCard(resp.Synthesis, generatedAt)
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	templ.Handler(component).ServeHTTP(w, r)
 }
 
@@ -82,7 +82,7 @@ func renderError(w http.ResponseWriter, errorMsg string) {
 		</div>
 	`, errorMsg)
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(errorHTML))
 }

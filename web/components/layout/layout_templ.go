@@ -86,9 +86,9 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 templ.SafeURL
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 48, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 48, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"app-main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"app-container app-main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,7 +138,20 @@ func BaseWithContentAndEmailAndSidebar(pageTitle string, userEmail string, sideb
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 100;\n\t\t\thtmx.config.defaultSettleDelay = 100;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('patient-search');\n\t\t\t\tconst searchResults = document.getElementById('search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 0;\n\t\t\thtmx.config.defaultSettleDelay = 0;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('legacy-patient-search');\n\t\t\t\tconst searchResults = document.getElementById('legacy-search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 281, Col: 73}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -176,57 +189,57 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 308, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 309, Col: 19}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</title><link href=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 templ.SafeURL
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 311, Col: 70}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" rel=\"stylesheet\"><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 templ.SafeURL
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 312, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 312, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" rel=\"stylesheet\"><link href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 templ.SafeURL
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 313, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,7 +247,7 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex pt-16\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex pt-16\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -242,7 +255,7 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<main class=\"flex-1 p-6 transition-all duration-300\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<main class=\"flex-1 p-6 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -250,7 +263,20 @@ func BaseWithContentAndEmail(pageTitle string, userEmail string, content templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 100;\n\t\t\thtmx.config.defaultSettleDelay = 100;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('patient-search');\n\t\t\t\tconst searchResults = document.getElementById('search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 0;\n\t\t\thtmx.config.defaultSettleDelay = 0;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('legacy-patient-search');\n\t\t\t\tconst searchResults = document.getElementById('legacy-search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 541, Col: 73}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -274,57 +300,57 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 553, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 555, Col: 19}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</title><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 templ.SafeURL
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
+		var templ_7745c5c3_Var13 templ.SafeURL
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 556, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 558, Col: 75}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" rel=\"stylesheet\"><link href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 templ.SafeURL
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 557, Col: 67}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" rel=\"stylesheet\"><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		var templ_7745c5c3_Var14 templ.SafeURL
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 559, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -332,7 +358,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"flex pt-16\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"flex pt-16\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -340,7 +366,7 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<main class=\"flex-1 p-6 transition-all duration-300\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<main class=\"flex-1 p-6 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -348,7 +374,20 @@ func BaseWithContent(pageTitle string, content templ.Component) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</main></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</main></div></div><script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 580, Col: 73}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -372,57 +411,57 @@ func Base(pageTitle string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Arandu ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if pageTitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "— ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "— ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(pageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 591, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 594, Col: 19}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</title><link href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</title><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 templ.SafeURL
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind.css?v=" + helpers.GetCSSVersion())
+		var templ_7745c5c3_Var18 templ.SafeURL
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 594, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 597, Col: 75}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" rel=\"stylesheet\"><link href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 templ.SafeURL
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 595, Col: 67}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" rel=\"stylesheet\"><link href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body style=\"opacity: 1;\">")
+		var templ_7745c5c3_Var19 templ.SafeURL
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 598, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body style=\"opacity: 1;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -430,7 +469,20 @@ func Base(pageTitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 100;\n\t\t\thtmx.config.defaultSettleDelay = 100;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('patient-search');\n\t\t\t\tconst searchResults = document.getElementById('search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 0;\n\t\t\thtmx.config.defaultSettleDelay = 0;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\t\tif (saved !== null) {\n\t\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tAlpine.effect(() => {\n\t\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\t\tif (open !== undefined) {\n\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Combobox keyboard navigation\n\t\t\t(function() {\n\t\t\t\tconst searchInput = document.getElementById('legacy-patient-search');\n\t\t\t\tconst searchResults = document.getElementById('legacy-search-results');\n\t\t\t\tlet activeIndex = -1;\n\t\t\t\tlet options = [];\n\n\t\t\t\tfunction updateActiveDescendant() {\n\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\tsearchInput.setAttribute('aria-activedescendant', options[activeIndex].id);\n\t\t\t\t\t\toptions[activeIndex].classList.add('bg-arandu-soft');\n\t\t\t\t\t\toptions[activeIndex].classList.remove('bg-transparent');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsearchInput.removeAttribute('aria-activedescendant');\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tfunction getOptions() {\n\t\t\t\t\treturn Array.from(searchResults.querySelectorAll('[role=\"option\"]'));\n\t\t\t\t}\n\n\t\t\t\tfunction highlightOption(index) {\n\t\t\t\t\toptions.forEach(opt => {\n\t\t\t\t\t\topt.classList.remove('bg-arandu-soft');\n\t\t\t\t\t\topt.classList.add('bg-transparent');\n\t\t\t\t\t});\n\t\t\t\t\tactiveIndex = index;\n\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\tif (options[activeIndex]) {\n\t\t\t\t\t\toptions[activeIndex].scrollIntoView({ block: 'nearest' });\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (searchInput && searchResults) {\n\t\t\t\t\tsearchInput.addEventListener('keydown', function(e) {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\tif (options.length === 0) return;\n\n\t\t\t\t\t\tswitch(e.key) {\n\t\t\t\t\t\t\tcase 'ArrowDown':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex < options.length - 1) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex + 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === -1) {\n\t\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'ArrowUp':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\tif (activeIndex > 0) {\n\t\t\t\t\t\t\t\t\thighlightOption(activeIndex - 1);\n\t\t\t\t\t\t\t\t} else if (activeIndex === 0) {\n\t\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\t\tupdateActiveDescendant();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Enter':\n\t\t\t\t\t\t\t\tif (activeIndex >= 0 && options[activeIndex]) {\n\t\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\t\twindow.location.href = options[activeIndex].href;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Escape':\n\t\t\t\t\t\t\t\tactiveIndex = -1;\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'Home':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(0);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\tcase 'End':\n\t\t\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\t\t\thighlightOption(options.length - 1);\n\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('focus', function() {\n\t\t\t\t\t\tif (searchResults.children.length > 0) {\n\t\t\t\t\t\t\tsearchResults.classList.remove('hidden');\n\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'true');\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchInput.addEventListener('blur', function() {\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\tif (!searchResults.matches(':hover')) {\n\t\t\t\t\t\t\t\tsearchResults.classList.add('hidden');\n\t\t\t\t\t\t\t\tsearchInput.setAttribute('aria-expanded', 'false');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t});\n\n\t\t\t\t\tsearchResults.addEventListener('mouseenter', function() {\n\t\t\t\t\t\toptions = getOptions();\n\t\t\t\t\t\toptions.forEach((opt, idx) => {\n\t\t\t\t\t\t\topt.addEventListener('mouseenter', () => {\n\t\t\t\t\t\t\t\thighlightOption(idx);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t})();\n\n\t\t\t// Smooth page transitions\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\t// Fade in on page load\n\t\t\t\tdocument.body.style.opacity = '0';\n\t\t\t\trequestAnimationFrame(() => {\n\t\t\t\t\tdocument.body.style.transition = 'opacity 0.3s ease';\n\t\t\t\t\tdocument.body.style.opacity = '1';\n\t\t\t\t});\n\n\t\t\t\t// Smooth navigation (for links without hx-boost)\n\t\t\t\tdocument.addEventListener('click', function(e) {\n\t\t\t\t\tconst link = e.target.closest('a[href]');\n\t\t\t\t\tif (link && !link.getAttribute('hx-boost') && !e.metaKey && !e.ctrlKey && link.origin === window.location.origin) {\n\t\t\t\t\t\te.preventDefault();\n\t\t\t\t\t\tdocument.body.style.opacity = '0.7';\n\t\t\t\t\t\tsetTimeout(() => {\n\t\t\t\t\t\t\twindow.location.href = link.href;\n\t\t\t\t\t\t}, 200);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\t// Focus management after HTMX swap\n\t\t\tdocument.body.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\tconst h1 = e.target.querySelector('h1, [data-autofocus]');\n\t\t\t\tif (h1) {\n\t\t\t\t\th1.setAttribute('tabindex', '-1');\n\t\t\t\t\th1.focus();\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetCSSVersion())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 818, Col: 73}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -454,12 +506,12 @@ func Layout() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"min-h-screen bg-arandu-bg\" x-data=\"{ sidebarOpen: window.innerWidth >= 768 }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -467,7 +519,7 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"flex pt-16\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"flex pt-16\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -475,15 +527,15 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<main class=\"flex-1 p-6 ml-0 md:ml-0 transition-all duration-300\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<main class=\"flex-1 p-6 ml-0 md:ml-0 transition-all duration-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ_7745c5c3_Var17.Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ_7745c5c3_Var21.Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 100;\n\t\t\thtmx.config.defaultSettleDelay = 100;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</main></div></div><script>\n\t\t\t// HTMX configuration for smooth transitions and error handling\n\t\t\thtmx.config.defaultSwapDelay = 0;\n\t\t\thtmx.config.defaultSettleDelay = 0;\n\t\t\thtmx.config.scrollIntoViewOnBoost = false;\n\n\t\t\t// Global error handling with toast notifications\n\t\t\tfunction showErrorToast(message) {\n\t\t\t\tlet toast = document.getElementById('error-toast');\n\t\t\t\tif (!toast) {\n\t\t\t\t\ttoast = document.createElement('div');\n\t\t\t\t\ttoast.id = 'error-toast';\n\t\t\t\t\ttoast.className = 'fixed top-4 right-4 z-50 max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';\n\t\t\t\t\ttoast.setAttribute('role', 'alert');\n\t\t\t\t\ttoast.setAttribute('aria-live', 'polite');\n\t\t\t\t\tdocument.body.appendChild(toast);\n\t\t\t\t}\n\t\t\t\ttoast.innerHTML = `\n\t\t\t\t\t<div class=\"flex items-start gap-3\">\n\t\t\t\t\t\t<i class=\"fas fa-exclamation-circle text-red-500 mt-0.5\"></i>\n\t\t\t\t\t\t<div class=\"flex-1\">\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-800 dark:text-red-400 font-medium\">Erro</p>\n\t\t\t\t\t\t\t<p class=\"text-sm text-red-600 dark:text-red-300 mt-1\">${message}</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<button onclick=\"this.parentElement.parentElement.remove()\" class=\"text-red-400 hover:text-red-600 dark:hover:text-red-200\" aria-label=\"Fechar\">\n\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\ttoast.classList.remove('translate-y-[-100%]');\n\t\t\t\ttoast.classList.add('translate-y-0');\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\ttoast.classList.add('translate-y-[-100%]');\n\t\t\t\t\tsetTimeout(() => toast.remove(), 300);\n\t\t\t\t}, 5000);\n\t\t\t}\n\n\t\t\tdocument.body.addEventListener('htmx:responseError', function(e) {\n\t\t\t\tconst detail = e.detail;\n\t\t\t\tif (detail.xhr && detail.xhr.status >= 400) {\n\t\t\t\t\tlet errorMessage = 'Erro ao processar requisição';\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst response = JSON.parse(detail.xhr.responseText);\n\t\t\t\t\t\terrorMessage = response.error || response.message || errorMessage;\n\t\t\t\t\t} catch {\n\t\t\t\t\t\tif (detail.xhr.responseText && detail.xhr.responseText.length < 200) {\n\t\t\t\t\t\t\terrorMessage = detail.xhr.responseText;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tshowErrorToast(errorMessage);\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:swapError', function(e) {\n\t\t\t\tshowErrorToast('Erro ao atualizar conteúdo. Tente novamente.');\n\t\t\t});\n\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tconst saved = localStorage.getItem('arandu-sidebar-open');\n\t\t\tif (saved !== null) {\n\t\t\t\tAlpine.store('sidebar', { open: saved === 'true' });\n\t\t\t}\n\t\t\t\n\t\t\tAlpine.effect(() => {\n\t\t\t\tconst open = Alpine.store('sidebar')?.open;\n\t\t\t\tif (open !== undefined) {\n\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-open', open);\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -507,12 +559,12 @@ func Sidebar() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
+		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var22 == nil {
+			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\"></div><!-- Sidebar Drawer --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"sidebar-nav\"><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-chart-line\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-users\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-plus\"></i> <span>Novo Paciente</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<!-- Mobile Overlay / Drawer Background --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"sidebar-overlay\"></div><!-- Sidebar Drawer --><aside class=\"sidebar-drawer\" :class=\"sidebarOpen ? 'sidebar-open' : ''\"><!-- Sidebar Header --><div class=\"sidebar-header\"><div class=\"sidebar-subtitle\">Inteligência Clínica</div><!-- Close button only visible on mobile --><button @click=\"sidebarOpen = false\" class=\"sidebar-close-btn\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"sidebar-nav\"><a href=\"/dashboard\" class=\"sidebar-nav-item\"><i class=\"fas fa-chart-line\"></i> <span>Dashboard</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-users\"></i> <span>Pacientes</span></a> <a href=\"/patients/new\" class=\"sidebar-nav-item\"><i class=\"fas fa-user-plus\"></i> <span>Novo Paciente</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-history\"></i> <span>Anamnese</span></a> <a href=\"/patients\" class=\"sidebar-nav-item\"><i class=\"fas fa-file-medical\"></i> <span>Prontuário</span></a></nav><!-- Logout --><div class=\"sidebar-nav-footer\"><a href=\"/logout\" class=\"sidebar-nav-item sidebar-nav-logout\"><i class=\"fas fa-sign-out-alt\"></i> <span>Sair</span></a></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -536,12 +588,12 @@ func TopBar() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<!-- Top Bar --><header class=\"fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-neutral-200 flex items-center px-4 gap-4\"><!-- Left: Menu Toggle & Logo --><div class=\"flex items-center gap-3\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"w-10 h-10 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600 md:hidden\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars text-lg\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"flex items-center gap-2\"><div class=\"w-8 h-8 bg-gradient-to-br from-arandu-primary to-arandu-dark rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-brain\"></i></div><span class=\"text-xl font-bold text-neutral-800 hidden sm:block\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"flex-1 max-w-xl relative\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"w-full px-4 py-2 pl-10 bg-neutral-50 border border-transparent rounded-xl text-sm text-neutral-800 placeholder-neutral-400 focus:bg-white focus:border-arandu-soft focus:outline-none focus:ring-2 focus:ring-arandu-soft/20 transition-all\"> <i class=\"fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400\"></i><div id=\"search-results\" class=\"search-results-dropdown absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-50 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div><!-- Right: Actions --><div class=\"flex items-center gap-2\"></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<!-- Top Bar --><header class=\"fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-neutral-200 flex items-center px-4 gap-4\"><!-- Left: Menu Toggle & Logo --><div class=\"flex items-center gap-3\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"w-10 h-10 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600 md:hidden\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars text-lg\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"flex items-center gap-2\"><div class=\"w-8 h-8 bg-gradient-to-br from-arandu-primary to-arandu-dark rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-brain\"></i></div><span class=\"text-xl font-bold text-neutral-800 hidden sm:block\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"flex-1 max-w-xl relative\"><input id=\"legacy-patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#legacy-search-results\" hx-indicator=\"#legacy-search-loading\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"legacy-search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"w-full px-4 py-2 pl-10 bg-neutral-50 border border-transparent rounded-xl text-sm text-neutral-800 placeholder-neutral-400 focus:bg-white focus:border-arandu-soft focus:outline-none focus:ring-2 focus:ring-arandu-soft/20 transition-all\"> <i class=\"fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400\"></i> <span id=\"legacy-search-loading\" class=\"htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"legacy-search-results\" class=\"search-results-dropdown absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-50 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div><!-- Right: Actions --><div class=\"flex items-center gap-2\"></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -565,25 +617,25 @@ func TopBarContent(userEmail string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<header class=\"top-bar\"><!-- Left: Menu Toggle & Logo --><div class=\"top-bar-left\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"hamburger-menu\" x-show=\"window.innerWidth < 768\"><i class=\"fas fa-bars\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"top-bar-logo\"><div class=\"top-bar-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"top-bar-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"top-bar-search-container\"><input id=\"patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"search-bar-silent\"> <i class=\"fas fa-search top-bar-search-icon\"></i><div id=\"search-results\" class=\"search-results-dropdown search-results-container\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div><!-- Right: User Profile --><div class=\"top-bar-right top-bar-right-container\"><div class=\"slp-top-bar-user\"><div class=\"slp-top-bar-user-avatar\"><i class=\"fas fa-user-md\"></i></div><span class=\"slp-top-bar-user-name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<header class=\"top-bar\"><!-- Left: Menu Toggle & Logo --><div class=\"top-bar-left\"><!-- Hamburger Menu - Only visible on mobile --><button @click=\"sidebarOpen = !sidebarOpen\" class=\"hamburger-menu\" x-show=\"window.innerWidth < 768\" aria-label=\"Abrir menu de navegação\" aria-expanded=\"false\" aria-controls=\"sidebar-drawer\"><i class=\"fas fa-bars\"></i></button><!-- Logo --><a href=\"/dashboard\" class=\"top-bar-logo\"><div class=\"top-bar-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"top-bar-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"top-bar-search-container\"><input id=\"patient-search-nav\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#search-results-nav\" hx-indicator=\"#search-loading-nav\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"search-results-nav\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"search-bar-silent\"> <i class=\"fas fa-search top-bar-search-icon\"></i> <span id=\"search-loading-nav\" class=\"htmx-indicator text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"search-results-nav\" class=\"search-results-dropdown search-results-container\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div><!-- Right: User Profile --><div class=\"top-bar-right top-bar-right-container\"><div class=\"slp-top-bar-user\"><div class=\"slp-top-bar-user-avatar\"><i class=\"fas fa-user-md\"></i></div><span class=\"slp-top-bar-user-name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(userEmail)
+		var templ_7745c5c3_Var25 string
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(userEmail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 1075, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/layout.templ`, Line: 1090, Col: 51}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span></div></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</span></div></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -608,9 +660,9 @@ func TopBarWithEmail(userEmail string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var22 == nil {
-			templ_7745c5c3_Var22 = templ.NopComponent
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = TopBarContent(userEmail).Render(ctx, templ_7745c5c3_Buffer)
