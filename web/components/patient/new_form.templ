@@ -7,163 +7,68 @@ type NewPatientFormData struct {
 }
 
 type PatientFormValues struct {
-	Name      string
-	Gender    string
-	Ethnicity string
+	Name       string
+	Gender     string
+	Ethnicity  string
 	Occupation string
-	Education string
-	Notes     string
+	Education  string
+	Notes      string
 }
 
 templ NewPatientForm(data NewPatientFormData) {
-	<div class="form-container">
-		<div class="content-header">
-			<div class="header-title">
-				<div class="header-title-row">
-					<a
-						href="/patients"
-						class="btn btn-ghost btn-sm"
-						aria-label="Voltar para a lista de pacientes"
-					>
-						<i class="fas fa-arrow-left btn-icon"></i>
-					</a>
-					<div>
-						<h1>Novo Paciente</h1>
-						<p class="header-subtitle">
-							Cadastre um novo paciente para iniciar o acompanhamento clínico
-						</p>
-					</div>
+	<div class="patient-form-wrapper">
+		<div class="patient-form-header">
+			<div class="header-content">
+				<a href="/patients" class="back-link" aria-label="Voltar para a lista de pacientes">
+					<i class="fas fa-arrow-left"></i>
+				</a>
+				<div class="header-text">
+					<h1>Novo Paciente</h1>
+					<p class="header-subtitle">Cadastre um novo paciente para iniciar o acompanhamento clínico</p>
 				</div>
 			</div>
 		</div>
-
-		<div class="clinical-notebook-form">
-			if data.Error != "" {
-				<div class="form-error" role="alert" aria-live="polite">
-					<p>
-						<i class="fas fa-exclamation-circle"></i>
-						{ data.Error }
-					</p>
-				</div>
-			}
-
-			if data.ServerError != "" {
-				<div class="form-error" role="alert" aria-live="polite">
-					<p>
-						<i class="fas fa-exclamation-circle"></i>
-						{ data.ServerError }
-					</p>
-				</div>
-			}
-
-			<form action="/patients/create" method="POST">
-				<div class="identity-section">
-					<div class="silent-form-group">
-						<label class="silent-label" for="patient-name">
-							Nome Completo *
-						</label>
-						<input
-							id="patient-name"
-							type="text"
-							name="name"
-							required
-							autocomplete="name"
-							placeholder="Ex: Maria da Silva"
-							value={ data.FormData.Name }
-							class="silent-input patient-name-input"
-							aria-describedby="patient-name-help"
-						/>
-						<p id="patient-name-help" class="small">
-							Use o nome pelo qual o paciente deve ser identificado no prontuário.
-						</p>
-					</div>
-
-					<div class="biopsychosocial-grid">
-						<div class="silent-form-group">
-							<label class="silent-label" for="patient-gender">
-								Identidade de Gênero
-							</label>
-							<input
-								id="patient-gender"
-								type="text"
-								name="gender"
-								autocomplete="sex"
-								placeholder="Ex: Feminino, Masculino, Não-binário"
-								class="silent-input"
-							/>
-						</div>
-
-						<div class="silent-form-group">
-							<label class="silent-label" for="patient-ethnicity">
-								Etnia/Raça
-							</label>
-							<input
-								id="patient-ethnicity"
-								type="text"
-								name="ethnicity"
-								placeholder="Ex: Branca, Preta, Parda, Amarela, Indígena"
-								class="silent-input"
-							/>
-						</div>
-
-						<div class="silent-form-group">
-							<label class="silent-label" for="patient-occupation">
-								Ocupação
-							</label>
-							<input
-								id="patient-occupation"
-								type="text"
-								name="occupation"
-								placeholder="Ex: Estudante, Advogado, Autônomo"
-								class="silent-input"
-							/>
-						</div>
-
-						<div class="silent-form-group">
-							<label class="silent-label" for="patient-education">
-								Escolaridade
-							</label>
-							<input
-								id="patient-education"
-								type="text"
-								name="education"
-								placeholder="Ex: Ensino Médio, Superior, Pós-graduação"
-								class="silent-input"
-							/>
-						</div>
-					</div>
-				</div>
-
-				<div class="anamnesis-section">
-					<div class="silent-form-group">
-						<label class="silent-label" for="patient-notes">
-							Observações Iniciais
-						</label>
-						<textarea
-							id="patient-notes"
-							name="notes"
-							rows="8"
-							placeholder="Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores"
-							class="silent-textarea clinical-textarea"
-							aria-describedby="patient-notes-help"
-						>{ data.FormData.Notes }</textarea>
-						<p id="patient-notes-help" class="small">
-							Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.
-						</p>
-					</div>
-				</div>
-
-				<div class="form-actions">
-					<a href="/patients" class="btn btn-outline">
-						<i class="fas fa-times btn-icon"></i>
-						Cancelar
-					</a>
-					<button type="submit" class="btn btn-primary">
-						<i class="fas fa-user-plus btn-icon"></i>
-						Cadastrar Paciente
-					</button>
-				</div>
-			</form>
-		</div>
+		if data.Error != "" {
+			<div class="form-error" role="alert" aria-live="polite">
+				<p><i class="fas fa-exclamation-circle"></i> { data.Error }</p>
+			</div>
+		}
+		if data.ServerError != "" {
+			<div class="form-error" role="alert" aria-live="polite">
+				<p><i class="fas fa-exclamation-circle"></i> { data.ServerError }</p>
+			</div>
+		}
+		<form action="/patients/create" method="POST" class="patient-form-grid">
+			<div class="form-field full-width">
+				<label class="form-label" for="patient-name">Nome Completo <span class="required">*</span></label>
+				<input id="patient-name" type="text" name="name" required autocomplete="name" placeholder="Ex: Maria da Silva" value={ data.FormData.Name } class="form-input" aria-describedby="patient-name-help"/>
+				<p id="patient-name-help" class="form-help">Use o nome pelo qual o paciente deve ser identificado no prontuário.</p>
+			</div>
+			<div class="form-field">
+				<label class="form-label" for="patient-gender">Identidade de Gênero</label>
+				<input id="patient-gender" type="text" name="gender" autocomplete="sex" placeholder="Ex: Feminino, Masculino" value={ data.FormData.Gender } class="form-input"/>
+			</div>
+			<div class="form-field">
+				<label class="form-label" for="patient-ethnicity">Etnia/Raça</label>
+				<input id="patient-ethnicity" type="text" name="ethnicity" placeholder="Ex: Branca, Preta, Parda" value={ data.FormData.Ethnicity } class="form-input"/>
+			</div>
+			<div class="form-field">
+				<label class="form-label" for="patient-occupation">Ocupação</label>
+				<input id="patient-occupation" type="text" name="occupation" placeholder="Ex: Estudante, Advogado" value={ data.FormData.Occupation } class="form-input"/>
+			</div>
+			<div class="form-field">
+				<label class="form-label" for="patient-education">Escolaridade</label>
+				<input id="patient-education" type="text" name="education" placeholder="Ex: Superior, Pós-graduação" value={ data.FormData.Education } class="form-input"/>
+			</div>
+			<div class="form-field full-width">
+				<label class="form-label" for="patient-notes">Observações Iniciais</label>
+				<textarea id="patient-notes" name="notes" rows="4" placeholder="Descreva observações relevantes sobre o paciente:" class="form-textarea" aria-describedby="patient-notes-help">{ data.FormData.Notes }</textarea>
+				<p id="patient-notes-help" class="form-help">Essas notas ficarão visíveis no perfil do paciente.</p>
+			</div>
+			<div class="form-actions">
+				<a href="/patients" class="btn btn-cancel"><i class="fas fa-times"></i> Cancelar</a>
+				<button type="submit" class="btn btn-submit"><i class="fas fa-user-plus"></i> Cadastrar Paciente</button>
+			</div>
+		</form>
 	</div>
 }

@@ -19,3 +19,11 @@ func GetCSSVersion() string {
 	}
 	return fmt.Sprintf("%d", info.ModTime().Unix())
 }
+
+func GetCSSVersionV2() string {
+	info, err := os.Stat("web/static/css/tailwind-v2.css")
+	if err != nil {
+		return fmt.Sprintf("dev_%d", time.Now().Unix())
+	}
+	return fmt.Sprintf("%d", info.ModTime().Unix())
+}

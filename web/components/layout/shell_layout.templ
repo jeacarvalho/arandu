@@ -1,0 +1,452 @@
+package layout
+
+import (
+	goContext "context"
+	appcontext "arandu/internal/platform/context"
+	"arandu/internal/platform/helpers"
+)
+
+// ShellConfig configuração do ShellLayout
+type ShellConfig struct {
+	PageTitle       string
+	ActivePage      string
+	ShowSidebar     bool
+	SidebarVariant  string // "default" | "patient"
+	PatientID       string // usado quando SidebarVariant = "patient"
+	UserEmail       string
+}
+
+// ShellWithContext cria um ShellLayout com contexto e sidebar opcional
+func ShellWithContext(ctx goContext.Context, config ShellConfig, content templ.Component) templ.Component {
+	// Get user email from context
+	userEmail, err := appcontext.GetUserEmail(ctx)
+	if err != nil {
+		userEmail = "user@example.com"
+	}
+	config.UserEmail = userEmail
+
+	return Shell(config, content)
+}
+
+// Shell componente base de layout com Topbar, Sidebar e Main Canvas
+// Uso: @Shell(config, conteúdo)
+templ Shell(config ShellConfig, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			Arandu
+			if config.PageTitle != "" {
+				— { config.PageTitle }
+			}
+		</title>
+		<!-- CSS v2 - Novo padrão Shell Layout -->
+		<link href={ "/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2() } rel="stylesheet">
+		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+		<script>
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+	</head>
+	<body>
+		<div 
+			class="shell"
+			x-data="{ 
+				sidebarOpen: false,
+				sidebarCollapsed: false,
+				init() {
+					// Restore sidebar state from localStorage
+					const saved = localStorage.getItem('arandu-sidebar-collapsed');
+					if (saved !== null) {
+						this.sidebarCollapsed = saved === 'true';
+					}
+				},
+				toggleSidebar() {
+					this.sidebarOpen = !this.sidebarOpen;
+				},
+				toggleCollapse() {
+					this.sidebarCollapsed = !this.sidebarCollapsed;
+					localStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);
+				},
+				closeSidebar() {
+					this.sidebarOpen = false;
+				}
+			}"
+			x-init="init()"
+		>
+			<!-- Topbar -->
+			@ShellTopbar(config)
+
+			<!-- Body -->
+			<div class="shell-body">
+				<!-- Mobile Sidebar Overlay -->
+				<div 
+					x-show="sidebarOpen" 
+					@click="closeSidebar()"
+					class="shell-sidebar-overlay"
+					:class="sidebarOpen ? 'shell-sidebar-overlay-open' : ''"
+					x-transition:enter="transition ease-out duration-200"
+					x-transition:enter-start="opacity-0"
+					x-transition:enter-end="opacity-100"
+					x-transition:leave="transition ease-in duration-150"
+					x-transition:leave-start="opacity-100"
+					x-transition:leave-end="opacity-0"
+				></div>
+
+				<!-- Sidebar -->
+				if config.ShowSidebar {
+					@ShellSidebar(config)
+				}
+
+				<!-- Main Content Area -->
+			<main class="shell-main">
+				<!-- Scrollable Canvas -->
+				<div class="shell-canvas" id="main-content">
+					<div class="shell-canvas-container" style="padding-top: 80px; padding-left: 260px;">
+						<div class="shell-content">
+							@content
+						</div>
+					</div>
+				</div>
+			</main>
+			</div>
+		</div>
+
+		<!-- Global Scripts -->
+		<script>
+			// HTMX Configuration
+			htmx.config.defaultSwapDelay = 0;
+			htmx.config.defaultSettleDelay = 0;
+			htmx.config.scrollIntoViewOnBoost = false;
+
+			// Global Error Handling with Toast
+			function showErrorToast(message) {
+				let toast = document.getElementById('error-toast');
+				if (!toast) {
+					toast = document.createElement('div');
+					toast.id = 'error-toast';
+					toast.className = 'fixed top-4 right-4 z-[100] max-w-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-y-[-100%]';
+					toast.setAttribute('role', 'alert');
+					toast.setAttribute('aria-live', 'polite');
+					document.body.appendChild(toast);
+				}
+				toast.innerHTML = `
+					<div class="flex items-start gap-3">
+						<i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+						<div class="flex-1">
+							<p class="text-sm text-red-800 dark:text-red-400 font-medium">Erro</p>
+							<p class="text-sm text-red-600 dark:text-red-300 mt-1">${message}</p>
+						</div>
+						<button onclick="this.parentElement.parentElement.remove()" class="text-red-400 hover:text-red-600 dark:hover:text-red-200" aria-label="Fechar">
+							<i class="fas fa-times"></i>
+						</button>
+					</div>
+				`;
+				toast.classList.remove('translate-y-[-100%]');
+				toast.classList.add('translate-y-0');
+				setTimeout(() => {
+					toast.classList.add('translate-y-[-100%]');
+					setTimeout(() => toast.remove(), 300);
+				}, 5000);
+			}
+
+			// HTMX Error Events
+			document.body.addEventListener('htmx:responseError', function(e) {
+				const detail = e.detail;
+				if (detail.xhr && detail.xhr.status >= 400) {
+					let errorMessage = 'Erro ao processar requisição';
+					try {
+						const response = JSON.parse(detail.xhr.responseText);
+						errorMessage = response.error || response.message || errorMessage;
+					} catch {
+						if (detail.xhr.responseText && detail.xhr.responseText.length < 200) {
+							errorMessage = detail.xhr.responseText;
+						}
+					}
+					showErrorToast(errorMessage);
+				}
+			});
+
+			document.body.addEventListener('htmx:swapError', function(e) {
+				showErrorToast('Erro ao atualizar conteúdo. Tente novamente.');
+			});
+
+			// Focus management after HTMX swap
+			document.body.addEventListener('htmx:afterSwap', (e) => {
+				// Close mobile sidebar on navigation
+				const alpineData = document.querySelector('[x-data]')?.__x?.$data;
+				if (alpineData && window.innerWidth < 768) {
+					alpineData.sidebarOpen = false;
+				}
+
+				// Focus management
+				const h1 = e.target.querySelector('h1, [data-autofocus]');
+				if (h1) {
+					h1.setAttribute('tabindex', '-1');
+					h1.focus();
+				}
+			});
+
+			// Smooth page transitions
+			document.addEventListener('DOMContentLoaded', function() {
+				document.body.style.opacity = '0';
+				requestAnimationFrame(() => {
+					document.body.style.transition = 'opacity 0.3s ease';
+					document.body.style.opacity = '1';
+				});
+			});
+		</script>
+	</body>
+	</html>
+}
+
+// ShellTopbar componente da barra superior
+templ ShellTopbar(config ShellConfig) {
+	<header class="shell-topbar">
+		<!-- Left: Menu Toggle & Logo -->
+		<div class="shell-topbar-left">
+			<!-- Mobile Hamburger -->
+			if config.ShowSidebar {
+				<button 
+					@click="toggleSidebar()"
+					class="shell-hamburger md:hidden"
+						if config.SidebarVariant == "patient" {
+							aria-label="Abrir menu do paciente"
+						} else {
+							aria-label="Abrir menu de navegação"
+						}
+					aria-expanded="false"
+					aria-controls="shell-sidebar"
+				>
+					<i class="fas fa-bars text-lg"></i>
+				</button>
+			}
+			
+			<!-- Logo -->
+			<a href="/dashboard" class="shell-logo">
+				<div class="shell-logo-icon">
+					<i class="fas fa-brain"></i>
+				</div>
+				<span class="shell-logo-text">Arandu</span>
+			</a>
+		</div>
+
+		<!-- Center: Search Bar -->
+		<div class="shell-topbar-center">
+			@ShellSearchBar()
+		</div>
+
+		<!-- Right: User Profile -->
+		<div class="shell-topbar-right">
+			<div class="shell-user">
+				<div class="shell-user-avatar">
+					<i class="fas fa-user-md"></i>
+				</div>
+				<span class="shell-user-name">{ config.UserEmail }</span>
+			</div>
+		</div>
+	</header>
+}
+
+// ShellSearchBar componente de busca na topbar
+templ ShellSearchBar() {
+	<div class="shell-search-container">
+		<input
+			id="patient-search"
+			type="text"
+			name="q"
+			placeholder="Buscar paciente..."
+			hx-get="/patients/search"
+			hx-trigger="keyup changed delay:350ms"
+			hx-target="#search-results"
+			hx-indicator="#search-loading"
+			autocomplete="off"
+			role="combobox"
+			aria-label="Buscar paciente"
+			aria-controls="search-results"
+			aria-autocomplete="list"
+			aria-expanded="false"
+			aria-haspopup="listbox"
+			class="shell-search-input"
+		/>
+		<i class="fas fa-search shell-search-icon"></i>
+		<span id="search-loading" class="htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500" role="status" aria-live="polite">
+			Buscando...
+		</span>
+		<div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden" role="listbox" aria-label="Resultados da busca de pacientes"></div>
+	</div>
+}
+
+// ShellSidebar componente da barra lateral
+templ ShellSidebar(config ShellConfig) {
+	<!-- Desktop Sidebar (always visible on md+) -->
+	<aside 
+		id="shell-sidebar"
+		class="shell-sidebar"
+		:class="sidebarCollapsed ? 'shell-sidebar-collapsed' : ''"
+		aria-label="Menu de navegação"
+	>
+		@ShellSidebarContent(config)
+	</aside>
+
+	<!-- Mobile Sidebar (drawer) -->
+	<aside 
+		id="shell-sidebar-mobile"
+		class="shell-sidebar-drawer"
+		:class="sidebarOpen ? 'shell-sidebar-drawer-open' : ''"
+		x-show="sidebarOpen"
+		x-transition:enter="transform transition ease-out duration-300"
+		x-transition:enter-start="-translate-x-full"
+		x-transition:enter-end="translate-x-0"
+		x-transition:leave="transform transition ease-in duration-200"
+		x-transition:leave-start="translate-x-0"
+		x-transition:leave-end="-translate-x-full"
+		aria-label="Menu de navegação mobile"
+	>
+		@ShellSidebarContent(config)
+	</aside>
+}
+
+// ShellSidebarContent conteúdo da sidebar
+templ ShellSidebarContent(config ShellConfig) {
+	<!-- Header -->
+	<div class="shell-sidebar-header">
+		<div class="shell-sidebar-title">
+			if config.SidebarVariant == "patient" {
+				Perfil do Paciente
+			} else {
+				Inteligência Clínica
+			}
+		</div>
+		<!-- Desktop Collapse Toggle -->
+		<button 
+			@click="toggleCollapse()"
+			class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors"
+			aria-label="Recolher menu"
+		>
+			<i class="fas" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+		</button>
+		<!-- Mobile Close Button -->
+		<button 
+			@click="closeSidebar()"
+			class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors"
+			aria-label="Fechar menu"
+		>
+			<i class="fas fa-times"></i>
+		</button>
+	</div>
+	
+	<!-- Navigation -->
+	<nav class="shell-sidebar-nav">
+		if config.SidebarVariant == "patient" && config.PatientID != "" {
+			@ShellPatientNavItems(config.PatientID, config.ActivePage)
+		} else {
+			@ShellDefaultNavItems(config.ActivePage)
+		}
+	</nav>
+
+	<!-- Footer -->
+	<div class="shell-sidebar-footer">
+		<a 
+			href="/logout" 
+			class="shell-sidebar-nav-item logout-item"
+		>
+			<i class="fas fa-sign-out-alt shell-sidebar-nav-item-icon"></i>
+			<span class="shell-sidebar-nav-item-text">Sair</span>
+		</a>
+	</div>
+}
+
+// ShellDefaultNavItems itens de navegação padrão
+templ ShellDefaultNavItems(activePage string) {
+	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-chart-line", "Dashboard")
+	@ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes")
+	@ShellNavItem("/patients/new", "new-patient", activePage, "fa-user-plus", "Novo Paciente")
+	@ShellNavItem("/patients", "anamnesis", activePage, "fa-history", "Anamnese")
+	@ShellNavItem("/patients", "records", activePage, "fa-file-medical", "Prontuário")
+}
+
+// ShellPatientNavItems itens de navegação do contexto paciente
+templ ShellPatientNavItems(patientID string, activePage string) {
+	@ShellNavItem("/patients/" + patientID, "patient-summary", activePage, "fa-user-md", "Resumo")
+	@ShellNavItem("/patients/" + patientID + "/anamnesis", "patient-anamnesis", activePage, "fa-history", "Anamnese")
+	@ShellNavItem("/patients/" + patientID + "/history", "patient-history", activePage, "fa-file-medical", "Prontuário")
+	@ShellNavItem("/patients/" + patientID + "/goals", "patient-goals", activePage, "fa-bullseye", "Plano Terapêutico")
+	
+	<!-- Divider -->
+	<div class="my-2 border-t border-neutral-200"></div>
+	
+	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-arrow-left", "Voltar ao Dashboard")
+}
+
+// ShellNavItem item individual de navegação
+templ ShellNavItem(href string, page string, activePage string, icon string, label string) {
+	<a 
+		href={ templ.SafeURL(href) }
+		class="shell-sidebar-nav-item group"
+		if page == activePage {
+			aria-current="page"
+		}
+		hx-get={ href }
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+		hx-indicator="#shell-loading"
+		@click="if (window.innerWidth < 768) { $data.sidebarOpen = false; }"
+	>
+		<i class={ "fas " + icon + " shell-sidebar-nav-item-icon" }></i>
+		<span class="shell-sidebar-nav-item-text">{ label }</span>
+	</a>
+}
+
+// ShellContentWrapper wrapper para conteúdos HTMX
+templ ShellContentWrapper(content templ.Component) {
+	<div id="main-content" hx-swap-oob="true">
+		<div class="shell-canvas-container">
+			<div class="shell-content">
+				@content
+			</div>
+		</div>
+	</div>
+}
+
+// ShellPageTitle componente de título de página padrão
+templ ShellPageTitle(title string, subtitle string) {
+	<div class="mb-6">
+		<h1 class="text-2xl font-semibold text-neutral-800" data-autofocus>{ title }</h1>
+		if subtitle != "" {
+			<p class="mt-1 text-sm text-neutral-500">{ subtitle }</p>
+		}
+	</div>
+}
+
+// ShellCard componente de card padrão
+templ ShellCard(title string, content templ.Component) {
+	<div class="bg-white rounded-xl border border-neutral-200 shadow-sm">
+		if title != "" {
+			<div class="px-6 py-4 border-b border-neutral-200">
+				<h2 class="text-lg font-semibold text-neutral-800">{ title }</h2>
+			</div>
+		}
+		<div class="p-6">
+			@content
+		</div>
+	</div>
+}
+
+// ShellLoading indicador de loading para HTMX
+templ ShellLoading() {
+	<div id="shell-loading" class="htmx-indicator fixed inset-0 z-[200] flex items-center justify-center bg-white/50 backdrop-blur-sm">
+		<div class="flex flex-col items-center gap-3">
+			<div class="w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin"></div>
+			<span class="text-sm text-neutral-600 font-medium">Carregando...</span>
+		</div>
+	</div>
+}
