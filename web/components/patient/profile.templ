@@ -7,38 +7,43 @@ import (
 )
 
 // PatientProfileView é o componente principal do perfil do paciente
-// Layout otimizado: grid 2 colunas em desktop, 1 coluna em mobile
-templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
+// Layout: grid 4 colunas em desktop, 1 coluna em mobile
+templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelineEvents []TimelineEventItem, recentSessions []SessionItem) {
 	<div class="sota-container">
-		<!-- Header -->
+		<!-- Row 1: Nome do paciente (col 1-3) + Botão Nova Sessão (col 4) -->
 		<div class="patient-profile-header">
 			<div class="patient-profile-header-container">
-				<a href="/patients" class="patient-back-button">
-					<i class="fas fa-arrow-left"></i>
-				</a>
-				<div class="patient-header-content">
+				<!-- Nome do paciente: grids 1-3 -->
+				<div class="patient-header-content flex-1">
 					<h1 class="patient-name font-clinical">{p.Name}</h1>
 					<p class="patient-subtitle font-clinical">Perfil clínico do paciente</p>
 				</div>
-				<a href="/patients/{p.ID}/sessions/new" class="patient-action-button" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+				<!-- Botão Nova Sessão: grid 4 -->
+				<a 
+					href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } 
+					class="patient-action-button" 
+					hx-boost="true" 
+					hx-target="#main-content" 
+					hx-swap="innerHTML transition:true" 
+					hx-push-url="true"
+				>
 					<i class="fas fa-calendar-plus"></i> Nova Sessão
 				</a>
 			</div>
 		</div>
 
-		<!-- Grid de Conteúdo: 2 colunas em desktop, 1 em mobile -->
-		<!-- CRÍTICO: grid-cols-1 md:grid-cols-2 = responsivo -->
-		<div class="patient-profile-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+		<!-- Grid de Conteúdo: 4 colunas em desktop, 1 em mobile -->
+		<div class="patient-profile-grid grid grid-cols-1 md:grid-cols-4 gap-6">
 			
-			<!-- Card 1: Identidade Biopsicossocial (65% em desktop) -->
-			<div class="clinical-card grid-card-identity md:col-span-1">
+			<!-- Row 2: Identidade Biopsicossocial (cols 1-2) + Linha do Tempo (cols 3-4) -->
+			
+			<!-- Card 1: Identidade Biopsicossocial (grids 1-2) -->
+			<div class="clinical-card grid-card-identity md:col-span-2">
 				<div class="section-header">
 					<div class="section-icon">
 						<i class="fas fa-id-card"></i>
 					</div>
-					<div>
-						<h2 class="section-title font-clinical">Identidade Biopsicossocial</h2>
-					</div>
+					<h2 class="section-title font-clinical">Identidade Biopsicossocial</h2>
 				</div>
 				
 				<!-- Dados de Identidade em grid interno -->
@@ -62,23 +67,7 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 				</div>
 			</div>
 
-			<!-- Card 2: Notas de Triagem (35% em desktop) -->
-			<div class="clinical-card grid-card-notes md:col-span-1">
-				<div class="section-header">
-					<div class="section-icon triage">
-						<i class="fas fa-sticky-note"></i>
-					</div>
-					<div>
-						<h2 class="section-title font-clinical">Notas de Triagem</h2>
-					</div>
-				</div>
-				
-				<div class="clinical-notes font-clinical mt-4 min-h-[120px]">
-					{p.Notes}
-				</div>
-			</div>
-
-			<!-- Card 3: Linha do Tempo (FULL WIDTH) -->
+			<!-- Card 2: Linha do Tempo (grids 3-4) -->
 			<div class="clinical-card grid-card-timeline md:col-span-2">
 				<div class="section-header">
 					<div class="section-icon timeline">
@@ -89,14 +78,30 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 				
 				<div class="timeline-container mt-4">
 					<div class="timeline-marker"></div>
+					
+					<!-- Evento de cadastro (sempre presente) -->
 					<div class="timeline-event">
-						<div class="timeline-dot"></div>
+						<div class="timeline-dot" style="background: var(--primary-600);"></div>
 						<div class="timeline-event-header">
-							<i class="fas fa-calendar-check timeline-event-icon"></i>
+							<i class="fas fa-user-plus timeline-event-icon" style="color: var(--primary-600);"></i>
 							<div class="timeline-event-content font-clinical">Cadastro realizado</div>
 						</div>
 						<div class="timeline-event-date font-clinical">{p.CreatedAt.Format("02/01/2006")}</div>
 					</div>
+					
+					<!-- Eventos dinâmicos (sessões, observações, intervenções) -->
+					if len(timelineEvents) > 0 {
+						for _, event := range timelineEvents {
+							<div class="timeline-event">
+								<div class="timeline-dot" style={ "background: " + event.Color + ";" }></div>
+								<div class="timeline-event-header">
+									<i class={ "fas " + event.Icon + " timeline-event-icon" } style={ "color: " + event.Color + ";" }></i>
+									<div class="timeline-event-content font-clinical">{ event.Content }</div>
+								</div>
+								<div class="timeline-event-date font-clinical">{ event.Date }</div>
+							</div>
+						}
+					}
 				</div>
 				
 				<div class="timeline-action mt-4">
@@ -106,7 +111,23 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 				</div>
 			</div>
 
-			<!-- Card 4: Ações Rápidas (FULL WIDTH) -->
+			<!-- Row 3: Notas de Triagem (grids 1-2) + Ações Rápidas (grids 3-4) -->
+			
+			<!-- Card 3: Notas de Triagem (grids 1-2) -->
+			<div class="clinical-card grid-card-notes md:col-span-2">
+				<div class="section-header">
+					<div class="section-icon triage">
+						<i class="fas fa-sticky-note"></i>
+					</div>
+					<h2 class="section-title font-clinical">Notas de Triagem</h2>
+				</div>
+				
+				<div class="clinical-notes font-clinical mt-4 min-h-[120px]">
+					{p.Notes}
+				</div>
+			</div>
+
+			<!-- Card 4: Ações Rápidas (grids 3-4) -->
 			<div class="clinical-card grid-card-actions md:col-span-2">
 				<div class="section-header">
 					<div class="section-icon quick-actions">
@@ -115,23 +136,65 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}) {
 					<h2 class="section-title font-clinical">Ações Rápidas</h2>
 				</div>
 				
-				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
-						<i class="fas fa-calendar-plus quick-action-icon"></i> Nova Sessão
-					</a>
-					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
-						<i class="fas fa-history quick-action-icon"></i> Completar Anamnese
-					</a>
-
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-push-url="true">
 						<i class="fas fa-clipboard-list quick-action-icon"></i> Anamnese Clínica
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="main" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-push-url="true">
 						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 					</a>
 				</div>
+			</div>
+
+			<!-- Row 4: Sessões Recentes (todos os grids - col-span-4) -->
+			
+			<!-- Card 5: Sessões Recentes (grids 1-4) -->
+			<div class="clinical-card grid-card-sessions md:col-span-4">
+				<div class="section-header">
+					<div class="section-icon sessions">
+						<i class="fas fa-calendar-alt"></i>
+					</div>
+					<h2 class="section-title font-clinical">Sessões Recentes</h2>
+				</div>
+				
+				if len(recentSessions) > 0 {
+					<div class="sessions-list mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+						for _, session := range recentSessions {
+							<a 
+								href={ templ.URL(fmt.Sprintf("/session/%s", session.ID)) } 
+								class="session-card-link"
+							>
+								<div class="session-notebook-card clinical-card session-card-hover">
+									<div class="session-card-header">
+										<span class="session-badge">Sessão #{session.SessionNumber}</span>
+										<span class="session-date">{session.Date}</span>
+									</div>
+									<div class="session-clinical-report font-clinical">
+										{session.Summary}
+									</div>
+								</div>
+							</a>
+						}
+					</div>
+				} else {
+					<div class="empty-sessions mt-4 text-center py-8">
+						<div class="text-neutral-400 mb-4">
+							<i class="fas fa-calendar-alt text-3xl"></i>
+						</div>
+						<p class="text-neutral-500 font-sans">Nenhuma sessão registrada ainda.</p>
+						<a 
+							href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } 
+							class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-sans text-sm"
+							hx-boost="true" 
+							hx-target="#main-content" 
+							hx-swap="innerHTML transition:true" 
+							hx-push-url="true"
+						>
+							<i class="fas fa-plus"></i> Registrar primeira sessão
+						</a>
+					</div>
+				}
 			</div>
 			
 		</div>

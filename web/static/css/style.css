@@ -4255,10 +4255,10 @@ header {
     margin-bottom: var(--space-xl);
 }
 
-/* Patient Profile Grid - Layout Otimizado com melhor aproveitamento de espaço */
+/* Patient Profile Grid - Layout 4 colunas para melhor aproveitamento */
 .patient-profile-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-lg);
     margin-top: var(--space-xl);
     width: 100%;
@@ -4270,19 +4270,19 @@ header {
 }
 
 .grid-card-identity {
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 .grid-card-notes {
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 .grid-card-timeline {
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 .grid-card-actions {
-    grid-column: span 1;
+    grid-column: span 2;
 }
 
 /* Cards no grid - ocupam 1 ou 2 colunas */
@@ -4710,9 +4710,24 @@ header {
         grid-column: span 2;
     }
 
-    /* Patient Profile Grid - Tablet */
+    /* Patient Profile Grid - Tablet (2 colunas) */
     .patient-profile-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .grid-card-identity,
+    .grid-card-notes,
+    .grid-card-timeline,
+    .grid-card-actions {
+        grid-column: span 2;
+    }
+    
+    .grid-card-sessions {
+        grid-column: span 2;
+    }
+    
+    .sessions-list {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -4727,7 +4742,12 @@ header {
     }
     
     .grid-card-1,
-    .grid-card-2 {
+    .grid-card-2,
+    .grid-card-identity,
+    .grid-card-notes,
+    .grid-card-timeline,
+    .grid-card-actions,
+    .grid-card-sessions {
         grid-column: span 1; /* Todos os cards ocupam 1 coluna */
     }
     
@@ -4749,6 +4769,10 @@ header {
     .patient-profile-grid .clinical-card {
         min-height: auto;
         padding: var(--space-lg);
+    }
+    
+    .sessions-list {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -6909,8 +6933,10 @@ header {
 .section-header {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
+    text-align: left;
 }
 
 .section-icon {
@@ -6923,6 +6949,8 @@ header {
     justify-content: center;
     color: white;
     font-size: 1.25rem;
+    flex-shrink: 0;
+    flex: 0 0 auto;
 }
 
 .section-title {
@@ -6931,6 +6959,8 @@ header {
     font-weight: 600;
     color: var(--arandu-dark);
     margin-bottom: 0;
+    text-align: left;
+    flex: 1;
 }
 
 /* Notas de triagem */
@@ -6975,6 +7005,60 @@ header {
 .quick-action-icon {
     width: 20px;
     color: var(--arandu-primary);
+}
+
+/* Sessões Recentes */
+.grid-card-sessions {
+    grid-column: span 4;
+}
+
+.sessions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
+}
+
+.session-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.session-card-link:hover .session-notebook-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.session-card-hover {
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.session-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.session-badge {
+    background: linear-gradient(135deg, var(--arandu-primary) 0%, var(--arandu-dark) 100%);
+    color: white;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.session-date {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.empty-sessions {
+    background: var(--arandu-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
 }
 
 /* Linha do tempo */

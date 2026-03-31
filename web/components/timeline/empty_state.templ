@@ -1,0 +1,40 @@
+package timeline
+
+templ TimelineEmpty(patientID string, showCTA bool) {
+	<div class="timeline-empty">
+		<div class="timeline-empty-icon">
+			<i class="fas fa-calendar-day"></i>
+		</div>
+		<p class="timeline-empty-text">
+			Nenhum evento clínico registrado ainda.
+		</p>
+		if showCTA {
+			<a
+				href={ "/patients/" + patientID + "/sessions/new" }
+				class="timeline-empty-cta"
+			>
+				<i class="fas fa-plus mr-2"></i>
+				Criar primeira sessão
+			</a>
+		}
+	</div>
+}
+
+templ TimelineLoading() {
+	<div id="loading-indicator" class="htmx-indicator timeline-loading">
+		<div>
+			<i class="fas fa-spinner fa-spin"></i>
+		</div>
+		<p class="timeline-loading-text">
+			A carregar mais registros...
+		</p>
+	</div>
+}
+
+templ TimelineEnd() {
+	<div class="timeline-end">
+		<p class="timeline-end-text">
+			Fim dos registros históricos
+		</p>
+	</div>
+}
