@@ -1,0 +1,69 @@
+package timeline
+
+import "arandu/internal/domain/timeline"
+
+templ TimelineFilters(patientID string, activeFilter *timeline.EventType) {
+	<div class="timeline-filters" id="timeline-filters">
+		<div class="timeline-filters-buttons">
+			<button
+				hx-get={ "/patients/" + patientID + "/history?filter=all" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				class={ "timeline-filter-btn " + getActiveClass(activeFilter, nil) }
+			>
+				<i class="fas fa-layer-group mr-2"></i>
+				Todos
+			</button>
+			<button
+				hx-get={ "/patients/" + patientID + "/history?filter=session" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				class={ "timeline-filter-btn " + getActiveClassForType(activeFilter, timeline.EventTypeSession) }
+			>
+				<i class="fas fa-calendar-check mr-2"></i>
+				Sessões
+			</button>
+			<button
+				hx-get={ "/patients/" + patientID + "/history?filter=observation" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				class={ "timeline-filter-btn " + getActiveClassForType(activeFilter, timeline.EventTypeObservation) }
+			>
+				<i class="fas fa-sticky-note mr-2"></i>
+				Observações
+			</button>
+			<button
+				hx-get={ "/patients/" + patientID + "/history?filter=intervention" }
+				hx-target="#filters-and-content"
+				hx-swap="innerHTML"
+				class={ "timeline-filter-btn " + getActiveClassForType(activeFilter, timeline.EventTypeIntervention) }
+			>
+				<i class="fas fa-hand-holding-heart mr-2"></i>
+				Intervenções
+			</button>
+		</div>
+	</div>
+}
+
+func getActiveClass(activeFilter *timeline.EventType, buttonFilter *timeline.EventType) string {
+	if activeFilter == nil && buttonFilter == nil {
+		return "active"
+	}
+	if activeFilter == nil || buttonFilter == nil {
+		return ""
+	}
+	if *activeFilter == *buttonFilter {
+		return "active"
+	}
+	return ""
+}
+
+func getActiveClassForType(activeFilter *timeline.EventType, buttonFilter timeline.EventType) string {
+	if activeFilter == nil {
+		return ""
+	}
+	if *activeFilter == buttonFilter {
+		return "active"
+	}
+	return ""
+}

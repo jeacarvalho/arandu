@@ -117,34 +117,6 @@ templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
 						}
 					</div>
 				</div>
-
-			<!-- Sessões Recentes (Cards no estilo Caderno) -->
-			if len(sessions) > 0 {
-				<div class="clinical-card">
-					<h2 class="dashboard-section-heading">
-						Sessões Recentes
-					</h2>
-					<div>
-						for _, session := range sessions {
-							<div class="session-notebook-card clinical-card">
-								<div class="session-badge">
-									Sessão #{ session.ID }
-								</div>
-								<div class="session-clinical-report font-clinical">
-									{ session.Summary }
-								</div>
-									<div class="session-tags">
-										<span class="session-tag">Observação</span>
-										<span class="session-tag">Reflexão</span>
-									</div>
-									<div class="dashboard-meta-date">
-										{ session.Date } • Paciente: { session.PatientName }
-									</div>
-								</div>
-							}
-						</div>
-					</div>
-				}
 			</div>
 
 			<!-- Coluna Direita - Métricas e Cronologia -->

@@ -333,8 +333,23 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get sessions (not used in new profile view)
-	_, _ = h.sessionService.ListSessionsByPatient(r.Context(), id)
+	// Get sessions for the patient (limit to 5 most recent)
+	sessions, _ := h.sessionService.ListSessionsByPatient(r.Context(), id)
+	var recentSessions []patientComponents.SessionItem
+	if len(sessions) > 0 {
+		recentSessions = make([]patientComponents.SessionItem, 0, min(5, len(sessions)))
+		for i, sess := range sessions {
+			if i >= 5 {
+				break
+			}
+			recentSessions = append(recentSessions, patientComponents.SessionItem{
+				ID:            sess.ID,
+				SessionNumber: i + 1,
+				Date:          sess.Date.Format("02/01/2006"),
+				Summary:       truncateText(sess.Summary, 100),
+			})
+		}
+	}
 
 	// Get theme frequency for the patient
 	themes, err := h.patientService.GetThemeFrequency(r.Context(), id, 10)
@@ -634,7 +649,14 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	// Criar componente de perfil do paciente
-	patientProfile := patientComponents.PatientProfileView(patientData, bioContext)
+	patientProfile := patientComponents.PatientProfileView(patientData, bioContext, timelineEvents, recentSessions)
+
+	// Check if this is an HTMX request - return only content without Shell
+	isHTMXRequest := r.Header.Get("HX-Request") == "true"
+	if isHTMXRequest {
+		patientProfile.Render(r.Context(), w)
+		return
+	}
 
 	layoutComponents.Shell(layoutComponents.ShellConfig{
 		PageTitle:      patientData.Name,

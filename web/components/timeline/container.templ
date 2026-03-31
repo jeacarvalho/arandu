@@ -1,0 +1,168 @@
+package timeline
+
+import (
+	"fmt"
+
+	"arandu/internal/domain/timeline"
+	layoutComponents "arandu/web/components/layout"
+)
+
+templ TimelineSearch(patientID string) {
+	<div class="timeline-search">
+		<div class="relative">
+			<input
+				type="text"
+				name="q"
+				placeholder="Buscar no histórico clínico (ex: transferência, luto, ansiedade...)"
+				hx-get={ fmt.Sprintf("/patients/%s/history/search", patientID) }
+				hx-target="#timeline-content"
+				hx-trigger="keyup changed delay:500ms, search"
+				hx-swap="innerHTML"
+				hx-indicator="#search-loading"
+				class="timeline-search-input"
+			/>
+			<div class="timeline-search-icon">
+				<i class="fas fa-search"></i>
+			</div>
+			<div id="search-loading" class="htmx-indicator timeline-search-spinner">
+				<i class="fas fa-spinner fa-spin"></i>
+			</div>
+		</div>
+		<p class="timeline-search-hint">
+			Pesquise por termos específicos em todas as observações e intervenções deste paciente.
+		</p>
+	</div>
+}
+
+templ TimelineEventCard(event *timeline.TimelineEvent, showSessionLink bool) {
+	<div class="timeline-event">
+		<div class={ "timeline-dot timeline-dot-" + GetEventTypeClass(event.Type) }></div>
+		<div class={ "timeline-event-card timeline-event-card-" + GetEventTypeClass(event.Type) }>
+			<div class="timeline-event-header">
+				<div class="flex items-center">
+					<span class={ "timeline-event-type timeline-event-type-" + GetEventTypeClass(event.Type) }>
+						<i class={ GetEventIcon(event.Type) }></i>
+						{ GetEventTypeLabel(event.Type) }
+					</span>
+					<span class="timeline-event-time">
+						{ event.Date.Format("15:04") }
+					</span>
+				</div>
+				if event.Metadata["session_id"] != "" && showSessionLink {
+					<a
+						href={ "/session/" + event.Metadata["session_id"] }
+						class="timeline-event-link"
+					>
+						<i class="fas fa-external-link-alt"></i>
+						Ver sessão
+					</a>
+				}
+			</div>
+			<div class="timeline-event-content">
+				{ event.Content }
+			</div>
+			<div class="timeline-event-footer">
+				<div class="timeline-event-meta">
+					Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ TimelineContent(patientID string, events timeline.Timeline) {
+	<div class="timeline-container">
+		<div class="timeline-line"></div>
+		<div id="timeline-content" class="timeline-content">
+			if len(events) == 0 {
+				@TimelineEmpty(patientID, true)
+			} else {
+				for _, event := range events {
+					@TimelineEventCard(event, true)
+				}
+			}
+		</div>
+	</div>
+}
+
+templ FiltersAndContent(patientID string, events timeline.Timeline, activeFilter *timeline.EventType) {
+	@TimelineFilters(patientID, activeFilter)
+	@TimelineContent(patientID, events)
+}
+
+templ TimelineContainer(patientID string, events timeline.Timeline, activeFilter *timeline.EventType) {
+	<div class="timeline-page">
+		<!-- Header -->
+		<div class="timeline-header">
+			<div class="timeline-header-row">
+				<a href="/patients" class="timeline-back-btn">
+					<i class="fas fa-arrow-left"></i>
+				</a>
+				<div class="timeline-title-group">
+					<h1 class="timeline-title">
+						Prontuário do Paciente
+					</h1>
+					<p class="timeline-subtitle">
+						Histórico clínico longitudinal organizado cronologicamente
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Search -->
+		@TimelineSearch(patientID)
+
+		<div id="filters-and-content">
+			@FiltersAndContent(patientID, events, activeFilter)
+		</div>
+	</div>
+}
+
+templ TimelineWidget(content layoutComponents.GridItem) {
+	@layoutComponents.StandardGrid(layoutComponents.NewGridConfig().
+		WithID("timeline-grid").
+		WithGap("gap-layout-grid").
+		AddRow(layoutComponents.NewGridRow().
+			AddItem(content).
+			Build()).
+		Build())
+}
+
+func GetEventTypeLabel(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "Sessão"
+	case timeline.EventTypeObservation:
+		return "Observação"
+	case timeline.EventTypeIntervention:
+		return "Intervenção"
+	default:
+		return "Evento"
+	}
+}
+
+func GetEventIcon(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "fas fa-calendar-check"
+	case timeline.EventTypeObservation:
+		return "fas fa-sticky-note"
+	case timeline.EventTypeIntervention:
+		return "fas fa-hand-holding-heart"
+	default:
+		return "fas fa-calendar-day"
+	}
+}
+
+func GetEventTypeClass(eventType timeline.EventType) string {
+	switch eventType {
+	case timeline.EventTypeSession:
+		return "session"
+	case timeline.EventTypeObservation:
+		return "observation"
+	case timeline.EventTypeIntervention:
+		return "intervention"
+	default:
+		return ""
+	}
+}
