@@ -60,7 +60,7 @@ func (h *InterventionHandler) GetIntervention(w http.ResponseWriter, r *http.Req
 		CreatedAt: intv.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering intervention item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
@@ -100,7 +100,7 @@ func (h *InterventionHandler) GetInterventionEditForm(w http.ResponseWriter, r *
 		Content: intv.Content,
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering intervention edit form: %v", err)
 		http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
@@ -156,7 +156,7 @@ func (h *InterventionHandler) UpdateIntervention(w http.ResponseWriter, r *http.
 		CreatedAt: intv.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering updated intervention item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)

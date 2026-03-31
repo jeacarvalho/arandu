@@ -654,7 +654,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	// Check if this is an HTMX request - return only content without Shell
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 	if isHTMXRequest {
-		patientProfile.Render(r.Context(), w)
+		layoutComponents.ShellContentWrapper(patientProfile).Render(r.Context(), w)
 		return
 	}
 

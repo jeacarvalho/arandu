@@ -60,7 +60,7 @@ func (h *ObservationHandler) GetObservation(w http.ResponseWriter, r *http.Reque
 		CreatedAt: obs.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering observation item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
@@ -100,7 +100,7 @@ func (h *ObservationHandler) GetObservationEditForm(w http.ResponseWriter, r *ht
 		Content: obs.Content,
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering observation edit form: %v", err)
 		http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
@@ -156,7 +156,7 @@ func (h *ObservationHandler) UpdateObservation(w http.ResponseWriter, r *http.Re
 		CreatedAt: obs.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering updated observation item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
