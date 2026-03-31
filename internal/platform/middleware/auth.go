@@ -144,12 +144,22 @@ func (am *AuthMiddleware) validateSessionToken(token string) (*Session, error) {
 		FROM sessions 
 		WHERE id = ? AND expires_at > ?`
 
-	err := am.centralDB.QueryRow(query, token, time.Now().Unix()).Scan(
-		&session.ID,
-		&session.UserID,
-		&session.TenantID,
-		&expiresAt,
-	)
+	var err error
+	for i := 0; i < 3; i++ {
+		err = am.centralDB.QueryRow(query, token, time.Now().Unix()).Scan(
+			&session.ID,
+			&session.UserID,
+			&session.TenantID,
+			&expiresAt,
+		)
+		if err == nil {
+			break
+		}
+		if !strings.Contains(err.Error(), "database is locked") {
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
 
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("session not found or expired")

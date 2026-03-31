@@ -92,7 +92,13 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 		// Para busca, apenas o conteúdo (já que a busca não muda os filtros)
 		patientComponents.FiltersAndContent(data).Render(ctx, w)
 	} else {
-		layoutComponents.BaseWithContext(ctx, "Prontuário", patientComponents.TimelineContainer(data)).Render(ctx, w)
+		layoutComponents.Shell(layoutComponents.ShellConfig{
+			PageTitle:      "Prontuário",
+			ActivePage:     "patient-history",
+			ShowSidebar:    true,
+			SidebarVariant: "patient",
+			PatientID:      patientID,
+		}, patientComponents.TimelineContainer(data)).Render(ctx, w)
 	}
 }
 

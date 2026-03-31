@@ -156,7 +156,11 @@ func (h *SessionHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 
 	// Render full page with layout
 	errorComponent := layoutComponents.ErrorFragment(errorData)
-	layoutComponents.BaseWithContext(r.Context(), "Erro", errorComponent).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Erro",
+		ActivePage:  "",
+		ShowSidebar: true,
+	}, errorComponent).Render(r.Context(), w)
 }
 
 // Show handles GET /session/{id} - shows session details
@@ -238,7 +242,13 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	detail := sessionComponents.SessionDetailView(sessionDetail, observations, interventions, sess.PatientID, "")
-	layoutComponents.BaseWithContext(r.Context(), "Sessão "+sessionDetail.Date, detail).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:      "Sessão " + sessionDetail.Date,
+		ActivePage:     "patient-history",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      sess.PatientID,
+	}, detail).Render(r.Context(), w)
 }
 
 // NewSession handles GET /patient/{id}/sessions/new - shows new session form
@@ -303,7 +313,13 @@ func (h *SessionHandler) NewSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render form with base layout
 	form := sessionComponents.NewSessionForm(formData)
-	layoutComponents.BaseWithContext(r.Context(), "Nova Sessão", form).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:      "Nova Sessão",
+		ActivePage:     "patient-history",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      patientID,
+	}, form).Render(r.Context(), w)
 }
 
 // CreateSession handles POST /sessions - creates a new session
@@ -388,7 +404,13 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	// Render the edit page directly
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContext(r.Context(), "Completar Sessão", form).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:      "Completar Sessão",
+		ActivePage:     "patient-history",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      sess.PatientID,
+	}, form).Render(r.Context(), w)
 }
 
 // EditSession handles GET /sessions/edit/{id} - shows edit session form
@@ -506,7 +528,13 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := sessionComponents.EditSessionForm(formData)
-	layoutComponents.BaseWithContext(r.Context(), "Editar Sessão", form).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:      "Editar Sessão",
+		ActivePage:     "patient-history",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      sess.PatientID,
+	}, form).Render(r.Context(), w)
 }
 
 // UpdateSession handles POST /sessions/update - updates an existing session

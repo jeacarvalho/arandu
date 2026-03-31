@@ -44,7 +44,7 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"form-container\"><div class=\"content-header\"><div class=\"header-title\"><div class=\"header-title-row\"><a href=\"/patients\" class=\"btn btn-ghost btn-sm\" aria-label=\"Voltar para a lista de pacientes\"><i class=\"fas fa-arrow-left btn-icon\"></i></a><div><h1>Novo Paciente</h1><p class=\"header-subtitle\">Cadastre um novo paciente para iniciar o acompanhamento clínico</p></div></div></div></div><div class=\"clinical-notebook-form\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"patient-form-wrapper\"><div class=\"patient-form-header\"><div class=\"header-content\"><a href=\"/patients\" class=\"back-link\" aria-label=\"Voltar para a lista de pacientes\"><i class=\"fas fa-arrow-left\"></i></a><div class=\"header-text\"><h1>Novo Paciente</h1><p class=\"header-subtitle\">Cadastre um novo paciente para iniciar o acompanhamento clínico</p></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -56,7 +56,7 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 45, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 33, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.ServerError)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 54, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 38, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -86,33 +86,85 @@ func NewPatientForm(data NewPatientFormData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patients/create\" method=\"POST\"><div class=\"identity-section\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-name\">Nome Completo *</label> <input id=\"patient-name\" type=\"text\" name=\"name\" required autocomplete=\"name\" placeholder=\"Ex: Maria da Silva\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form action=\"/patients/create\" method=\"POST\" class=\"patient-form-grid\"><div class=\"form-field full-width\"><label class=\"form-label\" for=\"patient-name\">Nome Completo <span class=\"required\">*</span></label> <input id=\"patient-name\" type=\"text\" name=\"name\" required autocomplete=\"name\" placeholder=\"Ex: Maria da Silva\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 72, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 44, Col: 141}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"silent-input patient-name-input\" aria-describedby=\"patient-name-help\"><p id=\"patient-name-help\" class=\"small\">Use o nome pelo qual o paciente deve ser identificado no prontuário.</p></div><div class=\"biopsychosocial-grid\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-gender\">Identidade de Gênero</label> <input id=\"patient-gender\" type=\"text\" name=\"gender\" autocomplete=\"sex\" placeholder=\"Ex: Feminino, Masculino, Não-binário\" class=\"silent-input\"></div><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-ethnicity\">Etnia/Raça</label> <input id=\"patient-ethnicity\" type=\"text\" name=\"ethnicity\" placeholder=\"Ex: Branca, Preta, Parda, Amarela, Indígena\" class=\"silent-input\"></div><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-occupation\">Ocupação</label> <input id=\"patient-occupation\" type=\"text\" name=\"occupation\" placeholder=\"Ex: Estudante, Advogado, Autônomo\" class=\"silent-input\"></div><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-education\">Escolaridade</label> <input id=\"patient-education\" type=\"text\" name=\"education\" placeholder=\"Ex: Ensino Médio, Superior, Pós-graduação\" class=\"silent-input\"></div></div></div><div class=\"anamnesis-section\"><div class=\"silent-form-group\"><label class=\"silent-label\" for=\"patient-notes\">Observações Iniciais</label> <textarea id=\"patient-notes\" name=\"notes\" rows=\"8\" placeholder=\"Descreva observações relevantes sobre o paciente:&#10;&#10;- Queixa principal&#10;- Histórico clínico relevante&#10;- Contexto biopsicossocial&#10;- Encaminhamentos anteriores\" class=\"silent-textarea clinical-textarea\" aria-describedby=\"patient-notes-help\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"form-input\" aria-describedby=\"patient-name-help\"><p id=\"patient-name-help\" class=\"form-help\">Use o nome pelo qual o paciente deve ser identificado no prontuário.</p></div><div class=\"form-field\"><label class=\"form-label\" for=\"patient-gender\">Identidade de Gênero</label> <input id=\"patient-gender\" type=\"text\" name=\"gender\" autocomplete=\"sex\" placeholder=\"Ex: Feminino, Masculino\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Notes)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Gender)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 149, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 49, Col: 142}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</textarea><p id=\"patient-notes-help\" class=\"small\">Essas notas ficarão visíveis no perfil do paciente para consulta rápida durante as sessões.</p></div></div><div class=\"form-actions\"><a href=\"/patients\" class=\"btn btn-outline\"><i class=\"fas fa-times btn-icon\"></i> Cancelar</a> <button type=\"submit\" class=\"btn btn-primary\"><i class=\"fas fa-user-plus btn-icon\"></i> Cadastrar Paciente</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"form-input\"></div><div class=\"form-field\"><label class=\"form-label\" for=\"patient-ethnicity\">Etnia/Raça</label> <input id=\"patient-ethnicity\" type=\"text\" name=\"ethnicity\" placeholder=\"Ex: Branca, Preta, Parda\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Ethnicity)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 53, Col: 133}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"form-input\"></div><div class=\"form-field\"><label class=\"form-label\" for=\"patient-occupation\">Ocupação</label> <input id=\"patient-occupation\" type=\"text\" name=\"occupation\" placeholder=\"Ex: Estudante, Advogado\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Occupation)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 57, Col: 135}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"form-input\"></div><div class=\"form-field\"><label class=\"form-label\" for=\"patient-education\">Escolaridade</label> <input id=\"patient-education\" type=\"text\" name=\"education\" placeholder=\"Ex: Superior, Pós-graduação\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Education)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 61, Col: 139}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"form-input\"></div><div class=\"form-field full-width\"><label class=\"form-label\" for=\"patient-notes\">Observações Iniciais</label> <textarea id=\"patient-notes\" name=\"notes\" rows=\"4\" placeholder=\"Descreva observações relevantes sobre o paciente:\" class=\"form-textarea\" aria-describedby=\"patient-notes-help\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Notes)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/new_form.templ`, Line: 65, Col: 202}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</textarea><p id=\"patient-notes-help\" class=\"form-help\">Essas notas ficarão visíveis no perfil do paciente.</p></div><div class=\"form-actions\"><a href=\"/patients\" class=\"btn btn-cancel\"><i class=\"fas fa-times\"></i> Cancelar</a> <button type=\"submit\" class=\"btn btn-submit\"><i class=\"fas fa-user-plus\"></i> Cadastrar Paciente</button></div></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -192,7 +192,11 @@ func (h *PatientHandler) renderError(w http.ResponseWriter, r *http.Request, mes
 
 	// Render full page with layout
 	errorComponent := layoutComponents.ErrorFragment(errorData)
-	layoutComponents.BaseWithContext(r.Context(), "Erro", errorComponent).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Erro",
+		ActivePage:  "",
+		ShowSidebar: true,
+	}, errorComponent).Render(r.Context(), w)
 }
 
 // getInsights retrieves insights for the sidebar (mock implementation)
@@ -287,7 +291,11 @@ func (h *PatientHandler) ListPatients(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// For full page requests, render with layout
 		patientList := patientComponents.PatientList(listData)
-		layoutComponents.BaseWithContext(r.Context(), "Pacientes", patientList).Render(r.Context(), w)
+		layoutComponents.Shell(layoutComponents.ShellConfig{
+			PageTitle:   "Pacientes",
+			ActivePage:  "patients",
+			ShowSidebar: true,
+		}, patientList).Render(r.Context(), w)
 	}
 }
 
@@ -625,13 +633,16 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// Criar sidebar específica para paciente
-	patientSidebar := layoutComponents.PatientSidebar(id)
-
 	// Criar componente de perfil do paciente
 	patientProfile := patientComponents.PatientProfileView(patientData, bioContext)
 
-	layoutComponents.BaseWithContentAndEmailAndSidebar(patientData.Name, "", patientSidebar, patientProfile).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:      patientData.Name,
+		ActivePage:     "patient-summary",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      id,
+	}, patientProfile).Render(r.Context(), w)
 }
 
 // Helper functions for biopsychosocial context
@@ -678,7 +689,11 @@ func (h *PatientHandler) NewPatient(w http.ResponseWriter, r *http.Request) {
 
 	// Render with layout using templ
 	form := patientComponents.NewPatientForm(formData)
-	layoutComponents.BaseWithContext(r.Context(), "Novo Paciente", form).Render(r.Context(), w)
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Novo Paciente",
+		ActivePage:  "new-patient",
+		ShowSidebar: true,
+	}, form).Render(r.Context(), w)
 }
 
 // NewPatientViewData is a ViewModel for the new patient form
@@ -704,6 +719,10 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	log.Printf("[DEBUG CreatePatient] HX-Request: %s", r.Header.Get("HX-Request"))
+	log.Printf("[DEBUG CreatePatient] Content-Type: %s", r.Header.Get("Content-Type"))
+	log.Printf("[DEBUG CreatePatient] Cookie: %s", r.Header.Get("Cookie"))
 
 	if err := r.ParseForm(); err != nil {
 		h.renderError(w, r, "Failed to parse form", http.StatusBadRequest)
@@ -740,7 +759,7 @@ func (h *PatientHandler) CreatePatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect to patient detail page
+	// Always redirect - HTMX will handle the navigation
 	http.Redirect(w, r, "/patients/"+patient.ID, http.StatusSeeOther)
 }
 
@@ -891,7 +910,7 @@ func (h *PatientHandler) ShowAnamnesis(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Map to view model
-	anamnesisVM := patientComponents.AnamnesisViewModel{
+	anamnesisVM := patientComponents.AnamnesisPageV2Model{
 		PatientID:       patientID,
 		PatientName:     patient.Name,
 		ChiefComplaint:  anamnesis.ChiefComplaint,
@@ -901,14 +920,9 @@ func (h *PatientHandler) ShowAnamnesis(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:       anamnesis.UpdatedAt.Format("02/01/2006 15:04"),
 	}
 
-	// Render full page with layout
+	// Render full page with new layout v2
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	layoutComponents.BaseWithContentAndEmailAndSidebar(
-		"Anamnese - "+patient.Name,
-		"", // userEmail vazio por enquanto
-		layoutComponents.PatientSidebar(patientID),
-		patientComponents.AnamnesisView(anamnesisVM),
-	).Render(ctx, w)
+	patientComponents.AnamnesisPageV2(anamnesisVM).Render(ctx, w)
 }
 
 // UpdateAnamnesisSection handles PATCH /patients/{id}/anamnesis/{section} - updates a specific section via HTMX
