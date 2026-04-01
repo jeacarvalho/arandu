@@ -13,6 +13,7 @@ import (
 	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
+	"arandu/internal/platform/middleware"
 
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
@@ -942,6 +943,15 @@ func (h *SessionHandler) TherapeuticPlanReport(w http.ResponseWriter, r *http.Re
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// If HTMX request, return partial content (without <head>)
+	// This prevents duplication of <head> elements when loaded via HTMX
+	if middleware.IsHTMXRequest(r) {
+		patientComponents.TherapeuticPlanReport(reportData).Render(ctx, w)
+		return
+	}
+
+	// Full page request (e.g., for printing/PDF) - return complete HTML
 	patientComponents.TherapeuticPlanReportPage(reportData).Render(ctx, w)
 }
 

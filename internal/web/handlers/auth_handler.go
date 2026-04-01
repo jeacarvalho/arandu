@@ -38,6 +38,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	// Log para debug
 	log.Printf("[AuthHandler.Login] Method: %s, Path: %s", r.Method, r.URL.Path)
 
+	// Login page should always be a full page request, not an HTMX fragment
+	// If accessed via HTMX, redirect to the full login page
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/login")
+		w.WriteHeader(http.StatusSeeOther)
+		return
+	}
+
 	if r.Method == http.MethodGet {
 		data := authComponents.LoginData{
 			Error: "",

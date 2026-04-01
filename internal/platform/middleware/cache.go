@@ -2,13 +2,18 @@ package middleware
 
 import "net/http"
 
+// IsHTMXRequest checks if the request is from HTMX
+func IsHTMXRequest(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
+}
+
 // HTMXCacheMiddleware sets appropriate cache headers for HTMX requests
 // Fragments should not be cached by the browser
 // All HTML responses use strict no-cache to prevent CSS desync issues
 func HTMXCacheMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if this is an HTMX request
-		isHTMX := r.Header.Get("HX-Request") == "true"
+		isHTMX := IsHTMXRequest(r)
 
 		// Always prevent caching of HTML responses to avoid CSS desync
 		// This is the safest approach for HTMX applications with dynamic CSS

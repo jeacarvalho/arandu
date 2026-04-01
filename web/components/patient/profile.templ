@@ -26,7 +26,7 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 			hx-target="#main-content"
 			hx-swap="innerHTML"
 			hx-push-url="true"
-			hx-history="false"
+			hx-head="merge"
 		>
 					<i class="fas fa-calendar-plus"></i> Nova Sessão
 				</a>
@@ -138,11 +138,11 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 				</div>
 				
 				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-history="false" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
 						<i class="fas fa-clipboard-list quick-action-icon"></i> Anamnese Clínica
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-history="false" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
 						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 					</a>
 				</div>
@@ -191,7 +191,7 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 			hx-target="#main-content"
 			hx-swap="innerHTML"
 			hx-push-url="true"
-			hx-history="false"
+			hx-head="merge"
 		>
 							<i class="fas fa-plus"></i> Registrar primeira sessão
 						</a>

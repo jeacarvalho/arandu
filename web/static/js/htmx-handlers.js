@@ -121,21 +121,50 @@ document.body.addEventListener('htmx:afterSwap', (e) => {
 	}
 });
 
+// Handle head elements after HTMX navigation with hx-head="merge"
+// This ensures CSS and other head elements are properly merged
+document.body.addEventListener('htmx:beforeSwap', (e) => {
+	// Store current scroll position before swap
+	if (e.detail && e.detail.pathInfo) {
+		sessionStorage.setItem('htmx-scroll-' + e.detail.pathInfo.requestPath, window.scrollY);
+	}
+});
+
+// Restore scroll position after HTMX navigation
+document.body.addEventListener('htmx:afterSettle', (e) => {
+	// Restore scroll position if stored
+	if (e.detail && e.detail.pathInfo) {
+		const scrollY = sessionStorage.getItem('htmx-scroll-' + e.detail.pathInfo.requestPath);
+		if (scrollY !== null) {
+			window.scrollTo(0, parseInt(scrollY, 10));
+			sessionStorage.removeItem('htmx-scroll-' + e.detail.pathInfo.requestPath);
+		}
+	}
+});
+
 // History restore handler - re-apply CSS classes after browser back/forward
 // This fixes CSS breakage when navigating back to HTMX-saved snapshots
 document.addEventListener('htmx:historyRestore', function(e) {
   console.log('[HTMX] History restore triggered');
 
-  // Force CSS re-evaluation by touching the stylesheets
-  // This ensures any dynamically loaded CSS is reapplied
-  const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
-  stylesheets.forEach(sheet => {
-    const href = sheet.href;
-    // Add cache-busting parameter to force reload
-    const url = new URL(href);
-    url.searchParams.set('_', Date.now());
-    sheet.href = url.toString();
-  });
+  // Re-initialize Alpine.js on restored content
+  if (typeof Alpine !== 'undefined') {
+    document.querySelectorAll('[x-data]').forEach(el => {
+      if (el._x_dataStack) {
+        return;
+      }
+      Alpine.initTree(el);
+    });
+  }
+
+  // Mark restoration complete
+  document.body.classList.add('htmx-history-restored');
+  setTimeout(() => {
+    document.body.classList.remove('htmx-history-restored');
+  }, 50);
+
+  console.log('[HTMX] History restore completed');
+});
 
   // Re-initialize Alpine.js on restored content
   if (typeof Alpine !== 'undefined') {

@@ -14,6 +14,8 @@ type TimelinePageData struct {
 	Offset    int
 }
 
+// TimelineContent renderiza o conteúdo da timeline
+// Refatorado para evitar concatenação dinâmica de classes
 templ TimelineContent(data TimelinePageData) {
 	<!-- Timeline -->
 	<div class="timeline-container">
@@ -31,51 +33,7 @@ templ TimelineContent(data TimelinePageData) {
 				</div>
 			} else {
 				for i, event := range data.Events {
-					<div 
-						class="timeline-event"
-						if i == len(data.Events) - 1 && len(data.Events) == data.Limit {
-							hx-get={ "/patients/" + data.PatientID + "/history/load-more?offset=" + strconv.Itoa(data.Offset + data.Limit) }
-							hx-trigger="revealed"
-							hx-swap="afterend"
-							hx-indicator="#loading-indicator"
-						}
-					>
-						<div class={ "timeline-dot " + getEventDotClass(event.Type) }></div>
-						
-						<div class={ "timeline-event-card " + getEventBorderClass(event.Type) }>
-							<div class="timeline-event-header">
-								<div>
-									<span class="timeline-event-type { getEventBadgeClass(event.Type) }">
-										<i class="{ getEventIcon(event.Type) }"></i>
-										{ getEventTypeLabel(event.Type) }
-									</span>
-									<span class="timeline-event-time">
-										{ event.Date.Format("15:04") }
-									</span>
-								</div>
-								
-								if event.Metadata["session_id"] != "" {
-									<a 
-										href={ "/session/" + event.Metadata["session_id"] }
-										class="timeline-event-link"
-									>
-										<i class="fas fa-external-link-alt"></i>
-										Ver sessão
-									</a>
-								}
-							</div>
-							
-							<div class="timeline-event-content">
-								{ event.Content }
-							</div>
-							
-							<div class="timeline-event-footer">
-								<div class="timeline-event-meta">
-									Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
-								</div>
-							</div>
-						</div>
-					</div>
+					@TimelineEventRow(i, event, data)
 				}
 				
 				<!-- Loading Indicator -->
@@ -100,38 +58,104 @@ templ TimelineContent(data TimelinePageData) {
 	</div>
 }
 
+// TimelineEventRow renderiza um item da timeline
+// Usa switch ao invés de concatenação dinâmica de classes
+templ TimelineEventRow(index int, event *timeline.TimelineEvent, data TimelinePageData) {
+	switch event.Type {
+		case timeline.EventTypeSession:
+			@timelineEventWrapper(index, event, data, "bg-primary-600", "border-l-4 border-primary-600", "bg-primary-50 text-primary-800")
+		case timeline.EventTypeObservation:
+			@timelineEventWrapper(index, event, data, "bg-insight-600", "border-l-4 border-insight-600", "bg-insight-50 text-insight-800")
+		case timeline.EventTypeIntervention:
+			@timelineEventWrapper(index, event, data, "bg-clinical-600", "border-l-4 border-clinical-600", "bg-clinical-50 text-clinical-800")
+		default:
+			@timelineEventWrapper(index, event, data, "bg-neutral-600", "border-l-4 border-neutral-600", "bg-neutral-50 text-neutral-800")
+	}
+}
+
+// timelineEventWrapper wrapper para evento com classes específicas
+templ timelineEventWrapper(index int, event *timeline.TimelineEvent, data TimelinePageData, dotClass, borderClass, badgeClass string) {
+	<div 
+		class="timeline-event"
+		if index == len(data.Events) - 1 && len(data.Events) == data.Limit {
+			hx-get={ "/patients/" + data.PatientID + "/history/load-more?offset=" + strconv.Itoa(data.Offset + data.Limit) }
+			hx-trigger="revealed"
+			hx-swap="afterend"
+			hx-indicator="#loading-indicator"
+		}
+	>
+		<div class={ "timeline-dot " + dotClass }></div>
+		
+		<div class={ "timeline-event-card " + borderClass }>
+			<div class="timeline-event-header">
+				<div>
+					<span class={ "timeline-event-type " + badgeClass }>
+						<i class={ getEventIcon(event.Type) }></i>
+						{ getEventTypeLabel(event.Type) }
+					</span>
+					<span class="timeline-event-time">
+						{ event.Date.Format("15:04") }
+					</span>
+				</div>
+				
+				if event.Metadata["session_id"] != "" {
+					<a 
+						href={ templ.SafeURL("/session/" + event.Metadata["session_id"]) }
+						class="timeline-event-link"
+					>
+						<i class="fas fa-external-link-alt"></i>
+						Ver sessão
+					</a>
+				}
+			</div>
+			
+			<div class="timeline-event-content">
+				{ event.Content }
+			</div>
+			
+			<div class="timeline-event-footer">
+				<div class="timeline-event-meta">
+					Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
 templ FiltersAndContent(data TimelinePageData) {
 	<!-- Filters -->
 	<div class="timeline-filters">
 		<div class="timeline-filters-buttons">
-			<button
-				hx-get={ "/patients/" + data.PatientID + "/history?filter=all" }
-				hx-target="#filters-and-content"
-				hx-swap="innerHTML"
-				class="timeline-filter-btn { getButtonClass(data.Filter == nil) }"
-			>
-				Todos
-			</button>
-			<button
-				hx-get={ "/patients/" + data.PatientID + "/history?filter=observation" }
-				hx-target="#filters-and-content"
-				hx-swap="innerHTML"
-				class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeObservation) }"
-			>
-				Observações
-			</button>
-			<button
-				hx-get={ "/patients/" + data.PatientID + "/history?filter=intervention" }
-				hx-target="#filters-and-content"
-				hx-swap="innerHTML"
-				class="timeline-filter-btn { getButtonClass(data.Filter != nil && *data.Filter == timeline.EventTypeIntervention) }"
-			>
-				Intervenções
-			</button>
+			@FilterButton(data, "all", "Todos", data.Filter == nil)
+			@FilterButton(data, "observation", "Observações", data.Filter != nil && *data.Filter == timeline.EventTypeObservation)
+			@FilterButton(data, "intervention", "Intervenções", data.Filter != nil && *data.Filter == timeline.EventTypeIntervention)
 		</div>
 	</div>
 
 	@TimelineContent(data)
+}
+
+// FilterButton botão de filtro com estado ativo/inativo
+templ FilterButton(data TimelinePageData, filterType, label string, isActive bool) {
+	if isActive {
+		<button
+			hx-get={ "/patients/" + data.PatientID + "/history?filter=" + filterType }
+			hx-target="#filters-and-content"
+			hx-swap="innerHTML"
+			class="timeline-filter-btn active"
+		>
+			{ label }
+		</button>
+	} else {
+		<button
+			hx-get={ "/patients/" + data.PatientID + "/history?filter=" + filterType }
+			hx-target="#filters-and-content"
+			hx-swap="innerHTML"
+			class="timeline-filter-btn"
+		>
+			{ label }
+		</button>
+	}
 }
 
 templ TimelineContainer(data TimelinePageData) {
@@ -185,27 +209,6 @@ templ TimelineContainer(data TimelinePageData) {
 	</div>
 }
 
-func getFilterParam(filter *timeline.EventType) string {
-	if filter == nil {
-		return "all"
-	}
-	switch *filter {
-	case timeline.EventTypeObservation:
-		return "observation"
-	case timeline.EventTypeIntervention:
-		return "intervention"
-	default:
-		return "all"
-	}
-}
-
-func getButtonClass(isActive bool) string {
-	if isActive {
-		return "active"
-	}
-	return ""
-}
-
 func getEventTypeLabel(eventType timeline.EventType) string {
 	switch eventType {
 	case timeline.EventTypeSession:
@@ -229,44 +232,5 @@ func getEventIcon(eventType timeline.EventType) string {
 		return "fas fa-hand-holding-heart"
 	default:
 		return "fas fa-calendar-day"
-	}
-}
-
-func getEventBadgeClass(eventType timeline.EventType) string {
-	switch eventType {
-	case timeline.EventTypeSession:
-		return "bg-primary-50 text-primary-800"
-	case timeline.EventTypeObservation:
-		return "bg-insight-50 text-insight-800"
-	case timeline.EventTypeIntervention:
-		return "bg-clinical-50 text-clinical-800"
-	default:
-		return "bg-neutral-50 text-neutral-800"
-	}
-}
-
-func getEventDotClass(eventType timeline.EventType) string {
-	switch eventType {
-	case timeline.EventTypeSession:
-		return "bg-primary-600"
-	case timeline.EventTypeObservation:
-		return "bg-insight-600"
-	case timeline.EventTypeIntervention:
-		return "bg-clinical-600"
-	default:
-		return "bg-neutral-600"
-	}
-}
-
-func getEventBorderClass(eventType timeline.EventType) string {
-	switch eventType {
-	case timeline.EventTypeSession:
-		return "border-l-4 border-primary-600"
-	case timeline.EventTypeObservation:
-		return "border-l-4 border-insight-600"
-	case timeline.EventTypeIntervention:
-		return "border-l-4 border-clinical-600"
-	default:
-		return "border-l-4 border-neutral-600"
 	}
 }

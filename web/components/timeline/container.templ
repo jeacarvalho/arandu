@@ -34,38 +34,96 @@ templ TimelineSearch(patientID string) {
 	</div>
 }
 
+// TimelineEventCard renderiza um card de evento na timeline
+// Refatorado para evitar concatenação dinâmica de classes
 templ TimelineEventCard(event *timeline.TimelineEvent, showSessionLink bool) {
 	<div class="timeline-event">
-		<div class={ "timeline-dot timeline-dot-" + GetEventTypeClass(event.Type) }></div>
-		<div class={ "timeline-event-card timeline-event-card-" + GetEventTypeClass(event.Type) }>
-			<div class="timeline-event-header">
-				<div class="flex items-center">
-					<span class={ "timeline-event-type timeline-event-type-" + GetEventTypeClass(event.Type) }>
-						<i class={ GetEventIcon(event.Type) }></i>
-						{ GetEventTypeLabel(event.Type) }
-					</span>
-					<span class="timeline-event-time">
-						{ event.Date.Format("15:04") }
-					</span>
-				</div>
-				if event.Metadata["session_id"] != "" && showSessionLink {
-					<a
-						href={ "/session/" + event.Metadata["session_id"] }
-						class="timeline-event-link"
-					>
-						<i class="fas fa-external-link-alt"></i>
-						Ver sessão
-					</a>
-				}
+		@TimelineDot(event.Type)
+		@TimelineEventCardContent(event, showSessionLink)
+	</div>
+}
+
+// TimelineDot renderiza o dot da timeline baseado no tipo de evento
+// Usa switch ao invés de concatenação dinâmica de classes
+templ TimelineDot(eventType timeline.EventType) {
+	switch eventType {
+		case timeline.EventTypeSession:
+			<div class="timeline-dot timeline-dot-session"></div>
+		case timeline.EventTypeObservation:
+			<div class="timeline-dot timeline-dot-observation"></div>
+		case timeline.EventTypeIntervention:
+			<div class="timeline-dot timeline-dot-intervention"></div>
+		default:
+			<div class="timeline-dot"></div>
+	}
+}
+
+// TimelineEventCardContent renderiza o conteúdo do card
+templ TimelineEventCardContent(event *timeline.TimelineEvent, showSessionLink bool) {
+	switch event.Type {
+		case timeline.EventTypeSession:
+			<div class="timeline-event-card timeline-event-card-session">
+				@TimelineEventHeader(event, showSessionLink, "timeline-event-type-session")
+				@TimelineEventBody(event)
+				@TimelineEventFooter(event)
 			</div>
-			<div class="timeline-event-content">
-				{ event.Content }
+		case timeline.EventTypeObservation:
+			<div class="timeline-event-card timeline-event-card-observation">
+				@TimelineEventHeader(event, showSessionLink, "timeline-event-type-observation")
+				@TimelineEventBody(event)
+				@TimelineEventFooter(event)
 			</div>
-			<div class="timeline-event-footer">
-				<div class="timeline-event-meta">
-					Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
-				</div>
+		case timeline.EventTypeIntervention:
+			<div class="timeline-event-card timeline-event-card-intervention">
+				@TimelineEventHeader(event, showSessionLink, "timeline-event-type-intervention")
+				@TimelineEventBody(event)
+				@TimelineEventFooter(event)
 			</div>
+		default:
+			<div class="timeline-event-card">
+				@TimelineEventHeader(event, showSessionLink, "timeline-event-type")
+				@TimelineEventBody(event)
+				@TimelineEventFooter(event)
+			</div>
+	}
+}
+
+// TimelineEventHeader renderiza o header do evento
+templ TimelineEventHeader(event *timeline.TimelineEvent, showSessionLink bool, typeClass string) {
+	<div class="timeline-event-header">
+		<div class="flex items-center">
+			<span class={ "timeline-event-type " + typeClass }>
+				<i class={ GetEventIcon(event.Type) }></i>
+				{ GetEventTypeLabel(event.Type) }
+			</span>
+			<span class="timeline-event-time">
+				{ event.Date.Format("15:04") }
+			</span>
+		</div>
+		if event.Metadata["session_id"] != "" && showSessionLink {
+			<a
+				href={ templ.SafeURL("/session/" + event.Metadata["session_id"]) }
+				class="timeline-event-link"
+			>
+				<i class="fas fa-external-link-alt"></i>
+				Ver sessão
+			</a>
+		}
+	</div>
+}
+
+// TimelineEventBody renderiza o corpo do evento
+templ TimelineEventBody(event *timeline.TimelineEvent) {
+	<div class="timeline-event-content">
+		{ event.Content }
+	</div>
+}
+
+// TimelineEventFooter renderiza o footer do evento
+templ TimelineEventFooter(event *timeline.TimelineEvent) {
+	<div class="timeline-event-footer">
+		<div class="timeline-event-meta">
+			Registrado em { event.CreatedAt.Format("02/01/2006 às 15:04") }
 		</div>
 	</div>
 }

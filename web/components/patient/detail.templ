@@ -52,7 +52,7 @@ templ PatientDetail(patient PatientDetailItem, sessions []SessionItem) {
 	hx-target="#main-content"
 	hx-swap="innerHTML"
 	hx-push-url="true"
-	hx-history="false"
+	hx-head="merge"
 >
 					<i class="fas fa-calendar-plus"></i>
 					Nova Sessão
@@ -249,7 +249,7 @@ Ver histórico completo
 	hx-target="#main-content"
 	hx-swap="innerHTML"
 	hx-push-url="true"
-	hx-history="false"
+	hx-head="merge"
 >
 <i class="fas fa-calendar-plus w-5 text-arandu-primary"></i>
 Nova Sessão
@@ -261,7 +261,7 @@ Nova Sessão
 			hx-target="#main-content"
 			hx-swap="innerHTML"
 			hx-push-url="true"
-			hx-history="false"
+			hx-head="merge"
 		>
 						<i class="fas fa-history w-5 text-arandu-primary"></i>
 						Ver Histórico
@@ -273,7 +273,7 @@ Nova Sessão
 			hx-target="#main-content"
 			hx-swap="innerHTML"
 			hx-push-url="true"
-			hx-history="false"
+			hx-head="merge"
 		>
 						<i class="fas fa-clipboard-list w-5 text-arandu-primary"></i>
 						Anamnese Clínica

@@ -15,6 +15,57 @@
  * 8. responsive: md:, lg:, xl:, etc.
  */
 
+/*
+ * SAFELIST - Classes dinâmicas que devem sempre estar disponíveis
+ * Estas classes são usadas em templates via funções auxiliares ou condicionais
+ * e podem não ser detectadas automaticamente pelo Tailwind JIT
+ */
+
+/* Cores de background e text usadas dinamicamente em style_helpers.go */
+@source inline("{bg,text}-{arandu,primary,accent,neutral,blue,green,amber,purple,red}-{50,100,200,300,400,500,600,700,800,900}");
+
+/* Classes de timeline usadas em timeline.templ */
+@source inline("timeline-dot-{session,observation,intervention}");
+@source inline("timeline-event-card-{session,observation,intervention}");
+@source inline("timeline-event-type-{session,observation,intervention}");
+
+/* Classes de grid responsivas usadas em grid_types.go */
+@source inline("grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}");
+@source inline("sm:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}");
+@source inline("md:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}");
+@source inline("lg:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}");
+@source inline("xl:grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}");
+
+/* Classes de plan-report usadas em therapeutic_plan_report.templ */
+@source inline("plan-report-goal-badge");
+@source inline("{achieved,in-progress,archived}");
+
+/* Classes de status de medicação usadas dinamicamente */
+@source inline("status-{active,inactive,discontinued,pending}");
+
+/* Cores de texto-2xl usadas em style_helpers.go */
+@source inline("text-2xl font-bold");
+
+/* Gap classes usadas em grid_types.go */
+@source inline("gap-{0,1,2,3,4,5,6,8,10,12,16,20,24}");
+@source inline("gap-layout-grid");
+
+/* Classes de ícones FontAwesome usadas dinamicamente */
+@source inline("fas fa-{calendar-check,sticky-note,hand-holding-heart,calendar-day,calendar-plus,history,clipboard-list,bullseye,route,edit,trash,user,user-md,search,plus,minus,save,cog,home,brain,calendar,tasks,users,chart-bar,file-alt,external-link-alt,check,spinner,times}");
+
+/* Classes dark: mode */
+@source inline("dark:bg-{arandu-bg,arandu-paper,arandu-soft,neutral-{50,100,200,300,400,500,600,700,800,900}}");
+@source inline("dark:text-{arandu-dark,neutral-{50,100,200,300,400,500,600,700,800,900}}");
+@source inline("dark:border-{arandu-primary,neutral-{100,200,300,700}}");
+
+/* Classes de hover usadas dinamicamente */
+@source inline("hover:bg-{arandu-primary,arandu-active,arandu-soft,primary-{50,100,200,500,600,700},neutral-{50,100,200}}");
+@source inline("hover:text-{arandu-primary,arandu-dark,primary-{500,600,700},neutral-{600,700,800,900}}");
+
+/* Classes de responsive para alinhamento */
+@source inline("{items,start,center,end,stretch}");
+@source inline("{sm,md,lg,xl}:{items,start,center,end,stretch}");
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {

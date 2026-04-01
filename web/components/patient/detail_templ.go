@@ -84,7 +84,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"flex items-center gap-2 px-4 py-3 bg-arandu-primary text-white rounded-xl font-sans font-medium text-sm hover:bg-arandu-active transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\" hx-history=\"false\"><i class=\"fas fa-calendar-plus\"></i> Nova Sessão</a></div></div><!-- Grid de Evolução (4 indicadores) --><div class=\"grid grid-cols-2 gap-4 lg:grid-cols-4\"><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-4 shadow-sm border border-neutral-200 dark:border-neutral-700\"><div class=\"text-2xl font-semibold text-arandu-primary\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"flex items-center gap-2 px-4 py-3 bg-arandu-primary text-white rounded-xl font-sans font-medium text-sm hover:bg-arandu-active transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-calendar-plus\"></i> Nova Sessão</a></div></div><!-- Grid de Evolução (4 indicadores) --><div class=\"grid grid-cols-2 gap-4 lg:grid-cols-4\"><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-4 shadow-sm border border-neutral-200 dark:border-neutral-700\"><div class=\"text-2xl font-semibold text-arandu-primary\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -360,7 +360,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML transition:true\" hx-push-url=\"true\" hx-history=\"false\"><i class=\"fas fa-calendar-plus w-5 text-arandu-primary\"></i> Nova Sessão</a> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-calendar-plus w-5 text-arandu-primary\"></i> Nova Sessão</a> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -373,7 +373,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-history=\"false\"><i class=\"fas fa-history w-5 text-arandu-primary\"></i> Ver Histórico</a> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-history w-5 text-arandu-primary\"></i> Ver Histórico</a> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -386,7 +386,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-history=\"false\"><i class=\"fas fa-clipboard-list w-5 text-arandu-primary\"></i> Anamnese Clínica</a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-clipboard-list w-5 text-arandu-primary\"></i> Anamnese Clínica</a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

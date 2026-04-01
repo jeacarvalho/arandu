@@ -6,6 +6,38 @@ import (
 	"arandu/internal/platform/helpers"
 )
 
+// ============================================================================
+// SHELL LAYOUT - RECOMMENDED LAYOUT
+// ============================================================================
+//
+// This is the recommended layout for all Arandu pages. It provides:
+//
+// 1. CSS Management: Uses content-based hash versioning (GetCSSVersionV2/GetCSSVersion)
+//    for stable cache control - version only changes when CSS content changes.
+//
+// 2. HTMX Support: Includes hx-head="merge" support for proper head management
+//    during HTMX navigation, preventing CSS desync issues.
+//
+// 3. Consistent Structure: Single source of truth for HTML structure, head elements,
+//    and asset includes.
+//
+// Usage:
+//
+//   // With context (recommended for handlers)
+//   layout.ShellWithContext(ctx, config, content)
+//
+//   // Direct usage
+//   layout.Shell(config, content)
+//
+// ShellConfig fields:
+//   - PageTitle: Title shown in browser tab (e.g., "Dashboard")
+//   - ActivePage: Current page for highlighting nav (e.g., "dashboard", "patients")
+//   - ShowSidebar: Whether to show the sidebar (default: true)
+//   - SidebarVariant: "default" | "patient" (changes sidebar content)
+//   - PatientID: Patient ID when SidebarVariant = "patient"
+//
+// ============================================================================
+
 // ShellConfig configuração do ShellLayout
 type ShellConfig struct {
 	PageTitle       string
@@ -46,6 +78,28 @@ templ Shell(config ShellConfig, content templ.Component) {
 		<link href={ "/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2() } rel="stylesheet">
 		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script>
+			// Initialize Alpine.store('shell') before Alpine.js loads
+			// This ensures the store is available when Alpine processes x-data
+			document.addEventListener('alpine:init', () => {
+				if (!Alpine.store('shell')) {
+					Alpine.store('shell', {
+						sidebarOpen: false,
+						sidebarCollapsed: false,
+						init() {
+							this.sidebarOpen = window.innerWidth >= 768;
+							this.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';
+						},
+						toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
+						closeSidebar() { this.sidebarOpen = false; },
+						toggleCollapse() {
+							this.sidebarCollapsed = !this.sidebarCollapsed;
+							localStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);
+						}
+					});
+				}
+			});
+		</script>
 		<script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -100,7 +154,7 @@ templ Shell(config ShellConfig, content templ.Component) {
 		</div>
 
 		<!-- Global Scripts -->
-		<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetCSSVersion() }></script>
+		<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
 	</body>
 	</html>
 }
@@ -296,6 +350,7 @@ templ ShellNavItem(href string, page string, activePage string, icon string, lab
 		hx-target="#main-content"
 		hx-push-url="true"
 		hx-swap="innerHTML"
+		hx-head="merge"
 		hx-indicator="#shell-loading"
 		@click="if (window.innerWidth < 768) { $data.sidebarOpen = false; }"
 	>
@@ -304,9 +359,10 @@ templ ShellNavItem(href string, page string, activePage string, icon string, lab
 	</a>
 }
 
-// ShellContentWrapper wrapper para conteúdos HTMX
+// ShellContentWrapper wrapper para conteúdos HTMX via OOB
+// Usa ID único para evitar conflito com #main-content estático
 templ ShellContentWrapper(content templ.Component) {
-	<div id="main-content" hx-swap-oob="true">
+	<div id="main-content-swap" hx-swap-oob="true">
 		<div class="shell-canvas-container">
 			<div class="shell-content">
 				@content
