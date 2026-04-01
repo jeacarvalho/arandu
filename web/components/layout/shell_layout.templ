@@ -143,7 +143,10 @@ templ Shell(config ShellConfig, content templ.Component) {
 			<main class="shell-main">
 				<!-- Scrollable Canvas -->
 				<div class="shell-canvas" id="main-content">
-					<div class="shell-canvas-container" style="padding-top: 80px; padding-left: 260px;">
+					<div 
+						class="shell-canvas-container"
+						:class="sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'"
+					>
 						<div class="shell-content">
 							@content
 						</div>

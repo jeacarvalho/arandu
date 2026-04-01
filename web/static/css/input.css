@@ -2127,9 +2127,28 @@ div.flex.pt-16 main.flex-1 {
 
 .shell-canvas-container {
   padding: 1.5rem;
-  padding-top: 80px;
-  padding-left: 260px;
+  padding-top: 1rem;
   transition: padding-left 0.2s ease;
+}
+
+/* Desktop: sidebar expanded (default) */
+@media (min-width: 768px) {
+  .shell-canvas-container {
+    padding-left: 260px;
+    padding-top: 1rem;
+  }
+  
+  .shell-canvas-container.shell-canvas-collapsed {
+    padding-left: 80px;
+  }
+}
+
+/* Mobile: no sidebar padding */
+@media (max-width: 767px) {
+  .shell-canvas-container {
+    padding-left: 0;
+    padding-top: 1rem;
+  }
 }
 
 .shell-content {
