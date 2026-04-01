@@ -154,7 +154,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Main Content Area --><main class=\"shell-main\"><!-- Scrollable Canvas --><div class=\"shell-canvas\" id=\"main-content\"><div class=\"shell-canvas-container\" :class=\"sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'\"><div class=\"shell-content\" id=\"shell-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Main Content Area --><main class=\"shell-main\"><!-- Scrollable Canvas --><div class=\"shell-canvas\"><div class=\"shell-canvas-container\" :class=\"sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'\"><div class=\"shell-content\" id=\"main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
