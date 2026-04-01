@@ -238,20 +238,20 @@ templ ShellSearchBar() {
 
 // ShellSidebar componente da barra lateral
 templ ShellSidebar(config ShellConfig) {
-	<!-- Desktop Sidebar (always visible on md+) -->
+	<!-- Desktop Sidebar (visible on md+ screens) -->
 	<aside 
 		id="shell-sidebar"
-		class="shell-sidebar"
+		class="shell-sidebar hidden md:flex"
 		:class="sidebarCollapsed ? 'shell-sidebar-collapsed' : ''"
 		aria-label="Menu de navegação"
 	>
 		@ShellSidebarContent(config)
 	</aside>
 
-	<!-- Mobile Sidebar (drawer) -->
+	<!-- Mobile Sidebar (drawer - only visible on small screens when open) -->
 	<aside 
 		id="shell-sidebar-mobile"
-		class="shell-sidebar-drawer"
+		class="shell-sidebar-drawer md:hidden"
 		:class="sidebarOpen ? 'shell-sidebar-drawer-open' : ''"
 		x-show="sidebarOpen"
 		x-transition:enter="transform transition ease-out duration-300"

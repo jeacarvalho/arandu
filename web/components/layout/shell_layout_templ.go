@@ -311,7 +311,7 @@ func ShellSidebar(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<!-- Desktop Sidebar (always visible on md+) --><aside id=\"shell-sidebar\" class=\"shell-sidebar\" :class=\"sidebarCollapsed ? 'shell-sidebar-collapsed' : ''\" aria-label=\"Menu de navegação\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<!-- Desktop Sidebar (visible on md+ screens) --><aside id=\"shell-sidebar\" class=\"shell-sidebar hidden md:flex\" :class=\"sidebarCollapsed ? 'shell-sidebar-collapsed' : ''\" aria-label=\"Menu de navegação\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -319,7 +319,7 @@ func ShellSidebar(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</aside><!-- Mobile Sidebar (drawer) --><aside id=\"shell-sidebar-mobile\" class=\"shell-sidebar-drawer\" :class=\"sidebarOpen ? 'shell-sidebar-drawer-open' : ''\" x-show=\"sidebarOpen\" x-transition:enter=\"transform transition ease-out duration-300\" x-transition:enter-start=\"-translate-x-full\" x-transition:enter-end=\"translate-x-0\" x-transition:leave=\"transform transition ease-in duration-200\" x-transition:leave-start=\"translate-x-0\" x-transition:leave-end=\"-translate-x-full\" aria-label=\"Menu de navegação mobile\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</aside><!-- Mobile Sidebar (drawer - only visible on small screens when open) --><aside id=\"shell-sidebar-mobile\" class=\"shell-sidebar-drawer md:hidden\" :class=\"sidebarOpen ? 'shell-sidebar-drawer-open' : ''\" x-show=\"sidebarOpen\" x-transition:enter=\"transform transition ease-out duration-300\" x-transition:enter-start=\"-translate-x-full\" x-transition:enter-end=\"translate-x-0\" x-transition:leave=\"transform transition ease-in duration-200\" x-transition:leave-start=\"translate-x-0\" x-transition:leave-end=\"-translate-x-full\" aria-label=\"Menu de navegação mobile\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
