@@ -651,10 +651,10 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	// Criar componente de perfil do paciente
 	patientProfile := patientComponents.PatientProfileView(patientData, bioContext, timelineEvents, recentSessions)
 
-	// Check if this is an HTMX request - return only content without Shell
+	// Check if this is an HTMX request - return content with container wrapper
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 	if isHTMXRequest {
-		patientProfile.Render(r.Context(), w)
+		layoutComponents.ShellContentContainer(patientProfile).Render(r.Context(), w)
 		return
 	}
 

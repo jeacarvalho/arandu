@@ -149,7 +149,7 @@ templ Shell(config ShellConfig, content templ.Component) {
 						class="shell-canvas-container"
 						:class="sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'"
 					>
-						<div class="shell-content">
+						<div class="shell-content" id="shell-content">
 							@content
 						</div>
 					</div>
@@ -368,10 +368,23 @@ templ ShellNavItem(href string, page string, activePage string, icon string, lab
 // Usa ID único para evitar conflito com #main-content estático
 templ ShellContentWrapper(content templ.Component) {
 	<div id="main-content-swap" hx-swap-oob="true">
-		<div class="shell-canvas-container">
-			<div class="shell-content">
+		<div class="shell-canvas-container shell-canvas-expanded">
+			<div class="shell-content" id="shell-content">
 				@content
 			</div>
+		</div>
+	</div>
+}
+
+// ShellContentContainer wrapper para conteúdos HTMX sem OOB
+// Usado quando HTMX replace diretamente o conteúdo
+templ ShellContentContainer(content templ.Component) {
+	<div 
+		class="shell-canvas-container"
+		style="padding-top: 80px; padding-left: 260px;"
+	>
+		<div class="shell-content" id="shell-content">
+			@content
 		</div>
 	</div>
 }
