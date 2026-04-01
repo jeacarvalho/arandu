@@ -84,10 +84,13 @@ templ Shell(config ShellConfig, content templ.Component) {
 			document.addEventListener('alpine:init', () => {
 				if (!Alpine.store('shell')) {
 					Alpine.store('shell', {
+						// sidebarOpen: controls MOBILE drawer visibility (true = open, false = closed)
+						// On desktop, sidebar is always visible (controlled by CSS md:flex)
 						sidebarOpen: false,
+						// sidebarCollapsed: controls DESKTOP sidebar width (true = 80px, false = 260px)
 						sidebarCollapsed: false,
 						init() {
-							this.sidebarOpen = window.innerWidth >= 768;
+							this.sidebarOpen = false; // Always start closed on mobile
 							this.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';
 						},
 						toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
@@ -120,11 +123,10 @@ templ Shell(config ShellConfig, content templ.Component) {
 
 			<!-- Body -->
 			<div class="shell-body">
-				<!-- Mobile Sidebar Overlay -->
-				<div 
+				<!-- Mobile Sidebar Overlay (only shows on mobile) --><div 
 					x-show="sidebarOpen" 
 					@click="closeSidebar()"
-					class="shell-sidebar-overlay"
+					class="shell-sidebar-overlay md:hidden"
 					:class="sidebarOpen ? 'shell-sidebar-overlay-open' : ''"
 					x-transition:enter="transition ease-out duration-200"
 					x-transition:enter-start="opacity-0"
