@@ -1,8 +1,12 @@
 /**
  * HTMX Handlers - Global event handlers for HTMX
- * This file is loaded by both shell_layout.templ and layout.templ
+ * This file is loaded by shell_layout.templ
  * 
  * Guard: window.__htmxHandlersLoaded prevents double registration
+ * 
+ * NOTE: Alpine.store('shell') is defined in shell_layout.templ <head>
+ * to ensure it's available before Alpine.js initializes.
+ * Do NOT define it here to avoid duplication.
  */
 (function() {
 	'use strict';
@@ -12,41 +16,6 @@
 		return;
 	}
 	window.__htmxHandlersLoaded = true;
-
-	// Initialize Alpine stores for shared state
-	document.addEventListener('alpine:init', () => {
-		// Shell store - manages sidebar state for Shell layout
-		Alpine.store('shell', {
-			sidebarOpen: false,
-			sidebarCollapsed: false,
-			
-			init() {
-				// Restore sidebar collapsed state from localStorage
-				const saved = localStorage.getItem('arandu-sidebar-collapsed');
-				if (saved !== null) {
-					this.sidebarCollapsed = saved === 'true';
-				}
-			},
-			
-			toggleSidebar() {
-				this.sidebarOpen = !this.sidebarOpen;
-			},
-			
-			toggleCollapse() {
-				this.sidebarCollapsed = !this.sidebarCollapsed;
-				localStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);
-			},
-			
-			closeSidebar() {
-				this.sidebarOpen = false;
-			}
-		});
-		
-		// UI store - manages general UI state
-		Alpine.store('ui', {
-			sidebarOpen: false
-		});
-	});
 
 	// HTMX Configuration
 	htmx.config.defaultSwapDelay = 0;
