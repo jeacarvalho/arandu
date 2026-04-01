@@ -19,14 +19,15 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 					<p class="patient-subtitle font-clinical">Perfil clínico do paciente</p>
 				</div>
 				<!-- Botão Nova Sessão: grid 4 -->
-				<a 
-					href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } 
-					class="patient-action-button" 
-					hx-boost="true" 
-					hx-target="#main-content" 
-					hx-swap="innerHTML transition:true" 
-					hx-push-url="true"
-				>
+<a
+			href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) }
+			class="patient-action-button"
+			hx-boost="true"
+			hx-target="#main-content"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+			hx-history="false"
+		>
 					<i class="fas fa-calendar-plus"></i> Nova Sessão
 				</a>
 			</div>
@@ -137,11 +138,11 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 				</div>
 				
 				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-history="false" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-history="false" hx-push-url="true">
 						<i class="fas fa-clipboard-list quick-action-icon"></i> Anamnese Clínica
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-history="false" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-history="false" hx-push-url="true">
 						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 					</a>
 				</div>
@@ -183,14 +184,15 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 							<i class="fas fa-calendar-alt text-3xl"></i>
 						</div>
 						<p class="text-neutral-500 font-sans">Nenhuma sessão registrada ainda.</p>
-						<a 
-							href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } 
-							class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-sans text-sm"
-							hx-boost="true" 
-							hx-target="#main-content" 
-							hx-swap="innerHTML transition:true" 
-							hx-push-url="true"
-						>
+<a
+			href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) }
+			class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-sans text-sm"
+			hx-boost="true"
+			hx-target="#main-content"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+			hx-history="false"
+		>
 							<i class="fas fa-plus"></i> Registrar primeira sessão
 						</a>
 					</div>

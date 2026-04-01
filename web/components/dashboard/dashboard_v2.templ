@@ -1,0 +1,328 @@
+package dashboard
+
+import (
+	"arandu/web/components/layout"
+)
+
+// DashboardPage exemplo de página usando ShellLayout
+// Esta é uma página completa que usa o novo ShellLayout
+templ DashboardPage(userEmail string) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:   "Dashboard",
+		ActivePage:  "dashboard",
+		ShowSidebar: true,
+		UserEmail:   userEmail,
+	}, DashboardContent())
+}
+
+// DashboardContent conteúdo específico da página de dashboard
+// Este componente é renderizado dentro do ShellLayout
+templ DashboardContent() {
+	<!-- Page Header -->
+	@layout.ShellPageTitle("Dashboard", "Visão geral da sua prática clínica")
+
+	<!-- Stats Grid -->
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+		@StatCard("Pacientes", "24", "fa-users", "text-blue-600", "bg-blue-50")
+		@StatCard("Sessões Hoje", "3", "fa-calendar-check", "text-green-600", "bg-green-50")
+		@StatCard("Pendentes", "7", "fa-clock", "text-amber-600", "bg-amber-50")
+		@StatCard("Insights IA", "12", "fa-brain", "text-purple-600", "bg-purple-50")
+	</div>
+
+	<!-- Content Grid -->
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+		<!-- Main Content -->
+		<div class="lg:col-span-2 space-y-6">
+			@layout.ShellCard("Próximos Atendimentos", NextAppointments())
+			@layout.ShellCard("Atividade Recente", RecentActivity())
+		</div>
+
+		<!-- Sidebar Content -->
+		<div class="space-y-6">
+			@layout.ShellCard("Ações Rápidas", QuickActions())
+			@layout.ShellCard("Lembretes", Reminders())
+		</div>
+	</div>
+}
+
+// StatCard componente de card de estatística
+templ StatCard(title string, value string, icon string, textColor string, bgColor string) {
+	<div class="bg-white rounded-xl p-6 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow">
+		<div class="flex items-center gap-4">
+			<div class={ "w-12 h-12 rounded-xl flex items-center justify-center text-xl " + bgColor + " " + textColor }>
+				<i class={ "fas " + icon }></i>
+			</div>
+			<div>
+				<p class="text-sm text-neutral-500">{ title }</p>
+				<p class={ "text-2xl font-bold " + textColor }>{ value }</p>
+			</div>
+		</div>
+	</div>
+}
+
+// NextAppointments conteúdo da seção de próximos atendimentos
+templ NextAppointments() {
+	<div class="space-y-3">
+		@AppointmentItem("João Silva", "09:00", "Terapia Individual", "confirmed")
+		@AppointmentItem("Maria Santos", "11:00", "Avaliação", "pending")
+		@AppointmentItem("Carlos Oliveira", "14:30", "Acompanhamento", "confirmed")
+	</div>
+}
+
+// AppointmentItem item de atendimento
+templ AppointmentItem(name string, time string, type_ string, status string) {
+	<div class="flex items-center justify-between p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+		hx-get="/patients/1"
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+	>
+		<div class="flex items-center gap-4">
+			<div class="w-10 h-10 rounded-full bg-arandu-bg text-arandu-primary flex items-center justify-center font-semibold">
+				{ string([]rune(name)[0]) }
+			</div>
+			<div>
+				<p class="font-medium text-neutral-800">{ name }</p>
+				<p class="text-sm text-neutral-500">{ type_ }</p>
+			</div>
+		</div>
+		<div class="flex items-center gap-3">
+			<span class="text-sm font-medium text-neutral-600">{ time }</span>
+			if status == "confirmed" {
+				<span class="w-2 h-2 rounded-full bg-green-500"></span>
+			} else {
+				<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+			}
+		</div>
+	</div>
+}
+
+// RecentActivity conteúdo da seção de atividade recente
+templ RecentActivity() {
+	<div class="space-y-4">
+		@ActivityItem("Anamnese atualizada", "João Silva", "há 30 minutos", "fa-file-medical")
+		@ActivityItem("Sessão registrada", "Maria Santos", "há 2 horas", "fa-clipboard-list")
+		@ActivityItem("Novo insight gerado", "Carlos Oliveira", "há 3 horas", "fa-lightbulb")
+		@ActivityItem("Paciente cadastrado", "Ana Pereira", "há 5 horas", "fa-user-plus")
+	</div>
+}
+
+// ActivityItem item de atividade
+templ ActivityItem(action string, patient string, time string, icon string) {
+	<div class="flex items-start gap-3">
+		<div class="w-8 h-8 rounded-lg bg-arandu-bg text-arandu-primary flex items-center justify-center flex-shrink-0">
+			<i class={ "fas " + icon + " text-sm" }></i>
+		</div>
+		<div class="flex-1 min-w-0">
+			<p class="text-sm text-neutral-800">
+				<span class="font-medium">{ action }</span>
+			</p>
+			<p class="text-sm text-neutral-500">
+				{ patient } • { time }
+			</p>
+		</div>
+	</div>
+}
+
+// QuickActions conteúdo da seção de ações rápidas
+templ QuickActions() {
+	<div class="grid grid-cols-2 gap-3">
+		@QuickActionButton("Novo Paciente", "fa-user-plus", "/patients/new")
+		@QuickActionButton("Nova Sessão", "fa-calendar-plus", "/sessions/new")
+		@QuickActionButton("Buscar", "fa-search", "/patients")
+		@QuickActionButton("Relatórios", "fa-chart-bar", "/reports")
+	</div>
+}
+
+// QuickActionButton botão de ação rápida
+templ QuickActionButton(label string, icon string, href string) {
+	<a 
+		href={ templ.SafeURL(href) }
+		class="flex flex-col items-center gap-2 p-4 rounded-xl border border-neutral-200 hover:border-arandu-primary hover:bg-arandu-bg transition-all group"
+		hx-get={ href }
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+	>
+		<i class={ "fas " + icon + " text-xl text-neutral-500 group-hover:text-arandu-primary transition-colors" }></i>
+		<span class="text-sm font-medium text-neutral-700">{ label }</span>
+	</a>
+}
+
+// Reminders conteúdo da seção de lembretes
+templ Reminders() {
+	<div class="space-y-3">
+		@ReminderItem("Revisar plano terapêutico", "João Silva", "hoje", "high")
+		@ReminderItem("Enviar relatório", "Maria Santos", "amanhã", "medium")
+		@ReminderItem("Atualizar anamnese", "Carlos Oliveira", "sexta", "low")
+	</div>
+}
+
+// ReminderItem item de lembrete
+templ ReminderItem(task string, patient string, due string, priority string) {
+	if priority == "high" {
+		<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-red-500 bg-red-50 cursor-pointer"
+			
+			hx-get={ "/patients/1" }
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+		</div>
+	} else if priority == "medium" {
+		<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-amber-500 bg-amber-50 cursor-pointer"
+			
+			hx-get={ "/patients/1" }
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+		</div>
+	} else {
+		<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-blue-500 bg-blue-50 cursor-pointer"
+			
+			hx-get={ "/patients/1" }
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+		</div>
+	}
+}
+
+// =============================================================================
+// EXEMPLO: Partial Content (para requisições HTMX)
+// Use este padrão quando quiser atualizar apenas o conteúdo via HTMX
+// =============================================================================
+
+// DashboardPartial é a versão HTMX do dashboard (sem wrapper completo)
+// Retorna apenas o conteúdo que vai dentro de #main-content
+templ DashboardPartial() {
+	@DashboardContent()
+}
+
+// PatientDashboardPage exemplo de página de paciente usando ShellLayout
+templ PatientDashboardPage(patientID string, patientName string, userEmail string) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:      patientName,
+		ActivePage:     "patient-summary",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      patientID,
+		UserEmail:      userEmail,
+	}, PatientContent(patientID, patientName))
+}
+
+// PatientContent conteúdo específico da página de paciente
+templ PatientContent(patientID string, patientName string) {
+	<!-- Page Header com ações -->
+	<div class="flex items-center justify-between mb-6">
+		@layout.ShellPageTitle(patientName, "Resumo do paciente")
+		<div class="flex items-center gap-3">
+			<button 
+				class="px-4 py-2 bg-arandu-primary text-white rounded-lg hover:bg-arandu-dark transition-colors"
+				hx-get={ "/patients/" + patientID + "/sessions/new" }
+				hx-target="#main-content"
+				hx-push-url="true"
+				hx-swap="innerHTML"
+			>
+				<i class="fas fa-plus mr-2"></i>
+				Nova Sessão
+			</button>
+		</div>
+	</div>
+
+	<!-- Patient Summary Cards -->
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+		@PatientStatCard("Idade", "34 anos", "fa-birthday-cake", "text-blue-600", "bg-blue-50")
+		@PatientStatCard("Sessões", "12", "fa-calendar-check", "text-green-600", "bg-green-50")
+		@PatientStatCard("Última", "2 dias", "fa-clock", "text-amber-600", "bg-amber-50")
+	</div>
+
+	<!-- Patient Content Grid -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+		@layout.ShellCard("Histórico Recentes", PatientHistoryPreview())
+		@layout.ShellCard("Plano Terapêutico", PatientGoalsPreview())
+	</div>
+}
+
+// PatientStatCard card de estatística do paciente
+templ PatientStatCard(label string, value string, icon string, textColor string, bgColor string) {
+	<div class="bg-white rounded-xl p-4 border border-neutral-200 shadow-sm">
+		<div class="flex items-center gap-3">
+			<div class={ "w-10 h-10 rounded-lg flex items-center justify-center " + bgColor }>
+				<i class={ "fas " + icon + " " + textColor }></i>
+			</div>
+			<div>
+				<p class="text-xs text-neutral-500 uppercase tracking-wide">{ label }</p>
+				<p class="text-lg font-semibold text-neutral-800">{ value }</p>
+			</div>
+		</div>
+	</div>
+}
+
+// PatientHistoryPreview preview do histórico
+templ PatientHistoryPreview() {
+	<div class="space-y-3">
+		<div class="p-3 bg-neutral-50 rounded-lg">
+			<p class="text-sm font-medium text-neutral-800">Sessão #12</p>
+			<p class="text-xs text-neutral-500 mt-1">27/03/2026 • Progresso significativo nas metas</p>
+		</div>
+		<div class="p-3 bg-neutral-50 rounded-lg"
+			hx-get="/patients/1/sessions/11"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<p class="text-sm font-medium text-neutral-800">Sessão #11</p>
+			<p class="text-xs text-neutral-500 mt-1">20/03/2026 • Revisão de técnicas</p>
+		</div>
+		<a 
+			href="/patients/1/history"
+			class="text-sm text-arandu-primary hover:text-arandu-dark font-medium"
+			hx-get="/patients/1/history"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			Ver histórico completo →
+		</a>
+	</div>
+}
+
+// PatientGoalsPreview preview das metas
+templ PatientGoalsPreview() {
+	<div class="space-y-3">
+		<div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+			<i class="fas fa-check-circle text-green-600"></i>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">Reduzir ansiedade em situações sociais</p>
+				<p class="text-xs text-green-600">Meta atingida</p>
+			</div>
+		</div>
+		<div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg"
+			hx-get="/patients/1/goals"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<i class="fas fa-spinner text-blue-600"></i>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">Estabelecer rotina de sono</p>
+				<p class="text-xs text-blue-600">Em progresso (60%)</p>
+			</div>
+		</div>
+	</div>
+}

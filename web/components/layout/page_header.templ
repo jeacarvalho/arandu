@@ -1,0 +1,109 @@
+package layout
+
+// PageHeaderProps define as propriedades do componente PageHeader
+type PageHeaderProps struct {
+	Title            string
+	Subtitle         string
+	BreadcrumbItems  []BreadcrumbItem
+	Actions          templ.Component
+}
+
+// BreadcrumbItem representa um item do breadcrumb
+type BreadcrumbItem struct {
+	Label string
+	Href  string
+	Active bool
+}
+
+// PageHeader componente de cabeçalho de página reutilizável
+// Uso: @PageHeader(PageHeaderProps{Title: "Anamnese", Subtitle: "...", BreadcrumbItems: items})
+templ PageHeader(props PageHeaderProps) {
+	<header class="mb-8">
+		<!-- Breadcrumb -->
+		if len(props.BreadcrumbItems) > 0 {
+			<nav class="mb-4" aria-label="Breadcrumb">
+				<ol class="flex items-center gap-2 text-sm">
+					for i, item := range props.BreadcrumbItems {
+						<li class="flex items-center gap-2">
+							if i > 0 {
+								<i class="fas fa-chevron-right text-neutral-300 text-xs"></i>
+							}
+							if item.Active {
+								<span class="text-neutral-500 font-medium" aria-current="page">
+									{ item.Label }
+								</span>
+							} else {
+								<a 
+									href={ templ.SafeURL(item.Href) }
+									class="text-neutral-500 hover:text-arandu-primary transition-colors"
+									hx-get={ item.Href }
+									hx-target="#main-content"
+									hx-push-url="true"
+									hx-swap="innerHTML"
+								>
+									{ item.Label }
+								</a>
+							}
+						</li>
+					}
+				</ol>
+			</nav>
+		}
+		
+		<!-- Title Section -->
+		<div class="flex items-start justify-between gap-4">
+			<div>
+				<h1 class="text-2xl font-semibold text-neutral-800">
+					{ props.Title }
+				</h1>
+				if props.Subtitle != "" {
+					<p class="mt-1 text-sm text-neutral-500">
+						{ props.Subtitle }
+					</p>
+				}
+			</div>
+			
+			<!-- Actions -->
+			if props.Actions != nil {
+				<div class="flex items-center gap-2 flex-shrink-0">
+					@props.Actions
+				</div>
+			}
+		</div>
+	</header>
+}
+
+// PageHeaderSimple versão simplificada sem breadcrumb
+// Uso: @PageHeaderSimple("Título", "Subtítulo")
+templ PageHeaderSimple(title string, subtitle string) {
+	@PageHeader(PageHeaderProps{
+		Title:    title,
+		Subtitle: subtitle,
+	})
+}
+
+// PageHeaderWithActions versão com ações
+// Uso: @PageHeaderWithActions("Título", "Subtítulo", actions)
+templ PageHeaderWithActions(title string, subtitle string, actions templ.Component) {
+	@PageHeader(PageHeaderProps{
+		Title:    title,
+		Subtitle: subtitle,
+		Actions:  actions,
+	})
+}
+
+// BackButton componente de botão voltar reutilizável
+// Uso: @BackButton("/patients/123", "Voltar ao Perfil")
+templ BackButton(href string, label string) {
+	<a 
+		href={ templ.SafeURL(href) }
+		class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-arandu-primary transition-colors mb-4"
+		hx-get={ href }
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+	>
+		<i class="fas fa-chevron-left text-xs"></i>
+		{ label }
+	</a>
+}

@@ -4,21 +4,27 @@ import "net/http"
 
 // HTMXCacheMiddleware sets appropriate cache headers for HTMX requests
 // Fragments should not be cached by the browser
+// All HTML responses use strict no-cache to prevent CSS desync issues
 func HTMXCacheMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if this is an HTMX request
 		isHTMX := r.Header.Get("HX-Request") == "true"
 
+		// Always prevent caching of HTML responses to avoid CSS desync
+		// This is the safest approach for HTMX applications with dynamic CSS
 		if isHTMX {
-			// HTMX fragments should not be cached
+			// HTMX fragments should never be cached
 			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 			w.Header().Set("Pragma", "no-cache")
 			w.Header().Set("Expires", "0")
 			w.Header().Set("Vary", "HX-Request")
 		} else {
-			// For full page requests, allow caching but with validation
-			w.Header().Set("Cache-Control", "private, no-cache")
-			w.Header().Set("Vary", "HX-Request")
+			// For full page requests, use strict no-cache to ensure CSS is always fresh
+			// This prevents the "CSS works on first load but breaks on navigation" issue
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
+			w.Header().Set("Vary", "HX-Request, Accept-Encoding")
 		}
 
 		next.ServeHTTP(w, r)

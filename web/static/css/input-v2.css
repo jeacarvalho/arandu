@@ -8,10 +8,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Source files for class detection */
-@source "../../../web/components/**/*.{templ,go,html}";
-@source "../../../web/pages/**/*.{templ,go,html}";
-@source "../../../internal/web/handlers/**/*.go";
-@source "../../../internal/**/*.go";
+@source "../../web/components/**/*.{templ,go,html}";
+@source "../../internal/web/handlers/**/*.go";
+@source "../../internal/**/*.go";
+
+/* Safelist for dynamically generated classes */
+/* Timeline classes - using @source inline with proper syntax for Tailwind v4 */
+@source inline("timeline-dot-{session,observation,intervention,goal}");
+@source inline("timeline-event-card-{session,observation,intervention,goal}");
+@source inline("timeline-event-type-{session,observation,intervention,goal}");
+@source inline("timeline-filter-btn");
 
 @theme {
   /* Cores Arandu (mantidas do v1) */

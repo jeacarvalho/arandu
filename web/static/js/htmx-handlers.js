@@ -124,24 +124,41 @@ document.body.addEventListener('htmx:afterSwap', (e) => {
 // History restore handler - re-apply CSS classes after browser back/forward
 // This fixes CSS breakage when navigating back to HTMX-saved snapshots
 document.addEventListener('htmx:historyRestore', function(e) {
-	// Option 1: Force re-apply styles by re-initializing Alpine.js
-	if (typeof Alpine !== 'undefined') {
-		// Re-initialize Alpine on the restored content
-		document.querySelectorAll('[x-data]').forEach(el => {
-			if (el._x_dataStack) {
-				// Element already has Alpine data, skip
-				return;
-			}
-			// Re-initialize this element
-			Alpine.initTree(el);
-		});
-	}
+  console.log('[HTMX] History restore triggered');
 
-	// Option 2: Re-trigger CSS animations/transitions if needed
-	document.body.classList.add('htmx-history-restored');
-	setTimeout(() => {
-		document.body.classList.remove('htmx-history-restored');
-	}, 50);
+  // Force CSS re-evaluation by touching the stylesheets
+  // This ensures any dynamically loaded CSS is reapplied
+  const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+  stylesheets.forEach(sheet => {
+    const href = sheet.href;
+    // Add cache-busting parameter to force reload
+    const url = new URL(href);
+    url.searchParams.set('_', Date.now());
+    sheet.href = url.toString();
+  });
+
+  // Re-initialize Alpine.js on restored content
+  if (typeof Alpine !== 'undefined') {
+    document.querySelectorAll('[x-data]').forEach(el => {
+      if (el._x_dataStack) {
+        return;
+      }
+      Alpine.initTree(el);
+    });
+  }
+
+  // Trigger reflow to ensure styles are recalculated
+  document.body.style.display = 'none';
+  document.body.offsetHeight; // Force reflow
+  document.body.style.display = '';
+
+  // Mark restoration complete
+  document.body.classList.add('htmx-history-restored');
+  setTimeout(() => {
+    document.body.classList.remove('htmx-history-restored');
+  }, 50);
+
+  console.log('[HTMX] History restore completed, CSS refreshed');
 });
 
 	// Smooth page transitions

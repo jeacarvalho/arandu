@@ -1,0 +1,228 @@
+package dashboard
+
+import "arandu/web/components/layout"
+
+// DashboardWithGrid exemplo de dashboard usando StandardGrid com ShellLayout
+// Esta é uma página completa que demonstra o uso do componente StandardGrid
+templ DashboardWithGrid(userEmail string) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:   "Dashboard",
+		ActivePage:  "dashboard",
+		ShowSidebar: true,
+		UserEmail:   userEmail,
+	}, DashboardGridContent())
+}
+
+// DashboardGridContent conteúdo do dashboard usando StandardGrid
+// Demonstra o uso do builder pattern para configurar a grid
+templ DashboardGridContent() {
+	// Page Title
+	@layout.ShellPageTitle("Dashboard", "Visão geral da sua prática clínica")
+
+	// Grid Configuration usando builder pattern
+	{{ gridConfig := layout.NewGridConfig().
+		WithID("dashboard-grid").
+		AddRow(layout.NewGridRow().
+		AddItem(layout.NewGridItem(StatCardExample("Pacientes", "24", "fa-users", "text-blue-600", "bg-blue-50")).Span(1).Build()).
+		AddItem(layout.NewGridItem(StatCardExample("Sessões Hoje", "3", "fa-calendar-check", "text-green-600", "bg-green-50")).Span(1).Build()).
+		AddItem(layout.NewGridItem(StatCardExample("Pendentes", "7", "fa-clock", "text-amber-600", "bg-amber-50")).Span(1).Build()).
+		AddItem(layout.NewGridItem(StatCardExample("Insights IA", "12", "fa-brain", "text-purple-600", "bg-purple-50")).Span(1).Build()).
+			Build()).
+		AddRow(layout.NewGridRow().
+			AddItem(layout.NewGridItem(NextAppointmentsCard()).Span(2).Build()).
+			AddItem(layout.NewGridItem(RecentActivityCard()).Span(2).Build()).
+			Build()).
+		AddRow(layout.NewGridRow().
+			AddItem(layout.NewGridItem(QuickActionCard("Novo Paciente", "fa-user-plus", "/patients/new")).Span(1).Build()).
+			AddItem(layout.NewGridItem(QuickActionCard("Nova Sessão", "fa-calendar-plus", "/sessions/new")).Span(1).Build()).
+			AddItem(layout.NewGridItem(QuickActionCard("Buscar", "fa-search", "/patients")).Span(2).Build()).
+			Build()).
+		AddRow(layout.NewGridRow().
+			AddItem(layout.NewGridItem(RemindersCard()).Span(4).Build()).
+			Build()).
+		Build() }}
+
+	// Render the grid
+	@layout.StandardGrid(gridConfig)
+}
+
+// StatCardExample componente de card de estatística (exemplo)
+// Exibe um valor numérico com ícone e cores configuráveis
+templ StatCardExample(title, value, icon, textColor, bgColor string) {
+	<div class="bg-white rounded-xl p-6 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow h-full">
+		<div class="flex items-center gap-4">
+			<div class={ "w-12 h-12 rounded-xl flex items-center justify-center text-xl " + bgColor + " " + textColor }>
+				<i class={ "fas " + icon }></i>
+			</div>
+			<div>
+				<p class="text-sm text-neutral-500">{ title }</p>
+				<p class={ "text-2xl font-bold " + textColor }>{ value }</p>
+			</div>
+		</div>
+	</div>
+}
+
+// NextAppointmentsCard card de próximos atendimentos
+// Usa layout.ShellCard para estrutura consistente
+templ NextAppointmentsCard() {
+	@layout.ShellCard("Próximos Atendimentos", AppointmentsContent())
+}
+
+// AppointmentsContent conteúdo da lista de atendimentos
+templ AppointmentsContent() {
+	<div class="space-y-3">
+		@AppointmentRow("João Silva", "09:00", "Terapia Individual", true)
+		@AppointmentRow("Maria Santos", "11:00", "Avaliação", false)
+		@AppointmentRow("Carlos Oliveira", "14:30", "Acompanhamento", true)
+	</div>
+}
+
+// AppointmentRow linha de atendimento individual
+// Exibe informações do paciente com status de confirmação
+templ AppointmentRow(name, time, type_ string, confirmed bool) {
+	<div
+		class="flex items-center justify-between p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
+		hx-get="/patients/1"
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+	>
+		<div class="flex items-center gap-4">
+			<div class="w-10 h-10 rounded-full bg-arandu-bg text-arandu-primary flex items-center justify-center font-semibold">
+				{ string([]rune(name)[0]) }
+			</div>
+			<div>
+				<p class="font-medium text-neutral-800">{ name }</p>
+				<p class="text-sm text-neutral-500">{ type_ }</p>
+			</div>
+		</div>
+		<div class="flex items-center gap-3">
+			<span class="text-sm font-medium text-neutral-600">{ time }</span>
+			if confirmed {
+				<span class="w-2 h-2 rounded-full bg-green-500" title="Confirmado"></span>
+			} else {
+				<span class="w-2 h-2 rounded-full bg-amber-500" title="Pendente"></span>
+			}
+		</div>
+	</div>
+}
+
+// RecentActivityCard card de atividade recente
+templ RecentActivityCard() {
+	@layout.ShellCard("Atividade Recente", ActivityContent())
+}
+
+// ActivityContent conteúdo da lista de atividades
+templ ActivityContent() {
+	<div class="space-y-4">
+		@ActivityRow("Anamnese atualizada", "João Silva", "há 30 minutos")
+		@ActivityRow("Sessão registrada", "Maria Santos", "há 2 horas")
+		@ActivityRow("Novo insight gerado", "Carlos Oliveira", "há 3 horas")
+	</div>
+}
+
+// ActivityRow linha de atividade individual
+templ ActivityRow(action, patient, time string) {
+	<div class="flex items-start gap-3">
+		<div class="w-8 h-8 rounded-lg bg-arandu-bg text-arandu-primary flex items-center justify-center flex-shrink-0">
+			<i class="fas fa-circle text-xs"></i>
+		</div>
+		<div class="flex-1 min-w-0">
+			<p class="text-sm text-neutral-800">
+				<span class="font-medium">{ action }</span>
+			</p>
+			<p class="text-sm text-neutral-500">
+				{ patient } • { time }
+			</p>
+		</div>
+	</div>
+}
+
+// QuickActionCard card de ação rápida clicável
+// Inclui atributos HTMX para navegação SPA
+templ QuickActionCard(label, icon, href string) {
+	<a
+		href={ templ.SafeURL(href) }
+		class="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border border-neutral-200 hover:border-arandu-primary hover:bg-arandu-bg transition-all group h-full min-h-[120px]"
+		hx-get={ href }
+		hx-target="#main-content"
+		hx-push-url="true"
+		hx-swap="innerHTML"
+	>
+		<i class={ "fas " + icon + " text-2xl text-neutral-500 group-hover:text-arandu-primary transition-colors" }></i>
+		<span class="text-sm font-medium text-neutral-700 text-center">{ label }</span>
+	</a>
+}
+
+// RemindersCard card de lembretes
+templ RemindersCard() {
+	@layout.ShellCard("Lembretes", RemindersContent())
+}
+
+// RemindersContent conteúdo da lista de lembretes
+templ RemindersContent() {
+	<div class="space-y-3">
+		@ReminderRow("Revisar plano terapêutico", "João Silva", "hoje", "high")
+		@ReminderRow("Enviar relatório", "Maria Santos", "amanhã", "medium")
+		@ReminderRow("Atualizar anamnese", "Carlos Oliveira", "sexta", "low")
+	</div>
+}
+
+// ReminderRow linha de lembrete individual
+// Prioridades: high (vermelho), medium (âmbar), low (azul)
+templ ReminderRow(task, patient, due, priority string) {
+	if priority == "high" {
+		<div
+			class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-red-500 bg-red-50 cursor-pointer hover:bg-red-100 transition-colors"
+			hx-get="/patients/1"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+			<span class="px-2 py-1 text-xs font-medium text-red-700 bg-red-100 rounded">Alta</span>
+		</div>
+	} else if priority == "medium" {
+		<div
+			class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-amber-500 bg-amber-50 cursor-pointer hover:bg-amber-100 transition-colors"
+			hx-get="/patients/1"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+			<span class="px-2 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded">Média</span>
+		</div>
+	} else {
+		<div
+			class="flex items-start gap-3 p-3 rounded-lg border-l-4 border-blue-500 bg-blue-50 cursor-pointer hover:bg-blue-100 transition-colors"
+			hx-get="/patients/1"
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<div class="flex-1">
+				<p class="text-sm font-medium text-neutral-800">{ task }</p>
+				<p class="text-xs text-neutral-500 mt-1">{ patient } • { due }</p>
+			</div>
+			<span class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded">Baixa</span>
+		</div>
+	}
+}
+
+// =============================================================================
+// VERSÃO PARTIAL (para requisições HTMX)
+// Use este padrão quando quiser atualizar apenas o conteúdo via HTMX
+// =============================================================================
+
+// DashboardGridPartial versão HTMX do dashboard com grid
+// Retorna apenas o conteúdo que vai dentro de #main-content
+templ DashboardGridPartial() {
+	@DashboardGridContent()
+}

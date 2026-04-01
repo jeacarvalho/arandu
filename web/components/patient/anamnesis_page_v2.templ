@@ -1,0 +1,221 @@
+package patient
+
+import (
+	"arandu/web/components/layout"
+	"fmt"
+)
+
+// AnamnesisPageV2Model view model para a página de anamnese v2
+type AnamnesisPageV2Model struct {
+	PatientID       string
+	PatientName     string
+	ChiefComplaint  string
+	PersonalHistory string
+	FamilyHistory   string
+	MentalStateExam string
+	UpdatedAt       string
+}
+
+// AnamnesisPageV2 página principal de anamnese com novo layout
+templ AnamnesisPageV2(model AnamnesisPageV2Model) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:      "Anamnese - " + model.PatientName,
+		ActivePage:     "patient-anamnesis",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      model.PatientID,
+	}, AnamnesisPageV2Content(model))
+}
+
+// AnamnesisPageV2Content conteúdo da página de anamnese
+templ AnamnesisPageV2Content(model AnamnesisPageV2Model) {
+	<!-- Page Header -->
+	@layout.PageHeader(layout.PageHeaderProps{
+		Title:    "Anamnese — " + model.PatientName,
+		Subtitle: "História profunda e fundamentos do caso clínico.",
+		BreadcrumbItems: []layout.BreadcrumbItem{
+			{Label: "Dashboard", Href: "/dashboard"},
+			{Label: "Pacientes", Href: "/patients"},
+			{Label: model.PatientName, Href: fmt.Sprintf("/patients/%s", model.PatientID)},
+			{Label: "Anamnese", Href: fmt.Sprintf("/patients/%s/anamnesis", model.PatientID), Active: true},
+		},
+	})
+	
+	<!-- Navegação Mobile (tabs) -->
+	@AnamnesisNavigationMobile(AnamnesisNavigationProps{
+		PatientID:     model.PatientID,
+		ActiveSection: "queixa",
+		Sections:      DefaultAnamnesisSections(),
+	})
+	
+	<!-- Grid Layout: Navegação (1 col) + Conteúdo (3 cols) -->
+	{{ 
+		gridConfig := layout.NewGridConfig().
+			WithID("anamnesis-grid").
+			AddRow(
+				layout.NewGridRow().
+					// Coluna 1: Navegação lateral (apenas desktop)
+					AddItem(layout.NewGridItem(
+						AnamnesisNavigationDesktop(model.PatientID),
+					).Span(1).WithClasses("hidden md:block").Build()).
+					// Colunas 2-4: Conteúdo das seções
+					AddItem(layout.NewGridItem(
+						AnamnesisSectionsContent(model),
+					).Span(3).Build()).
+					Build(),
+			).
+			Build()
+	}}
+	
+	@layout.StandardGrid(gridConfig)
+}
+
+// AnamnesisNavigationDesktop navegação lateral para desktop
+templ AnamnesisNavigationDesktop(patientID string) {
+	@AnamnesisNavigation(AnamnesisNavigationProps{
+		PatientID:     patientID,
+		ActiveSection: "queixa",
+		Sections:      DefaultAnamnesisSections(),
+	})
+}
+
+// AnamnesisSectionsContent conteúdo com todas as seções de anamnese
+templ AnamnesisSectionsContent(model AnamnesisPageV2Model) {
+	<div class="space-y-6">
+		<!-- Queixa Principal -->
+		@AnamnesisSectionV2(AnamnesisSectionProps{
+			PatientID:     model.PatientID,
+			SectionID:     "queixa",
+			Title:         "Queixa Principal",
+			Icon:          "fa-comment-medical",
+			Content:       model.ChiefComplaint,
+			AutoSaveDelay: "2s",
+			Rows:          6,
+		})
+		
+		<!-- História Pessoal -->
+		@AnamnesisSectionV2(AnamnesisSectionProps{
+			PatientID:     model.PatientID,
+			SectionID:     "pessoal",
+			Title:         "História Pessoal e Social",
+			Icon:          "fa-user-circle",
+			Content:       model.PersonalHistory,
+			AutoSaveDelay: "2s",
+			Rows:          8,
+		})
+		
+		<!-- História Familiar -->
+		@AnamnesisSectionV2(AnamnesisSectionProps{
+			PatientID:     model.PatientID,
+			SectionID:     "familiar",
+			Title:         "História Familiar",
+			Icon:          "fa-users",
+			Content:       model.FamilyHistory,
+			AutoSaveDelay: "2s",
+			Rows:          6,
+		})
+		
+		<!-- Exame Mental -->
+		@AnamnesisSectionV2(AnamnesisSectionProps{
+			PatientID:     model.PatientID,
+			SectionID:     "mental",
+			Title:         "Exame das Funções Mentais",
+			Icon:          "fa-brain",
+			Content:       model.MentalStateExam,
+			AutoSaveDelay: "2s",
+			Rows:          8,
+		})
+	</div>
+}
+
+// AnamnesisPageV2Partial conteúdo parcial para HTMX swaps
+// Uso: Atualizar apenas o conteúdo sem recarregar o layout
+templ AnamnesisPageV2Partial(model AnamnesisPageV2Model) {
+	<!-- Navegação Mobile -->
+	@AnamnesisNavigationMobile(AnamnesisNavigationProps{
+		PatientID:     model.PatientID,
+		ActiveSection: "queixa",
+		Sections:      DefaultAnamnesisSections(),
+	})
+	
+	<!-- Grid -->
+	{{ 
+		gridConfig := layout.NewGridConfig().
+			WithID("anamnesis-grid").
+			AddRow(
+				layout.NewGridRow().
+					AddItem(layout.NewGridItem(
+						AnamnesisNavigationDesktop(model.PatientID),
+					).Span(1).WithClasses("hidden md:block").Build()).
+					AddItem(layout.NewGridItem(
+						AnamnesisSectionsContent(model),
+					).Span(3).Build()).
+					Build(),
+			).
+			Build()
+	}}
+	
+	@layout.StandardGrid(gridConfig)
+}
+
+// AnamnesisSectionSavedPartialV2 resposta HTMX quando seção é salva (v2)
+// Uso: Retornar no handler PATCH para atualizar apenas o indicador
+templ AnamnesisSectionSavedPartialV2(sectionID string) {
+	@layout.AutoSaveIndicatorSaved(sectionID)
+}
+
+// AnamnesisEmptyView view quando não há anamnese cadastrada
+templ AnamnesisEmptyView(patientID string, patientName string) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:      "Anamnese - " + patientName,
+		ActivePage:     "patient-anamnesis",
+		ShowSidebar:    true,
+		SidebarVariant: "patient",
+		PatientID:      patientID,
+	}, AnamnesisEmptyContent(patientID, patientName))
+}
+
+// AnamnesisEmptyContent conteúdo da view vazia
+templ AnamnesisEmptyContent(patientID string, patientName string) {
+	@layout.PageHeader(layout.PageHeaderProps{
+		Title:    "Anamnese — " + patientName,
+		Subtitle: "História profunda e fundamentos do caso clínico.",
+		BreadcrumbItems: []layout.BreadcrumbItem{
+			{Label: "Dashboard", Href: "/dashboard"},
+			{Label: "Pacientes", Href: "/patients"},
+			{Label: patientName, Href: fmt.Sprintf("/patients/%s", patientID)},
+			{Label: "Anamnese", Href: fmt.Sprintf("/patients/%s/anamnesis", patientID), Active: true},
+		},
+	})
+	
+	@layout.WidgetWrapper(layout.NewWidgetProps(
+		AnamnesisEmptyState(patientID),
+	).
+	WithTitle("Iniciar Anamnese").
+	Build())
+}
+
+// AnamnesisEmptyState estado vazio com CTA
+templ AnamnesisEmptyState(patientID string) {
+	<div class="text-center py-12">
+		<div class="w-16 h-16 bg-arandu-bg rounded-full flex items-center justify-center mx-auto mb-4">
+			<i class="fas fa-clipboard-list text-2xl text-arandu-primary"></i>
+		</div>
+		<h3 class="text-lg font-semibold text-neutral-800 mb-2">
+			Nenhuma anamnese registrada
+		</h3>
+		<p class="text-neutral-500 mb-6 max-w-md mx-auto">
+			Comece preenchendo as informações clínicas do paciente. As alterações serão salvas automaticamente.
+		</p>
+		<button
+			class="px-6 py-3 bg-arandu-primary text-white rounded-lg hover:bg-arandu-dark transition-colors font-medium"
+			hx-get={ fmt.Sprintf("/patients/%s/anamnesis/init", patientID) }
+			hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+		>
+			<i class="fas fa-plus mr-2"></i>
+			Iniciar Anamnese
+		</button>
+	</div>
+}
