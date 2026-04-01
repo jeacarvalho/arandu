@@ -1825,3 +1825,314 @@ div.flex.pt-16 main.flex-1 {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
 }
+
+/* ============================================
+   SHELL LAYOUT - Main Layout System
+   ============================================ */
+
+/* Shell Container */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--arandu-bg, #E1F5EE);
+}
+
+/* Shell Body - Main flex container */
+.shell-body {
+  display: flex;
+  flex: 1;
+  padding-top: 64px;
+}
+
+/* Shell Topbar */
+.shell-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: white;
+  border-bottom: 1px solid var(--neutral-200, #E4E7EC);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 100;
+}
+
+.shell-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shell-topbar-center {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.shell-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Shell Hamburger (Mobile) */
+.shell-hamburger {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--neutral-600, #475467);
+}
+
+.shell-hamburger:hover {
+  background: var(--neutral-100, #F2F4F7);
+}
+
+/* Shell Logo */
+.shell-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.shell-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--arandu-primary, #0F6E56), var(--arandu-dark, #085041));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+}
+
+.shell-logo-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900, #101828);
+}
+
+/* Shell Search */
+.shell-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.shell-search-input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid var(--neutral-200, #E4E7EC);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  background: var(--neutral-50, #FAFBFC);
+  transition: all 0.2s ease;
+}
+
+.shell-search-input:focus {
+  outline: none;
+  border-color: var(--primary-500, #1D9E75);
+  background: white;
+}
+
+.shell-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neutral-400, #98A2B3);
+}
+
+/* Shell User */
+.shell-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shell-user-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--arandu-soft, #9FE1CB);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--arandu-primary, #0F6E56);
+}
+
+.shell-user-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--neutral-700, #344054);
+}
+
+/* Shell Sidebar - Desktop */
+.shell-sidebar {
+  width: 260px;
+  height: calc(100vh - 64px);
+  background: linear-gradient(180deg, var(--arandu-primary, #0F6E56) 0%, var(--arandu-dark, #085041) 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.shell-sidebar-collapsed {
+  width: 80px;
+  padding: 1rem;
+}
+
+.shell-sidebar-collapsed .shell-sidebar-nav-item-text,
+.shell-sidebar-collapsed .shell-sidebar-title {
+  display: none;
+}
+
+/* Shell Sidebar - Mobile Drawer */
+.shell-sidebar-drawer {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 280px;
+  background: linear-gradient(180deg, var(--arandu-primary, #0F6E56) 0%, var(--arandu-dark, #085041) 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.shell-sidebar-drawer-open {
+  transform: translateX(0);
+}
+
+.shell-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  top: 64px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.shell-sidebar-overlay-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Shell Sidebar Header */
+.shell-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shell-sidebar-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Shell Sidebar Navigation */
+.shell-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.shell-sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.shell-sidebar-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.shell-sidebar-nav-item[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.shell-sidebar-nav-item-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.shell-sidebar-nav-item-text {
+  flex: 1;
+}
+
+.shell-sidebar-footer {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.shell-sidebar-nav-item.logout-item {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.shell-sidebar-nav-item.logout-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Shell Main Content */
+.shell-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.shell-canvas {
+  min-height: calc(100vh - 64px);
+}
+
+.shell-canvas-container {
+  padding: 1.5rem;
+  padding-top: 80px;
+  padding-left: 260px;
+  transition: padding-left 0.2s ease;
+}
+
+.shell-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
