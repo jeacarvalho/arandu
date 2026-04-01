@@ -137,11 +137,11 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 				</div>
 				
 				<div class="quick-actions-container mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-history="false" hx-push-url="true">
 						<i class="fas fa-clipboard-list quick-action-icon"></i> Anamnese Clínica
 					</a>
 					
-					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-push-url="true">
+					<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="quick-action-link font-clinical" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML transition:true" hx-history="false" hx-push-url="true">
 						<i class="fas fa-bullseye quick-action-icon"></i> Definir Metas
 					</a>
 				</div>

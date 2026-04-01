@@ -7,6 +7,7 @@ import (
 
 	"arandu/internal/application/services"
 	aiComponents "arandu/web/components/ai"
+	layoutComponents "arandu/web/components/layout"
 
 	"github.com/a-h/templ"
 )
@@ -66,8 +67,16 @@ func (h *AIHandler) GeneratePatientSynthesis(w http.ResponseWriter, r *http.Requ
 	generatedAt := resp.GeneratedAt.Format("02/01/2006 15:04")
 	component := aiComponents.InsightCard(resp.Synthesis, generatedAt)
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	templ.Handler(component).ServeHTTP(w, r)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templ.Handler(component).ServeHTTP(w, r)
+		return
+	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Síntese",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 func renderError(w http.ResponseWriter, errorMsg string) {

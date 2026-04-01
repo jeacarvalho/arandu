@@ -8,6 +8,7 @@ import (
 
 	"arandu/internal/domain/intervention"
 
+	layoutComponents "arandu/web/components/layout"
 	sessionComponents "arandu/web/components/session"
 )
 
@@ -60,11 +61,19 @@ func (h *InterventionHandler) GetIntervention(w http.ResponseWriter, r *http.Req
 		CreatedAt: intv.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering intervention item: %v", err)
-		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering intervention item: %v", err)
+			http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Intervenção",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // GetInterventionEditForm handles GET /interventions/{id}/edit - returns edit form component
@@ -100,11 +109,19 @@ func (h *InterventionHandler) GetInterventionEditForm(w http.ResponseWriter, r *
 		Content: intv.Content,
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering intervention edit form: %v", err)
-		http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering intervention edit form: %v", err)
+			http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Editar Intervenção",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // UpdateIntervention handles PUT /interventions/{id} - updates intervention
@@ -156,11 +173,19 @@ func (h *InterventionHandler) UpdateIntervention(w http.ResponseWriter, r *http.
 		CreatedAt: intv.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering updated intervention item: %v", err)
-		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering updated intervention item: %v", err)
+			http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Intervenção",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // Helper function to extract intervention ID from URL path

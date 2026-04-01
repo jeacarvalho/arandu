@@ -355,9 +355,12 @@ func main() {
 	// Apply RequestID middleware first (must be before auth)
 	handlerWithRequestID := middleware.RequestIDMiddleware(protectedHandler)
 
+	// Apply HTMX Cache middleware (prevents caching of HTMX fragments)
+	handlerWithHTMXCache := middleware.HTMXCacheMiddleware(handlerWithRequestID)
+
 	// Apply telemetry middleware after RequestID (so it has access to request_id)
 	telemetryMiddleware := middleware.NewTelemetryMiddleware("/static/")
-	handlerWithTelemetry := telemetryMiddleware.Middleware(handlerWithRequestID)
+	handlerWithTelemetry := telemetryMiddleware.Middleware(handlerWithHTMXCache)
 
 	// Create a recovery middleware
 	recoveryHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

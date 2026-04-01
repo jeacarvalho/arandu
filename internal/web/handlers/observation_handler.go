@@ -8,6 +8,7 @@ import (
 
 	"arandu/internal/domain/observation"
 
+	layoutComponents "arandu/web/components/layout"
 	sessionComponents "arandu/web/components/session"
 )
 
@@ -60,11 +61,19 @@ func (h *ObservationHandler) GetObservation(w http.ResponseWriter, r *http.Reque
 		CreatedAt: obs.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering observation item: %v", err)
-		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering observation item: %v", err)
+			http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Observação",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // GetObservationEditForm handles GET /observations/{id}/edit - returns edit form component
@@ -100,11 +109,19 @@ func (h *ObservationHandler) GetObservationEditForm(w http.ResponseWriter, r *ht
 		Content: obs.Content,
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering observation edit form: %v", err)
-		http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering observation edit form: %v", err)
+			http.Error(w, "Erro ao renderizar formulário", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Editar Observação",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // UpdateObservation handles PUT /observations/{id} - updates observation
@@ -156,11 +173,19 @@ func (h *ObservationHandler) UpdateObservation(w http.ResponseWriter, r *http.Re
 		CreatedAt: obs.CreatedAt.Format("02/01/2006 15:04"),
 	})
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := component.Render(r.Context(), w); err != nil {
-		log.Printf("Error rendering updated observation item: %v", err)
-		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering updated observation item: %v", err)
+			http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		}
+		return
 	}
+	layoutComponents.Shell(layoutComponents.ShellConfig{
+		PageTitle:   "Observação",
+		ShowSidebar: true,
+	}, component).Render(r.Context(), w)
 }
 
 // Helper function to extract observation ID from URL path

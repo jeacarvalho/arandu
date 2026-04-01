@@ -105,21 +105,44 @@
 		showErrorToast('Erro ao atualizar conteúdo. Tente novamente.');
 	});
 
-	// Focus management after HTMX swap
-	document.body.addEventListener('htmx:afterSwap', (e) => {
-		// Close mobile sidebar on navigation using Alpine.store (official API)
-		const shellStore = Alpine.store('shell');
-		if (shellStore && typeof shellStore.closeSidebar === 'function' && window.innerWidth < 768) {
-			shellStore.closeSidebar();
-		}
+// Focus management after HTMX swap
+document.body.addEventListener('htmx:afterSwap', (e) => {
+	// Close mobile sidebar on navigation using Alpine.store (official API)
+	const shellStore = Alpine.store('shell');
+	if (shellStore && typeof shellStore.closeSidebar === 'function' && window.innerWidth < 768) {
+		shellStore.closeSidebar();
+	}
 
-		// Focus management
-		const h1 = e.target.querySelector('h1, [data-autofocus]');
-		if (h1) {
-			h1.setAttribute('tabindex', '-1');
-			h1.focus();
-		}
-	});
+	// Focus management
+	const h1 = e.target.querySelector('h1, [data-autofocus]');
+	if (h1) {
+		h1.setAttribute('tabindex', '-1');
+		h1.focus();
+	}
+});
+
+// History restore handler - re-apply CSS classes after browser back/forward
+// This fixes CSS breakage when navigating back to HTMX-saved snapshots
+document.addEventListener('htmx:historyRestore', function(e) {
+	// Option 1: Force re-apply styles by re-initializing Alpine.js
+	if (typeof Alpine !== 'undefined') {
+		// Re-initialize Alpine on the restored content
+		document.querySelectorAll('[x-data]').forEach(el => {
+			if (el._x_dataStack) {
+				// Element already has Alpine data, skip
+				return;
+			}
+			// Re-initialize this element
+			Alpine.initTree(el);
+		});
+	}
+
+	// Option 2: Re-trigger CSS animations/transitions if needed
+	document.body.classList.add('htmx-history-restored');
+	setTimeout(() => {
+		document.body.classList.remove('htmx-history-restored');
+	}, 50);
+});
 
 	// Smooth page transitions
 	document.addEventListener('DOMContentLoaded', function() {
