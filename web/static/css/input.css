@@ -2127,7 +2127,10 @@ div.flex.pt-16 main.flex-1 {
 
 .shell-canvas-container {
   padding: 1.5rem;
-  padding-top: 1rem;
+  /* Account for fixed topbar (64px) + some spacing */
+  padding-top: 80px;
+  /* Default: expanded sidebar padding */
+  padding-left: 260px;
   transition: padding-left 0.2s ease;
 }
 
@@ -2140,10 +2143,11 @@ div.flex.pt-16 main.flex-1 {
   padding-left: 80px;
 }
 
-/* Mobile: no sidebar padding */
+/* Mobile: reduced padding */
 @media (max-width: 767px) {
   .shell-canvas-container {
-    padding-left: 0;
+    padding-left: 1rem;
+    padding-top: 80px;
   }
 }
 
