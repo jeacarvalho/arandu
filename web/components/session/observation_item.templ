@@ -1,24 +1,48 @@
 package session
 
+import (
+	"arandu/internal/domain/observation"
+	"arandu/web/components/classification"
+)
+
 type ObservationItemData struct {
 	ID        string
 	Content   string
 	CreatedAt string
+	Tags      []observation.ObservationTag
 }
 
 templ ObservationItem(obs ObservationItemData) {
-	<div 
+	<div
 		id={ "observation-" + obs.ID }
-		class="observation-item card-hover obs-item"
+		class="observation-item card-hover obs-item py-4"
 	>
-		<div class="clinical-content source-serif">{ obs.Content }</div>
+		<!-- Observation Content - Main focus with larger font -->
+		<div class="observation-content mb-3">
+			<p class="text-lg font-serif text-gray-800 leading-relaxed">{ obs.Content }</p>
+		</div>
+		
+		<!-- Tags Section -->
+		<div id={ "observation-" + obs.ID + "-tags" } class="observation-tags my-3 py-2 border-t border-b border-gray-100">
+			@classification.TagList(obs.Tags, true)
+		</div>
+		
 		<div class="obs-item-row">
 			<div class="obs-item-date">
 				<i class="fas fa-clock obs-item-icon"></i>{ obs.CreatedAt }
 			</div>
-			<div class="obs-item-actions">
+			<div class="obs-item-actions flex items-center gap-2">
+				<button
+					class="btn btn-icon btn-sm text-arandu-primary"
+					hx-get={ "/observations/" + obs.ID + "/classify/edit" }
+					hx-target={ "#observation-" + obs.ID + "-tags" }
+					hx-swap="innerHTML"
+					title="Adicionar classificação"
+				>
+					<i class="fas fa-tags"></i>
+				</button>
 				<div class="badge badge-primary">Observação</div>
-				<button 
+				<button
 					class="btn btn-icon btn-sm"
 					hx-get={ templ.URL("/observations/" + obs.ID + "/edit") }
 					hx-target={ "#observation-" + obs.ID }

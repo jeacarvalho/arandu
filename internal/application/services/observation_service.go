@@ -70,3 +70,40 @@ func (s *ObservationService) UpdateObservation(ctx context.Context, id, content 
 func (s *ObservationService) DeleteObservation(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
 }
+
+// Classification methods
+
+func (s *ObservationService) GetTags(ctx context.Context) ([]observation.Tag, error) {
+	return s.repo.GetTags(ctx)
+}
+
+func (s *ObservationService) GetTagsByType(ctx context.Context, tagType observation.TagType) ([]observation.Tag, error) {
+	return s.repo.GetTagsByType(ctx, tagType)
+}
+
+func (s *ObservationService) AddTagToObservation(ctx context.Context, observationID, tagID string, intensity int) error {
+	if !observation.IsValidIntensity(intensity) {
+		return fmt.Errorf("intensity must be between 1 and 5")
+	}
+	return s.repo.AddTagToObservation(ctx, observationID, tagID, intensity)
+}
+
+func (s *ObservationService) RemoveTagFromObservation(ctx context.Context, observationID, tagID string) error {
+	return s.repo.RemoveTagFromObservation(ctx, observationID, tagID)
+}
+
+func (s *ObservationService) GetObservationTags(ctx context.Context, observationID string) ([]observation.ObservationTag, error) {
+	return s.repo.GetObservationTags(ctx, observationID)
+}
+
+func (s *ObservationService) GetTagsSummary(ctx context.Context) ([]observation.TagSummary, error) {
+	return s.repo.GetTagsSummary(ctx)
+}
+
+func (s *ObservationService) GetTagsSummaryByPatient(ctx context.Context, patientID string) ([]observation.TagSummary, error) {
+	return s.repo.GetTagsSummaryByPatient(ctx, patientID)
+}
+
+func (s *ObservationService) FindObservationsByTag(ctx context.Context, tagID string) ([]*observation.Observation, error) {
+	return s.repo.FindByTag(ctx, tagID)
+}

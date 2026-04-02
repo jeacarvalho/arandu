@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -124,7 +125,7 @@ func main() {
 
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter)
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
@@ -208,8 +209,46 @@ func main() {
 	mux.HandleFunc("/session", sessionHandler.CreateSession)
 
 	// Observation routes
+	// Initialize classification handler
+	classificationHandler := handlers.NewClassificationHandler(observationServiceAdapter)
+
+	// Classification routes (must be registered before general observation routes)
 	mux.HandleFunc("/observations/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(r.URL.Path, "/edit") && r.Method == "GET" {
+		path := r.URL.Path
+
+		// Log for debugging
+		log.Printf("[Router] /observations/ path=%s method=%s", path, r.Method)
+
+		// Classification routes - check for /classify pattern
+		// Pattern: /observations/{id}/classify or /observations/{id}/classify/{tag_id}
+		if strings.Contains(path, "/classify") {
+			log.Printf("[Router] Matched classify route")
+			// Check if it's the edit form request
+			if r.Method == "GET" && strings.HasSuffix(path, "/edit") {
+				classificationHandler.GetClassificationEdit(w, r)
+				return
+			}
+			// POST to /observations/{id}/classify - add tag
+			if r.Method == "POST" && !strings.Contains(path, "/classify/") {
+				classificationHandler.ClassifyObservation(w, r)
+				return
+			}
+			// DELETE to /observations/{id}/classify/{tag_id} - remove tag
+			if r.Method == "DELETE" || (r.Method == "POST" && strings.Contains(path, "/classify/")) {
+				classificationHandler.RemoveClassification(w, r)
+				return
+			}
+			// Fallback for GET without /edit
+			if r.Method == "GET" {
+				classificationHandler.GetClassificationEdit(w, r)
+				return
+			}
+			http.NotFound(w, r)
+			return
+		}
+
+		// Standard observation routes
+		if strings.HasSuffix(path, "/edit") && r.Method == "GET" {
 			observationHandler.GetObservationEditForm(w, r)
 		} else if r.Method == "GET" {
 			observationHandler.GetObservation(w, r)
@@ -219,6 +258,9 @@ func main() {
 			http.NotFound(w, r)
 		}
 	})
+
+	// Tag routes
+	mux.HandleFunc("/tags", classificationHandler.GetTagsByType)
 
 	// Intervention routes
 	mux.HandleFunc("/interventions/", func(w http.ResponseWriter, r *http.Request) {

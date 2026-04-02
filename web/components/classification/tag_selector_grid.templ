@@ -1,0 +1,353 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"strconv"
+)
+
+// TagSelectorGridData represents data for the grid-based tag selector
+type TagSelectorGridData struct {
+	ObservationID  string
+	AvailableTags  []observation.Tag
+	SelectedTags   []observation.ObservationTag
+}
+
+// TagSelectorGrid renders a 3-column grid selector for tags
+templ TagSelectorGrid(data TagSelectorGridData) {
+	<div id={ "tag-selector-grid-" + data.ObservationID } class="tag-selector-grid bg-white rounded-xl border border-gray-200 shadow-sm">
+		<!-- Header -->
+		<div class="flex items-center justify-between px-4 py-2 border-b border-gray-200">
+			<h4 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+				<i class="fas fa-tags text-arandu-primary"></i>
+				Classificar Observação
+			</h4>
+			<button 
+				type="button"
+				class="close-tag-selector text-gray-400 hover:text-gray-600 transition-colors p-1"
+				data-observation-id={ data.ObservationID }
+				title="Fechar"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		
+		<!-- Hidden form for HTMX submission -->
+		<form 
+			id={ "tag-form-" + data.ObservationID }
+			class="tag-form"
+			hx-post={ "/observations/" + data.ObservationID + "/classify" }
+			hx-target={ "#observation-" + data.ObservationID + "-tags" }
+			hx-swap="innerHTML"
+		>
+			<input type="hidden" id={ "tags-json-" + data.ObservationID } name="tags_json" value="[]" />
+			
+			<!-- 3-Column Grid -->
+			<div class="grid-3col p-3">
+				<!-- Column 1: Category Select -->
+				<div class="col-category">
+					<label class="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
+					<select
+						id={ "tag-select-" + data.ObservationID }
+						class="tag-select-input w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:ring-2 focus:ring-arandu-primary focus:border-arandu-primary cursor-pointer"
+					>
+						<option value="">Selecione...</option>
+						{{ 
+							tagTypes := []observation.TagType{
+								observation.TagTypeEmotion, 
+								observation.TagTypeBehavior, 
+								observation.TagTypeCognition, 
+								observation.TagTypeRelationship, 
+								observation.TagTypeSomatic, 
+								observation.TagTypeContext,
+							}
+						}}
+						for _, tagType := range tagTypes {
+							{{ typeTags := []observation.Tag{} }}
+							for _, tag := range data.AvailableTags {
+								if tag.TagType == tagType {
+									{{ typeTags = append(typeTags, tag) }}
+								}
+							}
+							if len(typeTags) > 0 {
+								<optgroup label={ observation.TagTypeLabel(tagType) }>
+									for _, tag := range typeTags {
+										<option value={ tag.ID } data-color={ tag.Color } data-name={ tag.Name }>
+											{ tag.Name }
+										</option>
+									}
+								</optgroup>
+							}
+						}
+					</select>
+				</div>
+				
+				<!-- Column 2: Intensity + Add Button -->
+				<div class="col-actions flex flex-col items-center justify-center gap-2">
+					<label class="block text-xs font-medium text-gray-500">Intensidade</label>
+					<div class="intensity-row flex gap-1" data-observation-id={ data.ObservationID }>
+						for i := 1; i <= 5; i++ {
+							{{ intensityStr := strconv.Itoa(i) }}
+							{{ btnClass := "" }}
+							if i == 1 {
+								{{ btnClass = "bg-emerald-100 text-emerald-700 border-emerald-300 hover:bg-emerald-200" }}
+							}
+							if i == 2 {
+								{{ btnClass = "bg-emerald-200 text-emerald-800 border-emerald-400 hover:bg-emerald-300" }}
+							}
+							if i == 3 {
+								{{ btnClass = "bg-yellow-100 text-yellow-800 border-yellow-400 hover:bg-yellow-200" }}
+							}
+							if i == 4 {
+								{{ btnClass = "bg-orange-100 text-orange-800 border-orange-400 hover:bg-orange-200" }}
+							}
+							if i == 5 {
+								{{ btnClass = "bg-red-100 text-red-800 border-red-400 hover:bg-red-200" }}
+							}
+							<button
+								type="button"
+								class={ "intensity-btn w-7 h-7 rounded text-xs font-semibold border transition-all " + btnClass }
+								data-intensity={ intensityStr }
+								if i == 3 {
+									data-selected="true"
+								}
+							>
+								{ intensityStr }
+							</button>
+						}
+					</div>
+					<button
+						type="button"
+						class="add-tag-btn w-8 h-8 rounded-full bg-arandu-primary text-white flex items-center justify-center hover:bg-arandu-dark transition-all text-sm shadow"
+						data-observation-id={ data.ObservationID }
+						title="Adicionar"
+					>
+						<i class="fas fa-plus"></i>
+					</button>
+				</div>
+				
+				<!-- Column 3: Selected Tags List -->
+				<div class="col-tags">
+					<div class="flex items-center justify-between mb-1">
+						<label class="block text-xs font-medium text-gray-500">Selecionadas</label>
+						<span id={ "tag-count-" + data.ObservationID } class="tag-counter text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+							{ strconv.Itoa(len(data.SelectedTags)) }
+						</span>
+					</div>
+					<div id={ "selected-tags-container-" + data.ObservationID } class="selected-tags-list overflow-y-auto max-h-32 space-y-1 pr-1">
+						if len(data.SelectedTags) == 0 {
+							<div class="empty-state text-center py-4 text-gray-400">
+								<p class="text-xs">Nenhuma categoria</p>
+							</div>
+						} else {
+							for _, ot := range data.SelectedTags {
+								if ot.Tag != nil {
+									<div class="selected-tag-item flex items-center justify-between px-2 py-1 rounded border text-xs" data-tag-id={ ot.Tag.ID } style={ "background-color: " + ot.Tag.Color + "10; border-color: " + ot.Tag.Color + "30;" }>
+										<div class="flex items-center gap-1.5">
+											<span class="w-2 h-2 rounded-full flex-shrink-0" style={ "background-color: " + ot.Tag.Color + ";" }></span>
+											<span class="font-medium truncate" style={ "color: " + ot.Tag.Color + ";" }>{ ot.Tag.Name }</span>
+										</div>
+										<div class="flex items-center gap-1.5 flex-shrink-0">
+											<span class="font-semibold px-1.5 py-0.5 rounded" style={ "background-color: " + ot.Tag.Color + "20; color: " + ot.Tag.Color + ";" }>
+												{ strconv.Itoa(ot.Intensity) }
+											</span>
+											<button
+												type="button"
+												class="remove-tag-btn text-gray-400 hover:text-red-500 transition-colors"
+												data-tag-id={ ot.Tag.ID }
+												data-observation-id={ data.ObservationID }
+												title="Remover"
+											>
+												<i class="fas fa-times text-xs"></i>
+											</button>
+										</div>
+									</div>
+								}
+							}
+						}
+					</div>
+				</div>
+			</div>
+			
+			<!-- Footer: Save Button -->
+			<div class="px-4 py-2 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+				<span class="text-xs text-gray-500">
+					<i class="fas fa-info-circle mr-1"></i>
+					Adicione categorias e salve
+				</span>
+				<button
+					type="submit"
+					id={ "btn-save-tags-" + data.ObservationID }
+					class="save-tags-btn px-4 py-1.5 bg-arandu-primary text-white rounded-lg text-sm font-medium hover:bg-arandu-dark transition-all flex items-center gap-1.5"
+					data-observation-id={ data.ObservationID }
+				>
+					<i class="fas fa-save"></i>
+					<span class="btn-text">Salvar</span>
+				</button>
+			</div>
+		</form>
+	</div>
+	
+	<style>
+		.grid-3col {
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
+			gap: 12px;
+			align-items: start;
+		}
+		.col-category { min-width: 140px; }
+		.col-actions { padding: 0 8px; }
+		.col-tags { min-width: 180px; }
+		.intensity-btn[data-selected="true"] {
+			transform: scale(1.15);
+			box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+			font-weight: 700;
+		}
+	</style>
+	
+	<script>
+		(function() {
+			if (!window.selectedTags) { window.selectedTags = {}; }
+			
+			var grid = document.querySelector('.tag-selector-grid');
+			if (!grid) { 
+				console.log('TagSelectorGrid: grid not found, retrying...');
+				setTimeout(arguments.callee, 100);
+				return;
+			}
+			var obsId = grid.id.replace('tag-selector-grid-', '');
+			if (!obsId) {
+				console.log('TagSelectorGrid: obsId not found');
+				return;
+			}
+			if (!window.selectedTags[obsId]) { window.selectedTags[obsId] = []; }
+			
+			var select = document.getElementById('tag-select-' + obsId);
+			var addBtn = document.querySelector('.add-tag-btn[data-observation-id="' + obsId + '"]');
+			var container = document.getElementById('selected-tags-container-' + obsId);
+			var countEl = document.getElementById('tag-count-' + obsId);
+			var form = document.getElementById('tag-form-' + obsId);
+			var hiddenInput = document.getElementById('tags-json-' + obsId);
+			var closeBtn = document.querySelector('.close-tag-selector[data-observation-id="' + obsId + '"]');
+			var intensityRow = document.querySelector('.intensity-row[data-observation-id="' + obsId + '"]');
+			
+			// Intensity buttons
+			if (intensityRow) {
+				var intensityBtns = intensityRow.querySelectorAll('.intensity-btn');
+				intensityBtns.forEach(function(btn) {
+					btn.addEventListener('click', function() {
+						intensityBtns.forEach(function(b) { b.removeAttribute('data-selected'); });
+						btn.setAttribute('data-selected', 'true');
+					});
+				});
+			}
+			
+			// Add button
+			if (addBtn) {
+				addBtn.addEventListener('click', function() {
+					if (!select || !select.value) {
+						select.classList.add('border-red-400', 'ring-2', 'ring-red-200');
+						setTimeout(function() { select.classList.remove('border-red-400', 'ring-2', 'ring-red-200'); }, 2000);
+						return;
+					}
+					var tagId = select.value;
+					var opt = select.options[select.selectedIndex];
+					var tagName = opt.getAttribute('data-name');
+					var tagColor = opt.getAttribute('data-color');
+					var selBtn = intensityRow ? intensityRow.querySelector('[data-selected="true"]') : null;
+					var intensity = selBtn ? selBtn.getAttribute('data-intensity') : '3';
+					
+					// Check duplicate
+					var exists = window.selectedTags[obsId].some(function(t) { return t.tagId === tagId; });
+					if (exists) { return; }
+					
+					window.selectedTags[obsId].push({ tagId: tagId, tagName: tagName, tagColor: tagColor, intensity: parseInt(intensity) });
+					
+					// Remove empty state
+					var empty = container.querySelector('.empty-state');
+					if (empty) { empty.remove(); }
+					
+					// Create element
+					var el = document.createElement('div');
+					el.className = 'selected-tag-item flex items-center justify-between px-2 py-1 rounded border text-xs';
+					el.style.backgroundColor = tagColor + '10';
+					el.style.borderColor = tagColor + '30';
+					el.setAttribute('data-tag-id', tagId);
+					
+					var leftDiv = document.createElement('div');
+					leftDiv.className = 'flex items-center gap-1.5';
+					var dot = document.createElement('span');
+					dot.className = 'w-2 h-2 rounded-full flex-shrink-0';
+					dot.style.backgroundColor = tagColor;
+					var nameSpan = document.createElement('span');
+					nameSpan.className = 'font-medium truncate';
+					nameSpan.style.color = tagColor;
+					nameSpan.textContent = tagName;
+					leftDiv.appendChild(dot);
+					leftDiv.appendChild(nameSpan);
+					
+					var rightDiv = document.createElement('div');
+					rightDiv.className = 'flex items-center gap-1.5 flex-shrink-0';
+					var badge = document.createElement('span');
+					badge.className = 'font-semibold px-1.5 py-0.5 rounded';
+					badge.style.backgroundColor = tagColor + '20';
+					badge.style.color = tagColor;
+					badge.textContent = intensity;
+					var rmBtn = document.createElement('button');
+					rmBtn.type = 'button';
+					rmBtn.className = 'remove-tag-btn text-gray-400 hover:text-red-500 transition-colors';
+					rmBtn.setAttribute('data-tag-id', tagId);
+					rmBtn.setAttribute('data-observation-id', obsId);
+					rmBtn.title = 'Remover';
+					var icon = document.createElement('i');
+					icon.className = 'fas fa-times text-xs';
+					rmBtn.appendChild(icon);
+					rightDiv.appendChild(badge);
+					rightDiv.appendChild(rmBtn);
+					
+					el.appendChild(leftDiv);
+					el.appendChild(rightDiv);
+					container.appendChild(el);
+					
+					rmBtn.addEventListener('click', function() {
+						window.selectedTags[obsId] = window.selectedTags[obsId].filter(function(t) { return t.tagId !== tagId; });
+						el.remove();
+						if (container.children.length === 0) {
+							container.innerHTML = '<div class="empty-state text-center py-4 text-gray-400"><p class="text-xs">Nenhuma categoria</p></div>';
+						}
+						if (countEl) { countEl.textContent = window.selectedTags[obsId].length; }
+					});
+					
+					if (countEl) { countEl.textContent = window.selectedTags[obsId].length; }
+					select.value = '';
+				});
+			}
+			
+			// Close button
+			if (closeBtn) {
+				closeBtn.addEventListener('click', function() {
+					var targetEl = document.querySelector('#observation-' + obsId + '-tags');
+					if (targetEl) {
+						htmx.ajax('GET', '/observations/' + obsId, { target: '#observation-' + obsId + '-tags', swap: 'innerHTML' });
+					} else {
+						var gridEl = document.querySelector('#tag-selector-grid-' + obsId);
+						if (gridEl) { gridEl.remove(); }
+					}
+				});
+			}
+			
+			// Form submit
+			if (form) {
+				form.addEventListener('htmx:configRequest', function(evt) {
+					var target = document.querySelector('#observation-' + obsId + '-tags');
+					var tagsData = JSON.stringify(window.selectedTags[obsId] || []);
+					evt.detail.parameters.tags_json = tagsData;
+				});
+				form.addEventListener('htmx:afterRequest', function(evt) {
+					if (evt.detail.successful) {
+						delete window.selectedTags[obsId];
+					}
+				});
+			}
+		})();
+	</script>
+}

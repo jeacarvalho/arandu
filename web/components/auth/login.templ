@@ -178,7 +178,7 @@ templ Login(data LoginData) {
 				
 				<div class="auth-welcome">Bem-vindo ao seu consultório seguro</div>
 				
-				<form action="/auth/login" method="POST">
+				<form id="login-form" action="/auth/login" method="POST">
 					<label class="silent-label" for="email">E-mail</label>
 					<input 
 						type="email" 
@@ -225,6 +225,21 @@ templ Login(data LoginData) {
 					</svg>
 					Entrar com Google
 				</a>
+
+				<!-- BOTÃO TEMPORÁRIO DE LOGIN RÁPIDO -->
+				<div class="divider">
+					<div class="divider-line"></div>
+					<div class="divider-text">dev</div>
+					<div class="divider-line"></div>
+				</div>
+				<button
+					type="button"
+					class="auth-submit"
+					style="background: #F59E0B; margin-top: var(--space-md);"
+					hx-on:click="document.getElementById('email').value='arandu_e2e@test.com';document.getElementById('password').value='test123456';document.getElementById('login-form').submit();"
+				>
+					<i class="fas fa-bolt"></i> Login Rápido (Dev)
+				</button>
 			</div>
 		</div>
 	</body>

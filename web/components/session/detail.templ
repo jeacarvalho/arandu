@@ -1,5 +1,9 @@
 package session
 
+import (
+	"arandu/internal/domain/observation"
+)
+
 type SessionDetail struct {
 	ID        string
 	PatientID string
@@ -13,6 +17,7 @@ type Observation struct {
 	ID        string
 	Content   string
 	CreatedAt string
+	Tags      []observation.ObservationTag
 }
 
 type Intervention struct {
@@ -57,13 +62,14 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<p class="card-subtitle">Registros e anotações da sessão</p>
 					</div>
 				</div>
-			<div id="observations-list" class="mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
+				<div id="observations-list" class="mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(observations) > 0 {
 						for _, o := range observations {
 							@ObservationItem(ObservationItemData{
 								ID:        o.ID,
 								Content:   o.Content,
 								CreatedAt: o.CreatedAt,
+								Tags:      o.Tags,
 							})
 						}
 					}

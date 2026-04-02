@@ -138,6 +138,41 @@ func (a *ObservationServiceAdapter) UpdateObservation(ctx context.Context, id, c
 	return a.service.UpdateObservation(ctx, id, content)
 }
 
+// GetTags implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) GetTags(ctx context.Context) ([]observation.Tag, error) {
+	return a.service.GetTags(ctx)
+}
+
+// GetTagsByType implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) GetTagsByType(ctx context.Context, tagType observation.TagType) ([]observation.Tag, error) {
+	return a.service.GetTagsByType(ctx, tagType)
+}
+
+// AddTagToObservation implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) AddTagToObservation(ctx context.Context, observationID, tagID string, intensity int) error {
+	return a.service.AddTagToObservation(ctx, observationID, tagID, intensity)
+}
+
+// RemoveTagFromObservation implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) RemoveTagFromObservation(ctx context.Context, observationID, tagID string) error {
+	return a.service.RemoveTagFromObservation(ctx, observationID, tagID)
+}
+
+// GetObservationTags implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) GetObservationTags(ctx context.Context, observationID string) ([]observation.ObservationTag, error) {
+	return a.service.GetObservationTags(ctx, observationID)
+}
+
+// GetTagsSummary implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) GetTagsSummary(ctx context.Context) ([]observation.TagSummary, error) {
+	return a.service.GetTagsSummary(ctx)
+}
+
+// GetTagsSummaryByPatient implements handlers.ClassificationServiceInterface
+func (a *ObservationServiceAdapter) GetTagsSummaryByPatient(ctx context.Context, patientID string) ([]observation.TagSummary, error) {
+	return a.service.GetTagsSummaryByPatient(ctx, patientID)
+}
+
 // InterventionServiceAdapter adapts services.InterventionService to handlers.InterventionServiceInterface
 type InterventionServiceAdapter struct {
 	service *services.InterventionService

@@ -88,11 +88,12 @@ type InterventionServiceInterface interface {
 
 // SessionHandler handles HTTP requests related to sessions
 type SessionHandler struct {
-	sessionService      SessionServiceInterface
-	patientService      PatientServiceInterface
-	observationService  ObservationServiceInterface
-	interventionService InterventionServiceInterface
-	goalService         GoalServiceInterface
+	sessionService        SessionServiceInterface
+	patientService        PatientServiceInterface
+	observationService    ObservationServiceInterface
+	interventionService   InterventionServiceInterface
+	goalService           GoalServiceInterface
+	classificationService ClassificationServiceInterface
 }
 
 // GoalServiceInterface defines the interface for goal operations
@@ -111,13 +112,15 @@ func NewSessionHandler(
 	observationService ObservationServiceInterface,
 	interventionService InterventionServiceInterface,
 	goalService GoalServiceInterface,
+	classificationService ClassificationServiceInterface,
 ) *SessionHandler {
 	return &SessionHandler{
-		sessionService:      sessionService,
-		patientService:      patientService,
-		observationService:  observationService,
-		interventionService: interventionService,
-		goalService:         goalService,
+		sessionService:        sessionService,
+		patientService:        patientService,
+		observationService:    observationService,
+		interventionService:   interventionService,
+		goalService:           goalService,
+		classificationService: classificationService,
 	}
 }
 
@@ -212,10 +215,13 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 	observations := []sessionComponents.Observation{}
 	for _, obs := range obsList {
 		if o, ok := obs.(*observation.Observation); ok {
+			// Fetch tags for this observation
+			obsTags, _ := h.classificationService.GetObservationTags(r.Context(), o.ID)
 			observations = append(observations, sessionComponents.Observation{
 				ID:        o.ID,
 				Content:   o.Content,
 				CreatedAt: o.CreatedAt.Format("02/01/2006 às 15:04"),
+				Tags:      obsTags,
 			})
 		}
 	}
