@@ -1,0 +1,18 @@
+package analysis
+
+templ AnalysisPage(vm ThemeAnalysisViewModel) {
+	<div id="analysis-content" class="analysis-page">
+		@ThemeCloudPanel(vm)
+		<div class="mt-4">
+			@ThemeFilters(vm.PatientID, vm.Timeframe)
+		</div>
+		<div class="mt-6">
+			@ThemeStats(vm)
+		</div>
+		if len(vm.FilteredEvents) > 0 {
+			<div class="mt-6">
+				@TimelineFiltered(vm.FilteredEvents)
+			</div>
+		}
+	</div>
+}

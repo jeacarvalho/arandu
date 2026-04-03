@@ -132,6 +132,9 @@ func main() {
 	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 
+	// Create Analysis Handler for theme cloud and pattern detection
+	analysisHandler := handlers.NewAnalysisHandler(patientServiceAdapter, sessionServiceAdapter, observationServiceAdapter, interventionServiceAdapter, timelineServiceAdapter)
+
 	// Initialize AI service
 	geminiAPIKey := os.Getenv("GEMINI_API_KEY")
 	if geminiAPIKey == "" {
@@ -306,6 +309,8 @@ func main() {
 			patientHandler.ShowAnamnesis(w, r)
 		} else if strings.Contains(r.URL.Path, "/analysis/synthesis") && r.Method == "POST" {
 			aiHandler.GeneratePatientSynthesis(w, r)
+		} else if strings.Contains(r.URL.Path, "/analysis/themes") && r.Method == "GET" {
+			analysisHandler.ShowThemes(w, r)
 		} else if strings.Contains(r.URL.Path, "/plan/report") && r.Method == "GET" {
 			sessionHandler.TherapeuticPlanReport(w, r)
 		} else if strings.HasSuffix(r.URL.Path, "/goals") && r.Method == "POST" {

@@ -266,7 +266,7 @@ Nova Sessão
 						<i class="fas fa-history w-5 text-arandu-primary"></i>
 						Ver Histórico
 					</a>
-<a
+			<a
 			href={ templ.URL("/patients/" + patient.ID + "/anamnesis") }
 			class="flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors"
 			hx-boost="true"
@@ -277,6 +277,18 @@ Nova Sessão
 		>
 						<i class="fas fa-clipboard-list w-5 text-arandu-primary"></i>
 						Anamnese Clínica
+					</a>
+					<a
+						href={ templ.URL("/patients/" + patient.ID + "/analysis/themes") }
+						class="flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors"
+						hx-boost="true"
+						hx-target="#main-content"
+						hx-swap="innerHTML"
+						hx-push-url="true"
+						hx-head="merge"
+					>
+						<i class="fas fa-chart-pie w-5 text-arandu-primary"></i>
+						Análise de Temas
 					</a>
 					@aiComponents.GenerateInsightButton(patient.ID)
 				</div>
@@ -297,10 +309,15 @@ Nova Sessão
 					<div class="theme-cloud-container">
 						<div class="theme-cloud-float">
 							for _, theme := range patient.Themes.Themes {
-								<a href={ templ.URL("/patients/" + patient.ID + "?q=" + theme.Name) } class={ "theme-float-word", theme.WeightClass }>
+								<a href={ templ.URL("/patients/" + patient.ID + "/analysis/themes") } class={ "theme-float-word", theme.WeightClass }>
 									{ theme.Name }
 								</a>{ " " }
 							}
+						</div>
+						<div class="mt-4 text-center">
+							<a href={ templ.URL("/patients/" + patient.ID + "/analysis/themes") } class="text-sm text-arandu-primary hover:underline">
+								Ver análise completa →
+							</a>
 						</div>
 					</div>
 				} else {

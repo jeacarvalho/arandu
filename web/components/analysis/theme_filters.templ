@@ -1,0 +1,47 @@
+package analysis
+
+import "fmt"
+
+templ ThemeFilters(patientID, currentTimeframe string) {
+	<div class="theme-filters flex gap-2 justify-center flex-wrap">
+		<button
+			class={ "filter-btn px-3 py-1.5 rounded text-sm transition-colors", getFilterActiveClass(currentTimeframe, "all") }
+			hx-get={ fmt.Sprintf("/patients/%s/analysis/themes?timeframe=all", patientID) }
+			hx-target="#theme-cloud-container"
+			hx-swap="innerHTML"
+		>
+			Todo Histórico
+		</button>
+		<button
+			class={ "filter-btn px-3 py-1.5 rounded text-sm transition-colors", getFilterActiveClass(currentTimeframe, "3m") }
+			hx-get={ fmt.Sprintf("/patients/%s/analysis/themes?timeframe=3m", patientID) }
+			hx-target="#theme-cloud-container"
+			hx-swap="innerHTML"
+		>
+			3 Meses
+		</button>
+		<button
+			class={ "filter-btn px-3 py-1.5 rounded text-sm transition-colors", getFilterActiveClass(currentTimeframe, "6m") }
+			hx-get={ fmt.Sprintf("/patients/%s/analysis/themes?timeframe=6m", patientID) }
+			hx-target="#theme-cloud-container"
+			hx-swap="innerHTML"
+		>
+			6 Meses
+		</button>
+		<button
+			class={ "filter-btn px-3 py-1.5 rounded text-sm transition-colors", getFilterActiveClass(currentTimeframe, "12m") }
+			hx-get={ fmt.Sprintf("/patients/%s/analysis/themes?timeframe=12m", patientID) }
+			hx-target="#theme-cloud-container"
+			hx-swap="innerHTML"
+		>
+			1 Ano
+		</button>
+	</div>
+}
+
+func getFilterActiveClass(current, target string) string {
+	if current == target {
+		return "bg-primary-600 text-white"
+	}
+	return "bg-gray-100 text-gray-600 hover:bg-gray-200"
+}

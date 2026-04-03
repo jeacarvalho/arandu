@@ -1,0 +1,42 @@
+package analysis
+
+import "strconv"
+
+templ ThemeStats(vm ThemeAnalysisViewModel) {
+	<div class="theme-stats bg-gray-50 rounded-lg p-4">
+		<h4 class="text-sm font-medium text-gray-600 mb-3">Estatísticas</h4>
+		<div class="grid grid-cols-2 gap-3">
+			<div class="stat-item">
+				<span class="text-xs text-gray-500">Total menções</span>
+				<p class="text-lg font-semibold text-gray-800">{ strconv.Itoa(vm.TotalCount) }</p>
+			</div>
+			<div class="stat-item">
+				<span class="text-xs text-gray-500">Temas únicos</span>
+				<p class="text-lg font-semibold text-gray-800">{ strconv.Itoa(len(vm.Themes)) }</p>
+			</div>
+			<div class="stat-item col-span-2">
+				<span class="text-xs text-gray-500">Período</span>
+				<p class="text-sm text-gray-700">{ getTimeframeLabel(vm.Timeframe) }</p>
+			</div>
+			if vm.SelectedTerm != "" {
+				<div class="stat-item col-span-2">
+					<span class="text-xs text-gray-500">Tema selecionado</span>
+					<p class="text-sm font-medium text-amber-700">{ vm.SelectedTerm }</p>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+func getTimeframeLabel(tf string) string {
+	switch tf {
+	case "3m":
+		return "Últimos 3 meses"
+	case "6m":
+		return "Últimos 6 meses"
+	case "12m":
+		return "Último ano"
+	default:
+		return "Todo o histórico"
+	}
+}

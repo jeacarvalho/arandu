@@ -1,3 +1,70 @@
 # Documentation files
 AUDITORIA_UX_FRONTEND_V2.md
 AUDITORIA_UX_FRONTEND_V3.md
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+/arandu
+/arandu.pid
+/cmd/arandu/arandu
+
+# Test binary
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+tmp/
+storage/tenants/*/
+!storage/tenants/.gitkeep
+*.db
+*.db-journal
+*.log
+server.log
+
+# Generated
+*_templ.go
+web/static/css/tailwind.css
+
+# Scripts
+scripts/fix_patients/
+scripts/import_massive.go
+scripts/test_fts.go
+scripts/clean_import.go
+
+# Proposta
+design/
+dump.txt
+proposta/
+
+# Environment
+.env
+
+# Screenshots (generated)
+screenshots/
+
+# Test scripts (temporary)
+scripts/diagnose_css.js
+scripts/test_*.js
+scripts/verify_tailwind_classes.sh
+scripts/visual_validation_test.js
+
+# Test files
+test_version.go

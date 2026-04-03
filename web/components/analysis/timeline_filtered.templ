@@ -1,0 +1,32 @@
+package analysis
+
+templ TimelineFiltered(events []ThemeEventViewModel) {
+	<div class="timeline-filtered space-y-3">
+		if len(events) > 0 {
+			<h4 class="text-sm font-medium text-gray-600 mb-3">
+				Eventos com o termo selecionado
+			</h4>
+			for _, event := range events {
+				<div class="event-item flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+					<div class="event-icon flex-shrink-0">
+						<i class={ "fas " + event.Icon } style={ "color: " + event.Color }></i>
+					</div>
+					<div class="event-content flex-1">
+						<div class="flex justify-between items-start">
+							<span class="text-xs text-gray-500">{ event.Date }</span>
+							<span class="text-xs px-2 py-0.5 rounded" style={ "background-color: " + event.Color + "20" + "; color: " + event.Color }>
+								{ event.Type }
+							</span>
+						</div>
+						<p class="text-sm text-gray-700 mt-1 font-clinical">{ event.Content }</p>
+						<a href={ templ.URL("/patients/" + event.SessionID + "/sessions") } class="text-xs text-primary-600 hover:underline mt-1 inline-block">
+							Ver sessão →
+						</a>
+					</div>
+				</div>
+			}
+		} else {
+			<p class="text-gray-500 text-center py-4 text-sm">Selecione um tema para ver os eventos relacionados.</p>
+		}
+	</div>
+}

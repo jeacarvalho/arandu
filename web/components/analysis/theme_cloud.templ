@@ -1,0 +1,70 @@
+package analysis
+
+import (
+	"fmt"
+	"strconv"
+)
+
+templ ThemeCloudPanel(vm ThemeAnalysisViewModel) {
+	<div class="theme-cloud-panel" id="theme-cloud-container">
+		if len(vm.Themes) > 0 {
+			<div class="theme-cloud-canvas flex flex-wrap gap-3 justify-center items-center p-4">
+				for _, theme := range vm.Themes {
+					<button
+						class={ "theme-term px-3 py-1 rounded-full transition-all duration-200 cursor-pointer hover:scale-110", getWeightClass(theme.Weight), getSelectedClass(vm.SelectedTerm, theme.Term) }
+						hx-get={ fmt.Sprintf("/patients/%s/analysis/themes/%s?timeframe=%s", vm.PatientID, theme.Term, vm.Timeframe) }
+						hx-target="#analysis-content"
+						hx-swap="innerHTML"
+						hx-indicator=".loading-indicator"
+					>
+						<span class={ "font-clinical", getWeightTextClass(theme.Weight) }>
+							{ theme.Term }
+						</span>
+						<span class="text-xs opacity-70 ml-1">
+							{ strconv.Itoa(theme.Frequency) }
+						</span>
+					</button>
+				}
+			</div>
+		} else {
+			<p class="text-gray-500 text-center p-4">Nenhum tema identificado ainda.</p>
+		}
+	</div>
+}
+
+func getWeightClass(weight int) string {
+	switch weight {
+	case 5:
+		return "bg-amber-100 text-amber-800 text-xl font-semibold"
+	case 4:
+		return "bg-amber-50 text-amber-700 text-lg font-medium"
+	case 3:
+		return "bg-gray-100 text-gray-700 text-base"
+	case 2:
+		return "bg-gray-50 text-gray-600 text-sm"
+	default:
+		return "bg-gray-25 text-gray-500 text-xs"
+	}
+}
+
+func getWeightTextClass(weight int) string {
+	switch weight {
+	case 5:
+		return "text-xl"
+	case 4:
+		return "text-lg"
+	case 3:
+		return "text-base"
+	case 2:
+		return "text-sm"
+	default:
+		return "text-xs"
+	}
+}
+
+func getSelectedClass(selectedTerm, currentTerm string) string {
+	if selectedTerm == currentTerm {
+		return "ring-2 ring-amber-500"
+	}
+	return ""
+}
