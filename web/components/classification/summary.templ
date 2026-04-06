@@ -1,0 +1,223 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"strconv"
+)
+
+// ClassificationSummaryData represents data for the classification summary
+type ClassificationSummaryData struct {
+	Summary       []observation.TagSummary
+	TotalTags     int
+	ShowLegend    bool
+}
+
+// ClassificationSummary renders a visual summary of tag distribution
+templ ClassificationSummary(data ClassificationSummaryData) {
+	<div class="classification-summary">
+		<!-- Header -->
+		<div class="summary-header mb-4">
+			<h3 class="text-sm font-semibold text-gray-900">Distribuição de Tags</h3>
+			<p class="text-xs text-gray-500">{ strconv.Itoa(data.TotalTags) } classificações no total</p>
+		</div>
+		
+		if len(data.Summary) == 0 {
+			<div class="summary-empty text-center py-8">
+				<div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+					<i class="fas fa-tags text-gray-400 text-xl"></i>
+				</div>
+				<p class="text-sm text-gray-500">Nenhuma classificação ainda</p>
+				<p class="text-xs text-gray-400 mt-1">As tags aparecerão aqui</p>
+			</div>
+		} else {
+			<!-- Visual Bar Chart -->
+			<div class="summary-chart space-y-3">
+				{{ 
+					maxCount := 0
+					for _, s := range data.Summary {
+						if s.Count > maxCount {
+							{{ maxCount = s.Count }}
+						}
+					}
+				}}
+				for _, summaryItem := range data.Summary {
+					{{ 
+						percentage := 0
+						if maxCount > 0 {
+							{{ percentage = (summaryItem.Count * 100) / maxCount }}
+						}
+						barColor := getTagTypeColor(summaryItem.TagType)
+					}}
+					<div class="summary-bar-item">
+						<div class="flex items-center justify-between mb-1">
+							<span class="text-sm text-gray-700">{ observation.TagTypeLabel(summaryItem.TagType) }</span>
+							<span class="text-xs text-gray-500">{ strconv.Itoa(summaryItem.Count) }</span>
+						</div>
+						<div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+							<div 
+								class="h-full rounded-full transition-all duration-500"
+								style={ "background-color: " + barColor + "; width: " + strconv.Itoa(percentage) + "%;" }
+							></div>
+						</div>
+					</div>
+				}
+			</div>
+			
+			<!-- Legend -->
+			if data.ShowLegend {
+				<div class="summary-legend mt-6 pt-4 border-t border-gray-200">
+					<h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Legenda</h4>
+					<div class="legend-items grid grid-cols-2 gap-2">
+						{{ 
+							tagTypes := []observation.TagType{
+								observation.TagTypeEmotion, 
+								observation.TagTypeBehavior, 
+								observation.TagTypeCognition, 
+								observation.TagTypeRelationship, 
+								observation.TagTypeSomatic, 
+								observation.TagTypeContext,
+							}
+						}}
+						for _, tagType := range tagTypes {
+							{{ color := getTagTypeColor(tagType) }}
+							<div class="legend-item flex items-center gap-2">
+								<span 
+									class="w-3 h-3 rounded-full"
+									style={ "background-color: " + color + ";" }
+								></span>
+								<span class="text-xs text-gray-600">{ observation.TagTypeLabel(tagType) }</span>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		}
+	</div>
+}
+
+// getTagTypeColor returns a color for each tag type
+func getTagTypeColor(tagType observation.TagType) string {
+	switch tagType {
+	case observation.TagTypeEmotion:
+		return "#0F6E56"
+	case observation.TagTypeBehavior:
+		return "#1D9E75"
+	case observation.TagTypeCognition:
+		return "#7C3AED"
+	case observation.TagTypeRelationship:
+		return "#F59E0B"
+	case observation.TagTypeSomatic:
+		return "#DC2626"
+	case observation.TagTypeContext:
+		return "#6B7280"
+	default:
+		return "#9CA3AF"
+	}
+}
+
+// PatientTagSummary renders a tag summary specific to a patient
+templ PatientTagSummary(patientID string, summary []observation.TagSummary) {
+	<div class="patient-tag-summary">
+		<div class="summary-header flex items-center justify-between mb-4">
+			<div>
+				<h3 class="text-sm font-semibold text-gray-900">Padrões do Paciente</h3>
+				<p class="text-xs text-gray-500 mt-1">Baseado nas observações registradas</p>
+			</div>
+			<a 
+				href={ "/patients/" + patientID + "/timeline" }
+				class="text-xs text-arandu-primary hover:underline"
+			>
+				Ver linha do tempo
+			</a>
+		</div>
+		
+		if len(summary) == 0 {
+			<div class="summary-empty text-center py-6">
+				<p class="text-sm text-gray-500">Sem dados suficientes</p>
+				<p class="text-xs text-gray-400 mt-1">Classifique observações para ver padrões</p>
+			</div>
+		} else {
+			<div class="summary-pills flex flex-wrap gap-2">
+				for _, item := range summary {
+					{{ 
+						color := getTagTypeColor(item.TagType)
+						badgeStyle := "background-color: " + color + "20; color: " + color + "; border-color: " + color + "40;"
+					}}
+					<div 
+						class="summary-pill inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border"
+						style={ badgeStyle }
+					>
+						<i class={ getTagTypeIconForSummary(item.TagType) + " text-xs" }></i>
+						<span>{ observation.TagTypeLabel(item.TagType) }</span>
+						<span class="opacity-70">({ strconv.Itoa(item.Count) })</span>
+					</div>
+				}
+			</div>
+			
+			<!-- Top Patterns -->
+			<div class="top-patterns mt-4 pt-4 border-t border-gray-100">
+				<h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Principais Padrões</h4>
+				<div class="patterns-list space-y-2">
+					{{ 
+						topCount := len(summary)
+						if topCount > 3 {
+							{{ topCount = 3 }}
+						}
+					}}
+					for i := 0; i < topCount; i++ {
+						{{ 
+							item := summary[i]
+							percentage := 0
+							total := 0
+							for _, s := range summary {
+								{{ total += s.Count }}
+							}
+							if total > 0 {
+								{{ percentage = (item.Count * 100) / total }}
+							}
+						}}
+						<div class="pattern-item flex items-center gap-3">
+							<span class="pattern-rank w-5 h-5 rounded-full bg-gray-100 text-gray-600 text-xs flex items-center justify-center font-medium">
+								{ strconv.Itoa(i + 1) }
+							</span>
+							<span class="pattern-name text-sm text-gray-700 flex-1">{ observation.TagTypeLabel(item.TagType) }</span>
+							<span class="pattern-percentage text-xs font-medium text-gray-500">{ strconv.Itoa(percentage) }%</span>
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// getTagTypeIconForSummary returns icon for summary view
+func getTagTypeIconForSummary(tagType observation.TagType) string {
+	switch tagType {
+	case observation.TagTypeEmotion:
+		return "fas fa-heart"
+	case observation.TagTypeBehavior:
+		return "fas fa-running"
+	case observation.TagTypeCognition:
+		return "fas fa-brain"
+	case observation.TagTypeRelationship:
+		return "fas fa-users"
+	case observation.TagTypeSomatic:
+		return "fas fa-heartbeat"
+	case observation.TagTypeContext:
+		return "fas fa-globe"
+	default:
+		return "fas fa-tag"
+	}
+}
+
+// EmptySummary renders an empty state for the summary
+templ EmptySummary(message string) {
+	<div class="classification-summary-empty">
+		<div class="text-center py-8">
+			<div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+				<i class="fas fa-chart-pie text-gray-400 text-xl"></i>
+			</div>
+			<p class="text-sm text-gray-500">{ message }</p>
+		</div>
+	</div>
+}

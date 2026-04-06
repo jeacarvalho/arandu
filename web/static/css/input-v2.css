@@ -19,6 +19,11 @@
 @source inline("timeline-event-type-{session,observation,intervention,goal}");
 @source inline("timeline-filter-btn");
 
+/* Custom component classes */
+@source inline("intervention-item");
+@source inline("intervention-content");
+@source inline("intervention-tags");
+
 @theme {
   /* Cores Arandu (mantidas do v1) */
   --color-arandu-primary: #0F6E56;
@@ -77,6 +82,19 @@
   --radius-2xl: 2rem;
 
   /* ============================================
+   * DESIGN TOKENS - TYPOGRAPHY
+   * ============================================ */
+
+  /* Patient Name - Responsive */
+  --font-patient-name: 2rem; /* 32px - desktop */
+  --font-patient-name-tablet: 1.75rem; /* 28px - tablet */
+  --font-patient-name-mobile: 1.5rem; /* 24px - mobile */
+
+  /* Clinical Content */
+  --font-clinical-content: 1.125rem; /* 18px */
+  --font-clinical-content-mobile: 1rem; /* 16px */
+
+  /* ============================================
    * DESIGN TOKENS - SHELL LAYOUT v2
    * NÃO USE VALORES ARBITRÁRIOS NO CÓDIGO
    * Use estes tokens para estrutura macro
@@ -87,18 +105,19 @@
   --layout-topbar-height-mobile: 56px;
 
   /* Layout - Sidebar */
-  --layout-sidebar-width: 260px;
-  --layout-sidebar-width-collapsed: 72px;
+  --layout-sidebar-width: 280px;
+  --layout-sidebar-width-collapsed: 80px;
   --layout-sidebar-transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Layout - Canvas */
-  --layout-canvas-padding: 24px;
+  --layout-canvas-padding: 32px;
+  --layout-canvas-padding-tablet: 24px;
   --layout-canvas-padding-mobile: 16px;
   --layout-canvas-max-width: 1440px;
 
   /* Layout - Canvas Content Offset (distance from sidebar and topbar) */
   --layout-canvas-offset-top: 80px;
-  --layout-canvas-offset-left: 260px;
+  --layout-canvas-offset-left: 280px;
   --layout-canvas-offset-right: 0px;
 
   /* Layout - Grid/Gap */
@@ -135,8 +154,10 @@
   --widget-shadow: var(--shadow-sm);
   --widget-shadow-hover: var(--shadow-md);
 
-  /* Widget - Border Radius */
-  --widget-radius: 0.75rem; /* 12px - rounded-xl */
+  /* Widget - Border Radius - Responsive */
+  --widget-radius: 1.5rem; /* 24px - rounded-2xl (desktop) */
+  --widget-radius-tablet: 1.25rem; /* 20px - rounded-xl (tablet) */
+  --widget-radius-mobile: 1rem; /* 16px - rounded-lg (mobile) */
 
   /* Widget - Padding */
   --widget-padding: 24px; /* p-6 */
@@ -851,10 +872,22 @@
     box-shadow: var(--widget-shadow-hover);
   }
 
-  /* Widget Radius */
+/* Widget Radius - Responsive */
+.rounded-widget {
+  border-radius: var(--widget-radius-mobile);
+}
+
+@media (min-width: 768px) {
+  .rounded-widget {
+    border-radius: var(--widget-radius-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
   .rounded-widget {
     border-radius: var(--widget-radius);
   }
+}
 
   /* Widget Padding */
   .p-widget {
@@ -1773,7 +1806,7 @@ main .patient-form-wrapper,
 
 /* Sidebar state classes - applied by Alpine */
 .shell-canvas-expanded {
-  padding-left: 260px;
+  padding-left: 280px;
 }
 
 .shell-canvas-collapsed {
@@ -1788,7 +1821,4 @@ main .patient-form-wrapper,
   }
 }
 
-.shell-content {
-  max-width: 1400px;
-  margin: 0 auto;
-}
+/* Cache bust: 1775356309 */

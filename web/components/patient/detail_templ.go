@@ -386,7 +386,20 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-clipboard-list w-5 text-arandu-primary\"></i> Anamnese Clínica</a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-clipboard-list w-5 text-arandu-primary\"></i> Anamnese Clínica</a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var23 templ.SafeURL
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + patient.ID + "/analysis/themes"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 282, Col: 70}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" class=\"flex items-center gap-2 p-4 bg-arandu-bg rounded-lg text-text-secondary font-sans text-sm font-medium hover:bg-arandu-soft hover:text-arandu-primary transition-colors\" hx-boost=\"true\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-head=\"merge\"><i class=\"fas fa-chart-pie w-5 text-arandu-primary\"></i> Análise de Temas</a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -394,193 +407,206 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div></div><!-- Temas Recorrentes --><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 grid-card-1\"><div class=\"flex items-center gap-4 mb-6\"><div class=\"w-10 h-10 bg-gradient-to-br from-clinical-purple to-purple-600 rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-tags\"></i></div><div><h2 class=\"font-clinical text-lg font-semibold text-arandu-dark mb-0\">Temas Recorrentes</h2><p class=\"font-sans text-xs text-text-tertiary dark:text-neutral-400 mb-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div></div><!-- Temas Recorrentes --><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 grid-card-1\"><div class=\"flex items-center gap-4 mb-6\"><div class=\"w-10 h-10 bg-gradient-to-br from-clinical-purple to-purple-600 rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-tags\"></i></div><div><h2 class=\"font-clinical text-lg font-semibold text-arandu-dark mb-0\">Temas Recorrentes</h2><p class=\"font-sans text-xs text-text-tertiary dark:text-neutral-400 mb-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(patient.Themes.TotalCount))
+		var templ_7745c5c3_Var24 string
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(patient.Themes.TotalCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 293, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 305, Col: 122}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " menções</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, " menções</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(patient.Themes.Themes) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"theme-cloud-container\"><div class=\"theme-cloud-float\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"theme-cloud-container\"><div class=\"theme-cloud-float\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, theme := range patient.Themes.Themes {
-				var templ_7745c5c3_Var24 = []any{"theme-float-word", theme.WeightClass}
-				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
+				var templ_7745c5c3_Var25 = []any{"theme-float-word", theme.WeightClass}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var25...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var25 templ.SafeURL
-				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + patient.ID + "?q=" + theme.Name))
+				var templ_7745c5c3_Var26 templ.SafeURL
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + patient.ID + "/analysis/themes"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 300, Col: 75}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var26 string
-				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var24).String())
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 1, Col: 0}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 312, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" class=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var27 string
-				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Name)
+				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var25).String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 301, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 1, Col: 0}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var28 string
-				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
+				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 302, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 313, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</a>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var29 string
+				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(" ")
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 314, Col: 17}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</div><div class=\"mt-4 text-center\"><a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var30 templ.SafeURL
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + patient.ID + "/analysis/themes"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 318, Col: 74}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"text-sm text-arandu-primary hover:underline\">Ver análise completa →</a></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"text-center py-6 text-text-quaternary dark:text-neutral-500\"><i class=\"fas fa-tags text-2xl mb-3 opacity-50\"></i><p class=\"font-sans text-sm\">Nenhum tema identificado ainda</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"text-center py-6 text-text-quaternary dark:text-neutral-500\"><i class=\"fas fa-tags text-2xl mb-3 opacity-50\"></i><p class=\"font-sans text-sm\">Nenhum tema identificado ainda</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></div><!-- Sessões Clínicas -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div></div><!-- Sessões Clínicas -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(sessions) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"mt-8\"><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 p-8\"><div class=\"flex items-center justify-between mb-6\"><div class=\"flex items-center gap-4\"><div class=\"w-10 h-10 bg-gradient-to-br from-clinical-purple to-purple-600 rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-calendar-alt\"></i></div><div><h2 class=\"font-clinical text-base font-semibold text-arandu-dark mb-0\">Sessões Clínicas</h2></div></div><div class=\"font-clinical text-xs font-medium text-arandu-primary bg-arandu-bg px-3 py-1 rounded-full\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"mt-8\"><div class=\"bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 p-8\"><div class=\"flex items-center justify-between mb-6\"><div class=\"flex items-center gap-4\"><div class=\"w-10 h-10 bg-gradient-to-br from-clinical-purple to-purple-600 rounded-lg flex items-center justify-center text-white\"><i class=\"fas fa-calendar-alt\"></i></div><div><h2 class=\"font-clinical text-base font-semibold text-arandu-dark mb-0\">Sessões Clínicas</h2></div></div><div class=\"font-clinical text-xs font-medium text-arandu-primary bg-arandu-bg px-3 py-1 rounded-full\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var29 string
-			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(sessions)))
+			var templ_7745c5c3_Var31 string
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(sessions)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 329, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 346, Col: 36}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " sessões</div></div><div class=\"grid gap-4\" style=\"grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " sessões</div></div><div class=\"grid gap-4\" style=\"grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, s := range sessions {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var30 templ.SafeURL
-				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + s.ID + "/edit")
+				var templ_7745c5c3_Var32 templ.SafeURL
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + s.ID + "/edit")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 334, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 351, Col: 45}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\" class=\"session-notebook-card\"><div class=\"session-badge\">Sessão #")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var31 string
-				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(s.SessionNumber))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 335, Col: 75}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				if s.Summary != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"session-clinical-report\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var32 string
-					templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(s.Summary)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 337, Col: 57}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"session-tags\"><span class=\"session-tag\">Observação</span> <span class=\"session-tag\">Reflexão</span></div><div class=\"font-clinical text-xs text-arandu-soft\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\" class=\"session-notebook-card\"><div class=\"session-badge\">Sessão #")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var33 string
-				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(s.Date)
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(s.SessionNumber))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 343, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 352, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if s.Summary != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"session-clinical-report\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var34 string
+					templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(s.Summary)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 354, Col: 57}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"session-tags\"><span class=\"session-tag\">Observação</span> <span class=\"session-tag\">Reflexão</span></div><div class=\"font-clinical text-xs text-arandu-soft\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var35 string
+				templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(s.Date)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/detail.templ`, Line: 360, Col: 68}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<!-- Insight Container for AI Reflections --><div id=\"insight-container\" class=\"mt-8\"></div><!-- Insight Loading Indicator -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<!-- Insight Container for AI Reflections --><div id=\"insight-container\" class=\"mt-8\"></div><!-- Insight Loading Indicator -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -588,7 +614,7 @@ func PatientDetail(patient PatientDetailItem, sessions []SessionItem) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<!-- Painel de Insights (IA) --><div class=\"insights-panel mt-8\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div><script>\n\t\t\tfunction openBioContextEditor(patientId) {\n\t\t\t\tconst modal = document.createElement('div');\n\t\t\t\tmodal.id = 'bio-context-editor-modal';\n\t\t\t\tmodal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 32px;';\n\t\t\t\t\n\t\t\t\tmodal.innerHTML = `\n\t\t\t\t\t<div style=\"background: white; border-radius: 16px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto;\">\n\t\t\t\t\t\t<div style=\"padding: 24px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between;\">\n\t\t\t\t\t\t\t<h3 style=\"font-size: 1.25rem; font-weight: 600; color: #111827; margin: 0;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-pills\" style=\"margin-right: 8px;\"></i>\n\t\t\t\t\t\t\t\tEditar Contexto Biológico\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<button id=\"close-bio-editor\" style=\"background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id=\"bio-context-editor-content\" style=\"padding: 24px;\">\n\t\t\t\t\t\t\t<div style=\"text-align: center; padding: 40px;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem; margin-bottom: 16px;\"></i>\n\t\t\t\t\t\t\t\t<p>Carregando editor...</p>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\t\n\t\t\t\tdocument.body.appendChild(modal);\n\t\t\t\t\n\t\t\t\tfetch('/patients/' + patientId + '/context')\n\t\t\t\t\t.then(function(response) { return response.text(); })\n\t\t\t\t\t.then(function(html) {\n\t\t\t\t\t\tvar editorContent = document.getElementById('bio-context-editor-content');\n\t\t\t\t\t\teditorContent.innerHTML = html;\n\t\t\t\t\t\tif (window.htmx) {\n\t\t\t\t\t\t\thtmx.process(editorContent);\n\t\t\t\t\t\t}\n\t\t\t\t\t})\n\t\t\t\t\t.catch(function(error) {\n\t\t\t\t\t\tconsole.error('Erro ao carregar editor:', error);\n\t\t\t\t\t\tvar editorContent = document.getElementById('bio-context-editor-content');\n\t\t\t\t\t\teditorContent.innerHTML = '<div style=\"text-align: center; padding: 40px; color: #6b7280;\">Erro: ' + error.message + '</div>';\n\t\t\t\t\t});\n\t\t\t\t\n\t\t\t\tdocument.getElementById('close-bio-editor').addEventListener('click', function() {\n\t\t\t\t\tdocument.body.removeChild(modal);\n\t\t\t\t});\n\t\t\t\t\n\t\t\t\tmodal.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target === modal) {\n\t\t\t\t\t\tdocument.body.removeChild(modal);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\t\t\t\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\tvar editBtn = document.getElementById('bio-edit-btn');\n\t\t\t\tif (editBtn) {\n\t\t\t\t\tvar patientId = editBtn.getAttribute('data-patient-id');\n\t\t\t\t\tif (patientId) {\n\t\t\t\t\t\teditBtn.addEventListener('click', function() {\n\t\t\t\t\t\t\topenBioContextEditor(patientId);\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tvar editBtnEmpty = document.getElementById('bio-edit-btn-empty');\n\t\t\t\tif (editBtnEmpty) {\n\t\t\t\t\tvar patientId = editBtnEmpty.getAttribute('data-patient-id');\n\t\t\t\t\tif (patientId) {\n\t\t\t\t\t\teditBtnEmpty.addEventListener('click', function() {\n\t\t\t\t\t\t\topenBioContextEditor(patientId);\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t</script></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<!-- Painel de Insights (IA) --><div class=\"insights-panel mt-8\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div><script>\n\t\t\tfunction openBioContextEditor(patientId) {\n\t\t\t\tconst modal = document.createElement('div');\n\t\t\t\tmodal.id = 'bio-context-editor-modal';\n\t\t\t\tmodal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 32px;';\n\t\t\t\t\n\t\t\t\tmodal.innerHTML = `\n\t\t\t\t\t<div style=\"background: white; border-radius: 16px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto;\">\n\t\t\t\t\t\t<div style=\"padding: 24px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between;\">\n\t\t\t\t\t\t\t<h3 style=\"font-size: 1.25rem; font-weight: 600; color: #111827; margin: 0;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-pills\" style=\"margin-right: 8px;\"></i>\n\t\t\t\t\t\t\t\tEditar Contexto Biológico\n\t\t\t\t\t\t\t</h3>\n\t\t\t\t\t\t\t<button id=\"close-bio-editor\" style=\"background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-times\"></i>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div id=\"bio-context-editor-content\" style=\"padding: 24px;\">\n\t\t\t\t\t\t\t<div style=\"text-align: center; padding: 40px;\">\n\t\t\t\t\t\t\t\t<i class=\"fas fa-spinner fa-spin\" style=\"font-size: 1.5rem; margin-bottom: 16px;\"></i>\n\t\t\t\t\t\t\t\t<p>Carregando editor...</p>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t`;\n\t\t\t\t\n\t\t\t\tdocument.body.appendChild(modal);\n\t\t\t\t\n\t\t\t\tfetch('/patients/' + patientId + '/context')\n\t\t\t\t\t.then(function(response) { return response.text(); })\n\t\t\t\t\t.then(function(html) {\n\t\t\t\t\t\tvar editorContent = document.getElementById('bio-context-editor-content');\n\t\t\t\t\t\teditorContent.innerHTML = html;\n\t\t\t\t\t\tif (window.htmx) {\n\t\t\t\t\t\t\thtmx.process(editorContent);\n\t\t\t\t\t\t}\n\t\t\t\t\t})\n\t\t\t\t\t.catch(function(error) {\n\t\t\t\t\t\tconsole.error('Erro ao carregar editor:', error);\n\t\t\t\t\t\tvar editorContent = document.getElementById('bio-context-editor-content');\n\t\t\t\t\t\teditorContent.innerHTML = '<div style=\"text-align: center; padding: 40px; color: #6b7280;\">Erro: ' + error.message + '</div>';\n\t\t\t\t\t});\n\t\t\t\t\n\t\t\t\tdocument.getElementById('close-bio-editor').addEventListener('click', function() {\n\t\t\t\t\tdocument.body.removeChild(modal);\n\t\t\t\t});\n\t\t\t\t\n\t\t\t\tmodal.addEventListener('click', function(e) {\n\t\t\t\t\tif (e.target === modal) {\n\t\t\t\t\t\tdocument.body.removeChild(modal);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\t\t\t\n\t\t\tdocument.addEventListener('DOMContentLoaded', function() {\n\t\t\t\tvar editBtn = document.getElementById('bio-edit-btn');\n\t\t\t\tif (editBtn) {\n\t\t\t\t\tvar patientId = editBtn.getAttribute('data-patient-id');\n\t\t\t\t\tif (patientId) {\n\t\t\t\t\t\teditBtn.addEventListener('click', function() {\n\t\t\t\t\t\t\topenBioContextEditor(patientId);\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tvar editBtnEmpty = document.getElementById('bio-edit-btn-empty');\n\t\t\t\tif (editBtnEmpty) {\n\t\t\t\t\tvar patientId = editBtnEmpty.getAttribute('data-patient-id');\n\t\t\t\t\tif (patientId) {\n\t\t\t\t\t\teditBtnEmpty.addEventListener('click', function() {\n\t\t\t\t\t\t\topenBioContextEditor(patientId);\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t</script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

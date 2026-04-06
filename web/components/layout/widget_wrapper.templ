@@ -1,0 +1,136 @@
+package layout
+
+// WidgetWrapper componente de container padronizado para widgets
+// Uso: @WidgetWrapper(props)
+templ WidgetWrapper(props WidgetProps) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ props.GetWrapperClasses() }
+		{ props.HTMXAttributes... }
+	>
+		<!-- Header - Apenas se houver título ou ações -->
+		if props.HasTitle() || props.HasActions() {
+			<header class={ props.GetHeaderClasses() }>
+				<!-- Título e Subtítulo -->
+				if props.HasTitle() {
+					<div class="widget-title-section">
+						<h3 class="widget-title">{ props.Title }</h3>
+						if props.Subtitle != "" {
+							<p class="widget-subtitle">{ props.Subtitle }</p>
+						}
+					</div>
+				}
+				
+				<!-- Ações do Header -->
+				if props.HasActions() {
+					<div class="widget-actions">
+						@props.Actions
+					</div>
+				}
+			</header>
+		}
+		
+		<!-- Conteúdo Principal -->
+		<div class={ props.GetContentClasses() }>
+			@props.Content
+		</div>
+		
+		<!-- Footer - Apenas se houver conteúdo -->
+		if props.HasFooter() {
+			<footer class="widget-footer">
+				@props.Footer
+			</footer>
+		}
+	</div>
+}
+
+// Widget é um helper simplificado para criar widgets comuns
+// Uso: @Widget("Título", "Subtítulo", conteúdo)
+templ Widget(title string, subtitle string, content templ.Component) {
+	@WidgetWrapper(NewWidgetProps(content).
+		WithTitle(title).
+		WithSubtitle(subtitle).
+		Build())
+}
+
+// WidgetWithActions é um helper para widgets com ações no header
+// Uso: @WidgetWithActions("Título", "Subtítulo", ações, conteúdo)
+templ WidgetWithActions(title string, subtitle string, actions templ.Component, content templ.Component) {
+	@WidgetWrapper(NewWidgetProps(content).
+		WithTitle(title).
+		WithSubtitle(subtitle).
+		WithActions(actions).
+		Build())
+}
+
+// WidgetCompact é um helper para widgets compactos
+// Uso: @WidgetCompact("Título", conteúdo)
+templ WidgetCompact(title string, content templ.Component) {
+	@WidgetWrapper(NewWidgetProps(content).
+		WithTitle(title).
+		WithCompact().
+		Build())
+}
+
+// WidgetNoPadding é um helper para widgets sem padding (full-bleed)
+// Uso: @WidgetNoPadding("Título", conteúdo)
+templ WidgetNoPadding(title string, content templ.Component) {
+	@WidgetWrapper(NewWidgetProps(content).
+		WithTitle(title).
+		WithNoPadding().
+		Build())
+}
+
+// WidgetWithHTMX é um helper para widgets com atributos HTMX
+// Uso: @WidgetWithHTMX("Título", conteúdo, atributos)
+templ WidgetWithHTMX(title string, content templ.Component, attrs templ.Attributes) {
+	@WidgetWrapper(NewWidgetProps(content).
+		WithTitle(title).
+		WithHTMX(attrs).
+		Build())
+}
+
+// WidgetLoading estado de loading do widget
+templ WidgetLoading() {
+	<div class="widget-wrapper flex items-center justify-center" style="min-height: 200px;">
+		<div class="flex flex-col items-center gap-3">
+			<div class="w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin"></div>
+			<span class="text-sm text-neutral-500">Carregando...</span>
+		</div>
+	</div>
+}
+
+// WidgetError estado de erro do widget
+templ WidgetError(message string, retryURL string) {
+	<div class="widget-wrapper flex flex-col items-center justify-center text-center" style="min-height: 200px;">
+		<div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center mb-3">
+			<i class="fas fa-exclamation-circle text-2xl"></i>
+		</div>
+		<p class="text-neutral-700 font-medium mb-1">Erro ao carregar</p>
+		<p class="text-sm text-neutral-500 mb-4">{ message }</p>
+		if retryURL != "" {
+			<button
+				class="px-4 py-2 bg-arandu-primary text-white rounded-lg hover:bg-arandu-dark transition-colors text-sm"
+				hx-get={ retryURL }
+				hx-target="closest .widget-wrapper"
+				hx-swap="outerHTML"
+			>
+				<i class="fas fa-redo mr-2"></i>
+				Tentar novamente
+			</button>
+		}
+	</div>
+}
+
+// WidgetEmpty estado vazio do widget
+templ WidgetEmpty(icon string, title string, description string) {
+	<div class="widget-wrapper flex flex-col items-center justify-center text-center" style="min-height: 200px;">
+		<div class="w-12 h-12 rounded-full bg-neutral-50 text-neutral-400 flex items-center justify-center mb-3">
+			<i class={ "fas " + icon + " text-2xl" }></i>
+		</div>
+		<p class="text-neutral-700 font-medium mb-1">{ title }</p>
+		<p class="text-sm text-neutral-500">{ description }</p>
+	</div>
+}

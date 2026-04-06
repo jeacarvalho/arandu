@@ -105,6 +105,38 @@ func (m *MockObservationRepository) Delete(ctx context.Context, id string) error
 	return nil
 }
 
+func (m *MockObservationRepository) GetTags(ctx context.Context) ([]Tag, error) {
+	return nil, nil
+}
+
+func (m *MockObservationRepository) GetTagsByType(ctx context.Context, tagType TagType) ([]Tag, error) {
+	return nil, nil
+}
+
+func (m *MockObservationRepository) AddTagToObservation(ctx context.Context, observationID, tagID string, intensity int) error {
+	return nil
+}
+
+func (m *MockObservationRepository) RemoveTagFromObservation(ctx context.Context, observationID, tagID string) error {
+	return nil
+}
+
+func (m *MockObservationRepository) GetObservationTags(ctx context.Context, observationID string) ([]ObservationTag, error) {
+	return nil, nil
+}
+
+func (m *MockObservationRepository) GetTagsSummary(ctx context.Context) ([]TagSummary, error) {
+	return nil, nil
+}
+
+func (m *MockObservationRepository) GetTagsSummaryByPatient(ctx context.Context, patientID string) ([]TagSummary, error) {
+	return nil, nil
+}
+
+func (m *MockObservationRepository) FindByTag(ctx context.Context, tagID string) ([]*Observation, error) {
+	return nil, nil
+}
+
 func TestObservation_RepositoryInterface(t *testing.T) {
 	repo := &MockObservationRepository{}
 	var _ Repository = repo

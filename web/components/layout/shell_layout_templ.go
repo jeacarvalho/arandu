@@ -103,7 +103,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(config.PageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 74, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 74, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 78, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 78, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -130,13 +130,13 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 79, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 79, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script>\n\t\t\t// Initialize Alpine.store('shell') before Alpine.js loads\n\t\t\t// This ensures the store is available when Alpine processes x-data\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tif (!Alpine.store('shell')) {\n\t\t\t\t\tAlpine.store('shell', {\n\t\t\t\t\t\t// sidebarOpen: controls MOBILE drawer visibility (true = open, false = closed)\n\t\t\t\t\t\t// On desktop, sidebar is always visible (controlled by CSS md:flex)\n\t\t\t\t\t\tsidebarOpen: false,\n\t\t\t\t\t\t// sidebarCollapsed: controls DESKTOP sidebar width (true = 80px, false = 260px)\n\t\t\t\t\t\tsidebarCollapsed: false,\n\t\t\t\t\t\tinit() {\n\t\t\t\t\t\t\tthis.sidebarOpen = false; // Always start closed on mobile\n\t\t\t\t\t\t\tthis.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';\n\t\t\t\t\t\t},\n\t\t\t\t\t\ttoggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },\n\t\t\t\t\t\tcloseSidebar() { this.sidebarOpen = false; },\n\t\t\t\t\t\ttoggleCollapse() {\n\t\t\t\t\t\t\tthis.sidebarCollapsed = !this.sidebarCollapsed;\n\t\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"shell\" x-data=\"Alpine.store('shell')\" x-init=\"$store.shell.init()\"><!-- Topbar -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><!-- BFCache Fix: Must be inline and early to catch pageshow event --><script>\n\t// Fix for browser back/forward button showing empty content\n\t// This runs immediately when page is restored from BFCache\n\twindow.addEventListener('pageshow', function(event) {\n\t\tif (event.persisted) {\n\t\t\tconsole.log('[BFCache] Page restored from cache, checking content...');\n\t\t\t\n\t\t\t// Give a small delay for DOM to settle\n\t\t\tsetTimeout(function() {\n\t\t\t\tvar mainContent = document.getElementById('main-content');\n\t\t\t\tif (mainContent) {\n\t\t\t\t\tvar html = mainContent.innerHTML.trim();\n\t\t\t\t\t// Check if content is effectively empty (no visible elements)\n\t\t\t\t\tvar hasContent = mainContent.querySelector('.content-header, .sota-container, .patient-profile, .card, form, table, .clinical-content');\n\t\t\t\t\t\n\t\t\t\t\tif (!hasContent || html.length < 100) {\n\t\t\t\t\t\tconsole.log('[BFCache] Content missing or too small, forcing reload...');\n\t\t\t\t\t\twindow.location.reload();\n\t\t\t\t\t} else {\n\t\t\t\t\t\tconsole.log('[BFCache] Content appears valid');\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}, 100);\n\t\t}\n\t});\n\t</script><script>\n\t// Initialize Alpine.store('shell') before Alpine.js loads\n\t\t\t// This ensures the store is available when Alpine processes x-data\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tif (!Alpine.store('shell')) {\n\t\t\t\t\tAlpine.store('shell', {\n\t\t\t\t\t\t// sidebarOpen: controls MOBILE drawer visibility (true = open, false = closed)\n\t\t\t\t\t\t// On desktop, sidebar is always visible (controlled by CSS md:flex)\n\t\t\t\t\t\tsidebarOpen: false,\n\t\t\t\t\t\t// sidebarCollapsed: controls DESKTOP sidebar width (true = 80px, false = 260px)\n\t\t\t\t\t\tsidebarCollapsed: false,\n\t\t\t\t\t\tinit() {\n\t\t\t\t\t\t\tthis.sidebarOpen = false; // Always start closed on mobile\n\t\t\t\t\t\t\tthis.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';\n\t\t\t\t\t\t},\n\t\t\t\t\t\ttoggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },\n\t\t\t\t\t\tcloseSidebar() { this.sidebarOpen = false; },\n\t\t\t\t\t\ttoggleCollapse() {\n\t\t\t\t\t\t\tthis.sidebarCollapsed = !this.sidebarCollapsed;\n\t\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap\" rel=\"stylesheet\"><script>\n\t\t\tif (window.matchMedia('(prefers-color-scheme: dark)').matches) {\n\t\t\t\tdocument.documentElement.classList.add('dark');\n\t\t\t}\n\t\t</script></head><body><div class=\"shell\" x-data=\"Alpine.store('shell')\" x-init=\"$store.shell.init()\"><!-- Topbar -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -154,7 +154,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Main Content Area --><main class=\"shell-main\"><!-- Scrollable Canvas --><div class=\"shell-canvas\"><div class=\"shell-canvas-container\" :class=\"sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'\"><div class=\"shell-content\" id=\"main-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Main Content Area --><main class=\"shell-main\"><!-- Scrollable Canvas --><div class=\"shell-canvas\"><div class=\"shell-canvas-container\" :class=\"sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'\"><div class=\"shell-content\" id=\"main-content\" hx-history=\"false\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,13 +169,13 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 162, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 189, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></script><!-- Debug Script - Remove in production --><script src=\"/static/js/htmx-debug.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -245,7 +245,7 @@ func ShellTopbar(config ShellConfig) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(config.UserEmail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 209, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 238, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -520,7 +520,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var14 templ.SafeURL
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 349, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 378, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -543,7 +543,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 354, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 383, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -565,7 +565,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var16).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -578,7 +578,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 363, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 392, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -699,7 +699,7 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 395, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 424, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -717,7 +717,7 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 397, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 426, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -770,7 +770,7 @@ func ShellCard(title string, content templ.Component) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 407, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 436, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {

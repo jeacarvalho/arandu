@@ -208,14 +208,14 @@ func MedicationList(data MedicationListViewModel) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if med.IsActive {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<button type=\"button\" class=\"bio-med-action action-suspend\" title=\"Suspender medicação\" hx-put=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<button type=\"button\" class=\"bio-med-action action-suspend\" title=\"Suspender medicação\" aria-label=\"Suspender medicação\" hx-put=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=suspend")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 43, Col: 100}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 44, Col: 100}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -227,14 +227,14 @@ func MedicationList(data MedicationListViewModel) templ.Component {
 					}
 				}
 				if med.IsSuspended {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<button type=\"button\" class=\"bio-med-action action-activate\" title=\"Reativar medicação\" hx-put=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<button type=\"button\" class=\"bio-med-action action-activate\" title=\"Reativar medicação\" aria-label=\"Reativar medicação\" hx-put=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + data.PatientID + "/medications/" + med.ID + "/status?status=activate")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 56, Col: 101}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/medication_list.templ`, Line: 58, Col: 101}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {

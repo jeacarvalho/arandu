@@ -8,6 +8,11 @@ package session
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"arandu/internal/domain/intervention"
+	"arandu/internal/domain/observation"
+)
+
 type SessionDetail struct {
 	ID          string
 	PatientID   string
@@ -21,12 +26,14 @@ type Observation struct {
 	ID        string
 	Content   string
 	CreatedAt string
+	Tags      []observation.ObservationTag
 }
 
 type Intervention struct {
 	ID        string
 	Content   string
 	CreatedAt string
+	Tags      []*intervention.InterventionClassification
 }
 
 func SessionDetailView(session SessionDetail, observations []Observation, interventions []Intervention, patientID string, errorMsg string) templ.Component {
@@ -58,7 +65,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMsg)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/detail.templ`, Line: 28, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `detail.templ`, Line: 35, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -71,7 +78,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + patientID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/detail.templ`, Line: 29, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `detail.templ`, Line: 36, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -89,7 +96,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(session.Date)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/detail.templ`, Line: 35, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `detail.templ`, Line: 42, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -102,7 +109,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 			var templ_7745c5c3_Var5 templ.SafeURL
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/session/" + session.ID + "/edit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/detail.templ`, Line: 39, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `detail.templ`, Line: 46, Col: 60}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -118,6 +125,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 						ID:        o.ID,
 						Content:   o.Content,
 						CreatedAt: o.CreatedAt,
+						Tags:      o.Tags,
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -142,6 +150,7 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 						ID:        i.ID,
 						Content:   i.Content,
 						CreatedAt: i.CreatedAt,
+						Tags:      i.Tags,
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -164,14 +173,14 @@ func SessionDetailView(session SessionDetail, observations []Observation, interv
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(session.Summary)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/detail.templ`, Line: 115, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `detail.templ`, Line: 122, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"text-center text-muted\"><i class=\"fas fa-file-medical-alt icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhum resumo registrado</p></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"text-center text-neutral-600\"><i class=\"fas fa-file-medical-alt icon-lg mb-md opacity-50\"></i><p class=\"font-italic\">Nenhum resumo registrado</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

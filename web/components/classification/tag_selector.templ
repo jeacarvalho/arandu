@@ -1,0 +1,282 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"strconv"
+)
+
+// TagSelectorData represents data for the tag selector component
+type TagSelectorData struct {
+	ObservationID  string
+	AvailableTags  []observation.Tag
+	SelectedTags   []observation.ObservationTag
+}
+
+// TagSelector renders a complete tag selector with intensity control
+// HTMX-enabled for adding tags without page reload
+templ TagSelector(data TagSelectorData) {
+	<div id={ "observation-" + data.ObservationID + "-tag-selector" } class="tag-selector bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+		<!-- Header -->
+		<div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+			<h4 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+				<i class="fas fa-tags text-arandu-primary"></i>
+				Classificar Observação
+			</h4>
+			<button 
+				type="button"
+				class="text-gray-400 hover:text-gray-600 transition-colors"
+				hx-get={ "/observations/" + data.ObservationID }
+				hx-target={ "#observation-" + data.ObservationID + "-tags" }
+				hx-swap="innerHTML"
+				title="Fechar"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+		
+		<form
+			hx-post={ "/observations/" + data.ObservationID + "/classify" }
+			hx-target={ "#observation-" + data.ObservationID + "-tags" }
+			hx-swap="innerHTML"
+			class="space-y-5"
+			onsubmit="return validateTagForm(this)"
+		>
+			<!-- Category Selection - Prominent -->
+			<div class="tag-selector-field">
+				<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+					Categoria da Observação
+				</label>
+				<div class="relative">
+					<select
+						name="tag_id"
+						id={ "tag-select-" + data.ObservationID }
+						class="tag-select w-full bg-gradient-to-r from-arandu-soft/30 to-white border-2 border-arandu-primary/30 rounded-xl px-4 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-arandu-primary focus:border-arandu-primary appearance-none cursor-pointer shadow-sm transition-all hover:border-arandu-primary/50"
+						required
+						onchange="updateTagPreview(this)"
+					>
+						<option value="" class="text-gray-400">Selecione uma categoria...</option>
+						{{ 
+							tagTypes := []observation.TagType{
+								observation.TagTypeEmotion, 
+								observation.TagTypeBehavior, 
+								observation.TagTypeCognition, 
+								observation.TagTypeRelationship, 
+								observation.TagTypeSomatic, 
+								observation.TagTypeContext,
+							}
+						}}
+						for _, tagType := range tagTypes {
+							{{ typeTags := []observation.Tag{} }}
+							for _, tag := range data.AvailableTags {
+								if tag.TagType == tagType {
+									{{ typeTags = append(typeTags, tag) }}
+								}
+							}
+							if len(typeTags) > 0 {
+								<optgroup 
+									label={ observation.TagTypeLabel(tagType) }
+									class="font-semibold text-gray-700"
+								>
+									for _, tag := range typeTags {
+										<option 
+											value={ tag.ID }
+											class="py-2"
+											data-color={ tag.Color }
+										>
+											{ tag.Name }
+										</option>
+									}
+								</optgroup>
+							}
+						}
+					</select>
+					<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-arandu-primary">
+						<i class="fas fa-chevron-down text-sm"></i>
+					</div>
+				</div>
+				<!-- Tag Preview -->
+				<div id={ "tag-preview-" + data.ObservationID } class="mt-2 min-h-[32px]"></div>
+			</div>
+			
+			<!-- Intensity Selection - Compact -->
+			<div class="tag-selector-field">
+				<div class="flex items-center justify-between mb-2">
+					<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+						Intensidade
+					</label>
+					<span class="text-xs text-gray-400">1 = Leve | 5 = Intensa</span>
+				</div>
+				<div class="intensity-selector flex gap-1 bg-gray-50 p-2 rounded-lg">
+					for i := 1; i <= 5; i++ {
+						{{ intensityStr := strconv.Itoa(i) }}
+						{{ intensityClasses := "" }}
+						if i == 1 {
+							{{ intensityClasses = "bg-white border-emerald-300 text-emerald-600 hover:bg-emerald-50" }}
+						}
+						if i == 2 {
+							{{ intensityClasses = "bg-white border-emerald-400 text-emerald-700 hover:bg-emerald-50" }}
+						}
+						if i == 3 {
+							{{ intensityClasses = "bg-white border-yellow-400 text-yellow-700 hover:bg-yellow-50" }}
+						}
+						if i == 4 {
+							{{ intensityClasses = "bg-white border-orange-400 text-orange-700 hover:bg-orange-50" }}
+						}
+						if i == 5 {
+							{{ intensityClasses = "bg-white border-red-400 text-red-700 hover:bg-red-50" }}
+						}
+						<label class="intensity-option cursor-pointer flex-1">
+							<input
+								type="radio"
+								name="intensity"
+								value={ intensityStr }
+								if i == 3 {
+									checked
+								}
+								class="sr-only"
+							/>
+							<span
+								class={ "intensity-btn w-full h-8 rounded-md flex items-center justify-center text-xs font-medium transition-all border " + intensityClasses }
+							>
+								{ intensityStr }
+							</span>
+						</label>
+					}
+				</div>
+			</div>
+			
+			<!-- Submit Button -->
+			<div class="pt-2 border-t border-gray-100">
+				<button
+					type="submit"
+					class="w-full py-2.5 px-4 bg-arandu-primary text-white rounded-lg font-medium text-sm hover:bg-arandu-dark transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95"
+				>
+					<i class="fas fa-plus-circle"></i>
+					<span>Adicionar Classificação</span>
+				</button>
+			</div>
+			
+			<!-- Loading Indicator -->
+			<div id={ "loading-" + data.ObservationID } class="htmx-indicator hidden">
+				<div class="flex items-center justify-center gap-2 py-2 text-sm text-gray-500">
+					<i class="fas fa-spinner fa-spin"></i>
+					<span>Salvando classificação...</span>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<style>
+		/* Intensity button selected states */
+		.intensity-option input:checked + .intensity-btn {
+			transform: scale(1.05);
+			font-weight: 600;
+		}
+		.intensity-option input[value="1"]:checked + .intensity-btn {
+			background-color: #10B981 !important;
+			border-color: #059669 !important;
+			color: white !important;
+		}
+		.intensity-option input[value="2"]:checked + .intensity-btn {
+			background-color: #34D399 !important;
+			border-color: #10B981 !important;
+			color: white !important;
+		}
+		.intensity-option input[value="3"]:checked + .intensity-btn {
+			background-color: #FBBF24 !important;
+			border-color: #F59E0B !important;
+			color: white !important;
+		}
+		.intensity-option input[value="4"]:checked + .intensity-btn {
+			background-color: #F59E0B !important;
+			border-color: #D97706 !important;
+			color: white !important;
+		}
+		.intensity-option input[value="5"]:checked + .intensity-btn {
+			background-color: #EF4444 !important;
+			border-color: #DC2626 !important;
+			color: white !important;
+		}
+		
+		/* Select focus and hover states */
+		.tag-select:focus {
+			outline: none;
+			border-color: #2D6A4F;
+			box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+		}
+		
+		/* Custom scrollbar for select options */
+		.tag-select option {
+			padding: 8px 12px;
+		}
+		.tag-select optgroup {
+			font-weight: 600;
+			color: #374151;
+			padding: 4px 8px;
+		}
+	</style>
+	
+	<script>
+		function validateTagForm(form) {
+			const tagSelect = form.querySelector('select[name="tag_id"]');
+			if (!tagSelect.value) {
+				tagSelect.classList.add('border-red-400', 'ring-2', 'ring-red-200');
+				setTimeout(() => {
+					tagSelect.classList.remove('border-red-400', 'ring-2', 'ring-red-200');
+				}, 2000);
+				return false;
+			}
+			return true;
+		}
+		
+		function updateTagPreview(select) {
+			const selectedOption = select.options[select.selectedIndex];
+			const previewDiv = document.getElementById('tag-preview-' + select.id.replace('tag-select-', ''));
+			const color = selectedOption.getAttribute('data-color');
+			
+			if (color && select.value) {
+				previewDiv.innerHTML = '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium" style="background-color: ' + color + '20; color: ' + color + '; border: 1px solid ' + color + '40;">' + selectedOption.text + '</span>';
+			} else {
+				previewDiv.innerHTML = '';
+			}
+		}
+	</script>
+}
+
+// TagFilter renders a filter component for observations by tag
+templ TagFilter(availableTags []observation.Tag, selectedTagID string) {
+	<div class="tag-filter flex flex-wrap gap-2">
+		{{ allClasses := "bg-gray-100 text-gray-700 hover:bg-gray-200" }}
+		if selectedTagID == "" {
+			{{ allClasses = "bg-arandu-primary text-white" }}
+		}
+		<a
+			href="/observations"
+			class={ "filter-chip inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-colors " + allClasses }
+		>
+			<i class="fas fa-filter text-xs"></i>
+			<span>Todos</span>
+		</a>
+		for _, tag := range availableTags {
+			{{ chipStyle := "" }}
+			if selectedTagID == tag.ID {
+				{{ chipStyle = "background-color: " + tag.Color + "20; color: " + tag.Color + "; border-color: " + tag.Color + "40;" }}
+			} else {
+				{{ chipStyle = "background-color: " + tag.Color + "10; color: " + tag.Color + "80; border-color: " + tag.Color + "20;" }}
+			}
+			{{ ringClass := "" }}
+			if selectedTagID == tag.ID {
+				{{ ringClass = "ring-2 ring-offset-1" }}
+			} else {
+				{{ ringClass = "hover:opacity-80" }}
+			}
+			<a
+				href={ "/observations?tag=" + tag.ID }
+				class={ "filter-chip inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border " + ringClass }
+				style={ chipStyle }
+			>
+				<span>{ tag.Name }</span>
+			</a>
+		}
+	</div>
+}

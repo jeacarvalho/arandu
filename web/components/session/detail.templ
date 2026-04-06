@@ -1,29 +1,31 @@
 package session
 
 import (
+	"arandu/internal/domain/intervention"
 	"arandu/internal/domain/observation"
 )
 
 type SessionDetail struct {
-	ID        string
+	ID string
 	PatientID string
 	PatientName string
-	Date      string
-	Summary   string
+	Date string
+	Summary string
 	CreatedAt string
 }
 
 type Observation struct {
-	ID        string
-	Content   string
+	ID string
+	Content string
 	CreatedAt string
-	Tags      []observation.ObservationTag
+	Tags []observation.ObservationTag
 }
 
 type Intervention struct {
-	ID        string
-	Content   string
+	ID string
+	Content string
 	CreatedAt string
+	Tags []*intervention.InterventionClassification
 }
 
 templ SessionDetailView(session SessionDetail, observations []Observation, interventions []Intervention, patientID string, errorMsg string) {
@@ -66,10 +68,10 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 					if len(observations) > 0 {
 						for _, o := range observations {
 							@ObservationItem(ObservationItemData{
-								ID:        o.ID,
-								Content:   o.Content,
+								ID: o.ID,
+								Content: o.Content,
 								CreatedAt: o.CreatedAt,
-								Tags:      o.Tags,
+								Tags: o.Tags,
 							})
 						}
 					}
@@ -78,7 +80,6 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 					@ObservationForm(session.ID)
 				</div>
 			</div>
-
 			<div class="card">
 				<div class="card-header">
 					<div class="card-icon card-icon-secondary">
@@ -93,9 +94,10 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 					if len(interventions) > 0 {
 						for _, i := range interventions {
 							@InterventionItem(InterventionItemData{
-								ID:        i.ID,
-								Content:   i.Content,
+								ID: i.ID,
+								Content: i.Content,
 								CreatedAt: i.CreatedAt,
+								Tags: i.Tags,
 							})
 						}
 					}
@@ -105,7 +107,6 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 				</div>
 			</div>
 		</div>
-
 		<div class="card">
 			<div class="card-header">
 				<div class="card-icon card-icon-purple">

@@ -96,7 +96,7 @@ func SessionGoalItemRender(goal GoalDataItem, patientID string) templ.Component 
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("session-goal-" + goal.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 38, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `goals_sidebar.templ`, Line: 38, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -109,20 +109,20 @@ func SessionGoalItemRender(goal GoalDataItem, patientID string) templ.Component 
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(goal.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 41, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `goals_sidebar.templ`, Line: 41, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><button type=\"button\" class=\"session-goal-achieve\" title=\"Marcar como alcançada\" hx-put=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><button type=\"button\" class=\"session-goal-achieve\" title=\"Marcar como alcançada\" aria-label=\"Marcar meta como alcançada\" hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/status?status=achieved")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 47, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `goals_sidebar.templ`, Line: 48, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -164,7 +164,7 @@ func GoalFormInline(patientID string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/goals_sidebar.templ`, Line: 60, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `goals_sidebar.templ`, Line: 61, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

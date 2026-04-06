@@ -123,6 +123,12 @@ func main() {
 	// Create anamnesis service adapter
 	anamnesisServiceAdapter := web.NewAnamnesisServiceAdapter(patientRepo)
 
+	// Create intervention classification service adapter
+	interventionClassificationServiceAdapter := web.NewInterventionClassificationServiceAdapter(interventionRepo)
+
+	// Create intervention classification handler
+	interventionClassificationHandler := handlers.NewInterventionClassificationHandler(interventionClassificationServiceAdapter)
+
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter)
@@ -262,11 +268,43 @@ func main() {
 		}
 	})
 
-	// Tag routes
+	// Tag routes for observations
 	mux.HandleFunc("/tags", classificationHandler.GetTagsByType)
+
+	// Tag routes for interventions
+	mux.HandleFunc("/tags/interventions", interventionClassificationHandler.GetInterventionTagsByType)
 
 	// Intervention routes
 	mux.HandleFunc("/interventions/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+
+		// Intervention classification routes
+		if strings.Contains(path, "/classify") {
+			// Check if it's the edit form request
+			if r.Method == "GET" && strings.HasSuffix(path, "/edit") {
+				interventionClassificationHandler.GetInterventionClassificationEdit(w, r)
+				return
+			}
+			// POST to /interventions/{id}/classify - add tag
+			if r.Method == "POST" && !strings.Contains(path, "/classify/") {
+				interventionClassificationHandler.ClassifyIntervention(w, r)
+				return
+			}
+			// DELETE to /interventions/{id}/classify/{tag_id} - remove tag
+			if r.Method == "DELETE" || (r.Method == "POST" && strings.Contains(path, "/classify/")) {
+				interventionClassificationHandler.RemoveInterventionClassification(w, r)
+				return
+			}
+			// Fallback for GET without /edit
+			if r.Method == "GET" {
+				interventionClassificationHandler.GetInterventionClassificationEdit(w, r)
+				return
+			}
+			http.NotFound(w, r)
+			return
+		}
+
+		// Standard intervention routes
 		if strings.HasSuffix(r.URL.Path, "/edit") && r.Method == "GET" {
 			interventionHandler.GetInterventionEditForm(w, r)
 		} else if r.Method == "GET" {

@@ -8,10 +8,16 @@ package session
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"arandu/internal/domain/intervention"
+	interventionComponents "arandu/web/components/intervention"
+)
+
 type InterventionItemData struct {
 	ID        string
 	Content   string
 	CreatedAt string
+	Tags      []*intervention.InterventionClassification
 }
 
 func InterventionItem(interv InterventionItemData) templ.Component {
@@ -42,65 +48,112 @@ func InterventionItem(interv InterventionItemData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("intervention-" + interv.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_item.templ`, Line: 11, Col: 34}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 17, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"intervention-item card-hover int-item\"><div class=\"clinical-content source-serif\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"intervention-item card-hover int-item py-4\"><!-- Intervention Content - Main focus with larger font --><div class=\"intervention-content mb-3\"><p class=\"text-lg font-serif text-gray-800 leading-relaxed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(interv.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_item.templ`, Line: 14, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 22, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"obs-item-row\"><div class=\"obs-item-date\"><i class=\"fas fa-clock obs-item-icon\"></i>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div><!-- Tags Section --><div id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(interv.CreatedAt)
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("intervention-" + interv.ID + "-tags")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_item.templ`, Line: 17, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 26, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div class=\"obs-item-actions\"><div class=\"badge badge-secondary\">Intervenção</div><button class=\"btn btn-icon btn-sm\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"intervention-tags my-3 py-2 border-t border-b border-gray-100\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = interventionComponents.InterventionTagList(interv.Tags, true).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div class=\"obs-item-row\"><div class=\"obs-item-date\"><i class=\"fas fa-clock obs-item-icon\"></i>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/interventions/" + interv.ID + "/edit"))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(interv.CreatedAt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_item.templ`, Line: 23, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 32, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div class=\"obs-item-actions flex items-center gap-2\"><button class=\"btn btn-icon btn-sm text-arandu-primary\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("#intervention-" + interv.ID)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/interventions/" + interv.ID + "/classify/edit")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_item.templ`, Line: 24, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 37, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-swap=\"outerHTML\" title=\"Editar intervenção\"><i class=\"fas fa-edit\"></i></button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-target=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("#intervention-" + interv.ID + "-tags")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 38, Col: 55}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-swap=\"innerHTML\" title=\"Adicionar classificação\"><i class=\"fas fa-tags\"></i></button><div class=\"badge badge-secondary\">Intervenção</div><button class=\"btn btn-icon btn-sm\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/interventions/" + interv.ID + "/edit"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 47, Col: 64}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("#intervention-" + interv.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `intervention_item.templ`, Line: 48, Col: 45}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-swap=\"outerHTML\" title=\"Editar intervenção\"><i class=\"fas fa-edit\"></i></button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,84 @@
+package layout
+
+// StandardGrid componente de grid de 4 colunas declarativo
+// Uso: @StandardGrid(config)
+templ StandardGrid(cfg GridConfig) {
+	if !cfg.IsEmpty() {
+		<div
+			if cfg.HasID() {
+				id={ cfg.ID }
+			}
+			class={ "grid " + GetGridColsClass(cfg) + " " + cfg.GetGap() + " " + cfg.Classes }
+		>
+			for _, row := range cfg.Rows {
+				for _, item := range row.Items {
+					<div
+						if item.ID != "" {
+							id={ item.ID }
+						}
+						class={ ColSpanClass(item.ColSpan) + " " + item.Classes }
+					>
+						@item.Component
+					</div>
+				}
+			}
+		</div>
+	}
+}
+
+// StandardGridWithValidation renderiza a grid com validação
+// Mostra erro se a configuração for inválida
+templ StandardGridWithValidation(cfg GridConfig) {
+	{{ err := cfg.Validate() }}
+	if err != nil {
+		<div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+			<p class="text-red-600 font-medium">Erro na configuração da grid:</p>
+			<p class="text-red-500 text-sm mt-1">{ err.Error() }</p>
+		</div>
+	} else {
+		@StandardGrid(cfg)
+	}
+}
+
+// StandardGridRow renderiza uma única linha da grid
+// Útil quando precisa de mais controle sobre cada linha
+templ StandardGridRow(row GridRow, cfg GridConfig) {
+	if len(row.Items) > 0 {
+		<div
+			if row.ID != "" {
+				id={ row.ID }
+			}
+			class={ "grid grid-cols-1 md:grid-cols-4 gap-layout-grid " + AlignClass(row.AlignItems) + " " + row.Classes }
+		>
+			for _, item := range row.Items {
+				<div
+					if item.ID != "" {
+						id={ item.ID }
+					}
+					class={ ColSpanClass(item.ColSpan) + " " + item.Classes }
+				>
+					@item.Component
+				</div>
+			}
+		</div>
+	}
+}
+
+// GridContainer container básico para grids personalizadas
+templ GridContainer(id string, classes string) {
+	<div
+		if id != "" {
+			id={ id }
+		}
+		class={ "grid grid-cols-1 md:grid-cols-4 gap-layout-grid " + classes }
+	>
+		{ children... }
+	</div>
+}
+
+// GridCell célula individual da grid com span definido
+templ GridCell(span int, classes string) {
+	<div class={ ColSpanClass(span) + " " + classes }>
+		{ children... }
+	</div>
+}

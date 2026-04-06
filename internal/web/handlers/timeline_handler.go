@@ -88,8 +88,8 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 
 	if isHTMXRequest {
-		// Para requisições HTMX de filtro, renderizar com wrapper para manter estrutura
-		layoutComponents.ShellContentWrapper(patientComponents.TimelineContainer(data)).Render(ctx, w)
+		// Para requisições HTMX, renderizar apenas o conteúdo
+		patientComponents.TimelineContainer(data).Render(ctx, w)
 	} else {
 		layoutComponents.Shell(layoutComponents.ShellConfig{
 			PageTitle:      "Prontuário",

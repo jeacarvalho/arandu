@@ -1,0 +1,182 @@
+package patient
+
+import "fmt"
+
+// AnamnesisNavSection representa uma seção da navegação
+type AnamnesisNavSection struct {
+	ID    string
+	Title string
+	Icon  string
+}
+
+// AnamnesisNavigationProps propriedades da navegação de anamnese
+type AnamnesisNavigationProps struct {
+	PatientID      string
+	ActiveSection  string
+	Sections       []AnamnesisNavSection
+}
+
+// DefaultAnamnesisSections retorna as seções padrão da anamnese
+func DefaultAnamnesisSections() []AnamnesisNavSection {
+	return []AnamnesisNavSection{
+		{ID: "queixa", Title: "Queixa Principal", Icon: "fa-comment-medical"},
+		{ID: "pessoal", Title: "História Pessoal", Icon: "fa-user-circle"},
+		{ID: "familiar", Title: "História Familiar", Icon: "fa-users"},
+		{ID: "mental", Title: "Exame Mental", Icon: "fa-brain"},
+	}
+}
+
+// AnamnesisNavigation navegação lateral das seções de anamnese
+// Uso: @AnamnesisNavigation(AnamnesisNavigationProps{...})
+templ AnamnesisNavigation(props AnamnesisNavigationProps) {
+	<nav 
+		class="section-navigation sticky top-4"
+		aria-label="Navegação da Anamnese"
+	>
+		<div class="widget-wrapper">
+			<h3 class="text-sm font-semibold text-neutral-700 uppercase tracking-wider mb-4">
+				Seções
+			</h3>
+			
+			<ul class="space-y-1">
+				for _, section := range props.Sections {
+					<li>
+						<a
+							href={ templ.SafeURL(fmt.Sprintf("#%s", section.ID)) }
+							class={ getNavLinkClass(props.ActiveSection == section.ID) }
+							data-section={ section.ID }
+						>
+							<i class={ fmt.Sprintf("fas %s w-5", section.Icon) }></i>
+							<span>{ section.Title }</span>
+						</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</nav>
+}
+
+// getNavLinkClass retorna a classe CSS baseada no estado ativo
+func getNavLinkClass(isActive bool) string {
+	baseClass := "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+	if isActive {
+		return baseClass + " bg-arandu-bg text-arandu-primary"
+	}
+	return baseClass + " text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+}
+
+// AnamnesisNavigationSimple versão simplificada com seções padrão
+templ AnamnesisNavigationSimple(patientID string, activeSection string) {
+	@AnamnesisNavigation(AnamnesisNavigationProps{
+		PatientID:     patientID,
+		ActiveSection: activeSection,
+		Sections:      DefaultAnamnesisSections(),
+	})
+}
+
+// AnamnesisNavigationMobile navegação mobile em formato de tabs
+// Uso: Aparece em mobile (< md) acima do conteúdo
+templ AnamnesisNavigationMobile(props AnamnesisNavigationProps) {
+	<nav class="md:hidden mb-4" aria-label="Navegação da Anamnese Mobile">
+		<div class="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+			for _, section := range props.Sections {
+				<a
+					href={ templ.SafeURL(fmt.Sprintf("#%s", section.ID)) }
+					class={ getMobileNavLinkClass(props.ActiveSection == section.ID) }
+					data-section={ section.ID }
+				>
+					<i class={ fmt.Sprintf("fas %s", section.Icon) }></i>
+					<span class="whitespace-nowrap">{ section.Title }</span>
+				</a>
+			}
+		</div>
+	</nav>
+}
+
+func getMobileNavLinkClass(isActive bool) string {
+	baseClass := "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0"
+	if isActive {
+		return baseClass + " bg-arandu-primary text-white"
+	}
+	return baseClass + " bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+}
+
+// AnamnesisNavigationWithProgress navegação com indicadores de preenchimento
+// Uso: Mostra visualmente quais seções têm conteúdo
+type AnamnesisNavSectionWithStatus struct {
+	ID       string
+	Title    string
+	Icon     string
+	HasContent bool
+	IsComplete bool
+}
+
+templ AnamnesisNavigationWithProgress(patientID string, sections []AnamnesisNavSectionWithStatus, activeSection string) {
+	<nav 
+		class="section-navigation sticky top-4"
+		aria-label="Navegação da Anamnese"
+	>
+		<div class="widget-wrapper">
+			<div class="flex items-center justify-between mb-4">
+				<h3 class="text-sm font-semibold text-neutral-700 uppercase tracking-wider">
+					Seções
+				</h3>
+				{{ completed := countCompleted(sections) }}
+				<span class="text-xs text-neutral-500">
+					{ fmt.Sprintf("%d/%d", completed, len(sections)) }
+				</span>
+			</div>
+			
+			<!-- Progress Bar -->
+			<div class="w-full bg-neutral-100 rounded-full h-1.5 mb-4">
+				<div 
+					class="bg-arandu-primary h-1.5 rounded-full transition-all duration-300"
+					style={ fmt.Sprintf("width: %.0f%%", float64(completed)/float64(len(sections))*100) }
+				></div>
+			</div>
+			
+			<ul class="space-y-1">
+				for _, section := range sections {
+					<li>
+						<a
+							href={ templ.SafeURL(fmt.Sprintf("#%s", section.ID)) }
+							class={ getNavLinkClassWithProgress(activeSection == section.ID) }
+							data-section={ section.ID }
+						>
+							<div class="flex items-center gap-3 flex-1">
+								<i class={ fmt.Sprintf("fas %s w-5", section.Icon) }></i>
+								<span>{ section.Title }</span>
+							</div>
+							<!-- Status Indicator -->
+							if section.IsComplete {
+								<i class="fas fa-check-circle text-arandu-active text-xs"></i>
+							} else if section.HasContent {
+								<div class="w-2 h-2 rounded-full bg-amber-400"></div>
+							} else {
+								<div class="w-2 h-2 rounded-full bg-neutral-200"></div>
+							}
+						</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</nav>
+}
+
+func getNavLinkClassWithProgress(isActive bool) string {
+	baseClass := "flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+	if isActive {
+		return baseClass + " bg-arandu-bg text-arandu-primary"
+	}
+	return baseClass + " text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+}
+
+func countCompleted(sections []AnamnesisNavSectionWithStatus) int {
+	count := 0
+	for _, s := range sections {
+		if s.IsComplete {
+			count++
+		}
+	}
+	return count
+}

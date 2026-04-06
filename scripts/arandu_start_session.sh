@@ -36,6 +36,7 @@ Antes de qualquer implementação leia:
 2. TODA página deve herdar de templates.Layout().
 3. CONTEÚDO CLÍNICO deve usar obrigatoriamente .font-clinical (Source Serif 4).
 4. ROTAS EXISTENTES não podem quebrar. Verifique /patients e /sessions antes de concluir.
+5. 🚨 NUNCA use hx-swap-oob com IDs que não existem no DOM base (veja docs/learnings/MASTER_LEARNINGS.md seção 0)
 
 ## PASSOS OBRIGATÓRIOS
 Leia antes de qualquer código:

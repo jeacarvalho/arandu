@@ -1,0 +1,131 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"strconv"
+)
+
+// TagData represents data for a single tag display
+type TagData struct {
+	ObservationID string
+	Tag           observation.Tag
+	Intensity     int
+	ShowClose     bool
+}
+
+// Tag renders a single classification tag
+// HTMX-enabled for removal
+templ Tag(data TagData) {
+	<span
+		class="tag-item inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm"
+		style={"background-color: " + data.Tag.Color + "15; color: " + data.Tag.Color + "CC; border-color: " + data.Tag.Color + "40;"}
+	>
+		<span class="font-semibold">{ data.Tag.Name }</span>
+		if data.Intensity > 0 {
+			{{ intensityStr := strconv.Itoa(data.Intensity) }}
+			<span
+				class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
+				style={"background-color: " + data.Tag.Color + "30; color: " + data.Tag.Color + ";"}
+			>
+				{ intensityStr }
+			</span>
+		}
+		if data.ShowClose {
+			<button
+				class="tag-remove-btn ml-1 hover:opacity-70 transition-opacity p-0.5 rounded hover:bg-white/50"
+				hx-delete={ "/observations/" + data.ObservationID + "/classify/" + data.Tag.ID }
+				hx-target="closest .tag-item"
+				hx-swap="outerHTML"
+				hx-confirm="Remover esta classificação?"
+				title="Remover tag"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+		}
+	</span>
+}
+
+// TagList renders a list of tags
+templ TagList(tags []observation.ObservationTag, showRemove bool) {
+	if len(tags) == 0 {
+		<div class="tag-list-empty text-sm text-gray-400 italic bg-gray-50 rounded-lg py-4 px-6 text-center">
+			<i class="fas fa-tags mb-2 text-gray-300"></i>
+			<p>Nenhuma classificação ainda</p>
+			<p class="text-xs mt-1">Clique no ícone de tags para adicionar</p>
+		</div>
+	} else {
+		<div class="tag-list flex flex-wrap gap-2">
+			for _, ot := range tags {
+				if ot.Tag != nil {
+					@Tag(TagData{
+						ObservationID: ot.ObservationID,
+						Tag:           *ot.Tag,
+						Intensity:     ot.Intensity,
+						ShowClose:     showRemove,
+					})
+				}
+			}
+		</div>
+	}
+}
+
+// TagGroupByType groups tags by their type
+templ TagGroupByType(tags []observation.ObservationTag) {
+	if len(tags) == 0 {
+		<div class="tag-groups-empty text-sm text-gray-500 italic p-4">
+			Nenhuma classificação atribuída
+		</div>
+	} else {
+		// Group by type
+		{{ groups := make(map[observation.TagType][]observation.ObservationTag) }}
+		for _, tag := range tags {
+			if tag.Tag != nil {
+				{{ groups[tag.Tag.TagType] = append(groups[tag.Tag.TagType], tag) }}
+			}
+		}
+		<div class="tag-groups space-y-3">
+			for tagType, groupTags := range groups {
+				<div class="tag-group">
+					<h4 class="tag-group-title text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+						{ observation.TagTypeLabel(tagType) }
+					</h4>
+					<div class="tag-group-items flex flex-wrap gap-2">
+						for _, ot := range groupTags {
+							if ot.Tag != nil {
+								@Tag(TagData{
+									ObservationID: ot.ObservationID,
+									Tag:           *ot.Tag,
+									Intensity:     ot.Intensity,
+									ShowClose:     false,
+								})
+							}
+						}
+					</div>
+				</div>
+			}
+		</div>
+	}
+}
+
+// IntensityBadge renders an intensity indicator
+templ IntensityBadge(intensity int) {
+	{{ classes := "bg-gray-100 text-gray-800 border-gray-200" }}
+	if intensity == 1 {
+		{{ classes = "bg-emerald-100 text-emerald-800 border-emerald-200" }}
+	}
+	if intensity == 2 {
+		{{ classes = "bg-emerald-200 text-emerald-900 border-emerald-300" }}
+	}
+	if intensity == 3 {
+		{{ classes = "bg-yellow-100 text-yellow-800 border-yellow-200" }}
+	}
+	if intensity == 4 {
+		{{ classes = "bg-orange-100 text-orange-800 border-orange-200" }}
+	}
+	if intensity == 5 {
+		{{ classes = "bg-red-100 text-red-800 border-red-200" }}
+	}
+	<span class={ "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border " + classes }>
+		{ strconv.Itoa(intensity) }
+	</span>
+}

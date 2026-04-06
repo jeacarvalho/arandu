@@ -1,168 +1,175 @@
-{"time":"2026-03-29T17:28:23.626198456-03:00","level":"INFO","msg":"Starting Arandu","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.626260969-03:00","level":"INFO","msg":"Initializing Control Plane (Central DB)","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.626975384-03:00","level":"INFO","msg":"Applying central database migrations","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.6270765-03:00","level":"INFO","msg":"Tenants directory ready","app":"arandu","version":"dev","commit":"unknown","path":"storage/tenants"}
-{"time":"2026-03-29T17:28:23.627085432-03:00","level":"INFO","msg":"Using central database for data plane","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.627088633-03:00","level":"INFO","msg":"Tenant pool initialized","app":"arandu","version":"dev","commit":"unknown"}
-2026/03/29 17:28:23 ✅ Google OAuth configurado com sucesso
-{"time":"2026-03-29T17:28:23.628552278-03:00","level":"INFO","msg":"Auth handler initialized","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.628557417-03:00","level":"INFO","msg":"Auth middleware initialized","app":"arandu","version":"dev","commit":"unknown"}
-{"time":"2026-03-29T17:28:23.628680746-03:00","level":"INFO","msg":"Starting server","app":"arandu","version":"dev","commit":"unknown","address":"http://localhost:8080","accessibility":"network"}
-{"time":"2026-03-29T17:28:23.940642617-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:23 [Signup] Method: POST
-2026/03/29 17:28:23 [Signup] Email: arandu_e2e@test.com, Password length: 10
-2026/03/29 17:28:23 [Signup] User already exists: arandu_e2e@test.com
-{"time":"2026-03-29T17:28:23.952848354-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/auth/signup","status":409,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:23 [AuthHandler.Login] Method: POST, Path: /login
-2026/03/29 17:28:24 ✅ Login bem-sucedido para usuário=arandu_e2e@test.com
-{"time":"2026-03-29T17:28:24.033474667-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/login","status":302,"duration_ms":72,"ip":"127.0.0.1"}
-2026/03/29 17:28:24 [AUTH DEBUG] Path: /dashboard, Method: POST
-2026/03/29 17:28:24 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:24.036986614-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/dashboard","status":405,"duration_ms":1,"ip":"127.0.0.1"}
-{"time":"2026-03-29T17:28:24.054838365-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:24 [AuthHandler.Login] Method: GET, Path: /login
-{"time":"2026-03-29T17:28:24.061357382-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/login","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-{"time":"2026-03-29T17:28:24.086017416-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/","status":302,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:24 [AUTH DEBUG] Path: /dashboard, Method: GET
-2026/03/29 17:28:24 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:24.095479695-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":3,"ip":"127.0.0.1"}
-2026/03/29 17:28:33 [AUTH DEBUG] Path: /dashboard, Method: GET
-2026/03/29 17:28:33 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:33.628521021-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":2,"ip":"[::1]"}
-{"time":"2026-03-29T17:28:35.766982235-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/logout","status":302,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:35 [AUTH DEBUG] Path: /patients/create, Method: POST
-2026/03/29 17:28:35 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:35.792569992-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/create","status":303,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:35 ✅ Audit log persisted: action=CREATE_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:35 [AUTH DEBUG] Path: /patients, Method: GET
-2026/03/29 17:28:35 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:35.801333034-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:36 [AUTH DEBUG] Path: /patients, Method: GET
-2026/03/29 17:28:36 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:36.52080699-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients","status":200,"duration_ms":0,"ip":"[::1]"}
-2026/03/29 17:28:37 [AUTH DEBUG] Path: /patients/new, Method: GET
-2026/03/29 17:28:37 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:37.685671418-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/new","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:37 [AUTH DEBUG] Path: /patients/search, Method: GET
-2026/03/29 17:28:37 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:37.697953634-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/search?q=test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:37 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, Method: GET
-2026/03/29 17:28:37 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:37.703877157-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"906d959c68527dfc2a62781fdcfe915f","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4","method":"GET"}
-{"time":"2026-03-29T17:28:37.703889291-03:00","level":"INFO","msg":"Routing to patientHandler.Show","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"906d959c68527dfc2a62781fdcfe915f","user_id":"c196228c-5f65-4934-aa65-19c0c5683172"}
-2026/03/29 17:28:37 PatientHandler.Show called for path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4
-2026/03/29 17:28:37 DEBUG: Getting biopsychosocial context for patient 6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4
-2026/03/29 17:28:37 DEBUG: GetMedications returned - err: <nil>, meds count: 0
-2026/03/29 17:28:37 DEBUG: Processing 0 medications
-2026/03/29 17:28:37 DEBUG: Total medication items: 0
-2026/03/29 17:28:37 DEBUG: GetLatestVitals returned - err: <nil>, vitals: <nil>
-2026/03/29 17:28:37 DEBUG: Latest vitals type: *patient.Vitals
-2026/03/29 17:28:37 DEBUG: Latest vitals is nil pointer
-2026/03/29 17:28:37 DEBUG: GetAverageVitals returned - err: <nil>, avgVitals: &{AverageSleepHours:<nil> AverageAppetiteLevel:<nil> AverageWeight:<nil> AveragePhysicalActivity:<nil> Count:0}
-2026/03/29 17:28:37 DEBUG: Average vitals type: *patient.VitalsAverage
-2026/03/29 17:28:37 DEBUG: Created average vitals item from struct: &{AvgSleepHours: AvgAppetiteLevel: AvgWeight: AvgPhysicalActivity: RecordCount:0 HasData:false}
-2026/03/29 17:28:37 DEBUG: Created bioContext - Medications: 0, LatestVitals: false, VitalsAverage: true
-{"time":"2026-03-29T17:28:37.704748801-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4","status":200,"duration_ms":1,"ip":"127.0.0.1"}
-2026/03/29 17:28:37 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:38 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, Method: GET
-2026/03/29 17:28:38 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:38.403522685-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"021c6c89faae6a69913c1ce48c146210","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4","method":"GET"}
-{"time":"2026-03-29T17:28:38.403533448-03:00","level":"INFO","msg":"Routing to patientHandler.Show","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"021c6c89faae6a69913c1ce48c146210","user_id":"c196228c-5f65-4934-aa65-19c0c5683172"}
-2026/03/29 17:28:38 PatientHandler.Show called for path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4
-2026/03/29 17:28:38 DEBUG: Getting biopsychosocial context for patient 6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4
-2026/03/29 17:28:38 DEBUG: GetMedications returned - err: <nil>, meds count: 0
-2026/03/29 17:28:38 DEBUG: Processing 0 medications
-2026/03/29 17:28:38 DEBUG: Total medication items: 0
-2026/03/29 17:28:38 DEBUG: GetLatestVitals returned - err: <nil>, vitals: <nil>
-2026/03/29 17:28:38 DEBUG: Latest vitals type: *patient.Vitals
-2026/03/29 17:28:38 DEBUG: Latest vitals is nil pointer
-2026/03/29 17:28:38 DEBUG: GetAverageVitals returned - err: <nil>, avgVitals: &{AverageSleepHours:<nil> AverageAppetiteLevel:<nil> AverageWeight:<nil> AveragePhysicalActivity:<nil> Count:0}
-2026/03/29 17:28:38 DEBUG: Average vitals type: *patient.VitalsAverage
-2026/03/29 17:28:38 DEBUG: Created average vitals item from struct: &{AvgSleepHours: AvgAppetiteLevel: AvgWeight: AvgPhysicalActivity: RecordCount:0 HasData:false}
-2026/03/29 17:28:38 DEBUG: Created bioContext - Medications: 0, LatestVitals: false, VitalsAverage: true
-{"time":"2026-03-29T17:28:38.404276152-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4","status":200,"duration_ms":0,"ip":"[::1]"}
-2026/03/29 17:28:38 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.536193214-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"cc50ca16f77b64d27331c0a989541555","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis","method":"GET"}
-{"time":"2026-03-29T17:28:39.536625843-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/history, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] getSession error: invalid session: failed to query session: database is locked (5) (SQLITE_BUSY)
-2026/03/29 17:28:39 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.54415257-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/history","status":302,"duration_ms":1,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/sessions, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.550118925-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"e70353baf95a9819e71291995c75ce99","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/sessions","method":"GET"}
-{"time":"2026-03-29T17:28:39.550198199-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/sessions","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis/chief_complaint, Method: PATCH
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.555675393-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"4f1952d34caa330bb042b4559580d415","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis/chief_complaint","method":"PATCH"}
-{"time":"2026-03-29T17:28:39.559649246-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PATCH","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/anamnesis/chief_complaint","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/medications, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.565969196-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"88b27abd570fc8c34abb79a8dbd8ad41","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/medications","method":"POST"}
-{"time":"2026-03-29T17:28:39.570290368-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/medications","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/vitals, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.575988245-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"40e44c6bfe615cb687c3264a295ef820","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/vitals","method":"POST"}
-{"time":"2026-03-29T17:28:39.580029085-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/vitals","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/goals, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.585809978-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"802b786e1b6472fe47550796f1916f34","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/goals","method":"POST"}
-{"time":"2026-03-29T17:28:39.589928526-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4/goals","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.611370994-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.619590373-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/edit, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 EditSession called: GET /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/edit
-2026/03/29 17:28:39 Path without edit: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7
-2026/03/29 17:28:39 Extracted sessionID: 5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7
-{"time":"2026-03-29T17:28:39.633363243-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/update, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 UpdateSession called: POST /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/update
-2026/03/29 17:28:39 Form values: map[date:[2026-03-24] session_id:[5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7] summary:[Updated session]]
-2026/03/29 17:28:39 Extracted session_id: 5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7
-2026/03/29 17:28:39 Redirecting to: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/edit
-{"time":"2026-03-29T17:28:39.650705504-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/update","status":303,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/observations, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.661254505-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/observations","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/interventions, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.67095226-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/interventions","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.682573722-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=6a0ee8c1-0a3d-4698-92ce-6a2f6e4e4fa4, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/observations, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.704092191-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/observations","status":200,"duration_ms":3,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /observations/bbbe2c11-112f-4ec5-97b5-f6839f232973, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.713011185-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/bbbe2c11-112f-4ec5-97b5-f6839f232973","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /observations/bbbe2c11-112f-4ec5-97b5-f6839f232973/edit, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.719005181-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/bbbe2c11-112f-4ec5-97b5-f6839f232973/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /observations/bbbe2c11-112f-4ec5-97b5-f6839f232973, Method: PUT
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.733724163-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/observations/bbbe2c11-112f-4ec5-97b5-f6839f232973","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/interventions, Method: POST
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.752582277-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/5de4b59b-f27f-4f36-ad5c-a23cb3f7d2b7/interventions","status":200,"duration_ms":4,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.761367658-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6/edit, Method: GET
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.767621854-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
-2026/03/29 17:28:39 [AUTH DEBUG] Path: /interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6, Method: PUT
-2026/03/29 17:28:39 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
-{"time":"2026-03-29T17:28:39.78141903-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/interventions/d9e19ddf-3a1c-4d96-b4a7-6529f0fd8fd6","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+{"time":"2026-04-02T20:40:40.9393166-03:00","level":"INFO","msg":"Starting Arandu","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.939618567-03:00","level":"INFO","msg":"Initializing Control Plane (Central DB)","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.940374067-03:00","level":"INFO","msg":"Applying central database migrations","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.940468193-03:00","level":"INFO","msg":"Tenants directory ready","app":"arandu","version":"dev","commit":"unknown","path":"storage/tenants"}
+{"time":"2026-04-02T20:40:40.94047573-03:00","level":"INFO","msg":"Using central database for data plane","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.940479118-03:00","level":"INFO","msg":"Tenant pool initialized","app":"arandu","version":"dev","commit":"unknown"}
+2026/04/02 20:40:40 ✅ Google OAuth configurado com sucesso
+{"time":"2026-04-02T20:40:40.941788253-03:00","level":"INFO","msg":"Auth handler initialized","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.9417961-03:00","level":"INFO","msg":"Auth middleware initialized","app":"arandu","version":"dev","commit":"unknown"}
+{"time":"2026-04-02T20:40:40.9420153-03:00","level":"INFO","msg":"Starting server","app":"arandu","version":"dev","commit":"unknown","address":"http://localhost:8080","accessibility":"network"}
+{"time":"2026-04-02T20:40:41.205739656-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:41 [Signup] Method: POST
+2026/04/02 20:40:41 [Signup] Email: arandu_e2e@test.com, Password length: 10
+2026/04/02 20:40:41 [Signup] User already exists: arandu_e2e@test.com
+{"time":"2026-04-02T20:40:41.213568163-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/auth/signup","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:41 [AuthHandler.Login] Method: POST, Path: /login
+2026/04/02 20:40:41 ✅ Login bem-sucedido para usuário=arandu_e2e@test.com
+{"time":"2026-04-02T20:40:41.293641078-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/login","status":302,"duration_ms":74,"ip":"127.0.0.1"}
+2026/04/02 20:40:41 [AUTH DEBUG] Path: /dashboard, Method: POST
+2026/04/02 20:40:41 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:41.295816281-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/dashboard","status":405,"duration_ms":1,"ip":"127.0.0.1"}
+{"time":"2026-04-02T20:40:41.337188401-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/test","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:41 [AuthHandler.Login] Method: GET, Path: /login
+{"time":"2026-04-02T20:40:41.348666415-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/login","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+{"time":"2026-04-02T20:40:41.396776975-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/","status":302,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:41 [AUTH DEBUG] Path: /dashboard, Method: GET
+2026/04/02 20:40:41 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:41.826973461-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":416,"ip":"127.0.0.1"}
+2026/04/02 20:40:42 [AUTH DEBUG] Path: /dashboard, Method: GET
+2026/04/02 20:40:42 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:43.046052039-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/dashboard","status":200,"duration_ms":379,"ip":"[::1]"}
+{"time":"2026-04-02T20:40:44.166699985-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/logout","status":302,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:44 [AUTH DEBUG] Path: /patients/create, Method: POST
+2026/04/02 20:40:44 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:44 [DEBUG CreatePatient] HX-Request: 
+2026/04/02 20:40:44 [DEBUG CreatePatient] Content-Type: application/x-www-form-urlencoded
+2026/04/02 20:40:44 [DEBUG CreatePatient] Cookie: arandu_session=2cee75df-d700-4d4c-88fb-776300afc0e9
+{"time":"2026-04-02T20:40:44.200062849-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/create","status":303,"duration_ms":12,"ip":"127.0.0.1"}
+2026/04/02 20:40:44 ✅ Audit log persisted: action=CREATE_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:44 [AUTH DEBUG] Path: /patients, Method: GET
+2026/04/02 20:40:44 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:44.208688729-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:44 [AUTH DEBUG] Path: /patients, Method: GET
+2026/04/02 20:40:44 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:44.964073987-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients","status":200,"duration_ms":0,"ip":"[::1]"}
+2026/04/02 20:40:46 [AUTH DEBUG] Path: /patients/new, Method: GET
+2026/04/02 20:40:46 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:46.053597787-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/new","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:46 [AUTH DEBUG] Path: /patients/search, Method: GET
+2026/04/02 20:40:46 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:46.06824646-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/search?q=test","status":200,"duration_ms":1,"ip":"127.0.0.1"}
+2026/04/02 20:40:46 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86, Method: GET
+2026/04/02 20:40:46 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:46.074511477-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"d7e5774611e2aad9bf6da0b7001f218f","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86","method":"GET"}
+{"time":"2026-04-02T20:40:46.074522133-03:00","level":"INFO","msg":"Routing to patientHandler.Show","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"d7e5774611e2aad9bf6da0b7001f218f","user_id":"c196228c-5f65-4934-aa65-19c0c5683172"}
+2026/04/02 20:40:46 PatientHandler.Show called for path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86
+2026/04/02 20:40:46 DEBUG: Getting biopsychosocial context for patient 5b35b614-023b-4b40-ae4f-fb3a87895e86
+2026/04/02 20:40:46 DEBUG: GetMedications returned - err: <nil>, meds count: 0
+2026/04/02 20:40:46 DEBUG: Processing 0 medications
+2026/04/02 20:40:46 DEBUG: Total medication items: 0
+2026/04/02 20:40:46 DEBUG: GetLatestVitals returned - err: <nil>, vitals: <nil>
+2026/04/02 20:40:46 DEBUG: Latest vitals type: *patient.Vitals
+2026/04/02 20:40:46 DEBUG: Latest vitals is nil pointer
+2026/04/02 20:40:46 DEBUG: GetAverageVitals returned - err: <nil>, avgVitals: &{AverageSleepHours:<nil> AverageAppetiteLevel:<nil> AverageWeight:<nil> AveragePhysicalActivity:<nil> Count:0}
+2026/04/02 20:40:46 DEBUG: Average vitals type: *patient.VitalsAverage
+2026/04/02 20:40:46 DEBUG: Created average vitals item from struct: &{AvgSleepHours: AvgAppetiteLevel: AvgWeight: AvgPhysicalActivity: RecordCount:0 HasData:false}
+2026/04/02 20:40:46 DEBUG: Created bioContext - Medications: 0, LatestVitals: false, VitalsAverage: true
+{"time":"2026-04-02T20:40:46.075265462-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:46 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:46 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86, Method: GET
+2026/04/02 20:40:46 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:46.866238177-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"37f7523531fbbe46dec1acb47018ea43","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86","method":"GET"}
+{"time":"2026-04-02T20:40:46.866249409-03:00","level":"INFO","msg":"Routing to patientHandler.Show","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"37f7523531fbbe46dec1acb47018ea43","user_id":"c196228c-5f65-4934-aa65-19c0c5683172"}
+2026/04/02 20:40:46 PatientHandler.Show called for path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86
+2026/04/02 20:40:46 DEBUG: Getting biopsychosocial context for patient 5b35b614-023b-4b40-ae4f-fb3a87895e86
+2026/04/02 20:40:46 DEBUG: GetMedications returned - err: <nil>, meds count: 0
+2026/04/02 20:40:46 DEBUG: Processing 0 medications
+2026/04/02 20:40:46 DEBUG: Total medication items: 0
+2026/04/02 20:40:46 DEBUG: GetLatestVitals returned - err: <nil>, vitals: <nil>
+2026/04/02 20:40:46 DEBUG: Latest vitals type: *patient.Vitals
+2026/04/02 20:40:46 DEBUG: Latest vitals is nil pointer
+2026/04/02 20:40:46 DEBUG: GetAverageVitals returned - err: <nil>, avgVitals: &{AverageSleepHours:<nil> AverageAppetiteLevel:<nil> AverageWeight:<nil> AveragePhysicalActivity:<nil> Count:0}
+2026/04/02 20:40:46 DEBUG: Average vitals type: *patient.VitalsAverage
+2026/04/02 20:40:46 DEBUG: Created average vitals item from struct: &{AvgSleepHours: AvgAppetiteLevel: AvgWeight: AvgPhysicalActivity: RecordCount:0 HasData:false}
+2026/04/02 20:40:46 DEBUG: Created bioContext - Medications: 0, LatestVitals: false, VitalsAverage: true
+{"time":"2026-04-02T20:40:46.866994638-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86","status":200,"duration_ms":1,"ip":"[::1]"}
+2026/04/02 20:40:46 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.017954237-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"459ac2c3371e3ae3d7f027b9f94bda13","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis","method":"GET"}
+{"time":"2026-04-02T20:40:48.018259764-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/history, Method: GET
+2026/04/02 20:40:48 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.075795803-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"715112d54c6e4195bfa4c4f28d1e5716","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/history","method":"GET"}
+{"time":"2026-04-02T20:40:48.076589101-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/history","status":200,"duration_ms":53,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/sessions, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.095925933-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"d480ac9863e11e8154efdaa9a87af77c","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/sessions","method":"GET"}
+{"time":"2026-04-02T20:40:48.09604144-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/sessions","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis/chief_complaint, Method: PATCH
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.102505063-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"c144eafc43ffc318fef3036fe1ad1f71","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis/chief_complaint","method":"PATCH"}
+{"time":"2026-04-02T20:40:48.109280926-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PATCH","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/anamnesis/chief_complaint","status":200,"duration_ms":7,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/medications, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.11517036-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"80cdadc3fd101dd02d1c533edba822ed","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/medications","method":"POST"}
+{"time":"2026-04-02T20:40:48.119275804-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/medications","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/vitals, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.12537276-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"9bb0ffd738b7e6d6a9f8654c49ad7081","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/vitals","method":"POST"}
+{"time":"2026-04-02T20:40:48.129300415-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/vitals","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/goals, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.135947874-03:00","level":"INFO","msg":"Route /patients/ called","app":"arandu","version":"dev","commit":"unknown","tenant_id":"9b33e4a0-ee4d-4054-8709-6b731f581a2a","request_id":"2cd2de830662401f715e8fdd2f500827","user_id":"c196228c-5f65-4934-aa65-19c0c5683172","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/goals","method":"POST"}
+{"time":"2026-04-02T20:40:48.139869304-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/patients/5b35b614-023b-4b40-ae4f-fb3a87895e86/goals","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.160863351-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.17037045-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/edit, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 EditSession called: GET /session/2b57166c-8209-44e0-89c7-3b93b160081b/edit
+2026/04/02 20:40:48 Path without edit: /session/2b57166c-8209-44e0-89c7-3b93b160081b
+2026/04/02 20:40:48 Extracted sessionID: 2b57166c-8209-44e0-89c7-3b93b160081b
+{"time":"2026-04-02T20:40:48.184346883-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/update, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 UpdateSession called: POST /session/2b57166c-8209-44e0-89c7-3b93b160081b/update
+2026/04/02 20:40:48 Form values: map[date:[2026-03-24] session_id:[2b57166c-8209-44e0-89c7-3b93b160081b] summary:[Updated session]]
+2026/04/02 20:40:48 Extracted session_id: 2b57166c-8209-44e0-89c7-3b93b160081b
+2026/04/02 20:40:48 Redirecting to: /session/2b57166c-8209-44e0-89c7-3b93b160081b/edit
+{"time":"2026-04-02T20:40:48.202946481-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/update","status":303,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/observations, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.214148797-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/observations","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/interventions, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.225897063-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/interventions","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.236909802-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 ✅ Audit log persisted: action=ACCESS_PATIENT, resource=5b35b614-023b-4b40-ae4f-fb3a87895e86, tenant=9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/observations, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.261687182-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/observations","status":200,"duration_ms":8,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /observations/80ed9791-9778-40d7-ad18-d5f9b167da2c, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [Router] /observations/ path=/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c method=GET
+{"time":"2026-04-02T20:40:48.270251542-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /observations/80ed9791-9778-40d7-ad18-d5f9b167da2c/edit, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [Router] /observations/ path=/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c/edit method=GET
+{"time":"2026-04-02T20:40:48.275938058-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /observations/80ed9791-9778-40d7-ad18-d5f9b167da2c, Method: PUT
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+2026/04/02 20:40:48 [Router] /observations/ path=/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c method=PUT
+{"time":"2026-04-02T20:40:48.364497517-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/observations/80ed9791-9778-40d7-ad18-d5f9b167da2c","status":200,"duration_ms":75,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /session/2b57166c-8209-44e0-89c7-3b93b160081b/interventions, Method: POST
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.385158129-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"POST","path":"/session/2b57166c-8209-44e0-89c7-3b93b160081b/interventions","status":200,"duration_ms":4,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /interventions/c901d38f-8e9b-45fb-a006-7c3ced518737, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.393176875-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/c901d38f-8e9b-45fb-a006-7c3ced518737","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /interventions/c901d38f-8e9b-45fb-a006-7c3ced518737/edit, Method: GET
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.399114956-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"GET","path":"/interventions/c901d38f-8e9b-45fb-a006-7c3ced518737/edit","status":200,"duration_ms":0,"ip":"127.0.0.1"}
+2026/04/02 20:40:48 [AUTH DEBUG] Path: /interventions/c901d38f-8e9b-45fb-a006-7c3ced518737, Method: PUT
+2026/04/02 20:40:48 [AUTH DEBUG] Session valid for tenant: 9b33e4a0-ee4d-4054-8709-6b731f581a2a
+{"time":"2026-04-02T20:40:48.466066967-03:00","level":"INFO","msg":"HTTP Request","app":"arandu","version":"dev","commit":"unknown","method":"PUT","path":"/interventions/c901d38f-8e9b-45fb-a006-7c3ced518737","status":200,"duration_ms":54,"ip":"127.0.0.1"}

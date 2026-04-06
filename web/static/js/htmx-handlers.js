@@ -126,25 +126,6 @@ document.addEventListener('htmx:historyRestore', function(e) {
     });
   }
 
-  // Mark restoration complete
-  document.body.classList.add('htmx-history-restored');
-  setTimeout(() => {
-    document.body.classList.remove('htmx-history-restored');
-  }, 50);
-
-  console.log('[HTMX] History restore completed');
-});
-
-  // Re-initialize Alpine.js on restored content
-  if (typeof Alpine !== 'undefined') {
-    document.querySelectorAll('[x-data]').forEach(el => {
-      if (el._x_dataStack) {
-        return;
-      }
-      Alpine.initTree(el);
-    });
-  }
-
   // Trigger reflow to ensure styles are recalculated
   document.body.style.display = 'none';
   document.body.offsetHeight; // Force reflow
@@ -159,15 +140,71 @@ document.addEventListener('htmx:historyRestore', function(e) {
   console.log('[HTMX] History restore completed, CSS refreshed');
 });
 
-	// Smooth page transitions
-	document.addEventListener('DOMContentLoaded', function() {
-		document.body.style.opacity = '0';
-		requestAnimationFrame(() => {
-			document.body.style.transition = 'opacity 0.3s ease';
-			document.body.style.opacity = '1';
-		});
+// Smooth page transitions - ONLY on initial page load, not HTMX swaps
+(function() {
+	// Check if we've already done the initial fade-in
+	if (window.__aranduInitialFadeDone) {
+		return;
+	}
+	window.__aranduInitialFadeDone = true;
+	
+	document.body.style.opacity = '0';
+	requestAnimationFrame(() => {
+		document.body.style.transition = 'opacity 0.3s ease';
+		document.body.style.opacity = '1';
 	});
-
-	// Expose showErrorToast globally for use in other scripts
-	window.showErrorToast = showErrorToast;
 })();
+
+// Ensure body is visible after HTMX swaps
+htmx.on('htmx:afterSwap', function(evt) {
+	// Ensure body opacity is 1 after any swap
+	document.body.style.opacity = '1';
+});
+
+// Also ensure visibility after settle
+htmx.on('htmx:afterSettle', function(evt) {
+	document.body.style.opacity = '1';
+});
+
+// Expose showErrorToast globally for use in other scripts
+window.showErrorToast = showErrorToast;
+
+// ============================================
+// BFCache Fix: Handle browser back/forward navigation
+// Issue: When user navigates back, content loaded via hx-trigger="load" 
+// doesn't reload because the 'load' event doesn't fire on BFCache restoration
+// ============================================
+window.addEventListener('pageshow', function(event) {
+	// Check if page came from BFCache (back/forward button)
+	if (event.persisted) {
+		console.log('[HTMX BFCache] Page restored from cache, checking content...');
+		
+		// Check if main-content is empty (only has whitespace/comments)
+		var mainContent = document.getElementById('main-content');
+		if (mainContent) {
+			var content = mainContent.innerHTML.trim();
+			// If empty or only has the OOB swap div wrapper
+			if (content === '' || content === '<div id="main-content-swap" hx-swap-oob="true"></div>') {
+				console.log('[HTMX BFCache] main-content is empty, reloading page...');
+				// Force a soft reload to fetch fresh content
+				window.location.reload();
+				return;
+			}
+			
+			// Check if content has actual visible elements
+			var visibleContent = mainContent.querySelector('.content-header, .sota-container, .patient-profile');
+			if (!visibleContent) {
+				console.log('[HTMX BFCache] main-content missing visible elements, reloading...');
+				window.location.reload();
+				return;
+			}
+		}
+		
+		console.log('[HTMX BFCache] Content appears valid, no reload needed');
+	}
+});
+
+// Expose event name globally for documentation
+window.HTMX_CACHE_RESTORE_EVENT = 'htmx:cache-restore';
+})();
+// Cache bust: 1775436751

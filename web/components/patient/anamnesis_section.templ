@@ -1,0 +1,141 @@
+package patient
+
+import (
+	"arandu/web/components/layout"
+	"fmt"
+	"strconv"
+)
+
+// AnamnesisSectionProps propriedades da seção de anamnese
+type AnamnesisSectionProps struct {
+	PatientID       string
+	SectionID       string
+	Title           string
+	Icon            string
+	Content         string
+	Placeholder     string
+	AutoSaveDelay   string // ex: "2s"
+	Rows            int
+}
+
+// DefaultAnamnesisPlaceholder retorna placeholder padrão baseado na seção
+func DefaultAnamnesisPlaceholder(sectionID string) string {
+	placeholders := map[string]string{
+		"queixa":  "Descreva a queixa principal do paciente...",
+		"pessoal": "Descreva a história pessoal e social do paciente...",
+		"familiar": "Descreva a história familiar relevante...",
+		"mental":  "Descreva o exame das funções mentais...",
+	}
+	if p, ok := placeholders[sectionID]; ok {
+		return p
+	}
+	return "Comece a descrever..."
+}
+
+// AnamnesisSectionV2 widget de seção de anamnese com auto-save (v2)
+templ AnamnesisSectionV2(props AnamnesisSectionProps) {
+	{{ 
+		if props.Placeholder == "" {
+			props.Placeholder = DefaultAnamnesisPlaceholder(props.SectionID)
+		}
+		if props.AutoSaveDelay == "" {
+			props.AutoSaveDelay = "2s"
+		}
+		if props.Rows == 0 {
+			props.Rows = 6
+		}
+	}}
+	
+	<section 
+		id={ props.SectionID }
+		class="scroll-mt-24"
+	>
+		@layout.WidgetWrapper(layout.NewWidgetProps(
+			AnamnesisSectionContent(props),
+		).
+		WithTitle(props.Title).
+		WithActions(AnamnesisSectionActions(props.SectionID)).
+		WithID("widget-" + props.SectionID).
+		Build())
+	</section>
+}
+
+// AnamnesisSectionContent conteúdo interno da seção
+templ AnamnesisSectionContent(props AnamnesisSectionProps) {
+	<div class="space-y-4">
+		<!-- Textarea com auto-save -->
+		<textarea 
+			name="content"
+			class="anamnesis-textarea w-full p-4 bg-neutral-50 border border-neutral-200 rounded-lg font-clinical resize-y focus:outline-none focus:ring-2 focus:ring-arandu-soft focus:border-arandu-soft transition-all"
+			placeholder={ props.Placeholder }
+			rows={ strconv.Itoa(props.Rows) }
+			style="min-height: 200px;"
+			hx-patch={ fmt.Sprintf("/patients/%s/anamnesis/%s", props.PatientID, props.SectionID) }
+			hx-trigger={ fmt.Sprintf("keyup changed delay:%s, blur", props.AutoSaveDelay) }
+			hx-swap="none"
+		>{ props.Content }</textarea>
+		
+		<!-- Hint -->
+		<p class="text-xs text-neutral-400">
+			<i class="fas fa-info-circle mr-1"></i>
+			As alterações são salvas automaticamente após { props.AutoSaveDelay } de inatividade
+		</p>
+	</div>
+}
+
+// AnamnesisSectionActions ações do header (indicador de salvamento)
+templ AnamnesisSectionActions(sectionID string) {
+	@layout.AutoSaveIndicator(sectionID, "idle")
+}
+
+// AnamnesisSectionSavedV2 resposta HTMX quando a seção é salva (v2)
+// Uso: Retornar no handler PATCH
+templ AnamnesisSectionSavedV2(sectionID string) {
+	@layout.AutoSaveIndicatorSaved(sectionID)
+}
+
+// AnamnesisSectionCompactV2 versão compacta da seção (v2)
+templ AnamnesisSectionCompactV2(props AnamnesisSectionProps) {
+	{{ 
+		if props.Placeholder == "" {
+			props.Placeholder = DefaultAnamnesisPlaceholder(props.SectionID)
+		}
+		if props.Rows == 0 {
+			props.Rows = 4
+		}
+	}}
+	
+	<section 
+		id={ props.SectionID }
+		class="scroll-mt-24"
+	>
+		@layout.WidgetWrapper(layout.NewWidgetProps(
+			AnamnesisSectionContent(props),
+		).
+		WithTitle(props.Title).
+		WithActions(AnamnesisSectionActions(props.SectionID)).
+		WithCompact().
+		WithID("widget-compact-" + props.SectionID).
+		Build())
+	</section>
+}
+
+// AnamnesisSectionReadOnly versão somente leitura (para visualização)
+templ AnamnesisSectionReadOnly(title string, content string) {
+	@layout.WidgetWrapper(layout.NewWidgetProps(
+		AnamnesisReadOnlyContent(content),
+	).
+	WithTitle(title).
+	Build())
+}
+
+// AnamnesisReadOnlyContent conteúdo somente leitura
+templ AnamnesisReadOnlyContent(content string) {
+	<div class="font-clinical text-neutral-700 leading-relaxed whitespace-pre-wrap">
+		if content == "" {
+			<span class="text-neutral-400 italic">Nenhum conteúdo registrado</span>
+		} else {
+			{ content }
+		}
+	</div>
+}

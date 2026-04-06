@@ -75,13 +75,13 @@ func GoalClosureModalInline(goal GoalItemViewModel, patientID string) templ.Comp
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/patients/" + patientID + "/goals/" + goal.ID + "/close")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 22, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 22, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this button[type='submit']\" x-on:htmx:after-request=\"showModal = false\"><div class=\"goal-closure-field\"><label class=\"goal-closure-label\"><i class=\"fas fa-pen-fancy\"></i> Nota de Desfecho</label><p class=\"goal-closure-hint\">Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.</p><textarea name=\"closure_note\" class=\"goal-closure-textarea\" rows=\"6\" placeholder=\"Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?\"></textarea></div><div class=\"goal-closure-actions\"><button type=\"button\" class=\"goal-closure-btn-cancel\" x-on:click=\"showModal = false\"><i class=\"fas fa-times\"></i> Cancelar</button> <button type=\"submit\" class=\"goal-closure-btn-confirm\"><i class=\"fas fa-check\"></i> Concluir Meta</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#goal-list\" hx-swap=\"innerHTML\" hx-disabled-elt=\"this button[type='submit']\" hx-indicator=\"#goal-close-loading\" x-on:htmx:after-on-load=\"showModal = false\"><div class=\"goal-closure-field\"><label class=\"goal-closure-label\"><i class=\"fas fa-pen-fancy\"></i> Nota de Desfecho</label><p class=\"goal-closure-hint\">Registre uma síntese reflexiva sobre o alcance deste objetivo terapêutico.</p><textarea name=\"closure_note\" class=\"goal-closure-textarea\" rows=\"6\" placeholder=\"Como esta meta foi alcançada?&#10;&#10;- Que progressos foram observados?&#10;- Que técnicas foram eficazes?&#10;- Que desafios foram superados?&#10;- Qual a síntese clínica do processo?\"></textarea></div><div class=\"goal-closure-actions\"><button type=\"button\" class=\"goal-closure-btn-cancel\" x-on:click=\"showModal = false\"><i class=\"fas fa-times\"></i> Cancelar</button> <button type=\"submit\" class=\"goal-closure-btn-confirm\"><i class=\"fas fa-check\"></i> Concluir Meta</button> <span id=\"goal-close-loading\" class=\"htmx-indicator text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Concluindo meta...</span></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,14 +110,14 @@ func CloseGoalButton(goal GoalItemViewModel, patientID string) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button type=\"button\" class=\"goal-action achieve\" title=\"Concluir meta com nota\" x-on:click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button type=\"button\" class=\"goal-action achieve\" title=\"Concluir meta com nota\" aria-label=\"Concluir meta com nota\" x-on:click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("showModal = true")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 64, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/goal_closure_modal.templ`, Line: 69, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

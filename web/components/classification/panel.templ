@@ -1,0 +1,183 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"strconv"
+)
+
+// ClassificationPanelData represents data for the classification panel
+type ClassificationPanelData struct {
+	Tags          []observation.Tag
+	Summary       []observation.TagSummary
+	SelectedType  observation.TagType
+}
+
+// ClassificationPanel renders a sidebar panel with available tags
+templ ClassificationPanel(data ClassificationPanelData) {
+	<div class="classification-panel">
+		<!-- Header -->
+		<div class="panel-header mb-4">
+			<h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Classificações</h3>
+			<p class="text-xs text-gray-500 mt-1">Categorize suas observações</p>
+		</div>
+		
+		<!-- Tag Types Navigation -->
+		<div class="tag-types-nav space-y-1 mb-4">
+			{{ 
+				tagTypes := []observation.TagType{
+					observation.TagTypeEmotion, 
+					observation.TagTypeBehavior, 
+					observation.TagTypeCognition, 
+					observation.TagTypeRelationship, 
+					observation.TagTypeSomatic, 
+					observation.TagTypeContext,
+				}
+			}}
+			for _, tagType := range tagTypes {
+				{{ typeCount := 0 }}
+				for _, tag := range data.Tags {
+					if tag.TagType == tagType {
+						{{ typeCount++ }}
+					}
+				}
+				{{ 
+					isActive := data.SelectedType == tagType
+					typeClasses := "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer "
+					if isActive {
+						typeClasses += "bg-arandu-primary text-white"
+					} else {
+						typeClasses += "text-gray-700 hover:bg-gray-100"
+					}
+				}}
+				<div 
+					class={ typeClasses }
+					hx-get={ "/tags?type=" + string(tagType) }
+					hx-target="#tag-list-container"
+					hx-trigger="click"
+				>
+					<span class="flex items-center gap-2">
+						<i class={ getTagTypeIcon(tagType) }></i>
+						<span>{ observation.TagTypeLabel(tagType) }</span>
+					</span>
+			{{ countClasses := "" }}
+			if isActive {
+				{{ countClasses = "bg-white/20 text-white" }}
+			} else {
+				{{ countClasses = "bg-gray-100 text-gray-600" }}
+			}
+			<span 
+				class={ "text-xs px-2 py-0.5 rounded-full " + countClasses }
+			>
+				{ strconv.Itoa(typeCount) }
+			</span>
+				</div>
+			}
+		</div>
+		
+		<!-- Tags List -->
+		<div id="tag-list-container" class="tags-list space-y-2">
+			if data.SelectedType != "" {
+				{{ filteredTags := []observation.Tag{} }}
+				for _, tag := range data.Tags {
+					if tag.TagType == data.SelectedType {
+						{{ filteredTags = append(filteredTags, tag) }}
+					}
+				}
+				for _, tag := range filteredTags {
+					<div 
+						class="tag-option flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+						draggable="true"
+						data-tag-id={ tag.ID }
+					>
+						<span 
+							class="w-3 h-3 rounded-full"
+							style={ "background-color: " + tag.Color + ";" }
+						></span>
+						<span class="text-sm text-gray-700 flex-1">{ tag.Name }</span>
+						<i class="fas fa-grip-lines text-gray-300 text-xs"></i>
+					</div>
+				}
+			} else {
+				<div class="text-sm text-gray-500 text-center py-4">
+					Selecione uma categoria para ver as tags
+				</div>
+			}
+		</div>
+		
+		<!-- Summary Section -->
+		if len(data.Summary) > 0 {
+			<div class="summary-section mt-6 pt-4 border-t border-gray-200">
+				<h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Resumo</h4>
+				<div class="summary-items space-y-2">
+					for _, summaryItem := range data.Summary {
+						<div class="summary-item flex items-center justify-between">
+							<span class="text-sm text-gray-600">{ observation.TagTypeLabel(summaryItem.TagType) }</span>
+							<div class="flex items-center gap-2">
+								<div class="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
+									{{ 
+										maxCount := 0
+										for _, s := range data.Summary {
+											if s.Count > maxCount {
+												{{ maxCount = s.Count }}
+											}
+										}
+										percentage := 0
+										if maxCount > 0 {
+											{{ percentage = (summaryItem.Count * 100) / maxCount }}
+										}
+									}}
+									<div 
+										class="h-full bg-arandu-primary rounded-full transition-all"
+										style={ "width: " + strconv.Itoa(percentage) + "%;" }
+									></div>
+								</div>
+								<span class="text-xs text-gray-500 w-6 text-right">{ strconv.Itoa(summaryItem.Count) }</span>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+// getTagTypeIcon returns the FontAwesome icon class for a tag type
+func getTagTypeIcon(tagType observation.TagType) string {
+	switch tagType {
+	case observation.TagTypeEmotion:
+		return "fas fa-heart"
+	case observation.TagTypeBehavior:
+		return "fas fa-running"
+	case observation.TagTypeCognition:
+		return "fas fa-brain"
+	case observation.TagTypeRelationship:
+		return "fas fa-users"
+	case observation.TagTypeSomatic:
+		return "fas fa-heartbeat"
+	case observation.TagTypeContext:
+		return "fas fa-globe"
+	default:
+		return "fas fa-tag"
+	}
+}
+
+// TagQuickSelect renders a quick tag selector for inline use
+templ TagQuickSelect(observationID string, tags []observation.Tag) {
+	<div class="tag-quick-select">
+		<div class="quick-tags flex flex-wrap gap-2">
+			for _, tag := range tags {
+				<button
+					class="quick-tag-btn px-2 py-1 rounded text-xs font-medium border transition-all hover:opacity-80"
+					style={ "background-color: " + tag.Color + "20; color: " + tag.Color + "; border-color: " + tag.Color + "40;" }
+					hx-post={ "/observations/" + observationID + "/classify" }
+					hx-vals={ `{"tag_id": "` + tag.ID + `", "intensity": 3}` }
+					hx-target={ "#observation-" + observationID + "-tags" }
+					hx-swap="innerHTML"
+					title={ "Adicionar: " + tag.Name }
+				>
+					+ { tag.Name }
+				</button>
+			}
+		</div>
+	</div>
+}

@@ -267,6 +267,78 @@ func (r *ContextAwareObservationRepository) FindByPatientIDAndTimeframe(ctx cont
 	return tempRepo.FindByPatientIDAndTimeframe(ctx, patientID, startTime)
 }
 
+func (r *ContextAwareObservationRepository) GetTags(ctx context.Context) ([]observation.Tag, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.GetTags(ctx)
+}
+
+func (r *ContextAwareObservationRepository) GetTagsByType(ctx context.Context, tagType observation.TagType) ([]observation.Tag, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.GetTagsByType(ctx, tagType)
+}
+
+func (r *ContextAwareObservationRepository) AddTagToObservation(ctx context.Context, observationID, tagID string, intensity int) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.AddTagToObservation(ctx, observationID, tagID, intensity)
+}
+
+func (r *ContextAwareObservationRepository) RemoveTagFromObservation(ctx context.Context, observationID, tagID string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.RemoveTagFromObservation(ctx, observationID, tagID)
+}
+
+func (r *ContextAwareObservationRepository) GetObservationTags(ctx context.Context, observationID string) ([]observation.ObservationTag, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.GetObservationTags(ctx, observationID)
+}
+
+func (r *ContextAwareObservationRepository) GetTagsSummary(ctx context.Context) ([]observation.TagSummary, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.GetTagsSummary(ctx)
+}
+
+func (r *ContextAwareObservationRepository) GetTagsSummaryByPatient(ctx context.Context, patientID string) ([]observation.TagSummary, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.GetTagsSummaryByPatient(ctx, patientID)
+}
+
+func (r *ContextAwareObservationRepository) FindByTag(ctx context.Context, tagID string) ([]*observation.Observation, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewObservationRepository(&DB{db})
+	return tempRepo.FindByTag(ctx, tagID)
+}
+
 type ContextAwareInterventionRepository struct {
 	factory *ContextAwareRepositoryFactory
 }
@@ -336,6 +408,101 @@ func (r *ContextAwareInterventionRepository) FindByPatientIDAndTimeframe(ctx con
 	}
 	tempRepo := NewInterventionRepository(&DB{db})
 	return tempRepo.FindByPatientIDAndTimeframe(ctx, patientID, startTime)
+}
+
+// AddTagToIntervention adiciona uma tag a uma intervenção
+func (r *ContextAwareInterventionRepository) AddTagToIntervention(ctx context.Context, interventionID, tagID string, intensity int) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.AddTagToIntervention(ctx, interventionID, tagID, intensity)
+}
+
+// RemoveTagFromIntervention remove uma tag de uma intervenção
+func (r *ContextAwareInterventionRepository) RemoveTagFromIntervention(ctx context.Context, interventionID, tagID string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.RemoveTagFromIntervention(ctx, interventionID, tagID)
+}
+
+// GetInterventionTags retorna todas as tags de uma intervenção
+func (r *ContextAwareInterventionRepository) GetInterventionTags(ctx context.Context, interventionID string) ([]*intervention.InterventionClassification, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetInterventionTags(ctx, interventionID)
+}
+
+// GetAllInterventionTags retorna todas as tags predefinidas
+func (r *ContextAwareInterventionRepository) GetAllInterventionTags(ctx context.Context) ([]*intervention.Tag, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetAllInterventionTags(ctx)
+}
+
+// GetAllTagsByType retorna tags por tipo
+func (r *ContextAwareInterventionRepository) GetAllTagsByType(ctx context.Context, tagType intervention.TagType) ([]*intervention.Tag, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetAllTagsByType(ctx, tagType)
+}
+
+// GetIntervention retorna uma intervenção pelo ID
+func (r *ContextAwareInterventionRepository) GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error) {
+	return r.FindByID(ctx, id)
+}
+
+// GetTopInterventionTags retorna as tags mais utilizadas
+func (r *ContextAwareInterventionRepository) GetTopInterventionTags(ctx context.Context, limit int) ([]map[string]interface{}, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetTopInterventionTags(ctx, limit)
+}
+
+// FindInterventionsByTagID retorna intervenções por tag
+func (r *ContextAwareInterventionRepository) FindInterventionsByTagID(ctx context.Context, tagID string) ([]*intervention.Intervention, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.FindInterventionsByTagID(ctx, tagID)
+}
+
+// GetTagCountByType retorna a contagem de tags por tipo
+func (r *ContextAwareInterventionRepository) GetTagCountByType(ctx context.Context, interventionID string) (map[intervention.TagType]int, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetTagCountByType(ctx, interventionID)
+}
+
+// GetInterventionTagsGroupedByType retorna as tags de uma intervenção agrupadas por tipo
+func (r *ContextAwareInterventionRepository) GetInterventionTagsGroupedByType(ctx context.Context, interventionID string) (map[intervention.TagType][]*intervention.InterventionClassification, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewInterventionRepository(&DB{db})
+	return tempRepo.GetInterventionTagsGroupedByType(ctx, interventionID)
 }
 
 type ContextAwareInsightRepository struct {

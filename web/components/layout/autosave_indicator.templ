@@ -1,0 +1,117 @@
+package layout
+
+// AutoSaveIndicator componente de indicador de salvamento automático
+// Mostra estados: oculto, salvando, gravado
+templ AutoSaveIndicator(sectionID string, status string) {
+	<div 
+		id={ "autosave-indicator-" + sectionID }
+		class={ "save-indicator flex items-center gap-1.5 transition-all duration-300 " + getIndicatorVisibilityClass(status) }
+		aria-live="polite"
+		aria-atomic="true"
+	>
+		if status == "saving" {
+			<!-- Estado: Salvando -->
+			<div class="w-3 h-3 border-2 border-arandu-soft border-t-arandu-primary rounded-full animate-spin"></div>
+			<span class="text-xs font-medium text-arandu-primary">Salvando...</span>
+		} else if status == "saved" {
+			<!-- Estado: Gravado -->
+			<i class="fas fa-check-circle text-arandu-active text-sm"></i>
+			<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
+		} else {
+			<!-- Estado: Oculto (espaço reservado para evitar layout shift) -->
+			<div class="w-3 h-3"></div>
+			<span class="text-xs opacity-0">&nbsp;</span>
+		}
+	</div>
+}
+
+// AutoSaveIndicatorContainer container para o indicador com posicionamento
+// Uso: Colocar no header do widget
+templ AutoSaveIndicatorContainer(sectionID string) {
+	<div 
+		id={ "autosave-container-" + sectionID }
+		class="autosave-indicator-container"
+	>
+		@AutoSaveIndicator(sectionID, "idle")
+	</div>
+}
+
+// getIndicatorVisibilityClass retorna a classe de visibilidade baseada no status
+func getIndicatorVisibilityClass(status string) string {
+	switch status {
+	case "saving", "saved":
+		return "opacity-100"
+	default:
+		return "opacity-0"
+	}
+}
+
+// AutoSaveStatus representa os estados possíveis do auto-save
+type AutoSaveStatus string
+
+const (
+	AutoSaveIdle    AutoSaveStatus = "idle"
+	AutoSaveSaving  AutoSaveStatus = "saving"
+	AutoSaveSaved   AutoSaveStatus = "saved"
+	AutoSaveError   AutoSaveStatus = "error"
+)
+
+// AutoSaveIndicatorWithStatus versão com status tipado
+templ AutoSaveIndicatorWithStatus(sectionID string, status AutoSaveStatus) {
+	<div 
+		id={ "autosave-indicator-" + sectionID }
+		class={ "save-indicator flex items-center gap-1.5 transition-all duration-300 " + getIndicatorClass(string(status)) }
+		aria-live="polite"
+	>
+		switch status {
+			case AutoSaveSaving:
+				<div class="w-3 h-3 border-2 border-arandu-soft border-t-arandu-primary rounded-full animate-spin"></div>
+				<span class="text-xs font-medium text-arandu-primary">Salvando...</span>
+			case AutoSaveSaved:
+				<i class="fas fa-check-circle text-arandu-active text-sm"></i>
+				<span class="text-[10px] uppercase font-bold text-arandu-active">Gravado</span>
+			case AutoSaveError:
+				<i class="fas fa-exclamation-circle text-red-500 text-sm"></i>
+				<span class="text-xs font-medium text-red-500">Erro ao salvar</span>
+			default:
+				<div class="w-3 h-3"></div>
+				<span class="text-xs opacity-0">&nbsp;</span>
+		}
+	</div>
+}
+
+func getIndicatorClass(status string) string {
+	if status == "idle" {
+		return "opacity-0"
+	}
+	return "opacity-100"
+}
+
+// AutoSaveIndicatorSaved resposta HTMX para indicador salvado
+// Uso: Retornar no handler PATCH para atualizar o indicador
+templ AutoSaveIndicatorSaved(sectionID string) {
+	@AutoSaveIndicator(sectionID, "saved")
+}
+
+// AutoSaveIndicatorSaving resposta HTMX para indicador salvando
+templ AutoSaveIndicatorSaving(sectionID string) {
+	@AutoSaveIndicator(sectionID, "saving")
+}
+
+// AutoSaveIndicatorError resposta HTMX para indicador com erro
+templ AutoSaveIndicatorError(sectionID string, message string) {
+	<div 
+		id={ "autosave-indicator-" + sectionID }
+		class="save-indicator flex items-center gap-1.5 opacity-100"
+		aria-live="polite"
+	>
+		<i class="fas fa-exclamation-circle text-red-500 text-sm"></i>
+		<span class="text-xs font-medium text-red-500">
+			if message != "" {
+				{ message }
+			} else {
+				Erro ao salvar
+			}
+		</span>
+	</div>
+}

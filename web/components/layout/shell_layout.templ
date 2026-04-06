@@ -77,9 +77,36 @@ templ Shell(config ShellConfig, content templ.Component) {
 		<!-- CSS v2 - Novo padrão Shell Layout -->
 		<link href={ "/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2() } rel="stylesheet">
 		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
-		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<script>
-			// Initialize Alpine.store('shell') before Alpine.js loads
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+	<!-- BFCache Fix: Must be inline and early to catch pageshow event -->
+	<script>
+	// Fix for browser back/forward button showing empty content
+	// This runs immediately when page is restored from BFCache
+	window.addEventListener('pageshow', function(event) {
+		if (event.persisted) {
+			console.log('[BFCache] Page restored from cache, checking content...');
+			
+			// Give a small delay for DOM to settle
+			setTimeout(function() {
+				var mainContent = document.getElementById('main-content');
+				if (mainContent) {
+					var html = mainContent.innerHTML.trim();
+					// Check if content is effectively empty (no visible elements)
+					var hasContent = mainContent.querySelector('.content-header, .sota-container, .patient-profile, .card, form, table, .clinical-content');
+					
+					if (!hasContent || html.length < 100) {
+						console.log('[BFCache] Content missing or too small, forcing reload...');
+						window.location.reload();
+					} else {
+						console.log('[BFCache] Content appears valid');
+					}
+				}
+			}, 100);
+		}
+	});
+	</script>
+	<script>
+	// Initialize Alpine.store('shell') before Alpine.js loads
 			// This ensures the store is available when Alpine processes x-data
 			document.addEventListener('alpine:init', () => {
 				if (!Alpine.store('shell')) {
@@ -149,17 +176,19 @@ templ Shell(config ShellConfig, content templ.Component) {
 						class="shell-canvas-container"
 						:class="sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'"
 					>
-						<div class="shell-content" id="main-content">
-							@content
-						</div>
+			<div class="shell-content" id="main-content" hx-history="false">
+				@content
+			</div>
 					</div>
 				</div>
 			</main>
 			</div>
 		</div>
 
-		<!-- Global Scripts -->
-		<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
+<!-- Global Scripts -->
+	<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
+	<!-- Debug Script - Remove in production -->
+	<script src="/static/js/htmx-debug.js"></script>
 	</body>
 	</html>
 }

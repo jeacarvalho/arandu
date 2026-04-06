@@ -1,24 +1,48 @@
 package session
 
+import (
+	"arandu/internal/domain/intervention"
+	interventionComponents "arandu/web/components/intervention"
+)
+
 type InterventionItemData struct {
-	ID        string
-	Content   string
+	ID string
+	Content string
 	CreatedAt string
+	Tags []*intervention.InterventionClassification
 }
 
 templ InterventionItem(interv InterventionItemData) {
-	<div 
+	<div
 		id={ "intervention-" + interv.ID }
-		class="intervention-item card-hover int-item"
+		class="intervention-item card-hover int-item py-4"
 	>
-		<div class="clinical-content source-serif">{ interv.Content }</div>
+		<!-- Intervention Content - Main focus with larger font -->
+		<div class="intervention-content mb-3">
+			<p class="text-lg font-serif text-gray-800 leading-relaxed">{ interv.Content }</p>
+		</div>
+		
+		<!-- Tags Section -->
+		<div id={ "intervention-" + interv.ID + "-tags" } class="intervention-tags my-3 py-2 border-t border-b border-gray-100">
+			@interventionComponents.InterventionTagList(interv.Tags, true)
+		</div>
+		
 		<div class="obs-item-row">
 			<div class="obs-item-date">
 				<i class="fas fa-clock obs-item-icon"></i>{ interv.CreatedAt }
 			</div>
-			<div class="obs-item-actions">
+			<div class="obs-item-actions flex items-center gap-2">
+				<button
+					class="btn btn-icon btn-sm text-arandu-primary"
+					hx-get={ "/interventions/" + interv.ID + "/classify/edit" }
+					hx-target={ "#intervention-" + interv.ID + "-tags" }
+					hx-swap="innerHTML"
+					title="Adicionar classificação"
+				>
+					<i class="fas fa-tags"></i>
+				</button>
 				<div class="badge badge-secondary">Intervenção</div>
-				<button 
+				<button
 					class="btn btn-icon btn-sm"
 					hx-get={ templ.URL("/interventions/" + interv.ID + "/edit") }
 					hx-target={ "#intervention-" + interv.ID }

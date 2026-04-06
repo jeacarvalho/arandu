@@ -43,9 +43,9 @@ func Signup(data SignupData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/static/css/tailwind.css?v=" + helpers.GetCSSVersion()))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/signup.templ`, Line: 19, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/signup.templ`, Line: 19, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -56,9 +56,9 @@ func Signup(data SignupData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 templ.SafeURL
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/static/css/style.css?v=" + helpers.GetCSSVersion()))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/signup.templ`, Line: 20, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/auth/signup.templ`, Line: 20, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

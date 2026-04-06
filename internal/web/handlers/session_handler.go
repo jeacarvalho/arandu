@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
-	"arandu/internal/domain/intervention"
+	interventionDomain "arandu/internal/domain/intervention"
 	"arandu/internal/domain/observation"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
@@ -237,11 +237,12 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	// Convert to component interventions
 	for _, intv := range intervList {
-		if i, ok := intv.(*intervention.Intervention); ok {
+		if i, ok := intv.(*interventionDomain.Intervention); ok {
 			interventions = append(interventions, sessionComponents.Intervention{
 				ID:        i.ID,
 				Content:   i.Content,
 				CreatedAt: i.CreatedAt.Format("02/01/2006 às 15:04"),
+				Tags:      []*interventionDomain.InterventionClassification{}, // TODO: Buscar tags
 			})
 		}
 	}
@@ -252,7 +253,8 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
-		layoutComponents.ShellContentWrapper(detail).Render(r.Context(), w)
+		// Render just the content, HTMX will swap into #main-content
+		detail.Render(r.Context(), w)
 		return
 	}
 
@@ -421,7 +423,8 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
-		layoutComponents.ShellContentWrapper(form).Render(r.Context(), w)
+		// Render just the form, HTMX will swap into #main-content
+		form.Render(r.Context(), w)
 		return
 	}
 
@@ -499,7 +502,7 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 	// Convert to component interventions
 	interventions := []sessionComponents.Intervention{}
 	for _, interv := range intList {
-		if i, ok := interv.(*intervention.Intervention); ok {
+		if i, ok := interv.(*interventionDomain.Intervention); ok {
 			interventions = append(interventions, sessionComponents.Intervention{
 				ID:        i.ID,
 				Content:   i.Content,
@@ -783,7 +786,7 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 	}
 
 	// Convert to domain intervention
-	intervention, ok := intv.(*intervention.Intervention)
+	interventionData, ok := intv.(*interventionDomain.Intervention)
 	if !ok {
 		h.renderError(w, r, "Erro ao converter intervenção", http.StatusInternalServerError)
 		return
@@ -791,9 +794,10 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 
 	// Render intervention item component
 	component := sessionComponents.InterventionItem(sessionComponents.InterventionItemData{
-		ID:        intervention.ID,
-		Content:   intervention.Content,
-		CreatedAt: intervention.CreatedAt.Format("02/01/2006 15:04"),
+		ID:        interventionData.ID,
+		Content:   interventionData.Content,
+		CreatedAt: interventionData.CreatedAt.Format("02/01/2006 15:04"),
+		Tags:      []*interventionDomain.InterventionClassification{}, // TODO: Buscar tags da intervenção
 	})
 
 	// Render HTMX fragment

@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "tailwind:build": "npx @tailwindcss/cli -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --minify",
+    "tailwind:build:v2": "npx @tailwindcss/cli -i ./web/static/css/input-v2.css -o ./web/static/css/tailwind-v2.css --minify",
     "tailwind:watch": "npx @tailwindcss/cli -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --watch",
-    "build:all": "npm run tailwind:build && go generate ./..."
+    "tailwind:watch:v2": "npx @tailwindcss/cli -i ./web/static/css/input-v2.css -o ./web/static/css/tailwind-v2.css --watch",
+    "build:all": "npm run tailwind:build && npm run tailwind:build:v2 && go generate ./..."
   },
   "dependencies": {
     "playwright": "^1.58.2"

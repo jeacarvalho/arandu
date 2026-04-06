@@ -23,6 +23,68 @@
 
 ## 🏗️ Arquitetura Web (Go + templ + HTMX)
 
+### 0. ⚠️ PROIBIDO: Uso de hx-swap-oob sem elemento no DOM
+
+**GRAVIDADE:** CRÍTICA - Silencioso, não gera erro no console, tela fica em branco
+
+**Problema:** O atributo `hx-swap-oob="true"` em uma resposta HTMX requer que o elemento com o mesmo ID **EXISTA PREVIAMENTE** no DOM. Se o elemento não existir, o HTMX falha silenciosamente e nada aparece na tela. Isso é extremamente difícil de debugar.
+
+**Cenário de erro (NUNCA FAÇA ISSO):**
+```go
+// ❌ ERRADO: Retorna elemento com OOB que não existe no DOM original
+func Handler(w http.ResponseWriter, r *http.Request) {
+    content := SomeComponent()
+    layoutComponents.ShellContentWrapper(content).Render(r.Context(), w)
+    // Retorna: <div id="main-content-swap" hx-swap-oob="true">...</div>
+    // Mas #main-content-swap NÃO EXISTE no layout base!
+}
+
+// Componente problemático:
+templ ShellContentWrapper(content templ.Component) {
+    <div id="main-content-swap" hx-swap-oob="true">  // ❌ ID não existe no DOM!
+        @content
+    </div>
+}
+```
+
+**Por que quebra:**
+1. Layout base tem: `<div id="main-content">` (sem `-swap`)
+2. Resposta HTMX procura: `#main-content-swap`
+3. HTMX não encontra → Falha silenciosamente → Tela em branco
+4. Usuário precisa dar Ctrl+Shift+R para "resolver"
+
+**Solução correta (sempre use):**
+```go
+// ✅ CERTO: Verificar se é HTMX e retornar apenas o conteúdo
+func Handler(w http.ResponseWriter, r *http.Request) {
+    content := SomeComponent()
+    
+    isHTMX := r.Header.Get("HX-Request") == "true"
+    if isHTMX {
+        // HTMX fará swap em #main-content automaticamente
+        content.Render(r.Context(), w)
+        return
+    }
+    
+    // Full page para requisições normais
+    layoutComponents.Shell(config, content).Render(r.Context(), w)
+}
+```
+
+**Regra de ouro:**
+- ❌ NUNCA use `hx-swap-oob` com IDs que não existem no layout base
+- ✅ SEMPRE retorne apenas o conteúdo para HTMX (ele faz swap no target configurado)
+- ✅ O target (`hx-target="#main-content"`) deve existir no layout base
+
+**Arquivos de referência para consulta:**
+- `internal/web/handlers/session_handler.go` (exemplo CORRETO)
+- `web/components/layout/shell_layout.templ` (estrutura base)
+- `web/components/layout/shell_layout.templ:179` (onde #main-content é definido)
+
+**Referência:** task_20260404_215326 - Problema identificado e corrigido em 04/04/2026
+
+---
+
 ### 1. Padrão de Renderização Contextual
 
 **Problema:** Esquecer de verificar se a requisição é HTMX, quebrando o layout ou retornando a página inteira dentro de um fragmento.

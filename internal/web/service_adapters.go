@@ -286,6 +286,60 @@ func (a *GoalServiceAdapter) FindByPatientID(ctx context.Context, patientID stri
 	return a.repo.FindByPatientID(ctx, patientID)
 }
 
+// InterventionClassificationServiceAdapter adapts repository to handlers.InterventionClassificationServiceInterface
+type InterventionClassificationServiceAdapter struct {
+	repo interface {
+		GetAllInterventionTags(ctx context.Context) ([]*intervention.Tag, error)
+		GetAllTagsByType(ctx context.Context, tagType intervention.TagType) ([]*intervention.Tag, error)
+		AddTagToIntervention(ctx context.Context, interventionID, tagID string, intensity int) error
+		RemoveTagFromIntervention(ctx context.Context, interventionID, tagID string) error
+		GetInterventionTags(ctx context.Context, interventionID string) ([]*intervention.InterventionClassification, error)
+		GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error)
+	}
+}
+
+// NewInterventionClassificationServiceAdapter creates a new adapter
+func NewInterventionClassificationServiceAdapter(repo interface {
+	GetAllInterventionTags(ctx context.Context) ([]*intervention.Tag, error)
+	GetAllTagsByType(ctx context.Context, tagType intervention.TagType) ([]*intervention.Tag, error)
+	AddTagToIntervention(ctx context.Context, interventionID, tagID string, intensity int) error
+	RemoveTagFromIntervention(ctx context.Context, interventionID, tagID string) error
+	GetInterventionTags(ctx context.Context, interventionID string) ([]*intervention.InterventionClassification, error)
+	GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error)
+}) *InterventionClassificationServiceAdapter {
+	return &InterventionClassificationServiceAdapter{repo: repo}
+}
+
+// GetAllInterventionTags implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) GetAllInterventionTags(ctx context.Context) ([]*intervention.Tag, error) {
+	return a.repo.GetAllInterventionTags(ctx)
+}
+
+// GetInterventionTagsByType implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) GetInterventionTagsByType(ctx context.Context, tagType intervention.TagType) ([]*intervention.Tag, error) {
+	return a.repo.GetAllTagsByType(ctx, tagType)
+}
+
+// AddTagToIntervention implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) AddTagToIntervention(ctx context.Context, interventionID, tagID string, intensity int) error {
+	return a.repo.AddTagToIntervention(ctx, interventionID, tagID, intensity)
+}
+
+// RemoveTagFromIntervention implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) RemoveTagFromIntervention(ctx context.Context, interventionID, tagID string) error {
+	return a.repo.RemoveTagFromIntervention(ctx, interventionID, tagID)
+}
+
+// GetInterventionTags implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) GetInterventionTags(ctx context.Context, interventionID string) ([]*intervention.InterventionClassification, error) {
+	return a.repo.GetInterventionTags(ctx, interventionID)
+}
+
+// GetIntervention implements handlers.InterventionClassificationServiceInterface
+func (a *InterventionClassificationServiceAdapter) GetIntervention(ctx context.Context, id string) (*intervention.Intervention, error) {
+	return a.repo.GetIntervention(ctx, id)
+}
+
 // AnamnesisServiceAdapter adapts repository to handlers.AnamnesisService interface
 type AnamnesisServiceAdapter struct {
 	repo interface {

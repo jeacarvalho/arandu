@@ -1,0 +1,118 @@
+package intervention
+
+import (
+	"arandu/internal/domain/intervention"
+	"strconv"
+)
+
+// InterventionTagData represents data for a single intervention tag display
+type InterventionTagData struct {
+	InterventionID string
+	Tag            intervention.Tag
+	Intensity      int
+	ShowClose      bool
+}
+
+// InterventionTag renders a single classification tag for interventions
+// HTMX-enabled for removal
+templ InterventionTag(data InterventionTagData) {
+	<span
+		class="tag-item inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm"
+		style={ "background-color: " + data.Tag.Color + "15; color: " + data.Tag.Color + "CC; border-color: " + data.Tag.Color + "40;" }
+	>
+		if data.Tag.Icon != "" {
+			<i class={ "fas fa-" + data.Tag.Icon + " text-xs opacity-70" }></i>
+		}
+		<span class="font-semibold">{ data.Tag.Name }</span>
+		if data.Intensity > 0 {
+			<span
+				class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
+				style={ "background-color: " + data.Tag.Color + "30; color: " + data.Tag.Color + ";" }
+			>
+				{ strconv.Itoa(data.Intensity) }
+			</span>
+		}
+		if data.ShowClose {
+			<button
+				class="tag-remove-btn ml-1 hover:opacity-70 transition-opacity p-0.5 rounded hover:bg-white/50"
+				hx-delete={ "/interventions/" + data.InterventionID + "/classify/" + data.Tag.ID }
+				hx-target="closest .tag-item"
+				hx-swap="outerHTML"
+				hx-confirm="Remover esta classificação?"
+				title="Remover tag"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+		}
+	</span>
+}
+
+// InterventionTagList renders a list of intervention tags
+templ InterventionTagList(tags []*intervention.InterventionClassification, showRemove bool) {
+	if len(tags) == 0 {
+		<div class="tag-list-empty text-sm text-gray-400 italic bg-gray-50 rounded-lg py-4 px-6 text-center">
+			<i class="fas fa-tags mb-2 text-gray-300"></i>
+			<p>Nenhuma classificação ainda</p>
+			<p class="text-xs mt-1">Clique no ícone de tags para adicionar</p>
+		</div>
+	} else {
+		<div class="tag-list flex flex-wrap gap-2">
+			for _, ic := range tags {
+				if ic.Tag != nil {
+					@InterventionTag(InterventionTagData{
+						InterventionID: ic.InterventionID,
+						Tag:            *ic.Tag,
+						Intensity:      ic.Intensity,
+						ShowClose:      showRemove,
+					})
+				}
+			}
+		</div>
+	}
+}
+
+// InterventionTagGroupByType groups intervention tags by their type
+templ InterventionTagGroupByType(tags []*intervention.InterventionClassification) {
+	if len(tags) == 0 {
+		<div class="tag-groups-empty text-sm text-gray-500 italic p-4">
+			Nenhuma classificação atribuída
+		</div>
+	} else {
+		// Group by type
+		{{ groups := make(map[intervention.TagType][]*intervention.InterventionClassification) }}
+		for _, ic := range tags {
+			if ic.Tag != nil {
+				{{ groups[ic.Tag.TagType] = append(groups[ic.Tag.TagType], ic) }}
+			}
+		}
+		<div class="tag-groups space-y-3">
+			for _, tagType := range intervention.TagTypeOrder {
+				if groupTags, ok := groups[tagType]; ok && len(groupTags) > 0 {
+					<div class="tag-group">
+						<h4
+							class="tag-group-title text-xs font-semibold uppercase tracking-wide mb-2 flex items-center gap-2"
+							style={ "color: " + intervention.GetTagTypeColor(tagType) }
+						>
+							<i class={ "fas fa-" + intervention.GetTagTypeIcon(tagType) }
+								style={ "color: " + intervention.GetTagTypeColor(tagType) }
+							></i>
+							{ intervention.GetTagTypeDisplayName(tagType) }
+						</h4>
+						<div class="tag-group-items flex flex-wrap gap-2">
+							for _, ic := range groupTags {
+								if ic.Tag != nil {
+									@InterventionTag(InterventionTagData{
+										InterventionID: ic.InterventionID,
+										Tag:            *ic.Tag,
+										Intensity:      ic.Intensity,
+										ShowClose:      false,
+									})
+								}
+							}
+						</div>
+					</div>
+				}
+			}
+		</div>
+	}
+}
