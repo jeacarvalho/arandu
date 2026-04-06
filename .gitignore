@@ -32,12 +32,13 @@ Thumbs.db
 
 # Project specific
 tmp/
-storage/tenants/*/
-!storage/tenants/.gitkeep
+storage/
+!storage/.gitkeep
 *.db
 *.db-journal
 *.log
 server.log
+internal/infrastructure/repository/sqlite/seeds/seed_massive_clinical_data.sql
 
 # Generated
 *_templ.go
