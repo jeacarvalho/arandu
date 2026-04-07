@@ -1,0 +1,144 @@
+package agenda
+
+// AppointmentDetail shows appointment details in a modal
+templ AppointmentDetail(model AppointmentDetailModel) {
+	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+		<div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+			<!-- Header -->
+			<div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+				<h3 class="text-lg font-semibold text-neutral-900">Detalhes da Sessão</h3>
+				<button
+					hx-get="/agenda"
+					hx-target="#agenda-content"
+					class="text-neutral-400 hover:text-neutral-600 transition-colors"
+				>
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			
+			<!-- Content -->
+			<div class="p-6 space-y-4">
+				<div class="flex items-center space-x-3">
+					<div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+						<i class="fas fa-user text-emerald-600"></i>
+					</div>
+					<div>
+						<div class="font-medium text-neutral-900">{ model.PatientName }</div>
+						<div class="text-sm text-neutral-500">Paciente</div>
+					</div>
+				</div>
+				
+				<div class="grid grid-cols-2 gap-4 text-sm">
+					<div>
+						<div class="text-neutral-500">Data</div>
+						<div class="font-medium">{ model.Date.Format("2 January 2006") }</div>
+					</div>
+					<div>
+						<div class="text-neutral-500">Horário</div>
+						<div class="font-medium">{ model.StartTime } - { model.EndTime }</div>
+					</div>
+				</div>
+				
+				<div class="text-sm">
+					<div class="text-neutral-500">Status</div>
+					<div class={ getStatusBadgeClass(model.Status) }>
+						{ getStatusLabel(model.Status) }
+					</div>
+				</div>
+				
+				if model.Notes != "" {
+					<div class="text-sm">
+						<div class="text-neutral-500">Observações</div>
+						<div class="text-neutral-700">{ model.Notes }</div>
+					</div>
+				}
+			</div>
+			
+			<!-- Actions -->
+			<div class="flex justify-end space-x-3 px-6 py-4 border-t border-neutral-200">
+				if model.Status == "scheduled" || model.Status == "confirmed" {
+					<button
+						hx-delete={ "/agenda/appointments/" + model.ID }
+						hx-confirm="Tem certeza que deseja cancelar esta sessão?"
+						hx-target="#drawer"
+						class="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
+					>
+						Cancelar
+					</button>
+					
+					if model.SessionID != nil {
+						<a
+							href={ "/session/" + *model.SessionID }
+							class="px-4 py-2 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-primary-dark rounded-md transition-colors inline-flex items-center"
+						>
+							Ver Sessão
+						</a>
+					} else {
+						<button
+							hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
+							hx-target="#drawer"
+							class="px-4 py-2 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-primary-dark rounded-md transition-colors"
+						>
+							Completar
+						</button>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+func getStatusBadgeClass(status string) string {
+	switch status {
+	case "scheduled":
+		return "inline-flex px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full"
+	case "confirmed":
+		return "inline-flex px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full"
+	case "completed":
+		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-800 rounded-full"
+	case "cancelled":
+		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-500 rounded-full line-through"
+	case "no_show":
+		return "inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full"
+	default:
+		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-800 rounded-full"
+	}
+}
+
+func getStatusLabel(status string) string {
+	switch status {
+	case "scheduled":
+		return "Agendada"
+	case "confirmed":
+		return "Confirmada"
+	case "completed":
+		return "Realizada"
+	case "cancelled":
+		return "Cancelada"
+	case "no_show":
+		return "Não Compareceu"
+	default:
+		return status
+	}
+}
+
+// SlotsList shows available time slots
+templ SlotsList(model SlotsViewModel) {
+	<div class="space-y-2">
+		for _, slot := range model.Slots {
+			if slot.Available {
+				<button
+					type="button"
+					value={ slot.StartTime }
+					class="w-full text-left px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md hover:bg-arandu-primary/5 hover:border-arandu-primary transition-colors"
+				>
+					{ slot.StartTime } - { slot.EndTime }
+				</button>
+			} else {
+				<div class="px-3 py-2 text-sm bg-neutral-100 text-neutral-400 rounded-md cursor-not-allowed">
+					{ slot.StartTime } - { slot.EndTime } (Ocupado)
+				</div>
+			}
+		}
+	</div>
+}

@@ -1,0 +1,200 @@
+package agenda
+
+import (
+	"fmt"
+
+	"arandu/web/components/layout"
+)
+
+// AgendaPage renders the complete agenda page using the system's standard shell layout
+templ AgendaPage(vm AgendaViewModel) {
+	@layout.Shell(layout.ShellConfig{
+		PageTitle:   "Agenda",
+		ActivePage:  "agenda",
+		ShowSidebar: true,
+	}, AgendaContent(vm))
+}
+
+// AgendaContent renders the agenda content (for HTMX swaps)
+templ AgendaContent(vm AgendaViewModel) {
+	<div class="flex flex-col h-full overflow-hidden">
+		<!-- Navigation Bar -->
+		<div class="h-11 bg-white border-b border-neutral-200 flex items-center px-5 gap-2.5 flex-shrink-0">
+			<!-- Navigation Arrows -->
+			<div class="flex gap-0.5">
+				<button
+					class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-50 transition-colors"
+					aria-label="Semana anterior"
+					hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.PrevDate, vm.CurrentView) }
+					hx-target="#agenda-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					<i class="fas fa-chevron-left text-xs text-neutral-600"></i>
+				</button>
+				<button
+					class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-50 transition-colors"
+					aria-label="Próxima semana"
+					hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.NextDate, vm.CurrentView) }
+					hx-target="#agenda-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					<i class="fas fa-chevron-right text-xs text-neutral-600"></i>
+				</button>
+			</div>
+			
+			<!-- Today Button -->
+			<button
+				class="h-7 px-3 border border-neutral-200 rounded-md text-xs font-medium text-neutral-600 bg-white hover:bg-neutral-50 transition-colors"
+				hx-get="/agenda"
+				hx-target="#agenda-content"
+				hx-swap="innerHTML"
+				hx-push-url="true"
+			>
+				Hoje
+			</button>
+			
+			<!-- Week Label -->
+			<span class="text-xs font-semibold text-neutral-900 flex-1">{ vm.WeekLabel }</span>
+			
+			<!-- View Tabs -->
+			<div class="flex bg-neutral-100 rounded-lg p-0.5 gap-px">
+				<button
+					class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-sm", vm.CurrentView == "dia"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "dia") }
+					hx-get={ fmt.Sprintf("/agenda?view=dia&date=%s", vm.WeekStart.Format("2006-01-02")) }
+					hx-target="#agenda-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Dia
+				</button>
+				<button
+					class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-sm", vm.CurrentView == "semana"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "semana") }
+					hx-get={ fmt.Sprintf("/agenda?view=semana&date=%s", vm.WeekStart.Format("2006-01-02")) }
+					hx-target="#agenda-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Semana
+				</button>
+				<button
+					class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-sm", vm.CurrentView == "mes"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "mes") }
+					hx-get={ fmt.Sprintf("/agenda?view=mes&date=%s", vm.WeekStart.Format("2006-01-02")) }
+					hx-target="#agenda-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Mês
+				</button>
+			</div>
+		</div>
+
+		<!-- Calendar -->
+		<div class="flex-1 flex overflow-hidden">
+			<div class="flex-1 flex overflow-y-auto overflow-x-hidden">
+				<!-- Time column -->
+				<div class="w-13 flex-shrink-0 border-r border-neutral-200 pt-11 bg-white">
+					for _, h := range []string{"08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00"} {
+						<div class="h-15 flex items-start justify-end pr-2 pt-1">
+							<span class="text-[10px] text-neutral-400 font-medium">{ h }</span>
+						</div>
+					}
+				</div>
+				
+				<!-- Days area -->
+				<div class="flex-1 flex flex-col min-w-0">
+					<!-- Days header -->
+					<div class="h-11 grid grid-cols-7 border-b border-neutral-200 bg-white flex-shrink-0 sticky top-0 z-10">
+						for _, day := range vm.Days {
+							<div class="flex flex-col items-center justify-center border-r border-neutral-200 last:border-r-0 px-0.5 py-1">
+								<span class="text-[10px] font-semibold text-neutral-400 uppercase tracking-wide">{ day.DayName }</span>
+								<div class={ "w-6.5 h-6.5 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5", templ.KV("bg-arandu-primary text-white", day.IsToday), templ.KV("text-neutral-600", !day.IsToday) }>
+									{ day.DayNumber }
+								</div>
+							</div>
+						}
+					</div>
+					
+					<!-- Days body -->
+					<div class="grid grid-cols-7 flex-1">
+						for _, day := range vm.Days {
+							@DayColumn(day)
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Legend -->
+		<div class="h-9 bg-white border-t border-neutral-200 flex items-center px-5 gap-3.5 flex-shrink-0">
+			<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
+				<div class="w-2 h-2 rounded-sm bg-arandu-active"></div>
+				Confirmado
+			</div>
+			<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
+				<div class="w-2 h-2 rounded-sm bg-amber-500"></div>
+				Aguardando
+			</div>
+			<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
+				<div class="w-2 h-2 rounded-sm bg-blue-500"></div>
+				1ª consulta
+			</div>
+			<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
+				<div class="w-2 h-2 rounded-sm bg-neutral-300"></div>
+				Cancelado
+			</div>
+			<div class="ml-auto text-xs text-neutral-600 font-semibold bg-neutral-100 border border-neutral-200 px-2.5 py-0.5 rounded-full">
+				{ fmt.Sprintf("%d consultas esta semana", vm.TotalCount) }
+			</div>
+		</div>
+	</div>
+}
+
+// DayColumn renders a single day column
+templ DayColumn(day DayViewModel) {
+	<div class={ "border-r border-neutral-200 relative last:border-r-0 min-h-[780px]", templ.KV("bg-arandu-primary/[0.03]", day.IsToday) }>
+		<!-- 13 hour rows (08:00-20:00) -->
+		for i := 0; i < 13; i++ {
+			<div class="h-15 border-b border-dashed border-neutral-100 last:border-b-0"></div>
+		}
+		
+		<!-- Appointments -->
+		for _, appt := range day.Appointments {
+			@AppointmentCard(appt)
+		}
+	</div>
+}
+
+// AppointmentCard renders an appointment card
+templ AppointmentCard(appt AppointmentViewModel) {
+	<div
+		class={ "absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", getAppointmentCardClasses(appt.Status) }
+		style={ fmt.Sprintf("top:%dpx;height:%dpx", appt.TopPx, appt.HeightPx) }
+		role="button"
+		aria-label={ fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime) }
+		hx-get={ fmt.Sprintf("/agenda/appointments/%s", appt.ID) }
+		hx-target="#drawer"
+		hx-swap="innerHTML"
+	>
+		<div class="text-[10px] font-medium opacity-75 mb-0.5 truncate">{ appt.StartTime } – { appt.EndTime }</div>
+		<div class="font-semibold leading-tight truncate">{ appt.PatientName }</div>
+		<div class="text-[10px] opacity-65 mt-0.5 truncate">{ StatusLabel(appt.Status) }</div>
+	</div>
+}
+
+// getAppointmentCardClasses returns the CSS classes for appointment status
+func getAppointmentCardClasses(status string) string {
+	switch status {
+	case "confirmed":
+		return "bg-emerald-100 text-emerald-900 border-emerald-500"
+	case "pending":
+		return "bg-amber-100 text-amber-900 border-amber-500"
+	case "first_session":
+		return "bg-blue-100 text-blue-900 border-blue-500"
+	case "cancelled":
+		return "bg-neutral-100 text-neutral-500 border-neutral-300 line-through opacity-65"
+	default:
+		return "bg-emerald-100 text-emerald-900 border-emerald-500"
+	}
+}
