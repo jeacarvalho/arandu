@@ -1,6 +1,6 @@
 # 🧠 Estado Atual do Projeto Arandu
 
-**Gerado em:** dom 05 abr 2026 23:43:07 -03
+**Gerado em:** ter 07 abr 2026 15:06:09 -03
 
 > 📚 **Contexto permanente:** [permanent_state.md](../project_context/permanent_state.md)
 
@@ -82,11 +82,11 @@
 
 ## 🛠️ Tarefas recentes
 
+- task_20260406_181645
+- task_20260406_144121
 - task_20260404_215326
 - task_20260404_182726
 - task_20260402_203808
-- task_20260402_194458
-- task_20260401_180238
 
 ## 📚 Sistema de Aprendizados
 
@@ -111,7 +111,7 @@ Arquivos principais:
 
 ## 📈 Progresso do Projeto
 
-- **Tarefas concluídas:** 63
-- **Requirements implementados:** 63
-- **Última atualização permanente:** ** dom 05 abr 2026 23:43:07 -03
+- **Tarefas concluídas:** 68
+- **Requirements implementados:** 68
+- **Última atualização permanente:** ** ter 07 abr 2026 15:06:08 -03
 

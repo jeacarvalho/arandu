@@ -103,7 +103,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(config.PageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 74, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 74, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 78, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 78, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 79, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 79, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -162,14 +162,14 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Global Scripts --><script src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Modal Container --><div id=\"modal-container\"></div><!-- Drawer Container --><div id=\"drawer-container\"></div><!-- Global Scripts --><script src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 189, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 195, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -245,7 +245,7 @@ func ShellTopbar(config ShellConfig) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(config.UserEmail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 238, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 244, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -429,6 +429,10 @@ func ShellDefaultNavItems(activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = ShellNavItem("/agenda", "agenda", activePage, "fa-calendar", "Agenda").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = ShellNavItem("/patients", "anamnesis", activePage, "fa-history", "Anamnese").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -520,7 +524,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var14 templ.SafeURL
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 378, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 385, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -543,7 +547,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 383, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 390, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -565,7 +569,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var16).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -578,7 +582,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 392, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 399, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -699,7 +703,7 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 424, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 431, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -717,7 +721,7 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 426, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 433, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -770,7 +774,7 @@ func ShellCard(title string, content templ.Component) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `shell_layout.templ`, Line: 436, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 443, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {

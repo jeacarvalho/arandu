@@ -124,3 +124,25 @@ func GetLegendDotClass(status string) string {
 		return "leg-dot confirmed"
 	}
 }
+
+// TranslateDayName translates English day abbreviations to Portuguese
+func TranslateDayName(englishDay string) string {
+	switch englishDay {
+	case "Mon":
+		return "Seg"
+	case "Tue":
+		return "Ter"
+	case "Wed":
+		return "Qua"
+	case "Thu":
+		return "Qui"
+	case "Fri":
+		return "Sex"
+	case "Sat":
+		return "Sáb"
+	case "Sun":
+		return "Dom"
+	default:
+		return englishDay
+	}
+}

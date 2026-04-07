@@ -90,13 +90,26 @@ templ AgendaContent(vm AgendaViewModel) {
 						Mês
 					</button>
 				</div>
+				
+				<!-- New Appointment Button -->
+				<button
+					class="h-7 px-3 bg-arandu-primary text-white text-xs font-medium rounded-md hover:bg-arandu-dark transition-colors flex items-center gap-1.5 cursor-pointer"
+					hx-get="/agenda/new"
+					hx-target="#drawer-container"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-plus text-[10px]"></i>
+					<span>Nova Marcação</span>
+				</button>
 			</div>
 
 			<!-- Calendar -->
 			<div class="flex overflow-hidden min-h-[780px]">
 				<div class="flex-1 flex overflow-y-auto overflow-x-hidden">
 				<!-- Time column -->
-				<div class="w-13 flex-shrink-0 border-r border-neutral-200 pt-11 bg-white">
+				<div class="w-13 flex-shrink-0 border-r border-neutral-200 bg-white">
+					<!-- Empty space to align with days header (h-11 = 44px) -->
+					<div class="h-11 border-b border-neutral-200"></div>
 					for _, h := range []string{"08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00"} {
 						<div class="h-15 flex items-start justify-end pr-2 pt-1">
 							<span class="text-[10px] text-neutral-400 font-medium">{ h }</span>
@@ -110,7 +123,7 @@ templ AgendaContent(vm AgendaViewModel) {
 					<div class="h-11 grid grid-cols-7 border-b border-neutral-200 bg-white flex-shrink-0 sticky top-0 z-10">
 						for _, day := range vm.Days {
 							<div class="flex flex-col items-center justify-center border-r border-neutral-200 last:border-r-0 px-0.5 py-1">
-								<span class="text-[10px] font-semibold text-neutral-400 uppercase tracking-wide">{ day.DayName }</span>
+								<span class="text-[10px] font-semibold text-neutral-400 uppercase tracking-wide">{ TranslateDayName(day.DayName) }</span>
 								<div class={ "w-6.5 h-6.5 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5", templ.KV("bg-arandu-primary text-white", day.IsToday), templ.KV("text-neutral-600", !day.IsToday) }>
 									{ day.DayNumber }
 								</div>

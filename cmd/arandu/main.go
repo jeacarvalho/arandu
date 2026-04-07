@@ -71,6 +71,7 @@ func main() {
 	medicationRepo := sqlite.NewContextAwareMedicationRepository(repoFactory)
 	vitalsRepo := sqlite.NewContextAwareVitalsRepository(repoFactory)
 	goalRepo := sqlite.NewContextAwareGoalRepository(repoFactory)
+	appointmentRepo := sqlite.NewContextAwareAppointmentRepository(repoFactory)
 
 	// Use context-aware repo for timeline
 	timelineRepo := sqlite.NewContextAwareTimelineRepository(repoFactory)
@@ -185,6 +186,38 @@ func main() {
 	mux.HandleFunc("/auth/google/callback", authHandler.ServeHTTP)
 	mux.HandleFunc("/logout", authHandler.ServeHTTP)
 	mux.HandleFunc("/auth/signup", authHandler.ServeHTTP)
+
+	// Agenda routes
+	agendaService := services.NewAgendaService(appointmentRepo)
+	agendaHandler := handlers.NewAgendaHandler(agendaService, patientServiceAdapter)
+
+	mux.HandleFunc("/agenda", agendaHandler.View)
+	mux.HandleFunc("/agenda/day", agendaHandler.DayView)
+	mux.HandleFunc("/agenda/week", agendaHandler.WeekView)
+	mux.HandleFunc("/agenda/month", agendaHandler.MonthView)
+	mux.HandleFunc("/agenda/new", agendaHandler.NewForm)
+	mux.HandleFunc("/agenda/slots", agendaHandler.GetSlots)
+
+	// Agenda appointments CRUD
+	mux.HandleFunc("/agenda/appointments/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if r.Method == "POST" && !strings.Contains(path, "/") {
+			agendaHandler.Create(w, r)
+		} else if r.Method == "GET" && !strings.HasSuffix(path, "/") {
+			agendaHandler.Show(w, r)
+		} else if r.Method == "PUT" && !strings.HasSuffix(path, "/") {
+			agendaHandler.Update(w, r)
+		} else if (r.Method == "DELETE" || (r.Method == "POST" && strings.Contains(path, "/cancel"))) && !strings.HasSuffix(path, "/") {
+			agendaHandler.Cancel(w, r)
+		} else if strings.Contains(path, "/reschedule") && r.Method == "POST" {
+			agendaHandler.Reschedule(w, r)
+		} else if strings.Contains(path, "/complete") && r.Method == "POST" {
+			agendaHandler.Complete(w, r)
+		} else {
+			http.NotFound(w, r)
+		}
+	})
+	mux.HandleFunc("/agenda/appointments", agendaHandler.Create)
 
 	// Dashboard
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

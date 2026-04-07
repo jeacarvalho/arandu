@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"arandu/internal/domain/appointment"
 	"arandu/internal/domain/insight"
 	"arandu/internal/domain/intervention"
 	"arandu/internal/domain/observation"
@@ -831,4 +832,131 @@ func (r *ContextAwareGoalRepository) CloseWithNote(ctx context.Context, id strin
 	}
 	tempRepo := NewGoalRepository(&DB{db})
 	return tempRepo.CloseWithNote(ctx, id, status, closureNote)
+}
+
+// ContextAwareAppointmentRepository wraps AppointmentRepository with multi-tenant support
+type ContextAwareAppointmentRepository struct {
+	factory *ContextAwareRepositoryFactory
+}
+
+// NewContextAwareAppointmentRepository creates a new context-aware appointment repository
+func NewContextAwareAppointmentRepository(factory *ContextAwareRepositoryFactory) *ContextAwareAppointmentRepository {
+	return &ContextAwareAppointmentRepository{factory: factory}
+}
+
+func (r *ContextAwareAppointmentRepository) Save(ctx context.Context, appt *appointment.Appointment) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.Save(ctx, appt)
+}
+
+func (r *ContextAwareAppointmentRepository) FindByID(ctx context.Context, id string) (*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindByID(ctx, id)
+}
+
+func (r *ContextAwareAppointmentRepository) FindByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindByDateRange(ctx, startDate, endDate)
+}
+
+func (r *ContextAwareAppointmentRepository) FindByPatient(ctx context.Context, patientID string) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindByPatient(ctx, patientID)
+}
+
+func (r *ContextAwareAppointmentRepository) FindByPatientAndDateRange(ctx context.Context, patientID string, startDate, endDate time.Time) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindByPatientAndDateRange(ctx, patientID, startDate, endDate)
+}
+
+func (r *ContextAwareAppointmentRepository) FindByDate(ctx context.Context, date time.Time) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindByDate(ctx, date)
+}
+
+func (r *ContextAwareAppointmentRepository) FindOverlapping(ctx context.Context, date time.Time, startTime, endTime string, excludeID string) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindOverlapping(ctx, date, startTime, endTime, excludeID)
+}
+
+func (r *ContextAwareAppointmentRepository) Update(ctx context.Context, appt *appointment.Appointment) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.Update(ctx, appt)
+}
+
+func (r *ContextAwareAppointmentRepository) Delete(ctx context.Context, id string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.Delete(ctx, id)
+}
+
+func (r *ContextAwareAppointmentRepository) CountByDate(ctx context.Context, date time.Time) (int, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return 0, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.CountByDate(ctx, date)
+}
+
+func (r *ContextAwareAppointmentRepository) FindUpcoming(ctx context.Context, fromDate time.Time, limit int) ([]*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindUpcoming(ctx, fromDate, limit)
+}
+
+func (r *ContextAwareAppointmentRepository) FindBySessionID(ctx context.Context, sessionID string) (*appointment.Appointment, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.FindBySessionID(ctx, sessionID)
+}
+
+func (r *ContextAwareAppointmentRepository) UpdatePatientName(ctx context.Context, patientID, patientName string) error {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return err
+	}
+	tempRepo := NewAppointmentRepository(&DB{db})
+	return tempRepo.UpdatePatientName(ctx, patientID, patientName)
 }

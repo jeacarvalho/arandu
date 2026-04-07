@@ -74,6 +74,7 @@ type SessionServiceInterface interface {
 // PatientServiceInterface defines the interface for patient operations
 type PatientServiceInterface interface {
 	GetPatientByID(ctx context.Context, id string) (*patient.Patient, error)
+	ListPatients(ctx context.Context) ([]*patient.Patient, error)
 }
 
 type ObservationServiceInterface interface {

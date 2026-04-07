@@ -32,20 +32,20 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fixed inset-0 bg-black/50 flex items-center justify-center z-50\" id=\"modal-backdrop\"><div class=\"bg-white rounded-lg shadow-xl w-full max-w-md mx-4\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-200\"><h3 class=\"text-lg font-semibold text-gray-900\">Nova Sessão</h3><button hx-get=\"/agenda\" hx-target=\"#calendar-container\" class=\"text-gray-400 hover:text-gray-600 transition-colors\"><i class=\"fas fa-times\"></i></button></div><!-- Form --><form hx-post=\"/agenda/appointments\" hx-target=\"#calendar-container\" hx-swap=\"outerHTML\" class=\"p-6 space-y-4\"><!-- Date --><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Data</label> <input type=\"date\" name=\"date\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"drawer\" class=\"fixed inset-y-0 right-0 w-96 bg-white shadow-xl z-50 flex flex-col\"><!-- Header --><div class=\"flex items-center justify-between px-5 py-4 border-b border-neutral-200 bg-neutral-50 flex-shrink-0\"><h3 class=\"text-base font-semibold text-neutral-800\">Nova Marcação</h3><button hx-get=\"/agenda\" hx-target=\"#drawer\" hx-swap=\"outerHTML\" class=\"w-8 h-8 flex items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors\"><i class=\"fas fa-times\"></i></button></div><!-- Form --><form hx-post=\"/agenda/appointments\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" class=\"flex-1 overflow-y-auto p-5 space-y-4\"><!-- Date --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Data</label> <input type=\"date\" name=\"date\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Date.Format("2006-01-02"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 29, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 34, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\" required></div><!-- Patient --><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Paciente</label> <select name=\"patient_id\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\" required><option value=\"\">Selecione um paciente...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary\" required></div><!-- Patient --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Paciente</label> <select name=\"patient_id\" class=\"w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary\" required><option value=\"\">Selecione...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +57,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(patient.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 45, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 50, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -70,7 +70,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(patient.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 45, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 50, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -81,7 +81,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</select></div><!-- Time --><div class=\"grid grid-cols-2 gap-4\"><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Horário</label> <select name=\"start_time\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\" required>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</select></div><!-- Time --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Horário</label> <select name=\"start_time\" class=\"w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary\" required>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,7 +94,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%02d:%s", hour, minute))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 61, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 65, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -107,7 +107,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%02d:%s", hour, minute))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 61, Col: 102}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/new_appointment_form.templ`, Line: 65, Col: 100}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -119,7 +119,7 @@ func NewAppointmentForm(data NewAppointmentFormData) templ.Component {
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</select></div><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Duração (min)</label> <select name=\"duration\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\" required><option value=\"30\">30</option> <option value=\"50\" selected>50</option> <option value=\"60\">60</option> <option value=\"90\">90</option></select></div></div><!-- Type --><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Tipo</label> <select name=\"type\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\"><option value=\"session\" selected>Sessão Clínica</option> <option value=\"followup\">Acompanhamento</option> <option value=\"blocked\">Bloqueado</option></select></div><!-- Notes --><div><label class=\"block text-sm font-medium text-gray-700 mb-1\">Observações</label> <textarea name=\"notes\" rows=\"3\" class=\"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500\" placeholder=\"Notas adicionais...\"></textarea></div><!-- Actions --><div class=\"flex justify-end space-x-3 pt-4\"><button type=\"button\" hx-get=\"/agenda\" hx-target=\"#calendar-container\" class=\"px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors\">Cancelar</button> <button type=\"submit\" class=\"px-4 py-2 text-sm font-medium text-white bg-clinical-600 hover:bg-clinical-700 rounded-md transition-colors\">Agendar</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</select></div><!-- Duration --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Duração</label> <select name=\"duration\" class=\"w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary\" required><option value=\"30\">30 min</option> <option value=\"50\" selected>50 min</option> <option value=\"60\">60 min</option></select></div><!-- Type --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Tipo</label> <select name=\"type\" class=\"w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary\"><option value=\"session\" selected>Sessão</option> <option value=\"followup\">Retorno</option> <option value=\"blocked\">Bloqueado</option></select></div><!-- Notes --><div><label class=\"block text-sm font-medium text-neutral-700 mb-1.5\">Observações</label> <textarea name=\"notes\" rows=\"3\" class=\"w-full px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/20 focus:border-arandu-primary resize-none\" placeholder=\"Opcional...\"></textarea></div><!-- Actions --><div class=\"flex gap-3 pt-4\"><button type=\"button\" hx-get=\"/agenda\" hx-target=\"#drawer\" hx-swap=\"outerHTML\" class=\"flex-1 h-10 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors\">Cancelar</button> <button type=\"submit\" class=\"flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-lg transition-colors\">Agendar</button></div></form></div><!-- Backdrop --><div class=\"fixed inset-0 bg-black/30 z-40\" hx-get=\"/agenda\" hx-target=\"#drawer\" hx-swap=\"outerHTML\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

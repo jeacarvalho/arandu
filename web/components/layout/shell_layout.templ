@@ -185,6 +185,12 @@ templ Shell(config ShellConfig, content templ.Component) {
 			</div>
 		</div>
 
+		<!-- Modal Container -->
+		<div id="modal-container"></div>
+		
+		<!-- Drawer Container -->
+		<div id="drawer-container"></div>
+
 <!-- Global Scripts -->
 	<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
 	<!-- Debug Script - Remove in production -->
@@ -355,6 +361,7 @@ templ ShellDefaultNavItems(activePage string) {
 	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-chart-line", "Dashboard")
 	@ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes")
 	@ShellNavItem("/patients/new", "new-patient", activePage, "fa-user-plus", "Novo Paciente")
+	@ShellNavItem("/agenda", "agenda", activePage, "fa-calendar", "Agenda")
 	@ShellNavItem("/patients", "anamnesis", activePage, "fa-history", "Anamnese")
 	@ShellNavItem("/patients", "records", activePage, "fa-file-medical", "Prontuário")
 }

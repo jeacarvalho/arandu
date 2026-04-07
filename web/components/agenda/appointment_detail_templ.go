@@ -30,14 +30,14 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fixed inset-0 bg-black/50 flex items-center justify-center z-50\"><div class=\"bg-white rounded-xl shadow-xl w-full max-w-md mx-4\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-neutral-200\"><h3 class=\"text-lg font-semibold text-neutral-900\">Detalhes da Sessão</h3><button hx-get=\"/agenda\" hx-target=\"#agenda-content\" class=\"text-neutral-400 hover:text-neutral-600 transition-colors\"><i class=\"fas fa-times\"></i></button></div><!-- Content --><div class=\"p-6 space-y-4\"><div class=\"flex items-center space-x-3\"><div class=\"w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center\"><i class=\"fas fa-user text-emerald-600\"></i></div><div><div class=\"font-medium text-neutral-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fixed inset-0 bg-black/50 flex items-center justify-center z-50\"><div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm w-full max-w-md mx-4 overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50\"><div class=\"flex items-center gap-3\"><div class=\"w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-base flex-shrink-0\"><i class=\"fas fa-calendar-check\"></i></div><h3 class=\"text-sm font-semibold text-neutral-700 uppercase tracking-wide\">Detalhes da Sessão</h3></div><button hx-get=\"/agenda\" hx-target=\"#agenda-content\" class=\"text-neutral-400 hover:text-neutral-600 transition-colors\"><i class=\"fas fa-times\"></i></button></div><!-- Content --><div class=\"p-6 space-y-4\"><div class=\"flex items-center space-x-3\"><div class=\"w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center\"><i class=\"fas fa-user text-primary-600\"></i></div><div><div class=\"font-medium text-neutral-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(model.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 26, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 31, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -50,7 +50,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(model.Date.Format("2 January 2006"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 34, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 39, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -63,7 +63,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(model.StartTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 38, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 43, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -76,7 +76,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(model.EndTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 38, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 43, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -111,7 +111,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(getStatusLabel(model.Status))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 45, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 50, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +129,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(model.Notes)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 52, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 57, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -140,7 +140,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- Actions --><div class=\"flex justify-end space-x-3 px-6 py-4 border-t border-neutral-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- Actions --><div class=\"flex justify-end space-x-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,13 +152,13 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/agenda/appointments/" + model.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 61, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 66, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-confirm=\"Tem certeza que deseja cancelar esta sessão?\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors\">Cancelar</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-confirm=\"Tem certeza que deseja cancelar esta sessão?\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors\">Cancelar</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -170,13 +170,13 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 				var templ_7745c5c3_Var11 templ.SafeURL
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs("/session/" + *model.SessionID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 71, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 76, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"px-4 py-2 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-primary-dark rounded-md transition-colors inline-flex items-center\">Ver Sessão</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors inline-flex items-center\">Ver Sessão</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -188,13 +188,13 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("/agenda/appointments/" + model.ID + "/complete")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 78, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 83, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-primary-dark rounded-md transition-colors\">Completar</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors\">Completar</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -211,9 +211,9 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 func getStatusBadgeClass(status string) string {
 	switch status {
 	case "scheduled":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full"
+		return "inline-flex px-2 py-1 text-xs font-medium bg-amber-100 text-amber-900 rounded-full"
 	case "confirmed":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full"
+		return "inline-flex px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded-full"
 	case "completed":
 		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-800 rounded-full"
 	case "cancelled":
@@ -277,7 +277,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(slot.StartTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 132, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 137, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(slot.StartTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 135, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 140, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -303,7 +303,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(slot.EndTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 135, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 140, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(slot.StartTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 139, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 144, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -334,7 +334,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(slot.EndTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 139, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/appointment_detail.templ`, Line: 144, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
