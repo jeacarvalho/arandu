@@ -15,7 +15,7 @@ templ Login(data LoginData) {
 		<title>Arandu — Login</title>
 <link href={ "/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2() } rel="stylesheet">
 <link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
-		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js" integrity="sha384-AAI2N7/xnb9++5A1tHf1zpw1U7A3t9RkE2oO0m+6xM9j1m9I9xWVeE7g5B0v2b" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 		<style>
@@ -236,7 +236,7 @@ templ Login(data LoginData) {
 					type="button"
 					class="auth-submit"
 					style="background: #F59E0B; margin-top: var(--space-md);"
-					hx-on:click="document.getElementById('email').value='arandu_e2e@test.com';document.getElementById('password').value='test123456';document.getElementById('login-form').submit();"
+					onclick="document.getElementById('email').value='arandu_e2e@test.com'; document.getElementById('password').value='test123456'; document.getElementById('login-form').submit();"
 				>
 					<i class="fas fa-bolt"></i> Login Rápido (Dev)
 				</button>

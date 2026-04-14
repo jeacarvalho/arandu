@@ -17,7 +17,11 @@ templ AgendaPage(vm AgendaViewModel) {
 
 // AgendaContent renders the agenda content (for HTMX swaps)
 templ AgendaContent(vm AgendaViewModel) {
-	<div class="sota-container">
+	<div 
+		class="sota-container"
+		aria-live="polite"
+		aria-label="Agenda de consultas"
+	>
 		@layout.ShellPageTitle("Agenda", "Gerencie horários e acompanhe a semana clínica")
 		<div class="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
 			<!-- Navigation Bar -->
@@ -25,36 +29,48 @@ templ AgendaContent(vm AgendaViewModel) {
 				<!-- Navigation Arrows -->
 				<div class="flex gap-0.5">
 					<button
-						class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors"
+						class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative"
 						aria-label="Semana anterior"
 						hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.PrevDate, vm.CurrentView) }
 						hx-target="#agenda-content"
 						hx-swap="innerHTML"
 						hx-push-url="true"
+						hx-indicator=".nav-spinner"
 					>
+						<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md">
+							<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
+						</span>
 						<i class="fas fa-chevron-left text-xs text-neutral-600"></i>
 					</button>
 					<button
-						class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors"
+						class="w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative"
 						aria-label="Próxima semana"
 						hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.NextDate, vm.CurrentView) }
 						hx-target="#agenda-content"
 						hx-swap="innerHTML"
 						hx-push-url="true"
+						hx-indicator=".nav-spinner"
 					>
+						<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md">
+							<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
+						</span>
 						<i class="fas fa-chevron-right text-xs text-neutral-600"></i>
 					</button>
 				</div>
 				
 				<!-- Today Button -->
 				<button
-					class="h-7 px-3 border border-neutral-200 rounded-md text-xs font-medium text-neutral-600 bg-white hover:bg-neutral-100 transition-colors"
+					class="h-7 px-3 border border-neutral-200 rounded-md text-xs font-medium text-neutral-600 bg-white hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative"
 					hx-get="/agenda"
 					hx-target="#agenda-content"
 					hx-swap="innerHTML"
 					hx-push-url="true"
+					hx-indicator=".nav-spinner"
 				>
-					Hoje
+					<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md">
+						<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
+					</span>
+					<span class="relative">Hoje</span>
 				</button>
 				
 				<!-- Week Label -->
@@ -63,7 +79,7 @@ templ AgendaContent(vm AgendaViewModel) {
 				<!-- View Tabs -->
 				<div class="flex bg-neutral-100 rounded-lg p-0.5 gap-px">
 					<button
-						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "dia"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "dia") }
+						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "dia"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "dia") }
 						hx-get={ fmt.Sprintf("/agenda?view=dia&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="innerHTML"
@@ -72,7 +88,7 @@ templ AgendaContent(vm AgendaViewModel) {
 						Dia
 					</button>
 					<button
-						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "semana"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "semana") }
+						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "semana"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "semana") }
 						hx-get={ fmt.Sprintf("/agenda?view=semana&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="innerHTML"
@@ -81,7 +97,7 @@ templ AgendaContent(vm AgendaViewModel) {
 						Semana
 					</button>
 					<button
-						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "mes"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "mes") }
+						class={ "h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "mes"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "mes") }
 						hx-get={ fmt.Sprintf("/agenda?view=mes&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="innerHTML"
@@ -93,13 +109,17 @@ templ AgendaContent(vm AgendaViewModel) {
 				
 				<!-- New Appointment Button -->
 				<button
-					class="h-7 px-3 bg-arandu-primary text-white text-xs font-medium rounded-md hover:bg-arandu-dark transition-colors flex items-center gap-1.5 cursor-pointer"
+					class="h-7 px-3 bg-arandu-primary text-white text-xs font-medium rounded-md hover:bg-arandu-dark transition-colors flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative"
 					hx-get="/agenda/new"
 					hx-target="#drawer-container"
 					hx-swap="innerHTML"
+					hx-indicator=".new-btn-spinner"
 				>
-					<i class="fas fa-plus text-[10px]"></i>
-					<span>Nova Marcação</span>
+					<span class="new-btn-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-arandu-primary rounded-md">
+						<i class="fas fa-spinner fa-spin text-[10px] text-white"></i>
+					</span>
+					<i class="fas fa-plus text-[10px] relative"></i>
+					<span class="relative">Nova Marcação</span>
 				</button>
 			</div>
 
@@ -185,9 +205,10 @@ templ DayColumn(day DayViewModel) {
 // AppointmentCard renders an appointment card
 templ AppointmentCard(appt AppointmentViewModel) {
 	<div
-		class={ "absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", getAppointmentCardClasses(appt.Status) }
+		class={ "absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", GetAppointmentCardClasses(appt.Status) }
 		style={ fmt.Sprintf("top:%dpx;height:%dpx", appt.TopPx, appt.HeightPx) }
 		role="button"
+		tabindex="0"
 		aria-label={ fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime) }
 		hx-get={ fmt.Sprintf("/agenda/appointments/%s", appt.ID) }
 		hx-target="#drawer"
@@ -197,20 +218,4 @@ templ AppointmentCard(appt AppointmentViewModel) {
 		<div class="font-semibold leading-tight truncate">{ appt.PatientName }</div>
 		<div class="text-[10px] opacity-65 mt-0.5 truncate">{ StatusLabel(appt.Status) }</div>
 	</div>
-}
-
-// getAppointmentCardClasses returns the CSS classes for appointment status
-func getAppointmentCardClasses(status string) string {
-	switch status {
-	case "confirmed":
-		return "bg-emerald-100 text-emerald-900 border-emerald-500"
-	case "pending":
-		return "bg-amber-100 text-amber-900 border-amber-500"
-	case "first_session":
-		return "bg-blue-100 text-blue-900 border-blue-500"
-	case "cancelled":
-		return "bg-neutral-100 text-neutral-500 border-neutral-300 line-through opacity-65"
-	default:
-		return "bg-emerald-100 text-emerald-900 border-emerald-500"
-	}
 }

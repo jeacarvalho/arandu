@@ -237,7 +237,13 @@ func (h *AgendaHandler) DayView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+		return
+	}
+
+	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
 }
 
 // WeekView handles GET /agenda/week
@@ -286,7 +292,13 @@ func (h *AgendaHandler) WeekView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+		return
+	}
+
+	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
 }
 
 // MonthView handles GET /agenda/month
@@ -337,7 +349,13 @@ func (h *AgendaHandler) MonthView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+		return
+	}
+
+	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
 }
 
 // NewForm handles GET /agenda/new
@@ -494,7 +512,15 @@ func (h *AgendaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/agenda?view=day&date="+dateStr, http.StatusSeeOther)
+	redirectURL := "/agenda?view=day&date=" + dateStr
+
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", redirectURL)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 // Show handles GET /agenda/appointments/{id}

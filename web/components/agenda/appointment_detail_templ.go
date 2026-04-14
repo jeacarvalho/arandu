@@ -30,7 +30,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fixed inset-0 bg-black/50 flex items-center justify-center z-50\"><div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm w-full max-w-md mx-4 overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50\"><div class=\"flex items-center gap-3\"><div class=\"w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-base flex-shrink-0\"><i class=\"fas fa-calendar-check\"></i></div><h3 class=\"text-sm font-semibold text-neutral-700 uppercase tracking-wide\">Detalhes da Sessão</h3></div><button hx-get=\"/agenda\" hx-target=\"#agenda-content\" class=\"text-neutral-400 hover:text-neutral-600 transition-colors\"><i class=\"fas fa-times\"></i></button></div><!-- Content --><div class=\"p-6 space-y-4\"><div class=\"flex items-center space-x-3\"><div class=\"w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center\"><i class=\"fas fa-user text-primary-600\"></i></div><div><div class=\"font-medium text-neutral-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"fixed inset-0 bg-black/50 flex items-center justify-center z-50\"><div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm w-full max-w-md mx-4 overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50\"><div class=\"flex items-center gap-3\"><div class=\"w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-base flex-shrink-0\"><i class=\"fas fa-calendar-check\"></i></div><h3 class=\"text-sm font-semibold text-neutral-700 uppercase tracking-wide\">Detalhes da Sessão</h3></div><button hx-get=\"/agenda\" hx-target=\"#agenda-content\" class=\"text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2 rounded-md p-1\"><i class=\"fas fa-times\"></i></button></div><!-- Content --><div class=\"p-6 space-y-4\"><div class=\"flex items-center space-x-3\"><div class=\"w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center\"><i class=\"fas fa-user text-primary-600\"></i></div><div><div class=\"font-medium text-neutral-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -158,7 +158,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-confirm=\"Tem certeza que deseja cancelar esta sessão?\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors\">Cancelar</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-confirm=\"Tem certeza que deseja cancelar esta sessão?\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2\">Cancelar</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -176,7 +176,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors inline-flex items-center\">Ver Sessão</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors inline-flex items-center focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2\">Ver Sessão</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -194,7 +194,7 @@ func AppointmentDetail(model AppointmentDetailModel) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors\">Completar</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-target=\"#drawer\" class=\"px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2\">Completar</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -283,7 +283,7 @@ func SlotsList(model SlotsViewModel) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"w-full text-left px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md hover:bg-arandu-primary/5 hover:border-arandu-primary transition-colors\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"w-full text-left px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md hover:bg-arandu-primary/5 hover:border-arandu-primary transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

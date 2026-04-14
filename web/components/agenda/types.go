@@ -109,6 +109,22 @@ func GetAppointmentStatusClass(status string) string {
 	}
 }
 
+// GetAppointmentCardClasses returns Tailwind CSS classes for appointment card styling
+func GetAppointmentCardClasses(status string) string {
+	switch status {
+	case "confirmed":
+		return "bg-emerald-100 text-emerald-900 border-emerald-500"
+	case "pending":
+		return "bg-amber-100 text-amber-900 border-amber-500"
+	case "first_session":
+		return "bg-blue-100 text-blue-900 border-blue-500"
+	case "cancelled":
+		return "bg-neutral-100 text-neutral-500 border-neutral-300 line-through opacity-65"
+	default:
+		return "bg-emerald-100 text-emerald-900 border-emerald-500"
+	}
+}
+
 // GetLegendDotClass returns the CSS class for legend dot
 func GetLegendDotClass(status string) string {
 	switch status {

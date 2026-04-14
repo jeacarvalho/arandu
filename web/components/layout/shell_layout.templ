@@ -77,7 +77,7 @@ templ Shell(config ShellConfig, content templ.Component) {
 		<!-- CSS v2 - Novo padrão Shell Layout -->
 		<link href={ "/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2() } rel="stylesheet">
 		<link href={ "/static/css/style.css?v=" + helpers.GetCSSVersion() } rel="stylesheet">
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js" integrity="sha384-AAI2N7/xnb9++5A1tHf1zpw1U7A3t9RkE2oO0m+6xM9j1m9I9xWVeE7g5B0v2b" crossorigin="anonymous"></script>
 	<!-- BFCache Fix: Must be inline and early to catch pageshow event -->
 	<script>
 	// Fix for browser back/forward button showing empty content
@@ -208,12 +208,12 @@ templ ShellTopbar(config ShellConfig) {
 			if config.ShowSidebar {
 				<button 
 					@click="toggleSidebar()"
-					class="shell-hamburger md:hidden"
-						if config.SidebarVariant == "patient" {
-							aria-label="Abrir menu do paciente"
-						} else {
-							aria-label="Abrir menu de navegação"
-						}
+					class="shell-hamburger md:hidden focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
+					if config.SidebarVariant == "patient" {
+						aria-label="Abrir menu do paciente"
+					} else {
+						aria-label="Abrir menu de navegação"
+					}
 					aria-expanded="false"
 					aria-controls="shell-sidebar"
 				>
@@ -320,7 +320,7 @@ templ ShellSidebarContent(config ShellConfig) {
 		<!-- Desktop Collapse Toggle -->
 		<button 
 			@click="toggleCollapse()"
-			class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors"
+			class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
 			aria-label="Recolher menu"
 		>
 			<i class="fas" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
@@ -328,7 +328,7 @@ templ ShellSidebarContent(config ShellConfig) {
 		<!-- Mobile Close Button -->
 		<button 
 			@click="closeSidebar()"
-			class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors"
+			class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
 			aria-label="Fechar menu"
 		>
 			<i class="fas fa-times"></i>

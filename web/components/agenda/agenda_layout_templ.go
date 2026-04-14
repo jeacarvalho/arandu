@@ -70,7 +70,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"sota-container\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"sota-container\" aria-live=\"polite\" aria-label=\"Agenda de consultas\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -78,40 +78,40 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden\"><!-- Navigation Bar --><div class=\"h-11 bg-neutral-50 border-b border-neutral-200 flex items-center px-5 gap-2.5 flex-shrink-0\"><!-- Navigation Arrows --><div class=\"flex gap-0.5\"><button class=\"w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors\" aria-label=\"Semana anterior\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden\"><!-- Navigation Bar --><div class=\"h-11 bg-neutral-50 border-b border-neutral-200 flex items-center px-5 gap-2.5 flex-shrink-0\"><!-- Navigation Arrows --><div class=\"flex gap-0.5\"><button class=\"w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative\" aria-label=\"Semana anterior\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda?date=%s&view=%s", vm.PrevDate, vm.CurrentView))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 30, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 34, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><i class=\"fas fa-chevron-left text-xs text-neutral-600\"></i></button> <button class=\"w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors\" aria-label=\"Próxima semana\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-indicator=\".nav-spinner\"><span class=\"nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md\"><i class=\"fas fa-spinner fa-spin text-xs text-arandu-primary\"></i></span> <i class=\"fas fa-chevron-left text-xs text-neutral-600\"></i></button> <button class=\"w-7 h-7 border border-neutral-200 rounded-md bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative\" aria-label=\"Próxima semana\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda?date=%s&view=%s", vm.NextDate, vm.CurrentView))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 40, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 48, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><i class=\"fas fa-chevron-right text-xs text-neutral-600\"></i></button></div><!-- Today Button --><button class=\"h-7 px-3 border border-neutral-200 rounded-md text-xs font-medium text-neutral-600 bg-white hover:bg-neutral-100 transition-colors\" hx-get=\"/agenda\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">Hoje</button><!-- Week Label --><span class=\"text-xs font-semibold text-neutral-900 flex-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-indicator=\".nav-spinner\"><span class=\"nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md\"><i class=\"fas fa-spinner fa-spin text-xs text-arandu-primary\"></i></span> <i class=\"fas fa-chevron-right text-xs text-neutral-600\"></i></button></div><!-- Today Button --><button class=\"h-7 px-3 border border-neutral-200 rounded-md text-xs font-medium text-neutral-600 bg-white hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative\" hx-get=\"/agenda\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" hx-indicator=\".nav-spinner\"><span class=\"nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-md\"><i class=\"fas fa-spinner fa-spin text-xs text-arandu-primary\"></i></span> <span class=\"relative\">Hoje</span></button><!-- Week Label --><span class=\"text-xs font-semibold text-neutral-900 flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(vm.WeekLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 61, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 77, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -121,7 +121,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "dia"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "dia")}
+		var templ_7745c5c3_Var6 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "dia"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "dia")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -146,7 +146,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda?view=dia&date=%s", vm.WeekStart.Format("2006-01-02")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 67, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 83, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -156,7 +156,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "semana"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "semana")}
+		var templ_7745c5c3_Var9 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "semana"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "semana")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -181,7 +181,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda?view=semana&date=%s", vm.WeekStart.Format("2006-01-02")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 76, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 92, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -191,7 +191,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "mes"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "mes")}
+		var templ_7745c5c3_Var12 = []any{"h-6 px-3 text-xs font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1", templ.KV("bg-white text-neutral-900 font-semibold border border-neutral-200 shadow-xs", vm.CurrentView == "mes"), templ.KV("text-neutral-500 hover:text-neutral-700", vm.CurrentView != "mes")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -216,13 +216,13 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda?view=mes&date=%s", vm.WeekStart.Format("2006-01-02")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 85, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 101, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">Mês</button></div><!-- New Appointment Button --><button class=\"h-7 px-3 bg-arandu-primary text-white text-xs font-medium rounded-md hover:bg-arandu-dark transition-colors flex items-center gap-1.5 cursor-pointer\" hx-get=\"/agenda/new\" hx-target=\"#drawer-container\" hx-swap=\"innerHTML\"><i class=\"fas fa-plus text-[10px]\"></i> <span>Nova Marcação</span></button></div><!-- Calendar --><div class=\"flex overflow-hidden min-h-[780px]\"><div class=\"flex-1 flex overflow-y-auto overflow-x-hidden\"><!-- Time column --><div class=\"w-13 flex-shrink-0 border-r border-neutral-200 bg-white\"><!-- Empty space to align with days header (h-11 = 44px) --><div class=\"h-11 border-b border-neutral-200\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-target=\"#agenda-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">Mês</button></div><!-- New Appointment Button --><button class=\"h-7 px-3 bg-arandu-primary text-white text-xs font-medium rounded-md hover:bg-arandu-dark transition-colors flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1 relative\" hx-get=\"/agenda/new\" hx-target=\"#drawer-container\" hx-swap=\"innerHTML\" hx-indicator=\".new-btn-spinner\"><span class=\"new-btn-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-arandu-primary rounded-md\"><i class=\"fas fa-spinner fa-spin text-[10px] text-white\"></i></span> <i class=\"fas fa-plus text-[10px] relative\"></i> <span class=\"relative\">Nova Marcação</span></button></div><!-- Calendar --><div class=\"flex overflow-hidden min-h-[780px]\"><div class=\"flex-1 flex overflow-y-auto overflow-x-hidden\"><!-- Time column --><div class=\"w-13 flex-shrink-0 border-r border-neutral-200 bg-white\"><!-- Empty space to align with days header (h-11 = 44px) --><div class=\"h-11 border-b border-neutral-200\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,7 +234,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(h)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 115, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 135, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -257,7 +257,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(TranslateDayName(day.DayName))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 126, Col: 120}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 146, Col: 120}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -292,7 +292,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(day.DayNumber)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 128, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 148, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -320,7 +320,7 @@ func AgendaContent(vm AgendaViewModel) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d consultas esta semana", vm.TotalCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 163, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 183, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -424,7 +424,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var25 = []any{"absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", getAppointmentCardClasses(appt.Status)}
+		var templ_7745c5c3_Var25 = []any{"absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", GetAppointmentCardClasses(appt.Status)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var25...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -449,20 +449,20 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("top:%dpx;height:%dpx", appt.TopPx, appt.HeightPx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 189, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 209, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" role=\"button\" aria-label=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" role=\"button\" tabindex=\"0\" aria-label=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 191, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 212, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -475,7 +475,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var29 string
 		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/agenda/appointments/%s", appt.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 192, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 213, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {
@@ -488,7 +488,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(appt.StartTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 196, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 217, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -501,7 +501,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(appt.EndTime)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 196, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 217, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -514,7 +514,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(appt.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 197, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 218, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -527,7 +527,7 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(StatusLabel(appt.Status))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 198, Col: 80}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/agenda/agenda_layout.templ`, Line: 219, Col: 80}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -539,22 +539,6 @@ func AppointmentCard(appt AppointmentViewModel) templ.Component {
 		}
 		return nil
 	})
-}
-
-// getAppointmentCardClasses returns the CSS classes for appointment status
-func getAppointmentCardClasses(status string) string {
-	switch status {
-	case "confirmed":
-		return "bg-emerald-100 text-emerald-900 border-emerald-500"
-	case "pending":
-		return "bg-amber-100 text-amber-900 border-amber-500"
-	case "first_session":
-		return "bg-blue-100 text-blue-900 border-blue-500"
-	case "cancelled":
-		return "bg-neutral-100 text-neutral-500 border-neutral-300 line-through opacity-65"
-	default:
-		return "bg-emerald-100 text-emerald-900 border-emerald-500"
-	}
 }
 
 var _ = templruntime.GeneratedTemplate

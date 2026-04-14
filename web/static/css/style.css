@@ -141,6 +141,28 @@ body {
     color: var(--primary-900);
 }
 
+/* Focus Visible - A11y */
+:focus-visible {
+    outline: 2px solid var(--arandu-primary);
+    outline-offset: 2px;
+}
+
+/* Remove outline for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Interactive elements focus styles */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid var(--arandu-primary);
+    outline-offset: 2px;
+}
+
 /* Typography System */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
