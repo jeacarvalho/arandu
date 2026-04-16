@@ -126,6 +126,16 @@
     box-sizing: border-box;
 }
 
+/* Agenda Tab Active State */
+button.agenda-tab-active,
+div button.agenda-tab-active,
+.agenda-tabs button.agenda-tab-active {
+    background-color: #0F6E56 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
 body {
     font-family: var(--font-sans);
     background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */

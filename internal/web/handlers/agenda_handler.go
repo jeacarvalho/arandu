@@ -43,7 +43,7 @@ func NewAgendaHandler(agendaService AgendaServiceInterface, patientService Patie
 	}
 }
 
-// View handles GET /agenda - main agenda view
+// View handles GET /agenda - dispatches by ?view= param
 func (h *AgendaHandler) View(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -68,63 +68,140 @@ func (h *AgendaHandler) View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-
-	// Get week view data
-	weekView, err := h.agendaService.GetWeekView(ctx, currentDate)
-	if err != nil {
-		http.Error(w, "Failed to load week view", http.StatusInternalServerError)
-		return
-	}
-
-	// Build week label
-	weekLabel := fmt.Sprintf("%d – %d de %s de %d",
-		weekView.StartDate.Day(),
-		weekView.EndDate.Day(),
-		strings.ToLower(weekView.EndDate.Format("January")),
-		weekView.EndDate.Year(),
-	)
-
-	// Calculate prev/next week dates
-	prevDate := weekView.StartDate.AddDate(0, 0, -7).Format("2006-01-02")
-	nextDate := weekView.StartDate.AddDate(0, 0, 7).Format("2006-01-02")
-
-	// Build days view model
-	days := make([]agendaComponents.DayViewModel, 0, len(weekView.Days))
-	totalCount := 0
-	for _, day := range weekView.Days {
-		dayVM := agendaComponents.DayViewModel{
-			Date:         day.Date,
-			DayName:      day.Date.Format("Mon"),
-			DayNumber:    day.Date.Format("2"),
-			IsToday:      isToday(day.Date),
-			Appointments: convertAppointmentsForWeek(day.Appointments),
-		}
-		totalCount += len(day.Appointments)
-		days = append(days, dayVM)
-	}
-
-	viewModel := agendaComponents.AgendaViewModel{
-		WeekStart:   weekView.StartDate,
-		WeekEnd:     weekView.EndDate,
-		WeekLabel:   weekLabel,
-		Days:        days,
-		TotalCount:  totalCount,
-		CurrentView: view,
-		PrevDate:    prevDate,
-		NextDate:    nextDate,
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	// Check if HTMX request
-	isHTMXRequest := r.Header.Get("HX-Request") == "true"
-	if isHTMXRequest {
-		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
-		return
+	var (
+		vm  agendaComponents.AgendaViewModel
+		err error
+	)
+
+	switch view {
+	case "dia":
+		vm, err = h.viewModelForDay(ctx, currentDate)
+	case "mes":
+		vm, err = h.viewModelForMonth(ctx, currentDate)
+	default:
+		view = "semana"
+		vm, err = h.viewModelForWeek(ctx, currentDate)
 	}
 
-	// Full page render
-	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
+	if err != nil {
+		http.Error(w, "Failed to load agenda", http.StatusInternalServerError)
+		return
+	}
+	vm.CurrentView = view
+
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AgendaContent(vm).Render(ctx, w)
+		return
+	}
+	agendaComponents.AgendaPage(vm).Render(ctx, w)
+}
+
+func (h *AgendaHandler) viewModelForWeek(ctx context.Context, date time.Time) (agendaComponents.AgendaViewModel, error) {
+	weekView, err := h.agendaService.GetWeekView(ctx, date)
+	if err != nil {
+		return agendaComponents.AgendaViewModel{}, err
+	}
+
+	days := make([]agendaComponents.DayViewModel, 0, len(weekView.Days))
+	total := 0
+	for _, d := range weekView.Days {
+		appts := convertAppointmentsForWeek(d.Appointments)
+		total += len(appts)
+		days = append(days, agendaComponents.DayViewModel{
+			Date:         d.Date,
+			DayName:      d.Date.Format("Mon"),
+			DayNumber:    d.Date.Format("2"),
+			IsToday:      isToday(d.Date),
+			Appointments: appts,
+		})
+	}
+
+	return agendaComponents.AgendaViewModel{
+		WeekStart:  weekView.StartDate,
+		WeekEnd:    weekView.EndDate,
+		WeekLabel:  fmt.Sprintf("%d – %d de %s de %d", weekView.StartDate.Day(), weekView.EndDate.Day(), strings.ToLower(weekView.EndDate.Format("January")), weekView.EndDate.Year()),
+		Days:       days,
+		TotalCount: total,
+		PrevDate:   weekView.StartDate.AddDate(0, 0, -7).Format("2006-01-02"),
+		NextDate:   weekView.StartDate.AddDate(0, 0, 7).Format("2006-01-02"),
+	}, nil
+}
+
+func (h *AgendaHandler) viewModelForDay(ctx context.Context, date time.Time) (agendaComponents.AgendaViewModel, error) {
+	dayView, err := h.agendaService.GetDayView(ctx, date)
+	if err != nil {
+		return agendaComponents.AgendaViewModel{}, err
+	}
+
+	appts := convertAppointmentsForWeek(dayView.Appointments)
+	days := []agendaComponents.DayViewModel{{
+		Date:         date,
+		DayName:      date.Format("Mon"),
+		DayNumber:    date.Format("2"),
+		IsToday:      isToday(date),
+		Appointments: appts,
+	}}
+
+	return agendaComponents.AgendaViewModel{
+		WeekStart:  date,
+		WeekEnd:    date,
+		WeekLabel:  fmt.Sprintf("%d de %s de %d", date.Day(), strings.ToLower(date.Format("January")), date.Year()),
+		Days:       days,
+		TotalCount: len(appts),
+		PrevDate:   date.AddDate(0, 0, -1).Format("2006-01-02"),
+		NextDate:   date.AddDate(0, 0, 1).Format("2006-01-02"),
+	}, nil
+}
+
+func (h *AgendaHandler) viewModelForMonth(ctx context.Context, date time.Time) (agendaComponents.AgendaViewModel, error) {
+	monthView, err := h.agendaService.GetMonthView(ctx, date.Year(), int(date.Month()))
+	if err != nil {
+		return agendaComponents.AgendaViewModel{}, err
+	}
+
+	// Index appointments by date string for O(1) lookup per day
+	apptsByDate := make(map[string][]agendaComponents.AppointmentViewModel)
+	for _, a := range monthView.Appointments {
+		key := a.Date.Format("2006-01-02")
+		apptsByDate[key] = append(apptsByDate[key], agendaComponents.AppointmentViewModel{
+			ID:          a.ID,
+			PatientName: a.PatientName,
+			StartTime:   a.StartTime,
+			EndTime:     a.EndTime,
+			Status:      mapAppointmentStatus(string(a.Status)),
+		})
+	}
+
+	days := make([]agendaComponents.DayViewModel, 0, len(monthView.Days))
+	total := 0
+	for _, d := range monthView.Days {
+		key := d.Date.Format("2006-01-02")
+		dayAppts := apptsByDate[key]
+		total += len(dayAppts)
+		days = append(days, agendaComponents.DayViewModel{
+			Date:             d.Date,
+			DayName:          d.Date.Format("Mon"),
+			DayNumber:        d.Date.Format("2"),
+			IsToday:          isToday(d.Date),
+			IsCurrentMonth:   d.Date.Year() == date.Year() && d.Date.Month() == date.Month(),
+			Appointments:     dayAppts,
+			AppointmentCount: len(dayAppts),
+		})
+	}
+
+	prev := date.AddDate(0, -1, 0)
+	next := date.AddDate(0, 1, 0)
+	return agendaComponents.AgendaViewModel{
+		WeekStart:  date,
+		WeekEnd:    date,
+		WeekLabel:  fmt.Sprintf("%s de %d", strings.ToLower(date.Format("January")), date.Year()),
+		Days:       days,
+		TotalCount: total,
+		PrevDate:   fmt.Sprintf("%d-%02d-01", prev.Year(), prev.Month()),
+		NextDate:   fmt.Sprintf("%d-%02d-01", next.Year(), next.Month()),
+	}, nil
 }
 
 func isToday(date time.Time) bool {
@@ -138,12 +215,12 @@ func convertAppointmentsForWeek(appointments []*appointment.Appointment) []agend
 	for _, a := range appointments {
 		startHour := a.GetStartDateTime().Hour()
 		startMin := a.GetStartDateTime().Minute()
-		topPx := (startHour-8)*60 + startMin
+		topPx := ((startHour-8)*60 + startMin) * 80 / 60
 		if topPx < 0 {
 			topPx = 0
 		}
 
-		heightPx := a.Duration - 4
+		heightPx := (a.Duration * 80 / 60) - 4
 		if heightPx < 20 {
 			heightPx = 20
 		}

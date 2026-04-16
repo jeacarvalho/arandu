@@ -48,7 +48,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 20, Col: 139}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 20, Col: 139}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -61,7 +61,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + data.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 23, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 23, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -79,7 +79,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 35, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 35, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.ServerError)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 41, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 41, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -116,7 +116,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var6 templ.SafeURL
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/session/" + data.SessionID + "/update"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 57, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 57, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +129,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.SessionID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 58, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 58, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -142,7 +142,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 59, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 59, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -155,7 +155,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(data.Date)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 67, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 67, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -168,7 +168,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(data.Summary)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 79, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 79, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -239,7 +239,7 @@ func EditSessionWizard(data EditSessionWizardData) templ.Component {
 		var templ_7745c5c3_Var11 templ.SafeURL
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + data.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_session_wizard.templ`, Line: 151, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_session_wizard.templ`, Line: 151, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

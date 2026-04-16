@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@source "../../components/**/*.templ";
+@source "../../components/**/*.go";
+
 /*
  * Arandu CSS v2 - Shell Layout Design Tokens
  * Versão para testes antes da migração completa
@@ -21,6 +24,9 @@
 
 /* Agenda classes from PR #8 */
 @source inline("sota-container");
+
+/* Tab button active state - bg-arandu-active */
+@source inline("bg-arandu-active");
 
 /* Manual safelist for classes in .templ files that Tailwind v4 may not detect */
 .sota-container {

@@ -1,90 +1,119 @@
 package agenda
 
+import "fmt"
+
 // AppointmentDetail shows appointment details in a modal
 templ AppointmentDetail(model AppointmentDetailModel) {
-	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-		<div class="bg-white rounded-xl border border-neutral-200 shadow-sm w-full max-w-md mx-4 overflow-hidden">
-			<!-- Header -->
-			<div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50">
-				<div class="flex items-center gap-3">
-					<div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-base flex-shrink-0">
-						<i class="fas fa-calendar-check"></i>
+	<div
+		class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+		onclick="if(event.target===this)document.getElementById('modal-container').innerHTML=''"
+	>
+		<div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+			<!-- Colored status strip at top -->
+			<div class={ appointmentStatusStripClass(model.Status) }></div>
+
+			<!-- Body -->
+			<div class="p-6">
+				<!-- Top row: patient avatar + name + close -->
+				<div class="flex items-start gap-4 mb-6">
+					<div class="w-12 h-12 rounded-full bg-arandu-primary flex items-center justify-center flex-shrink-0 text-white text-lg font-bold">
+						{ string([]rune(model.PatientName)[0:1]) }
 					</div>
-					<h3 class="text-sm font-semibold text-neutral-700 uppercase tracking-wide">Detalhes da Sessão</h3>
+					<div class="flex-1 min-w-0">
+						<h2 class="text-lg font-bold leading-snug" style="color:#111827">{ model.PatientName }</h2>
+						<p class="text-sm mt-0.5" style="color:#6b7280">{ model.SessionType }</p>
+					</div>
+					<button
+						onclick="document.getElementById('modal-container').innerHTML=''"
+						class="w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+						style="color:#9ca3af"
+						onmouseover="this.style.background='#f3f4f6';this.style.color='#374151'"
+						onmouseout="this.style.background='';this.style.color='#9ca3af'"
+					>
+						<i class="fas fa-times text-sm"></i>
+					</button>
 				</div>
-				<button
-					hx-get="/agenda"
-					hx-target="#agenda-content"
-					class="text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2 rounded-md p-1"
-				>
-					<i class="fas fa-times"></i>
-				</button>
-			</div>
-			
-			<!-- Content -->
-			<div class="p-6 space-y-4">
-				<div class="flex items-center space-x-3">
-					<div class="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center">
-						<i class="fas fa-user text-primary-600"></i>
+
+				<!-- Status badge -->
+				<div class="mb-5">
+					<span class={ getStatusBadgeClass(model.Status) }>{ getStatusLabel(model.Status) }</span>
+				</div>
+
+				<!-- Info rows with icons -->
+				<div class="space-y-3">
+					<div class="flex items-center gap-3">
+						<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#f3f4f6">
+							<i class="fas fa-calendar-day text-xs" style="color:#9ca3af"></i>
+						</div>
+						<div>
+							<div class="text-xs font-medium uppercase tracking-wide" style="color:#9ca3af">Data</div>
+							<div class="text-sm font-semibold" style="color:#1f2937">{ model.Date.Format("02 de January de 2006") }</div>
+						</div>
 					</div>
-					<div>
-						<div class="font-medium text-neutral-900">{ model.PatientName }</div>
-						<div class="text-sm text-neutral-500">Paciente</div>
+					<div class="flex items-center gap-3">
+						<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#f3f4f6">
+							<i class="fas fa-clock text-xs" style="color:#9ca3af"></i>
+						</div>
+						<div>
+							<div class="text-xs font-medium uppercase tracking-wide" style="color:#9ca3af">Horário</div>
+							<div class="text-sm font-semibold" style="color:#1f2937">
+								{ model.StartTime } – { model.EndTime }
+								<span class="text-xs font-normal ml-1" style="color:#9ca3af">{ fmt.Sprintf("(%d min)", model.Duration) }</span>
+							</div>
+						</div>
 					</div>
 				</div>
-				
-				<div class="grid grid-cols-2 gap-4 text-sm">
-					<div>
-						<div class="text-neutral-500">Data</div>
-						<div class="font-medium">{ model.Date.Format("2 January 2006") }</div>
-					</div>
-					<div>
-						<div class="text-neutral-500">Horário</div>
-						<div class="font-medium">{ model.StartTime } - { model.EndTime }</div>
-					</div>
-				</div>
-				
-				<div class="text-sm">
-					<div class="text-neutral-500">Status</div>
-					<div class={ getStatusBadgeClass(model.Status) }>
-						{ getStatusLabel(model.Status) }
-					</div>
-				</div>
-				
+
 				if model.Notes != "" {
-					<div class="text-sm">
-						<div class="text-neutral-500">Observações</div>
-						<div class="text-neutral-700">{ model.Notes }</div>
+					<div class="mt-4 rounded-xl p-3.5" style="background:#f9fafb">
+						<div class="text-xs font-medium uppercase tracking-wide mb-2" style="color:#9ca3af">Observações</div>
+						<p class="text-sm leading-relaxed" style="color:#374151">{ model.Notes }</p>
 					</div>
 				}
 			</div>
-			
+
 			<!-- Actions -->
-			<div class="flex justify-end space-x-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50">
+			<div class="px-6 pb-6 flex gap-2">
+				<button
+					onclick="document.getElementById('modal-container').innerHTML=''"
+					class="flex-1 h-10 text-sm font-medium rounded-xl transition-colors"
+					style="background:#f3f4f6;color:#374151"
+					onmouseover="this.style.background='#e5e7eb'"
+					onmouseout="this.style.background='#f3f4f6'"
+				>
+					Fechar
+				</button>
 				if model.Status == "scheduled" || model.Status == "confirmed" {
 					<button
-						hx-delete={ "/agenda/appointments/" + model.ID }
-						hx-confirm="Tem certeza que deseja cancelar esta sessão?"
-						hx-target="#drawer"
-						class="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2"
+						hx-post={ "/agenda/appointments/" + model.ID + "/cancel" }
+						hx-confirm="Cancelar esta consulta?"
+						hx-target="#agenda-content"
+						hx-swap="outerHTML"
+						onclick="document.getElementById('modal-container').innerHTML=''"
+						class="h-10 px-4 text-sm font-medium rounded-xl border transition-colors"
+						style="color:#dc2626;border-color:#fecaca"
+						onmouseover="this.style.background='#fef2f2'"
+						onmouseout="this.style.background=''"
 					>
-						Cancelar
+						<i class="fas fa-ban text-xs mr-1"></i>Cancelar
 					</button>
-					
 					if model.SessionID != nil {
 						<a
-							href={ "/session/" + *model.SessionID }
-							class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors inline-flex items-center focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
+							href={ templ.SafeURL("/session/" + *model.SessionID) }
+							class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors inline-flex items-center justify-center gap-1.5"
 						>
+							<i class="fas fa-file-medical text-xs"></i>
 							Ver Sessão
 						</a>
 					} else {
 						<button
 							hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
-							hx-target="#drawer"
-							class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
+							hx-target="#agenda-content"
+							hx-swap="outerHTML"
+							onclick="document.getElementById('modal-container').innerHTML=''"
+							class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors"
 						>
-							Completar
+							Concluir
 						</button>
 					}
 				}
@@ -93,20 +122,38 @@ templ AppointmentDetail(model AppointmentDetailModel) {
 	</div>
 }
 
-func getStatusBadgeClass(status string) string {
+func appointmentStatusStripClass(status string) string {
 	switch status {
 	case "scheduled":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-amber-100 text-amber-900 rounded-full"
+		return "h-1.5 bg-amber-400"
 	case "confirmed":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-primary-50 text-primary-700 rounded-full"
+		return "h-1.5 bg-emerald-500"
 	case "completed":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-800 rounded-full"
+		return "h-1.5 bg-arandu-primary"
 	case "cancelled":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-500 rounded-full line-through"
+		return "h-1.5 bg-neutral-300"
 	case "no_show":
-		return "inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full"
+		return "h-1.5 bg-red-400"
 	default:
-		return "inline-flex px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-800 rounded-full"
+		return "h-1.5 bg-arandu-primary"
+	}
+}
+
+func getStatusBadgeClass(status string) string {
+	base := "inline-flex px-2.5 py-1 text-xs font-semibold rounded-full"
+	switch status {
+	case "scheduled":
+		return base + " bg-amber-100 text-amber-800"
+	case "confirmed":
+		return base + " bg-arandu-primary/10 text-arandu-primary"
+	case "completed":
+		return base + " bg-emerald-100 text-emerald-800"
+	case "cancelled":
+		return base + " bg-neutral-100 text-neutral-500 line-through"
+	case "no_show":
+		return base + " bg-red-100 text-red-700"
+	default:
+		return base + " bg-neutral-100 text-neutral-700"
 	}
 }
 
@@ -129,21 +176,18 @@ func getStatusLabel(status string) string {
 
 // SlotsList shows available time slots
 templ SlotsList(model SlotsViewModel) {
-	<div class="space-y-2">
-		for _, slot := range model.Slots {
-			if slot.Available {
-				<button
-					type="button"
-					value={ slot.StartTime }
-					class="w-full text-left px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md hover:bg-arandu-primary/5 hover:border-arandu-primary transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-1"
-				>
-					{ slot.StartTime } - { slot.EndTime }
-				</button>
-			} else {
-				<div class="px-3 py-2 text-sm bg-neutral-100 text-neutral-400 rounded-md cursor-not-allowed">
-					{ slot.StartTime } - { slot.EndTime } (Ocupado)
+	for _, slot := range model.Slots {
+		if slot.Available {
+			<label class="cursor-pointer">
+				<input type="radio" name="start_time" value={ slot.StartTime } class="peer sr-only" required />
+				<div class="text-center px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md peer-checked:bg-arandu-primary peer-checked:text-white peer-checked:border-arandu-primary hover:bg-arandu-primary/5 transition-colors">
+					{ slot.StartTime }
 				</div>
-			}
+			</label>
+		} else {
+			<div class="text-center px-3 py-2 text-sm bg-neutral-100 text-neutral-400 rounded-md cursor-not-allowed opacity-60">
+				{ slot.StartTime }
+			</div>
 		}
-	</div>
+	}
 }

@@ -47,7 +47,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + data.FormData.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 17, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 17, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -60,7 +60,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.PatientName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 22, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 22, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -78,7 +78,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Error)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 33, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 33, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -96,7 +96,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/session/" + data.SessionID + "/update"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 38, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 38, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -109,7 +109,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.PatientID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 39, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 39, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -122,7 +122,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Date)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 53, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 53, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +135,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.FormData.Summary)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 70, Col: 121}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 70, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -148,7 +148,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var9 templ.SafeURL
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + data.FormData.PatientID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 76, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 76, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -225,7 +225,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(g.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 143, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 143, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -244,7 +244,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/patients/" + data.FormData.PatientID + "/goals"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 150, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 150, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -278,7 +278,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/observations"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 190, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 190, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -312,7 +312,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/session/" + data.SessionID + "/interventions"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 223, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 223, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -331,7 +331,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(g.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 243, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 243, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -350,7 +350,7 @@ func EditSessionForm(data EditSessionFormData) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templ.URL("/patients/" + data.FormData.PatientID + "/goals"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `edit_form.templ`, Line: 250, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/edit_form.templ`, Line: 250, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {

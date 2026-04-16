@@ -1,0 +1,11 @@
+--- web/static/css/input.css
++++ web/static/css/input.css
+@@ -1,5 +1,8 @@
+ @import "tailwindcss";
+ 
++@source "../../components/**/*.templ";
++@source "../../components/**/*.go";
++
+ /*
+  * Tailwind Class Ordering Standard
+  * Pattern: layout > spacing > sizing > typography > color > visual effects > state > responsive
