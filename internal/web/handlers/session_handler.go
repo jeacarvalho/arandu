@@ -576,11 +576,9 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Debug: log all form values
-	log.Printf("Form values: %v", r.Form)
-
-	sessionID := r.FormValue("session_id")
-	log.Printf("Extracted session_id: %s", sessionID)
+	// ID da sessão vem da URL path: /session/{id}/update
+	pathWithoutSuffix := strings.TrimSuffix(r.URL.Path, "/update")
+	sessionID := extractSessionIDFromPath(pathWithoutSuffix, "/session/")
 	if sessionID == "" {
 		h.renderError(w, r, "ID da sessão é obrigatório", http.StatusBadRequest)
 		return
@@ -636,9 +634,7 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect back to session edit page to continue adding observations/interventions
-	log.Printf("Redirecting to: /session/%s/edit", sessionID)
-	http.Redirect(w, r, "/session/"+sessionID+"/edit", http.StatusSeeOther)
+	http.Redirect(w, r, "/session/"+sessionID, http.StatusSeeOther)
 }
 
 // extractPatientIDFromPath extracts patient ID from URL path like /patient/{id}/sessions/new or /patients/{id}/context
@@ -748,12 +744,14 @@ func (h *SessionHandler) CreateObservation(w http.ResponseWriter, r *http.Reques
 		CreatedAt: obsVM.CreatedAt,
 	})
 
-	// Render HTMX fragment
+	// Render HTMX fragment + OOB toast
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(ctx, w); err != nil {
 		log.Printf("Error rendering observation item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		return
 	}
+	layoutComponents.ToastSuccess("Observação adicionada").Render(ctx, w)
 }
 
 // CreateIntervention handles POST /sessions/{id}/interventions
@@ -801,12 +799,14 @@ func (h *SessionHandler) CreateIntervention(w http.ResponseWriter, r *http.Reque
 		Tags:      []*interventionDomain.InterventionClassification{}, // TODO: Buscar tags da intervenção
 	})
 
-	// Render HTMX fragment
+	// Render HTMX fragment + OOB toast
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(ctx, w); err != nil {
 		log.Printf("Error rendering intervention item: %v", err)
 		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		return
 	}
+	layoutComponents.ToastSuccess("Intervenção adicionada").Render(ctx, w)
 }
 
 // CloseGoalWithNote handles PUT /patients/{patientID}/goals/{goalID}/close
@@ -1037,5 +1037,47 @@ func (h *SessionHandler) CreateGoal(w http.ResponseWriter, r *http.Request) {
 		Description: goal.Description,
 	}
 
-	sessionComponents.SessionGoalItemRender(vm, patientID).Render(ctx, w)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := sessionComponents.SessionGoalItemRender(vm, patientID).Render(ctx, w); err != nil {
+		log.Printf("Error rendering goal item: %v", err)
+		http.Error(w, "Erro ao renderizar componente", http.StatusInternalServerError)
+		return
+	}
+	layoutComponents.ToastSuccess("Meta adicionada").Render(ctx, w)
+}
+
+// PatchSummary handles PATCH /session/{id}/summary — autosave do resumo clínico.
+// Retorna um fragmento HTMX com o indicador de autosave.
+func (h *SessionHandler) PatchSummary(w http.ResponseWriter, r *http.Request) {
+	id := extractIDFromPath(r.URL.Path, "/session/")
+	if id == "" {
+		http.Error(w, "ID da sessão é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Requisição inválida", http.StatusBadRequest)
+		return
+	}
+
+	summary := r.FormValue("summary")
+
+	sess, err := h.sessionService.GetSession(r.Context(), id)
+	if err != nil || sess == nil {
+		http.Error(w, "Sessão não encontrada", http.StatusNotFound)
+		return
+	}
+
+	err = h.sessionService.UpdateSession(r.Context(), services.UpdateSessionInput{
+		ID:      sess.ID,
+		Date:    sess.Date,
+		Summary: summary,
+	})
+	if err != nil {
+		http.Error(w, "Erro ao salvar", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	layoutComponents.AutoSaveIndicatorSaved("summary").Render(r.Context(), w)
 }

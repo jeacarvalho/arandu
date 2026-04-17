@@ -242,6 +242,8 @@ func main() {
 			sessionHandler.CreateObservation(w, r)
 		} else if strings.HasSuffix(r.URL.Path, "/interventions") && r.Method == "POST" {
 			sessionHandler.CreateIntervention(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/summary") && r.Method == "PATCH" {
+			sessionHandler.PatchSummary(w, r)
 		} else if r.Method == "GET" {
 			sessionHandler.Show(w, r)
 		} else {
@@ -411,8 +413,6 @@ func main() {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		stats := dashboard.Stats{
 			TotalPatients:    12,
-			NewThisWeek:      2,
-			ActiveThisMonth:  8,
 			TotalSessions:    47,
 			SessionsThisWeek: 5,
 			SessionsToday:    1,

@@ -150,17 +150,11 @@ templ Shell(config ShellConfig, content templ.Component) {
 
 			<!-- Body -->
 			<div class="shell-body">
-				<!-- Mobile Sidebar Overlay (only shows on mobile) --><div 
-					x-show="sidebarOpen" 
+				<!-- Mobile Sidebar Overlay -->
+				<div
 					@click="closeSidebar()"
-					class="shell-sidebar-overlay md:hidden"
+					class="shell-sidebar-overlay"
 					:class="sidebarOpen ? 'shell-sidebar-overlay-open' : ''"
-					x-transition:enter="transition ease-out duration-200"
-					x-transition:enter-start="opacity-0"
-					x-transition:enter-end="opacity-100"
-					x-transition:leave="transition ease-in duration-150"
-					x-transition:leave-start="opacity-100"
-					x-transition:leave-end="opacity-0"
 				></div>
 
 				<!-- Sidebar -->
@@ -187,9 +181,12 @@ templ Shell(config ShellConfig, content templ.Component) {
 
 		<!-- Modal Container -->
 		<div id="modal-container"></div>
-		
+
 		<!-- Drawer Container -->
 		<div id="drawer-container"></div>
+
+		<!-- Toast Container -->
+		<div id="toast-container"></div>
 
 <!-- Global Scripts -->
 	<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
@@ -278,29 +275,11 @@ templ ShellSearchBar() {
 
 // ShellSidebar componente da barra lateral
 templ ShellSidebar(config ShellConfig) {
-	<!-- Desktop Sidebar (visible on md+ screens) -->
-	<aside 
+	<aside
 		id="shell-sidebar"
-		class="shell-sidebar hidden md:flex"
-		:class="sidebarCollapsed ? 'shell-sidebar-collapsed' : ''"
+		class="shell-sidebar"
+		:class="{ 'shell-sidebar-collapsed': sidebarCollapsed, 'shell-sidebar-open': sidebarOpen }"
 		aria-label="Menu de navegação"
-	>
-		@ShellSidebarContent(config)
-	</aside>
-
-	<!-- Mobile Sidebar (drawer - only visible on small screens when open) -->
-	<aside 
-		id="shell-sidebar-mobile"
-		class="shell-sidebar-drawer md:hidden"
-		:class="sidebarOpen ? 'shell-sidebar-drawer-open' : ''"
-		x-show="sidebarOpen"
-		x-transition:enter="transform transition ease-out duration-300"
-		x-transition:enter-start="-translate-x-full"
-		x-transition:enter-end="translate-x-0"
-		x-transition:leave="transform transition ease-in duration-200"
-		x-transition:leave-start="translate-x-0"
-		x-transition:leave-end="-translate-x-full"
-		aria-label="Menu de navegação mobile"
 	>
 		@ShellSidebarContent(config)
 	</aside>
@@ -362,8 +341,6 @@ templ ShellDefaultNavItems(activePage string) {
 	@ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes")
 	@ShellNavItem("/patients/new", "new-patient", activePage, "fa-user-plus", "Novo Paciente")
 	@ShellNavItem("/agenda", "agenda", activePage, "fa-calendar", "Agenda")
-	@ShellNavItem("/patients", "anamnesis", activePage, "fa-history", "Anamnese")
-	@ShellNavItem("/patients", "records", activePage, "fa-file-medical", "Prontuário")
 }
 
 // ShellPatientNavItems itens de navegação do contexto paciente
@@ -372,11 +349,19 @@ templ ShellPatientNavItems(patientID string, activePage string) {
 	@ShellNavItem("/patients/" + patientID + "/anamnesis", "patient-anamnesis", activePage, "fa-history", "Anamnese")
 	@ShellNavItem("/patients/" + patientID + "/history", "patient-history", activePage, "fa-file-medical", "Prontuário")
 	@ShellNavItem("/patients/" + patientID + "/goals", "patient-goals", activePage, "fa-bullseye", "Plano Terapêutico")
-	
+
 	<!-- Divider -->
 	<div class="my-2 border-t border-neutral-200"></div>
-	
-	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-arrow-left", "Voltar ao Dashboard")
+
+	<!-- Navegação completa: re-renderiza o shell inteiro com o nav correto -->
+	<a
+		href="/dashboard"
+		class="shell-sidebar-nav-item group"
+		@click="if (window.innerWidth < 768) { $data.sidebarOpen = false; }"
+	>
+		<i class="fas fa-arrow-left shell-sidebar-nav-item-icon"></i>
+		<span class="shell-sidebar-nav-item-text">Voltar ao Dashboard</span>
+	</a>
 }
 
 // ShellNavItem item individual de navegação

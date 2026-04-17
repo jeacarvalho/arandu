@@ -26,9 +26,6 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 					<div class="patient-name-row">
 						<h1 class="patient-name-v2">{p.Name}</h1>
 						<div class="patient-tags-row">
-							<span class="patient-tag-v2 tag-status">Em tratamento</span>
-							<span class="patient-tag-v2 tag-diagnosis">TAG</span>
-							<span class="patient-tag-v2 tag-age">{ calculateAge(p.CreatedAt) } anos</span>
 						</div>
 					</div>
 					<p class="patient-demographics">
@@ -243,10 +240,6 @@ func formatFullIdentity(gender, ethnicity, occupation, education string) string 
 func formatMonthYear(t time.Time) string {
 	months := []string{"jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"}
 	return months[t.Month()-1] + "/" + strconv.Itoa(t.Year())
-}
-
-func calculateAge(createdAt time.Time) int {
-	return int(time.Since(createdAt).Hours() / 24 / 365.25)
 }
 
 func calculateTherapyTime(createdAt time.Time) string {

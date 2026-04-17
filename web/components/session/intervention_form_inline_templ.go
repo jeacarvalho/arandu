@@ -68,14 +68,14 @@ func InterventionFormInline(sessionID string, targetID string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-disabled-elt=\"this button[type='submit']\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Intervenção</label> <textarea name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"3\" class=\"silent-textarea\" required></textarea></div><div class=\"form-actions form-actions-mt-md\"><button type=\"submit\" class=\"btn btn-secondary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button> <span id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-disabled-elt=\"this button[type='submit']\" hx-on::after-request=\"this.reset()\"><div class=\"silent-form-group\"><label class=\"silent-label\"><i class=\"fas fa-plus-circle\"></i> Adicionar Nova Intervenção</label> <textarea name=\"content\" placeholder=\"Descreva a técnica ou intervenção realizada...\" rows=\"3\" class=\"silent-textarea\"></textarea></div><div class=\"form-actions form-actions-mt-md\"><button type=\"submit\" class=\"btn btn-secondary btn-sm\"><i class=\"fas fa-plus btn-icon\"></i>Adicionar</button> <span id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(targetID + "-loading")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_form_inline.templ`, Line: 30, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/session/intervention_form_inline.templ`, Line: 29, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

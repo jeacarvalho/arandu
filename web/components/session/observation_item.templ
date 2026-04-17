@@ -22,10 +22,14 @@ templ ObservationItem(obs ObservationItemData) {
 			<p class="text-lg font-serif text-gray-800 leading-relaxed">{ obs.Content }</p>
 		</div>
 		
-		<!-- Tags Section -->
-		<div id={ "observation-" + obs.ID + "-tags" } class="observation-tags my-3 py-2 border-t border-b border-gray-100">
-			@classification.TagList(obs.Tags, true)
-		</div>
+		<!-- Tags: só renderiza bloco visível quando há tags; container vazio mantém target HTMX -->
+		if len(obs.Tags) > 0 {
+			<div id={ "observation-" + obs.ID + "-tags" } class="observation-tags my-2 flex flex-wrap gap-1">
+				@classification.TagList(obs.Tags, true)
+			</div>
+		} else {
+			<div id={ "observation-" + obs.ID + "-tags" }></div>
+		}
 		
 		<div class="obs-item-row">
 			<div class="obs-item-date">

@@ -36,32 +36,37 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 			<a href={ templ.URL("/patients/" + patientID) } class="mt-4 btn btn-outline btn-sm">Voltar para o paciente</a>
 		</div>
 	} else {
-		<div class="content-header">
-			<div class="header-title">
+		<div class="mb-xl">
+			<div class="flex flex-center gap-md">
+				<a href={ templ.URL("/patients/" + patientID) } class="back-button">
+					<i class="fas fa-arrow-left"></i>
+				</a>
 				<div>
-					<h1>Sessão { session.Date }</h1>
-					<p class="header-subtitle">Detalhes da sessão terapêutica</p>
+					<h1 class="page-title">
+						if session.PatientName != "" {
+							{ session.PatientName }
+						} else {
+							Sessão
+						}
+					</h1>
+					<p class="page-subtitle">Sessão { session.Date }</p>
 				</div>
-				<div class="header-actions">
-					<a href={ templ.URL("/session/" + session.ID + "/edit") } class="btn btn-outline">
+				<div class="flex gap-sm" style="margin-left:auto">
+					<a href={ templ.URL("/session/" + session.ID + "/edit") } class="btn btn-outline btn-sm">
 						<i class="fas fa-edit btn-icon"></i>Editar
 					</a>
-					<button class="btn btn-primary">
-						<i class="fas fa-plus btn-icon"></i>Nova Observação
-					</button>
 				</div>
 			</div>
 		</div>
 
-		<div class="form-grid mb-2xl">
+		<div class="session-detail-grid mb-2xl">
 			<div class="card">
-				<div class="card-header">
+				<div class="flex flex-center gap-md mb-md">
 					<div class="card-icon card-icon-primary">
 						<i class="fas fa-sticky-note"></i>
 					</div>
 					<div>
-						<h2 class="card-title">Observações Clínicas</h2>
-						<p class="card-subtitle">Registros e anotações da sessão</p>
+						<h2 class="section-title">Observações Clínicas</h2>
 					</div>
 				</div>
 				<div id="observations-list" class="mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
@@ -81,13 +86,12 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 				</div>
 			</div>
 			<div class="card">
-				<div class="card-header">
+				<div class="flex flex-center gap-md mb-md">
 					<div class="card-icon card-icon-secondary">
 						<i class="fas fa-hands-helping"></i>
 					</div>
 					<div>
-						<h2 class="card-title">Intervenções Terapêuticas</h2>
-						<p class="card-subtitle">Ações e técnicas aplicadas</p>
+						<h2 class="section-title">Intervenções Terapêuticas</h2>
 					</div>
 				</div>
 				<div id="interventions-list" class="mt-lg" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
@@ -108,13 +112,12 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 			</div>
 		</div>
 		<div class="card">
-			<div class="card-header">
+			<div class="flex flex-center gap-md mb-md">
 				<div class="card-icon card-icon-purple">
 					<i class="fas fa-file-medical-alt"></i>
 				</div>
 				<div>
-					<h2 class="card-title">Resumo da Sessão</h2>
-					<p class="card-subtitle">Síntese e reflexões clínicas</p>
+					<h2 class="section-title">Resumo da Sessão</h2>
 				</div>
 			</div>
 			<div class="clinical-content p-xl">

@@ -21,14 +21,16 @@ echo "✅ Processos parados"
 
 # ===== Compilar Tailwind CSS =====
 echo "🎨 Verificando Tailwind CSS..."
-TAILWIND_INPUT="web/static/css/input.css"
-TAILWIND_OUTPUT="web/static/css/tailwind.css"
+TAILWIND_INPUT_V1="web/static/css/input.css"
+TAILWIND_OUTPUT_V1="web/static/css/tailwind.css"
+TAILWIND_INPUT_V2="web/static/css/input-v2.css"
+TAILWIND_OUTPUT_V2="web/static/css/tailwind-v2.css"
 
-# Verificar se precisa recompilar Tailwind
+# Verificar se precisa recompilar Tailwind (qualquer versão)
 need_tailwind=false
-if [ ! -f "$TAILWIND_OUTPUT" ]; then
+if [ ! -f "$TAILWIND_OUTPUT_V1" ] || [ ! -f "$TAILWIND_OUTPUT_V2" ]; then
     need_tailwind=true
-elif [ "$TAILWIND_INPUT" -nt "$TAILWIND_OUTPUT" ]; then
+elif [ "$TAILWIND_INPUT_V1" -nt "$TAILWIND_OUTPUT_V1" ] || [ "$TAILWIND_INPUT_V2" -nt "$TAILWIND_OUTPUT_V2" ]; then
     need_tailwind=true
 fi
 
@@ -39,7 +41,8 @@ if [ "$need_tailwind" = true ]; then
         exit 1
     fi
     npm run tailwind:build
-    echo "✅ Tailwind CSS compilado"
+    npm run tailwind:build:v2
+    echo "✅ Tailwind CSS compilado (v1 + v2)"
 else
     echo "✅ Tailwind CSS está atualizado"
 fi

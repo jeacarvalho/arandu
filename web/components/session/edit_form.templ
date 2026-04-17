@@ -1,5 +1,7 @@
 package session
 
+import layoutComponents "arandu/web/components/layout"
+
 type EditSessionFormData struct {
 	Error         string
 	FormData      *SessionFormValues
@@ -66,8 +68,21 @@ templ EditSessionForm(data EditSessionFormData) {
 					</div>
 					<div class="bg-neutral-50 p-lg rounded-lg">
 						<div class="mb-md">
-							<label class="label-uppercase">Resumo</label>
-							<textarea name="summary" rows="6" placeholder="Resumo da sessão..." class="textarea-base">{ data.FormData.Summary }</textarea>
+							<div class="flex flex-between flex-center mb-xs">
+								<label class="label-uppercase">Resumo</label>
+								@layoutComponents.AutoSaveIndicator("summary", "idle")
+							</div>
+							<textarea
+								name="summary"
+								rows="6"
+								placeholder="Resumo da sessão..."
+								class="textarea-base"
+								hx-patch={ "/session/" + data.SessionID + "/summary" }
+								hx-trigger="input changed delay:1500ms"
+								hx-target="#autosave-indicator-summary"
+								hx-swap="outerHTML"
+								hx-include="this"
+							>{ data.FormData.Summary }</textarea>
 						</div>
 					</div>
 				</div>
