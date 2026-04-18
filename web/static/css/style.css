@@ -8008,3 +8008,7 @@ aside.shell-sidebar {
 .session-detail-list {
     flex: 1;
 }
+
+.session-detail-form-footer {
+    margin-top: auto;
+}
