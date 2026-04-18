@@ -7,6 +7,7 @@ templ InterventionForm(sessionID string) {
 		hx-target="#interventions-list"
 		hx-swap="afterbegin"
 		hx-disabled-elt="this button[type='submit']"
+		hx-indicator="#intv-loading"
 		hx-on::after-request="this.reset()"
 	>
 		<div class="silent-form-group">
@@ -17,18 +18,14 @@ templ InterventionForm(sessionID string) {
 				<i class="fas fa-hands-helping"></i>
 				Nova Intervenção Terapêutica
 			</label>
-			<textarea 
-				id="intervention-content" 
-				name="content" 
+			<textarea
+				id="intervention-content"
+				name="content"
 				placeholder="Descreva a técnica ou intervenção realizada..."
 				rows="4"
 				class="silent-textarea"
 				required
 			></textarea>
-			<div class="form-help">
-				<i class="fas fa-info-circle"></i>
-				Registre a conduta técnica aplicada para análise posterior da evolução.
-			</div>
 		</div>
 		<div class="form-actions">
 			<button type="submit" class="btn btn-primary">
@@ -37,6 +34,9 @@ templ InterventionForm(sessionID string) {
 			<button type="button" class="btn btn-outline" onclick="this.closest('form').querySelector('textarea').value = ''">
 				<i class="fas fa-times btn-icon"></i>Limpar
 			</button>
+			<span id="intv-loading" class="htmx-indicator text-xs text-neutral-500" role="status" aria-live="polite">
+				Salvando intervenção...
+			</span>
 		</div>
 	</form>
 }
