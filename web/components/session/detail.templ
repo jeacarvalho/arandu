@@ -60,7 +60,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 		</div>
 
 		<div class="session-detail-grid mb-2xl">
-			<div class="card">
+			<div class="card session-detail-card">
 				<div class="flex flex-center gap-md mb-md">
 					<div class="card-icon card-icon-primary">
 						<i class="fas fa-sticky-note"></i>
@@ -69,7 +69,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<h2 class="section-title">Observações Clínicas</h2>
 					</div>
 				</div>
-				<div id="observations-list" class="mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
+				<div id="observations-list" class="session-detail-list mt-lg" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(observations) > 0 {
 						for _, o := range observations {
 							@ObservationItem(ObservationItemData{
@@ -85,7 +85,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 					@ObservationForm(session.ID)
 				</div>
 			</div>
-			<div class="card">
+			<div class="card session-detail-card">
 				<div class="flex flex-center gap-md mb-md">
 					<div class="card-icon card-icon-secondary">
 						<i class="fas fa-hands-helping"></i>
@@ -94,7 +94,7 @@ templ SessionDetailView(session SessionDetail, observations []Observation, inter
 						<h2 class="section-title">Intervenções Terapêuticas</h2>
 					</div>
 				</div>
-				<div id="interventions-list" class="mt-lg" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
+				<div id="interventions-list" class="session-detail-list mt-lg" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 					if len(interventions) > 0 {
 						for _, i := range interventions {
 							@InterventionItem(InterventionItemData{

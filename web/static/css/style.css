@@ -7996,3 +7996,15 @@ aside.shell-sidebar {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================================
+   Session Detail — cards balanceados (form sempre no fundo)
+   ============================================================ */
+.session-detail-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.session-detail-list {
+    flex: 1;
+}
