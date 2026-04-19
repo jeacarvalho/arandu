@@ -9344,3 +9344,276 @@ aside.shell-sidebar.shell-sidebar-collapsed {
   .sabio-session-header { grid-template-columns: 1fr; gap: 12px; }
   .sabio-session-back { display: none; }
 }
+
+/* ================================================================
+   SÁBIO — LLM Drawer (Phase 6)
+   ================================================================ */
+
+/* Backdrop */
+.sabio-llm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in oklab, var(--ink) 40%, transparent);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+}
+
+/* Drawer */
+.sabio-llm-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 460px;
+  max-width: 90vw;
+  background: var(--paper);
+  border-left: 1px solid var(--line);
+  box-shadow: -24px 0 60px -24px rgba(31,26,21,.25);
+  display: flex;
+  flex-direction: column;
+  z-index: 41;
+  transform: translateX(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+}
+
+.sabio-llm-drawer--open,
+[x-show][style*="display: block"].sabio-llm-drawer,
+.sabio-llm-drawer[style*="display: flex"] {
+  transform: translateX(0);
+}
+
+/* Header */
+.sabio-llm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.sabio-llm-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,.2);
+}
+
+.sabio-llm-brand-info { flex: 1; min-width: 0; }
+
+.sabio-llm-brand-name {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.sabio-llm-brand-sub {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+
+.sabio-llm-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background .1s;
+  flex-shrink: 0;
+}
+.sabio-llm-close:hover { background: var(--paper-2); }
+
+/* Suggestions */
+.sabio-llm-suggestions {
+  padding: 14px 22px;
+  border-bottom: 1px dashed var(--line-2);
+  background: var(--paper-2);
+  flex-shrink: 0;
+}
+
+.sabio-llm-section-label {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 9px;
+}
+
+.sabio-llm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sabio-llm-chip {
+  font-size: 11.5px;
+  padding: 6px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  color: var(--ink-2);
+  font-family: var(--font-serif);
+  font-style: italic;
+  cursor: pointer;
+  transition: background .1s;
+}
+.sabio-llm-chip:hover { background: var(--paper-2); }
+
+/* Thread */
+.sabio-llm-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sabio-llm-thread-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.sabio-llm-thread-empty-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .7;
+}
+
+.sabio-llm-thread-empty-text {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  line-height: 1.5;
+  max-width: 260px;
+}
+
+/* Chat messages */
+.sabio-llm-msg-user {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 12px 12px 12px 4px;
+  font-size: 13.5px;
+  color: var(--ink);
+  max-width: 85%;
+}
+
+.sabio-llm-msg-assistant {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.sabio-llm-msg-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.sabio-llm-msg-body {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+/* Input */
+.sabio-llm-input {
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-2);
+  flex-shrink: 0;
+}
+
+.sabio-llm-input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+}
+
+.sabio-llm-textarea {
+  flex: 1;
+  resize: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  font-family: inherit;
+  min-height: 22px;
+  max-height: 120px;
+}
+
+.sabio-llm-textarea::placeholder { color: var(--ink-4); }
+
+.sabio-llm-send {
+  padding: 8px 9px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+.sabio-llm-send:hover { opacity: .85; }
+
+.sabio-llm-disclaimer {
+  font-size: 10.5px;
+  color: var(--ink-4);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+/* Alpine transition helpers (CSS-based since x-transition:enter/leave) */
+@keyframes sabioFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sabioFadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+.sabio-fade-in  { animation: sabioFadeIn  .2s ease; }
+.sabio-fade-out { animation: sabioFadeOut .2s ease; }

@@ -1,0 +1,100 @@
+package layout
+
+// LLMDrawer é o painel lateral de inteligência clínica, activado via ⌘J.
+// Abre/fecha via Alpine store: $store.shell.llmOpen.
+// Posicionado fora do fluxo normal (fixed), renderizado dentro do <body>
+// no Shell principal.
+templ LLMDrawer() {
+	<!-- Backdrop -->
+	<div class="sabio-llm-backdrop"
+	     x-show="$store.shell.llmOpen"
+	     x-transition:enter="sabio-fade-in"
+	     x-transition:leave="sabio-fade-out"
+	     @click="$store.shell.closeLLM()"
+	     style="display:none"></div>
+
+	<!-- Drawer -->
+	<aside class="sabio-llm-drawer"
+	       :class="{ 'sabio-llm-drawer--open': $store.shell.llmOpen }"
+	       x-show="$store.shell.llmOpen"
+	       x-transition:enter="sabio-slide-in"
+	       x-transition:leave="sabio-slide-out"
+	       style="display:none"
+	       aria-label="Inteligência Clínica Arandu"
+	       role="complementary">
+
+		<!-- Header -->
+		<header class="sabio-llm-header">
+			<div class="sabio-llm-brand-icon">
+				@sabioSparklesIcon()
+			</div>
+			<div class="sabio-llm-brand-info">
+				<div class="sabio-llm-brand-name serif">Arandu</div>
+				<div class="sabio-llm-brand-sub">Inteligência clínica</div>
+			</div>
+			<button class="sabio-llm-close"
+			        @click="$store.shell.closeLLM()"
+			        aria-label="Fechar drawer">
+				<i class="fas fa-times"></i>
+			</button>
+		</header>
+
+		<!-- Sugestões rápidas -->
+		<div class="sabio-llm-suggestions">
+			<div class="sabio-llm-section-label">Sugestões</div>
+			<div class="sabio-llm-chips">
+				<button class="sabio-llm-chip" @click="document.getElementById('llm-textarea').value = 'Resumir evolução dos últimos 3 meses'; document.getElementById('llm-textarea').focus()">
+					Resumir evolução
+				</button>
+				<button class="sabio-llm-chip" @click="document.getElementById('llm-textarea').value = 'Que padrões se repetem nas sessões recentes?'; document.getElementById('llm-textarea').focus()">
+					Padrões recentes
+				</button>
+				<button class="sabio-llm-chip" @click="document.getElementById('llm-textarea').value = 'Sugerir hipóteses diagnósticas diferenciais'; document.getElementById('llm-textarea').focus()">
+					Hipóteses diagnósticas
+				</button>
+				<button class="sabio-llm-chip" @click="document.getElementById('llm-textarea').value = 'Gerar rascunho de plano terapêutico'; document.getElementById('llm-textarea').focus()">
+					Plano terapêutico
+				</button>
+			</div>
+		</div>
+
+		<!-- Área de conversa (HTMX target para SSE futuro) -->
+		<div id="llm-thread" class="sabio-llm-thread" aria-live="polite" aria-label="Conversa com Arandu">
+			<div class="sabio-llm-thread-empty">
+				<div class="sabio-llm-thread-empty-icon">
+					@sabioSparklesIcon()
+				</div>
+				<p class="sabio-llm-thread-empty-text serif">
+					Faça uma pergunta sobre os padrões clínicos do paciente.
+				</p>
+			</div>
+		</div>
+
+		<!-- Input -->
+		<div class="sabio-llm-input">
+			<form id="llm-form"
+			      hx-post="/api/llm/chat"
+			      hx-target="#llm-thread"
+			      hx-swap="beforeend"
+			      hx-disabled-elt="button[type='submit']"
+			      hx-on::after-request="if(event.detail.successful) { document.getElementById('llm-textarea').value = ''; }"
+			      class="sabio-llm-input-wrap">
+				<textarea id="llm-textarea"
+				          name="message"
+				          placeholder="Pergunte sobre padrões, hipóteses, comparações…"
+				          rows="1"
+				          class="sabio-llm-textarea"
+				          @keydown.meta.enter.prevent="document.getElementById('llm-form').dispatchEvent(new Event('submit', {bubbles:true}))"
+				          @keydown.ctrl.enter.prevent="document.getElementById('llm-form').dispatchEvent(new Event('submit', {bubbles:true}))"
+				          required></textarea>
+				<button type="submit" class="sabio-llm-send" aria-label="Enviar">
+					<i class="fas fa-arrow-up"></i>
+				</button>
+			</form>
+			<div class="sabio-llm-disclaimer">
+				<i class="fas fa-info-circle"></i>
+				Respostas de IA são auxiliares e não substituem julgamento clínico.
+			</div>
+		</div>
+	</aside>
+}

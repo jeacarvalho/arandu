@@ -214,7 +214,15 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Modal Container --><div id=\"modal-container\"></div><!-- Drawer Container --><div id=\"drawer-container\"></div><!-- LLM Drawer (Fase 6) --><div id=\"llm-drawer\"></div><!-- Toast Container --><div id=\"toast-container\"></div><!-- Global Scripts --><script src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Modal Container --><div id=\"modal-container\"></div><!-- Drawer Container --><div id=\"drawer-container\"></div><!-- LLM Drawer -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = LLMDrawer().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!-- Toast Container --><div id=\"toast-container\"></div><!-- Global Scripts --><script src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -227,7 +235,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></script><!-- Debug Script - Remove in production --><script src=\"/static/js/htmx-debug.js\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"></script><!-- Debug Script - Remove in production --><script src=\"/static/js/htmx-debug.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -257,28 +265,28 @@ func ShellTopbar(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<header class=\"sabio-topbar\"><!-- Mobile Hamburger -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<header class=\"sabio-topbar\"><!-- Mobile Hamburger -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if config.ShowSidebar {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button @click=\"$store.shell.toggleSidebar()\" class=\"shell-hamburger md:hidden\" aria-label=\"Abrir menu de navegação\" aria-controls=\"shell-sidebar\"><i class=\"fas fa-bars\"></i></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button @click=\"$store.shell.toggleSidebar()\" class=\"shell-hamburger md:hidden\" aria-label=\"Abrir menu de navegação\" aria-controls=\"shell-sidebar\"><i class=\"fas fa-bars\"></i></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Breadcrumb --><nav class=\"sabio-breadcrumb\" aria-label=\"Localização\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<!-- Breadcrumb --><nav class=\"sabio-breadcrumb\" aria-label=\"Localização\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i, item := range deriveBreadcrumb(config) {
 			if i > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"sabio-breadcrumb-sep\">›</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span class=\"sabio-breadcrumb-sep\">›</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " <span class=\"sabio-breadcrumb-item\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " <span class=\"sabio-breadcrumb-item\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -291,12 +299,12 @@ func ShellTopbar(config ShellConfig) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</nav><div class=\"sabio-topbar-spacer\"></div><!-- Search --><div class=\"sabio-search-wrap\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</nav><div class=\"sabio-topbar-spacer\"></div><!-- Search --><div class=\"sabio-search-wrap\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -304,7 +312,7 @@ func ShellTopbar(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- LLM Button --><button class=\"sabio-llm-btn\" @click=\"$store.shell.toggleLLM()\" aria-label=\"Abrir inteligência clínica (⌘J)\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><!-- LLM Button --><button class=\"sabio-llm-btn\" @click=\"$store.shell.toggleLLM()\" aria-label=\"Abrir inteligência clínica (⌘J)\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -312,7 +320,7 @@ func ShellTopbar(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span>Arandu</span> <kbd class=\"sabio-kbd\">⌘J</kbd></button><!-- Settings --><button class=\"sabio-settings-btn\" title=\"Configurações\" aria-label=\"Configurações\"><i class=\"fas fa-cog\"></i></button></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<span>Arandu</span> <kbd class=\"sabio-kbd\">⌘J</kbd></button><!-- Settings --><button class=\"sabio-settings-btn\" title=\"Configurações\" aria-label=\"Configurações\"><i class=\"fas fa-cog\"></i></button></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -342,7 +350,7 @@ func sabioSparklesIcon() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"></path> <path d=\"M5 3v4\"></path> <path d=\"M19 17v4\"></path> <path d=\"M3 5h4\"></path> <path d=\"M17 19h4\"></path></svg>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"></path> <path d=\"M5 3v4\"></path> <path d=\"M19 17v4\"></path> <path d=\"M3 5h4\"></path> <path d=\"M17 19h4\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -372,7 +380,7 @@ func ShellSearchBar() templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"shell-search-container\"><input id=\"shell-patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#shell-search-results\" hx-indicator=\"#shell-search-loading\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"shell-search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"shell-search-input\"> <i class=\"fas fa-search shell-search-icon\"></i> <span id=\"shell-search-loading\" class=\"htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"shell-search-results\" class=\"absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"shell-search-container\"><input id=\"shell-patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#shell-search-results\" hx-indicator=\"#shell-search-loading\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"shell-search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"shell-search-input\"> <i class=\"fas fa-search shell-search-icon\"></i> <span id=\"shell-search-loading\" class=\"htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"shell-search-results\" class=\"absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -402,7 +410,7 @@ func ShellSidebar(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<aside id=\"shell-sidebar\" class=\"shell-sidebar\" :class=\"{ 'shell-sidebar-collapsed': $store.shell.sidebarCollapsed, 'shell-sidebar-open': $store.shell.sidebarOpen }\" aria-label=\"Menu de navegação\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<aside id=\"shell-sidebar\" class=\"shell-sidebar\" :class=\"{ 'shell-sidebar-collapsed': $store.shell.sidebarCollapsed, 'shell-sidebar-open': $store.shell.sidebarOpen }\" aria-label=\"Menu de navegação\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -410,7 +418,7 @@ func ShellSidebar(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -440,7 +448,7 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- Brand Header --><div class=\"sabio-brand-header\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Brand Header --><div class=\"sabio-brand-header\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -448,7 +456,7 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"sabio-brand-text\"><div class=\"sabio-brand-name\">Arandu</div><div class=\"sabio-brand-sub\">CLÍNICO</div></div></div><!-- Navigation --><nav class=\"sabio-nav\"><div class=\"sabio-nav-section-label\">MENU</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"sabio-brand-text\"><div class=\"sabio-brand-name\">Arandu</div><div class=\"sabio-brand-sub\">CLÍNICO</div></div></div><!-- Navigation --><nav class=\"sabio-nav\"><div class=\"sabio-nav-section-label\">MENU</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -463,7 +471,7 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"sabio-nav-section-label sabio-nav-section-gap\">ATALHOS</div><a href=\"/session/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-plus\"></i></span> <span class=\"sabio-nav-item-text\">Nova sessão</span></a> <a href=\"/patients/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-user-plus\"></i></span> <span class=\"sabio-nav-item-text\">Novo paciente</span></a></nav><!-- Footer: avatar + recolher --><div class=\"sabio-sidebar-footer\"><div class=\"sabio-user-row\"><div class=\"sabio-avatar\" aria-hidden=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"sabio-nav-section-label sabio-nav-section-gap\">ATALHOS</div><a href=\"/session/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-plus\"></i></span> <span class=\"sabio-nav-item-text\">Nova sessão</span></a> <a href=\"/patients/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-user-plus\"></i></span> <span class=\"sabio-nav-item-text\">Novo paciente</span></a></nav><!-- Footer: avatar + recolher --><div class=\"sabio-sidebar-footer\"><div class=\"sabio-user-row\"><div class=\"sabio-avatar\" aria-hidden=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -476,7 +484,7 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><div class=\"sabio-user-info\"><div class=\"sabio-user-name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><div class=\"sabio-user-info\"><div class=\"sabio-user-name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -501,7 +509,7 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><div class=\"sabio-user-meta\"><a href=\"/logout\" style=\"color:inherit;text-decoration:none;\">Sair</a></div></div></div><button @click=\"$store.shell.toggleCollapse()\" class=\"sabio-collapse-btn\" aria-label=\"Recolher menu lateral\"><i class=\"fas\" :class=\"$store.shell.sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'\"></i> <span class=\"sabio-collapse-btn-text\">Recolher</span></button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"sabio-user-meta\"><a href=\"/logout\" style=\"color:inherit;text-decoration:none;\">Sair</a></div></div></div><button @click=\"$store.shell.toggleCollapse()\" class=\"sabio-collapse-btn\" aria-label=\"Recolher menu lateral\"><i class=\"fas\" :class=\"$store.shell.sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'\"></i> <span class=\"sabio-collapse-btn-text\">Recolher</span></button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -531,7 +539,7 @@ func sabioBrandMark() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"sabio-brandmark\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3c-4 3-6 6-6 10 0 4 2 7 6 8 4-1 6-4 6-8 0-4-2-7-6-10z\"></path> <path d=\"M12 7v12\" opacity=\".55\"></path> <circle cx=\"12\" cy=\"13\" r=\"1.4\" fill=\"currentColor\" stroke=\"none\"></circle></svg></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"sabio-brandmark\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3c-4 3-6 6-6 10 0 4 2 7 6 8 4-1 6-4 6-8 0-4-2-7-6-10z\"></path> <path d=\"M12 7v12\" opacity=\".55\"></path> <circle cx=\"12\" cy=\"13\" r=\"1.4\" fill=\"currentColor\" stroke=\"none\"></circle></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -615,7 +623,7 @@ func ShellPatientNavItems(patientID string, activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div style=\"height:1px;background:var(--color-line);margin:8px 12px;\"></div><a href=\"/dashboard\" class=\"sabio-nav-item\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-arrow-left\"></i></span> <span class=\"sabio-nav-item-text\">Voltar ao Dashboard</span></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div style=\"height:1px;background:var(--color-line);margin:8px 12px;\"></div><a href=\"/dashboard\" class=\"sabio-nav-item\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-arrow-left\"></i></span> <span class=\"sabio-nav-item-text\">Voltar ao Dashboard</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -645,7 +653,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -658,17 +666,17 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"sabio-nav-item\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"sabio-nav-item\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if page == activePage {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " aria-current=\"page\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " aria-current=\"page\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -681,7 +689,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" hx-target=\"#main-content\" hx-push-url=\"true\" hx-swap=\"innerHTML\" hx-head=\"merge\" hx-indicator=\"#shell-loading\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" hx-target=\"#main-content\" hx-push-url=\"true\" hx-swap=\"innerHTML\" hx-head=\"merge\" hx-indicator=\"#shell-loading\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -690,7 +698,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<i class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<i class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -703,7 +711,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\"></i></span> <span class=\"sabio-nav-item-text\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\"></i></span> <span class=\"sabio-nav-item-text\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -716,7 +724,7 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -747,7 +755,7 @@ func ShellContentWrapper(content templ.Component) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div id=\"main-content-swap\" hx-swap-oob=\"true\"><div class=\"shell-canvas-container shell-canvas-expanded\"><div class=\"shell-content\" id=\"shell-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div id=\"main-content-swap\" hx-swap-oob=\"true\"><div class=\"shell-canvas-container shell-canvas-expanded\"><div class=\"shell-content\" id=\"shell-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -755,7 +763,7 @@ func ShellContentWrapper(content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -786,7 +794,7 @@ func ShellContentContainer(content templ.Component) templ.Component {
 			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"shell-canvas-container\" style=\"padding-top: 80px; padding-left: 260px;\"><div class=\"shell-content\" id=\"shell-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"shell-canvas-container\" style=\"padding-top: 80px; padding-left: 260px;\"><div class=\"shell-content\" id=\"shell-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -794,7 +802,7 @@ func ShellContentContainer(content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -824,7 +832,7 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"mb-6\"><h1 class=\"text-2xl font-semibold text-neutral-800\" data-autofocus>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div class=\"mb-6\"><h1 class=\"text-2xl font-semibold text-neutral-800\" data-autofocus>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -837,12 +845,12 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if subtitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<p class=\"mt-1 text-sm text-neutral-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<p class=\"mt-1 text-sm text-neutral-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -855,12 +863,12 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -890,12 +898,12 @@ func ShellCard(title string, content templ.Component) templ.Component {
 			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if title != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"px-6 py-4 border-b border-neutral-200\"><h2 class=\"text-lg font-semibold text-neutral-800\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"px-6 py-4 border-b border-neutral-200\"><h2 class=\"text-lg font-semibold text-neutral-800\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -908,12 +916,12 @@ func ShellCard(title string, content templ.Component) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</h2></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</h2></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div class=\"p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -921,7 +929,7 @@ func ShellCard(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -951,7 +959,7 @@ func ShellLoading() templ.Component {
 			templ_7745c5c3_Var31 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div id=\"shell-loading\" class=\"htmx-indicator fixed inset-0 z-[200] flex items-center justify-center bg-white/50 backdrop-blur-sm\"><div class=\"flex flex-col items-center gap-3\"><div class=\"w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin\"></div><span class=\"text-sm text-neutral-600 font-medium\">Carregando...</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div id=\"shell-loading\" class=\"htmx-indicator fixed inset-0 z-[200] flex items-center justify-center bg-white/50 backdrop-blur-sm\"><div class=\"flex flex-col items-center gap-3\"><div class=\"w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin\"></div><span class=\"text-sm text-neutral-600 font-medium\">Carregando...</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
