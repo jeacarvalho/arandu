@@ -9,6 +9,7 @@ import (
 
 	"arandu/internal/infrastructure/auth"
 	"arandu/internal/infrastructure/repository/sqlite"
+	"arandu/internal/platform/env"
 	authComponents "arandu/web/components/auth"
 
 	"github.com/google/uuid"
@@ -46,9 +47,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	isDev := env.IsDev()
+
 	if r.Method == http.MethodGet {
 		data := authComponents.LoginData{
 			Error: "",
+			IsDev: isDev,
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		authComponents.Login(data).Render(r.Context(), w)
@@ -62,6 +66,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		if email == "" || password == "" {
 			data := authComponents.LoginData{
 				Error: "Credenciais inválidas",
+				IsDev: isDev,
 			}
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			authComponents.Login(data).Render(r.Context(), w)
@@ -72,6 +77,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			data := authComponents.LoginData{
 				Error: err.Error(),
+				IsDev: isDev,
 			}
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			authComponents.Login(data).Render(r.Context(), w)

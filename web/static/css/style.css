@@ -8375,9 +8375,17 @@ aside.shell-sidebar.shell-sidebar-collapsed {
 
 .shell-sidebar-collapsed .sabio-collapse-btn-text { display: none; }
 
-/* Canvas offsets para nova largura da sidebar (232px / 68px) */
-.shell-canvas-expanded  { padding-left: 232px !important; }
-.shell-canvas-collapsed { padding-left: 68px !important; }
+/* Sidebar is a flex sibling of shell-main — no padding-left offset needed on canvas */
+.shell-canvas-expanded  {}
+.shell-canvas-collapsed {}
+
+/* Fix layout conflicts from input-v2.css outside-@layer rules:
+   - shell-body already has margin-top:64px from @layer; padding-top:64px is double-offset
+   - shell-canvas-container padding offsets are for fixed/abs sidebar, not flex sidebar
+   - shell-canvas min-height conflicts with flex-1 height management */
+.shell-body { padding-top: 0; }
+.shell-canvas { min-height: auto; }
+.shell-canvas-container { padding-top: 0; padding-left: 0; }
 
 /* ================================================================
    SÁBIO — Dashboard (Phase 3)

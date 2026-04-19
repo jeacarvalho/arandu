@@ -85,12 +85,20 @@ type AppointmentDetailModel struct {
 // StatusLabel returns the human-readable label for a status
 func StatusLabel(status string) string {
 	switch status {
+	case "scheduled":
+		return "Agendada"
+	case "confirmed":
+		return "Confirmada"
 	case "pending":
 		return "Aguardando confirmação"
 	case "first_session":
 		return "1ª consulta"
 	case "cancelled":
 		return "Cancelado"
+	case "no_show":
+		return "Não Compareceu"
+	case "completed":
+		return "Realizada"
 	default:
 		return "Sessão individual"
 	}
