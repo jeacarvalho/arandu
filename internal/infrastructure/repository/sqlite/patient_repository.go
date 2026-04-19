@@ -40,22 +40,22 @@ func newPatientQueries() *patientQueries {
 	return &patientQueries{
 		save: `INSERT INTO patients (id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-		findByID: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE id = ?`,
+		findByID: `SELECT id, name, COALESCE(tag,''), gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE id = ?`,
 
-		findAll: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
+		findAll: `SELECT id, name, COALESCE(tag,''), gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
 
 		update: `UPDATE patients SET name = ?, tag = ?, gender = ?, ethnicity = ?, occupation = ?, education = ?, notes = ?, updated_at = ? WHERE id = ?`,
 
 		delete: `DELETE FROM patients WHERE id = ?`,
 
 		// Search patients by name (case-insensitive, partial match)
-		findByName: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
+		findByName: `SELECT id, name, COALESCE(tag,''), gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
 
 		// Search with pagination (using LIKE for backward compatibility)
-		search: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
+		search: `SELECT id, name, COALESCE(tag,''), gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
 
 		// FTS5 search with pagination (simple version without content=)
-		searchFTS: `SELECT p.id, p.name, p.tag, p.gender, p.ethnicity, p.occupation, p.education, p.notes, p.created_at, p.updated_at
+		searchFTS: `SELECT p.id, p.name, COALESCE(p.tag,''), p.gender, p.ethnicity, p.occupation, p.education, p.notes, p.created_at, p.updated_at
 			FROM patients p
 			INNER JOIN patients_fts f ON p.id = f.patient_id
 			WHERE patients_fts MATCH ?
@@ -66,7 +66,7 @@ func newPatientQueries() *patientQueries {
 		countAll: `SELECT COUNT(*) FROM patients`,
 
 		// Paginated results
-		findPaginated: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+		findPaginated: `SELECT id, name, COALESCE(tag,''), gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
 
 		// Dashboard enriched list — single CTE query, no N+1
 		listForDashboard: `
