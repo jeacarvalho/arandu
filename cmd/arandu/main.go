@@ -246,7 +246,9 @@ func main() {
 		} else if strings.HasSuffix(r.URL.Path, "/summary") && r.Method == "PATCH" {
 			sessionHandler.PatchSummary(w, r)
 		} else if r.Method == "GET" {
-			sessionHandler.Show(w, r)
+			// Redirect bare /session/{id} to /session/{id}/edit so the Sábio
+			// design is always used — Show and EditSession serve the same purpose.
+			http.Redirect(w, r, r.URL.Path+"/edit", http.StatusMovedPermanently)
 		} else {
 			http.NotFound(w, r)
 		}
