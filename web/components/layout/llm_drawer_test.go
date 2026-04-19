@@ -107,3 +107,21 @@ func TestLLMDrawer_HasDisclaimer(t *testing.T) {
 		t.Error("Drawer deve ter disclaimer sobre julgamento clínico")
 	}
 }
+
+// TestLLMDrawer_HasCrossInsightsSection verifica seção "Padrões cruzados" com barras.
+func TestLLMDrawer_HasCrossInsightsSection(t *testing.T) {
+	var buf bytes.Buffer
+	if err := LLMDrawer().Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	html := buf.String()
+	if !strings.Contains(html, "sabio-llm-insights") {
+		t.Error("Drawer deve ter sabio-llm-insights (seção padrões cruzados)")
+	}
+	if !strings.Contains(html, "Padrões cruzados") {
+		t.Error("Seção deve ter label 'Padrões cruzados'")
+	}
+	if !strings.Contains(html, "sabio-llm-insight-bar") {
+		t.Error("Seção deve ter barras de progresso sabio-llm-insight-bar")
+	}
+}

@@ -156,3 +156,29 @@ func TestDashboard_EmptyPatientsShowsEmptyState(t *testing.T) {
 		t.Error("Lista vazia deve exibir texto 'Nenhum paciente'")
 	}
 }
+
+// TestDashboard_KpiUpDeltaHasIcon verifica ícone de tendência no KPI com tone "up".
+func TestDashboard_KpiUpDeltaHasIcon(t *testing.T) {
+	vm := makeSampleVM()
+	vm.KpiItems[1].Tone = "up"
+	var buf bytes.Buffer
+	if err := Dashboard(vm).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	if !strings.Contains(buf.String(), "sabio-kpi-delta-icon") {
+		t.Error("KPI com tone 'up' deve ter ícone sabio-kpi-delta-icon")
+	}
+}
+
+// TestDashboard_KpiWarnDeltaHasIcon verifica ícone de alerta no KPI com tone "warn".
+func TestDashboard_KpiWarnDeltaHasIcon(t *testing.T) {
+	vm := makeSampleVM()
+	vm.KpiItems[3].Tone = "warn"
+	var buf bytes.Buffer
+	if err := Dashboard(vm).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	if !strings.Contains(buf.String(), "sabio-kpi-delta-icon") {
+		t.Error("KPI com tone 'warn' deve ter ícone sabio-kpi-delta-icon")
+	}
+}

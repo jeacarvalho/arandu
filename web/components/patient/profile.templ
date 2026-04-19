@@ -68,6 +68,11 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 							Ver tudo <i class="fas fa-chevron-right"></i>
 						</a>
 					</div>
+					<div class="sabio-timeline-filters" x-data="{ filter: 'all' }">
+							<button class="sabio-timeline-pill" :class="{ 'sabio-timeline-pill--active': filter === 'all' }" @click="filter = 'all'">Tudo</button>
+							<button class="sabio-timeline-pill" :class="{ 'sabio-timeline-pill--active': filter === 'session' }" @click="filter = 'session'">Sessões</button>
+							<button class="sabio-timeline-pill" :class="{ 'sabio-timeline-pill--active': filter === 'note' }" @click="filter = 'note'">Notas</button>
+						</div>
 					<div class="sabio-timeline">
 						if len(timelineEvents) > 0 {
 							for i, ev := range timelineEvents {

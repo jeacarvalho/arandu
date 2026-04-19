@@ -117,7 +117,14 @@ templ Dashboard(vm DashboardVM) {
 				<div class={ kpiCardClass(kpi.Dark) }>
 					<div class="sabio-kpi-label">{ kpi.Label }</div>
 					<div class="sabio-kpi-value serif">{ kpi.Value }</div>
-					<div class={ "sabio-kpi-delta sabio-kpi-delta--" + kpi.Tone }>{ kpi.Delta }</div>
+					<div class={ "sabio-kpi-delta sabio-kpi-delta--" + kpi.Tone }>
+							if kpi.Tone == "up" {
+								<i class="fas fa-arrow-up sabio-kpi-delta-icon"></i>
+							} else if kpi.Tone == "warn" {
+								<i class="fas fa-exclamation-triangle sabio-kpi-delta-icon"></i>
+							}
+							{ kpi.Delta }
+						</div>
 				</div>
 			}
 		</div>

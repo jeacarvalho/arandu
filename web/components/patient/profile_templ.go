@@ -170,7 +170,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"sabio-card-action\">Ver tudo <i class=\"fas fa-chevron-right\"></i></a></div><div class=\"sabio-timeline\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"sabio-card-action\">Ver tudo <i class=\"fas fa-chevron-right\"></i></a></div><div class=\"sabio-timeline-filters\" x-data=\"{ filter: 'all' }\"><button class=\"sabio-timeline-pill\" :class=\"{ 'sabio-timeline-pill--active': filter === 'all' }\" @click=\"filter = 'all'\">Tudo</button> <button class=\"sabio-timeline-pill\" :class=\"{ 'sabio-timeline-pill--active': filter === 'session' }\" @click=\"filter = 'session'\">Sessões</button> <button class=\"sabio-timeline-pill\" :class=\"{ 'sabio-timeline-pill--active': filter === 'note' }\" @click=\"filter = 'note'\">Notas</button></div><div class=\"sabio-timeline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -194,7 +194,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var11 templ.SafeURL
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 96, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 101, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -207,7 +207,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/patients/%s/anamnesis", p.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 98, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 103, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var13 templ.SafeURL
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 104, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 109, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -233,7 +233,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/patients/%s/goals", p.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 106, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 111, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -246,7 +246,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var15 templ.SafeURL
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/analysis/themes", p.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 112, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 117, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -259,7 +259,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/patients/%s/analysis/themes", p.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 114, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 119, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -272,7 +272,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var17 templ.SafeURL
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 120, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 125, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -285,7 +285,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/patients/%s/sessions/new", p.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 122, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 127, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Date)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 146, Col: 54}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 151, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Content)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 148, Col: 54}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 153, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -349,7 +349,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 		var templ_7745c5c3_Var21 templ.SafeURL
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/history", p.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 167, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 172, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -368,7 +368,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var22 templ.SafeURL
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/session/%s", s.ID)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 174, Col: 59}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 179, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -381,7 +381,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/session/%s", s.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 176, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 181, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -394,7 +394,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var24 string
 				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(s.SessionNumber))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 181, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 186, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
@@ -407,7 +407,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 				var templ_7745c5c3_Var25 string
 				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(s.Date)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 183, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 188, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 				if templ_7745c5c3_Err != nil {
@@ -425,7 +425,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 					var templ_7745c5c3_Var26 string
 					templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(s.Summary)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 186, Col: 59}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 191, Col: 59}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 					if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func PatientProfileView(p *patient.Patient, patientContext interface{}, timeline
 			var templ_7745c5c3_Var27 templ.SafeURL
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 196, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 201, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -514,7 +514,7 @@ func timelineItem(ev TimelineEventItem, last bool) templ.Component {
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Date)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 208, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 213, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -576,7 +576,7 @@ func timelineItem(ev TimelineEventItem, last bool) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 215, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 220, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -594,7 +594,7 @@ func timelineItem(ev TimelineEventItem, last bool) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 217, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 222, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -630,7 +630,7 @@ func timelineItem(ev TimelineEventItem, last bool) templ.Component {
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(timelineKindLabel(ev.Type))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 219, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 224, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {
@@ -648,7 +648,7 @@ func timelineItem(ev TimelineEventItem, last bool) templ.Component {
 			var templ_7745c5c3_Var41 string
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(ev.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 222, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/patient/profile.templ`, Line: 227, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {

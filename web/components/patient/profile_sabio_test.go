@@ -162,3 +162,25 @@ func TestPatientProfile_RecentSessionsList(t *testing.T) {
 		t.Error("Lista de sessões deve conter 'Sessão 5'")
 	}
 }
+
+// TestPatientProfile_HasTimelineFilterPills verifica pills de filtro na timeline.
+func TestPatientProfile_HasTimelineFilterPills(t *testing.T) {
+	p := newSabioTestPatient()
+	var buf bytes.Buffer
+	if err := PatientProfileView(p, nil, newSabioTimeline(), nil).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	html := buf.String()
+	if !strings.Contains(html, "sabio-timeline-filters") {
+		t.Error("Timeline deve ter div.sabio-timeline-filters com pills de filtro")
+	}
+	if !strings.Contains(html, "Tudo") {
+		t.Error("Filtros devem incluir 'Tudo'")
+	}
+	if !strings.Contains(html, "Sessões") {
+		t.Error("Filtros devem incluir 'Sessões'")
+	}
+	if !strings.Contains(html, "Notas") {
+		t.Error("Filtros devem incluir 'Notas'")
+	}
+}
