@@ -4,7 +4,57 @@ import (
 	goContext "context"
 	appcontext "arandu/internal/platform/context"
 	"arandu/internal/platform/helpers"
+	"strings"
 )
+
+// deriveBreadcrumb retorna o breadcrumb a partir do ShellConfig.
+// Se Breadcrumb está explícito, usa-o; caso contrário deriva de ActivePage.
+func deriveBreadcrumb(config ShellConfig) []string {
+	if len(config.Breadcrumb) > 0 {
+		return config.Breadcrumb
+	}
+	switch config.ActivePage {
+	case "dashboard":
+		return []string{"Hoje"}
+	case "patients":
+		return []string{"Pacientes"}
+	case "new-patient":
+		return []string{"Pacientes", "Novo Paciente"}
+	case "agenda":
+		return []string{"Agenda"}
+	case "patient-summary", "patient-anamnesis", "patient-history", "patient-goals":
+		if config.PageTitle != "" {
+			return []string{"Pacientes", config.PageTitle}
+		}
+		return []string{"Pacientes"}
+	default:
+		if config.PageTitle != "" {
+			return []string{config.PageTitle}
+		}
+		return []string{"Arandu"}
+	}
+}
+
+// userInitials extrai até 2 iniciais de um email para o avatar.
+func userInitials(email string) string {
+	if email == "" {
+		return "?"
+	}
+	prefix := email
+	if idx := strings.Index(email, "@"); idx > 0 {
+		prefix = email[:idx]
+	}
+	parts := strings.FieldsFunc(prefix, func(r rune) bool {
+		return r == '.' || r == '_' || r == '-'
+	})
+	if len(parts) >= 2 && len(parts[0]) > 0 && len(parts[1]) > 0 {
+		return strings.ToUpper(string(parts[0][0])) + strings.ToUpper(string(parts[1][0]))
+	}
+	if len(prefix) >= 2 {
+		return strings.ToUpper(prefix[:2])
+	}
+	return strings.ToUpper(prefix)
+}
 
 // ============================================================================
 // SHELL LAYOUT - RECOMMENDED LAYOUT
@@ -40,12 +90,14 @@ import (
 
 // ShellConfig configuração do ShellLayout
 type ShellConfig struct {
-	PageTitle       string
-	ActivePage      string
-	ShowSidebar     bool
-	SidebarVariant  string // "default" | "patient"
-	PatientID       string // usado quando SidebarVariant = "patient"
-	UserEmail       string
+	PageTitle      string
+	ActivePage     string
+	ShowSidebar    bool
+	SidebarVariant string   // "default" | "patient"
+	PatientID      string   // usado quando SidebarVariant = "patient"
+	UserEmail      string
+	UserName       string   // nome de exibição; se vazio usa prefixo do email
+	Breadcrumb     []string // itens do breadcrumb; se vazio deriva de ActivePage
 }
 
 // ShellWithContext cria um ShellLayout com contexto e sidebar opcional
@@ -111,21 +163,22 @@ templ Shell(config ShellConfig, content templ.Component) {
 			document.addEventListener('alpine:init', () => {
 				if (!Alpine.store('shell')) {
 					Alpine.store('shell', {
-						// sidebarOpen: controls MOBILE drawer visibility (true = open, false = closed)
-						// On desktop, sidebar is always visible (controlled by CSS md:flex)
 						sidebarOpen: false,
-						// sidebarCollapsed: controls DESKTOP sidebar width (true = 80px, false = 260px)
 						sidebarCollapsed: false,
+						llmOpen: false,
 						init() {
-							this.sidebarOpen = false; // Always start closed on mobile
+							this.sidebarOpen = false;
 							this.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';
 						},
-						toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
-						closeSidebar() { this.sidebarOpen = false; },
+						toggleSidebar()  { this.sidebarOpen = !this.sidebarOpen; },
+						closeSidebar()   { this.sidebarOpen = false; },
 						toggleCollapse() {
 							this.sidebarCollapsed = !this.sidebarCollapsed;
 							localStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);
-						}
+						},
+						openLLM()   { this.llmOpen = true; },
+						closeLLM()  { this.llmOpen = false; },
+						toggleLLM() { this.llmOpen = !this.llmOpen; },
 					});
 				}
 			});
@@ -135,10 +188,12 @@ templ Shell(config ShellConfig, content templ.Component) {
 		<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<div 
+		<div
 			class="shell"
 			x-data="Alpine.store('shell')"
 			x-init="$store.shell.init()"
+			@keydown.meta.j.window="$store.shell.toggleLLM()"
+			@keydown.ctrl.j.window="$store.shell.toggleLLM()"
 		>
 			<!-- Topbar -->
 			@ShellTopbar(config)
@@ -180,6 +235,9 @@ templ Shell(config ShellConfig, content templ.Component) {
 		<!-- Drawer Container -->
 		<div id="drawer-container"></div>
 
+		<!-- LLM Drawer (Fase 6) -->
+		<div id="llm-drawer"></div>
+
 		<!-- Toast Container -->
 		<div id="toast-container"></div>
 
@@ -191,52 +249,65 @@ templ Shell(config ShellConfig, content templ.Component) {
 	</html>
 }
 
-// ShellTopbar componente da barra superior
+// ShellTopbar componente da barra superior — Sábio design
 templ ShellTopbar(config ShellConfig) {
-	<header class="shell-topbar">
-		<!-- Left: Menu Toggle & Logo -->
-		<div class="shell-topbar-left">
-			<!-- Mobile Hamburger -->
-			if config.ShowSidebar {
-				<button 
-					@click="toggleSidebar()"
-					class="shell-hamburger md:hidden focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
-					if config.SidebarVariant == "patient" {
-						aria-label="Abrir menu do paciente"
-					} else {
-						aria-label="Abrir menu de navegação"
-					}
-					aria-expanded="false"
-					aria-controls="shell-sidebar"
-				>
-					<i class="fas fa-bars text-lg"></i>
-				</button>
-			}
-			
-			<!-- Logo -->
-			<a href="/dashboard" class="shell-logo">
-				<div class="shell-logo-icon">
-					<i class="fas fa-brain"></i>
-				</div>
-				<span class="shell-logo-text">Arandu</span>
-			</a>
-		</div>
+	<header class="sabio-topbar">
+		<!-- Mobile Hamburger -->
+		if config.ShowSidebar {
+			<button
+				@click="$store.shell.toggleSidebar()"
+				class="shell-hamburger md:hidden"
+				aria-label="Abrir menu de navegação"
+				aria-controls="shell-sidebar"
+			>
+				<i class="fas fa-bars"></i>
+			</button>
+		}
 
-		<!-- Center: Search Bar -->
-		<div class="shell-topbar-center">
+		<!-- Breadcrumb -->
+		<nav class="sabio-breadcrumb" aria-label="Localização">
+			for i, item := range deriveBreadcrumb(config) {
+				if i > 0 {
+					<span class="sabio-breadcrumb-sep">›</span>
+				}
+				<span class="sabio-breadcrumb-item">{ item }</span>
+			}
+		</nav>
+
+		<div class="sabio-topbar-spacer"></div>
+
+		<!-- Search -->
+		<div class="sabio-search-wrap">
 			@ShellSearchBar()
 		</div>
 
-		<!-- Right: User Profile -->
-		<div class="shell-topbar-right">
-			<div class="shell-user">
-				<div class="shell-user-avatar">
-					<i class="fas fa-user-md"></i>
-				</div>
-				<span class="shell-user-name">{ config.UserEmail }</span>
-			</div>
-		</div>
+		<!-- LLM Button -->
+		<button
+			class="sabio-llm-btn"
+			@click="$store.shell.toggleLLM()"
+			aria-label="Abrir inteligência clínica (⌘J)"
+		>
+			@sabioSparklesIcon()
+			<span>Arandu</span>
+			<kbd class="sabio-kbd">⌘J</kbd>
+		</button>
+
+		<!-- Settings -->
+		<button class="sabio-settings-btn" title="Configurações" aria-label="Configurações">
+			<i class="fas fa-cog"></i>
+		</button>
 	</header>
+}
+
+// sabioSparklesIcon ícone sparkles inline SVG para o botão LLM
+templ sabioSparklesIcon() {
+	<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+		<path d="M5 3v4"></path>
+		<path d="M19 17v4"></path>
+		<path d="M3 5h4"></path>
+		<path d="M17 19h4"></path>
+	</svg>
 }
 
 // ShellSearchBar componente de busca na topbar
@@ -268,65 +339,84 @@ templ ShellSearchBar() {
 	</div>
 }
 
-// ShellSidebar componente da barra lateral
+// ShellSidebar componente da barra lateral — Sábio design
 templ ShellSidebar(config ShellConfig) {
 	<aside
 		id="shell-sidebar"
 		class="shell-sidebar"
-		:class="{ 'shell-sidebar-collapsed': sidebarCollapsed, 'shell-sidebar-open': sidebarOpen }"
+		:class="{ 'shell-sidebar-collapsed': $store.shell.sidebarCollapsed, 'shell-sidebar-open': $store.shell.sidebarOpen }"
 		aria-label="Menu de navegação"
 	>
 		@ShellSidebarContent(config)
 	</aside>
 }
 
-// ShellSidebarContent conteúdo da sidebar
+// ShellSidebarContent conteúdo da sidebar — Sábio design
 templ ShellSidebarContent(config ShellConfig) {
-	<!-- Header -->
-	<div class="shell-sidebar-header">
-		<div class="shell-sidebar-title">
-			if config.SidebarVariant == "patient" {
-				Perfil do Paciente
-			} else {
-				Inteligência Clínica
-			}
+	<!-- Brand Header -->
+	<div class="sabio-brand-header">
+		@sabioBrandMark()
+		<div class="sabio-brand-text">
+			<div class="sabio-brand-name">Arandu</div>
+			<div class="sabio-brand-sub">CLÍNICO</div>
 		</div>
-		<!-- Desktop Collapse Toggle -->
-		<button 
-			@click="toggleCollapse()"
-			class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
-			aria-label="Recolher menu"
-		>
-			<i class="fas" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
-		</button>
-		<!-- Mobile Close Button -->
-		<button 
-			@click="closeSidebar()"
-			class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2"
-			aria-label="Fechar menu"
-		>
-			<i class="fas fa-times"></i>
-		</button>
 	</div>
-	
+
 	<!-- Navigation -->
-	<nav class="shell-sidebar-nav">
+	<nav class="sabio-nav">
+		<div class="sabio-nav-section-label">MENU</div>
 		if config.SidebarVariant == "patient" && config.PatientID != "" {
 			@ShellPatientNavItems(config.PatientID, config.ActivePage)
 		} else {
 			@ShellDefaultNavItems(config.ActivePage)
 		}
+		<div class="sabio-nav-section-label sabio-nav-section-gap">ATALHOS</div>
+		<a href="/session/new" class="sabio-nav-item">
+			<span class="sabio-nav-item-icon"><i class="fas fa-plus"></i></span>
+			<span class="sabio-nav-item-text">Nova sessão</span>
+		</a>
+		<a href="/patients/new" class="sabio-nav-item">
+			<span class="sabio-nav-item-icon"><i class="fas fa-user-plus"></i></span>
+			<span class="sabio-nav-item-text">Novo paciente</span>
+		</a>
 	</nav>
 
-	<!-- Footer -->
-	<div class="shell-sidebar-footer">
-		<a 
-			href="/logout" 
-			class="shell-sidebar-nav-item logout-item"
+	<!-- Footer: avatar + recolher -->
+	<div class="sabio-sidebar-footer">
+		<div class="sabio-user-row">
+			<div class="sabio-avatar" aria-hidden="true">{ userInitials(config.UserEmail) }</div>
+			<div class="sabio-user-info">
+				<div class="sabio-user-name">
+					if config.UserName != "" {
+						{ config.UserName }
+					} else {
+						{ config.UserEmail }
+					}
+				</div>
+				<div class="sabio-user-meta">
+					<a href="/logout" style="color:inherit;text-decoration:none;">Sair</a>
+				</div>
+			</div>
+		</div>
+		<button
+			@click="$store.shell.toggleCollapse()"
+			class="sabio-collapse-btn"
+			aria-label="Recolher menu lateral"
 		>
-			<i class="fas fa-sign-out-alt shell-sidebar-nav-item-icon"></i>
-			<span class="shell-sidebar-nav-item-text">Sair</span>
-		</a>
+			<i class="fas" :class="$store.shell.sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+			<span class="sabio-collapse-btn-text">Recolher</span>
+		</button>
+	</div>
+}
+
+// sabioBrandMark glifo SVG identidade Sábio (folha + olho)
+templ sabioBrandMark() {
+	<div class="sabio-brandmark">
+		<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M12 3c-4 3-6 6-6 10 0 4 2 7 6 8 4-1 6-4 6-8 0-4-2-7-6-10z"></path>
+			<path d="M12 7v12" opacity=".55"></path>
+			<circle cx="12" cy="13" r="1.4" fill="currentColor" stroke="none"></circle>
+		</svg>
 	</div>
 }
 
@@ -334,36 +424,31 @@ templ ShellSidebarContent(config ShellConfig) {
 templ ShellDefaultNavItems(activePage string) {
 	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-chart-line", "Dashboard")
 	@ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes")
-	@ShellNavItem("/patients/new", "new-patient", activePage, "fa-user-plus", "Novo Paciente")
 	@ShellNavItem("/agenda", "agenda", activePage, "fa-calendar", "Agenda")
 }
 
 // ShellPatientNavItems itens de navegação do contexto paciente
 templ ShellPatientNavItems(patientID string, activePage string) {
-	@ShellNavItem("/patients/" + patientID, "patient-summary", activePage, "fa-user-md", "Resumo")
-	@ShellNavItem("/patients/" + patientID + "/anamnesis", "patient-anamnesis", activePage, "fa-history", "Anamnese")
-	@ShellNavItem("/patients/" + patientID + "/history", "patient-history", activePage, "fa-file-medical", "Prontuário")
-	@ShellNavItem("/patients/" + patientID + "/goals", "patient-goals", activePage, "fa-bullseye", "Plano Terapêutico")
-
-	<!-- Divider -->
-	<div class="my-2 border-t border-neutral-200"></div>
-
-	<!-- Navegação completa: re-renderiza o shell inteiro com o nav correto -->
+	@ShellNavItem("/patients/"+patientID, "patient-summary", activePage, "fa-user-md", "Resumo")
+	@ShellNavItem("/patients/"+patientID+"/anamnesis", "patient-anamnesis", activePage, "fa-history", "Anamnese")
+	@ShellNavItem("/patients/"+patientID+"/history", "patient-history", activePage, "fa-file-medical", "Prontuário")
+	@ShellNavItem("/patients/"+patientID+"/goals", "patient-goals", activePage, "fa-bullseye", "Plano Terapêutico")
+	<div style="height:1px;background:var(--color-line);margin:8px 12px;"></div>
 	<a
 		href="/dashboard"
-		class="shell-sidebar-nav-item group"
-		@click="if (window.innerWidth < 768) { $data.sidebarOpen = false; }"
+		class="sabio-nav-item"
+		@click="if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }"
 	>
-		<i class="fas fa-arrow-left shell-sidebar-nav-item-icon"></i>
-		<span class="shell-sidebar-nav-item-text">Voltar ao Dashboard</span>
+		<span class="sabio-nav-item-icon"><i class="fas fa-arrow-left"></i></span>
+		<span class="sabio-nav-item-text">Voltar ao Dashboard</span>
 	</a>
 }
 
-// ShellNavItem item individual de navegação
+// ShellNavItem item individual de navegação — Sábio design
 templ ShellNavItem(href string, page string, activePage string, icon string, label string) {
-	<a 
+	<a
 		href={ templ.SafeURL(href) }
-		class="shell-sidebar-nav-item group"
+		class="sabio-nav-item"
 		if page == activePage {
 			aria-current="page"
 		}
@@ -373,10 +458,10 @@ templ ShellNavItem(href string, page string, activePage string, icon string, lab
 		hx-swap="innerHTML"
 		hx-head="merge"
 		hx-indicator="#shell-loading"
-		@click="if (window.innerWidth < 768) { $data.sidebarOpen = false; }"
+		@click="if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }"
 	>
-		<i class={ "fas " + icon + " shell-sidebar-nav-item-icon" }></i>
-		<span class="shell-sidebar-nav-item-text">{ label }</span>
+		<span class="sabio-nav-item-icon"><i class={ "fas " + icon }></i></span>
+		<span class="sabio-nav-item-text">{ label }</span>
 	</a>
 }
 

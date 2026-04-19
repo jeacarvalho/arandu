@@ -170,10 +170,10 @@
   --layout-topbar-height: 64px;
   --layout-topbar-height-mobile: 56px;
 
-  /* Layout - Sidebar */
-  --layout-sidebar-width: 280px;
-  --layout-sidebar-width-collapsed: 80px;
-  --layout-sidebar-transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Layout - Sidebar (Sábio: 232px / 68px) */
+  --layout-sidebar-width: 232px;
+  --layout-sidebar-width-collapsed: 68px;
+  --layout-sidebar-transition: 200ms ease;
 
   /* Layout - Canvas */
   --layout-canvas-padding: 32px;
@@ -183,7 +183,7 @@
 
   /* Layout - Canvas Content Offset (distance from sidebar and topbar) */
   --layout-canvas-offset-top: 80px;
-  --layout-canvas-offset-left: 280px;
+  --layout-canvas-offset-left: 232px;
   --layout-canvas-offset-right: 0px;
 
   /* Layout - Grid/Gap */

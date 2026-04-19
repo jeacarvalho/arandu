@@ -8012,3 +8012,369 @@ aside.shell-sidebar {
 .session-detail-form-footer {
     margin-top: auto;
 }
+
+/* ============================================================
+   FASE 2: Chrome Sábio — Topbar + Sidebar
+   ============================================================ */
+
+/* ------ Topbar ------ */
+.sabio-topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: color-mix(in oklab, var(--color-paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-line);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 12px;
+    z-index: 50;
+}
+
+.sabio-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-ink-3);
+    min-width: 0;
+}
+
+.sabio-breadcrumb-sep {
+    color: var(--color-ink-4);
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.sabio-breadcrumb-item {
+    white-space: nowrap;
+}
+
+.sabio-breadcrumb-item:last-child {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-ink);
+}
+
+.sabio-topbar-spacer {
+    flex: 1;
+}
+
+.sabio-search-wrap {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.sabio-search-wrap .shell-search-input {
+    background: var(--color-paper-2) !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 10px !important;
+    color: var(--color-ink) !important;
+}
+
+.sabio-search-wrap .shell-search-input:focus {
+    background: var(--color-paper) !important;
+    border-color: var(--color-accent-soft) !important;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 12%, transparent) !important;
+}
+
+.sabio-search-wrap .shell-search-input::placeholder {
+    color: var(--color-ink-4) !important;
+}
+
+.sabio-search-wrap .shell-search-icon {
+    color: var(--color-ink-4) !important;
+}
+
+.sabio-llm-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--color-accent-deep), var(--color-accent));
+    color: var(--color-paper);
+    border: 1px solid color-mix(in oklab, var(--color-accent-deep) 60%, #000);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 4px 12px -4px color-mix(in oklab, var(--color-accent) 60%, transparent);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .15s ease;
+    flex-shrink: 0;
+}
+
+.sabio-llm-btn:hover { opacity: .9; }
+
+.sabio-kbd {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    padding: 2px 6px;
+    border: 1px solid color-mix(in oklab, var(--color-paper) 35%, transparent);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: color-mix(in oklab, var(--color-paper) 12%, transparent);
+    color: color-mix(in oklab, var(--color-paper) 65%, transparent);
+    line-height: 1.4;
+}
+
+.sabio-settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    color: var(--color-ink-2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .15s ease;
+}
+
+.sabio-settings-btn:hover { background: var(--color-paper-2); }
+
+@media (max-width: 767px) {
+    .sabio-search-wrap { display: none; }
+    .sabio-topbar { padding: 0 16px; gap: 8px; }
+    .sabio-llm-btn span:not(.sabio-kbd) { display: none; }
+}
+
+/* ------ Sidebar ------ */
+aside.shell-sidebar {
+    background: var(--color-paper) !important;
+    border-right: 1px solid var(--color-line) !important;
+    width: 232px !important;
+}
+
+aside.shell-sidebar.shell-sidebar-collapsed {
+    width: 68px !important;
+}
+
+.sabio-brand-header {
+    padding: 22px 20px;
+    border-bottom: 1px solid var(--color-line);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    height: 64px;
+    box-sizing: border-box;
+}
+
+.shell-sidebar-collapsed .sabio-brand-header {
+    padding: 22px 12px;
+    justify-content: center;
+}
+
+.sabio-brandmark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-paper);
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.15);
+    flex-shrink: 0;
+}
+
+.sabio-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.shell-sidebar-collapsed .sabio-brand-text { display: none; }
+
+.sabio-brand-name {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    letter-spacing: -0.3px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-ink);
+}
+
+.sabio-brand-sub {
+    font-size: 10.5px;
+    color: var(--color-ink-3);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* Nav */
+.sabio-nav {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sabio-nav-section-label {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--color-ink-4);
+    padding: 6px 12px 4px;
+    font-weight: 500;
+    font-family: var(--font-sans);
+}
+
+.sabio-nav-section-gap { padding-top: 18px; }
+
+.shell-sidebar-collapsed .sabio-nav-section-label { display: none; }
+
+.sabio-nav-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 9px 12px !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--color-ink-2) !important;
+    font-size: 13.5px !important;
+    font-weight: 400 !important;
+    font-family: var(--font-sans) !important;
+    text-decoration: none !important;
+    transition: background .15s ease, color .15s ease !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+}
+
+.sabio-nav-item:hover {
+    background: var(--color-paper-2) !important;
+    color: var(--color-ink) !important;
+    transform: none !important;
+}
+
+.sabio-nav-item[aria-current="page"] {
+    background: color-mix(in oklab, var(--color-accent) 14%, transparent) !important;
+    border-color: color-mix(in oklab, var(--color-accent) 22%, transparent) !important;
+    color: var(--color-accent-deep) !important;
+    font-weight: 500 !important;
+}
+
+.sabio-nav-item-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.sabio-nav-item-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shell-sidebar-collapsed .sabio-nav-item {
+    justify-content: center !important;
+    padding: 10px !important;
+    gap: 0 !important;
+}
+
+.shell-sidebar-collapsed .sabio-nav-item-text { display: none; }
+
+/* Footer */
+.sabio-sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.sabio-user-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+.shell-sidebar-collapsed .sabio-user-row {
+    justify-content: center;
+    padding: 6px;
+}
+
+.sabio-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, color-mix(in oklab, var(--color-accent) 70%, var(--color-paper)), var(--color-accent));
+    color: var(--color-paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: .2px;
+    flex-shrink: 0;
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,.15);
+}
+
+.sabio-user-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.sabio-user-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sabio-user-meta {
+    font-size: 10.5px;
+    color: var(--color-ink-3);
+}
+
+.shell-sidebar-collapsed .sabio-user-info { display: none; }
+
+.sabio-collapse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px dashed var(--color-line-2);
+    color: var(--color-ink-3);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 11.5px;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: background .15s ease;
+    width: 100%;
+}
+
+.sabio-collapse-btn:hover { background: var(--color-paper-2); }
+
+.shell-sidebar-collapsed .sabio-collapse-btn-text { display: none; }
+
+/* Canvas offsets para nova largura da sidebar (232px / 68px) */
+.shell-canvas-expanded  { padding-left: 232px !important; }
+.shell-canvas-collapsed { padding-left: 68px !important; }

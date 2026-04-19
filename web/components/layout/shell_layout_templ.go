@@ -12,7 +12,57 @@ import (
 	appcontext "arandu/internal/platform/context"
 	"arandu/internal/platform/helpers"
 	goContext "context"
+	"strings"
 )
+
+// deriveBreadcrumb retorna o breadcrumb a partir do ShellConfig.
+// Se Breadcrumb está explícito, usa-o; caso contrário deriva de ActivePage.
+func deriveBreadcrumb(config ShellConfig) []string {
+	if len(config.Breadcrumb) > 0 {
+		return config.Breadcrumb
+	}
+	switch config.ActivePage {
+	case "dashboard":
+		return []string{"Hoje"}
+	case "patients":
+		return []string{"Pacientes"}
+	case "new-patient":
+		return []string{"Pacientes", "Novo Paciente"}
+	case "agenda":
+		return []string{"Agenda"}
+	case "patient-summary", "patient-anamnesis", "patient-history", "patient-goals":
+		if config.PageTitle != "" {
+			return []string{"Pacientes", config.PageTitle}
+		}
+		return []string{"Pacientes"}
+	default:
+		if config.PageTitle != "" {
+			return []string{config.PageTitle}
+		}
+		return []string{"Arandu"}
+	}
+}
+
+// userInitials extrai até 2 iniciais de um email para o avatar.
+func userInitials(email string) string {
+	if email == "" {
+		return "?"
+	}
+	prefix := email
+	if idx := strings.Index(email, "@"); idx > 0 {
+		prefix = email[:idx]
+	}
+	parts := strings.FieldsFunc(prefix, func(r rune) bool {
+		return r == '.' || r == '_' || r == '-'
+	})
+	if len(parts) >= 2 && len(parts[0]) > 0 && len(parts[1]) > 0 {
+		return strings.ToUpper(string(parts[0][0])) + strings.ToUpper(string(parts[1][0]))
+	}
+	if len(prefix) >= 2 {
+		return strings.ToUpper(prefix[:2])
+	}
+	return strings.ToUpper(prefix)
+}
 
 // ============================================================================
 // SHELL LAYOUT - RECOMMENDED LAYOUT
@@ -54,6 +104,8 @@ type ShellConfig struct {
 	SidebarVariant string // "default" | "patient"
 	PatientID      string // usado quando SidebarVariant = "patient"
 	UserEmail      string
+	UserName       string   // nome de exibição; se vazio usa prefixo do email
+	Breadcrumb     []string // itens do breadcrumb; se vazio deriva de ActivePage
 }
 
 // ShellWithContext cria um ShellLayout com contexto e sidebar opcional
@@ -103,7 +155,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(config.PageTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 74, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 126, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +169,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/tailwind-v2.css?v=" + helpers.GetCSSVersionV2())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 78, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 130, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -130,13 +182,13 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/static/css/style.css?v=" + helpers.GetCSSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 79, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 131, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"/static/js/htmx.min.js\"></script><!-- BFCache Fix: Must be inline and early to catch pageshow event --><script>\n\t// Fix for browser back/forward button showing empty content\n\t// This runs immediately when page is restored from BFCache\n\twindow.addEventListener('pageshow', function(event) {\n\t\tif (event.persisted) {\n\t\t\tconsole.log('[BFCache] Page restored from cache, checking content...');\n\t\t\t\n\t\t\t// Give a small delay for DOM to settle\n\t\t\tsetTimeout(function() {\n\t\t\t\tvar mainContent = document.getElementById('main-content');\n\t\t\t\tif (mainContent) {\n\t\t\t\t\tvar html = mainContent.innerHTML.trim();\n\t\t\t\t\t// Check if content is effectively empty (no visible elements)\n\t\t\t\t\tvar hasContent = mainContent.querySelector('.content-header, .sota-container, .patient-profile, .card, form, table, .clinical-content');\n\t\t\t\t\t\n\t\t\t\t\tif (!hasContent || html.length < 100) {\n\t\t\t\t\t\tconsole.log('[BFCache] Content missing or too small, forcing reload...');\n\t\t\t\t\t\twindow.location.reload();\n\t\t\t\t\t} else {\n\t\t\t\t\t\tconsole.log('[BFCache] Content appears valid');\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}, 100);\n\t\t}\n\t});\n\t</script><script>\n\t// Initialize Alpine.store('shell') before Alpine.js loads\n\t\t\t// This ensures the store is available when Alpine processes x-data\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tif (!Alpine.store('shell')) {\n\t\t\t\t\tAlpine.store('shell', {\n\t\t\t\t\t\t// sidebarOpen: controls MOBILE drawer visibility (true = open, false = closed)\n\t\t\t\t\t\t// On desktop, sidebar is always visible (controlled by CSS md:flex)\n\t\t\t\t\t\tsidebarOpen: false,\n\t\t\t\t\t\t// sidebarCollapsed: controls DESKTOP sidebar width (true = 80px, false = 260px)\n\t\t\t\t\t\tsidebarCollapsed: false,\n\t\t\t\t\t\tinit() {\n\t\t\t\t\t\t\tthis.sidebarOpen = false; // Always start closed on mobile\n\t\t\t\t\t\t\tthis.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';\n\t\t\t\t\t\t},\n\t\t\t\t\t\ttoggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },\n\t\t\t\t\t\tcloseSidebar() { this.sidebarOpen = false; },\n\t\t\t\t\t\ttoggleCollapse() {\n\t\t\t\t\t\t\tthis.sidebarCollapsed = !this.sidebarCollapsed;\n\t\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap\" rel=\"stylesheet\"></head><body><div class=\"shell\" x-data=\"Alpine.store('shell')\" x-init=\"$store.shell.init()\"><!-- Topbar -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" rel=\"stylesheet\"><script src=\"/static/js/htmx.min.js\"></script><!-- BFCache Fix: Must be inline and early to catch pageshow event --><script>\n\t// Fix for browser back/forward button showing empty content\n\t// This runs immediately when page is restored from BFCache\n\twindow.addEventListener('pageshow', function(event) {\n\t\tif (event.persisted) {\n\t\t\tconsole.log('[BFCache] Page restored from cache, checking content...');\n\t\t\t\n\t\t\t// Give a small delay for DOM to settle\n\t\t\tsetTimeout(function() {\n\t\t\t\tvar mainContent = document.getElementById('main-content');\n\t\t\t\tif (mainContent) {\n\t\t\t\t\tvar html = mainContent.innerHTML.trim();\n\t\t\t\t\t// Check if content is effectively empty (no visible elements)\n\t\t\t\t\tvar hasContent = mainContent.querySelector('.content-header, .sota-container, .patient-profile, .card, form, table, .clinical-content');\n\t\t\t\t\t\n\t\t\t\t\tif (!hasContent || html.length < 100) {\n\t\t\t\t\t\tconsole.log('[BFCache] Content missing or too small, forcing reload...');\n\t\t\t\t\t\twindow.location.reload();\n\t\t\t\t\t} else {\n\t\t\t\t\t\tconsole.log('[BFCache] Content appears valid');\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}, 100);\n\t\t}\n\t});\n\t</script><script>\n\t// Initialize Alpine.store('shell') before Alpine.js loads\n\t\t\t// This ensures the store is available when Alpine processes x-data\n\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\tif (!Alpine.store('shell')) {\n\t\t\t\t\tAlpine.store('shell', {\n\t\t\t\t\t\tsidebarOpen: false,\n\t\t\t\t\t\tsidebarCollapsed: false,\n\t\t\t\t\t\tllmOpen: false,\n\t\t\t\t\t\tinit() {\n\t\t\t\t\t\t\tthis.sidebarOpen = false;\n\t\t\t\t\t\t\tthis.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';\n\t\t\t\t\t\t},\n\t\t\t\t\t\ttoggleSidebar()  { this.sidebarOpen = !this.sidebarOpen; },\n\t\t\t\t\t\tcloseSidebar()   { this.sidebarOpen = false; },\n\t\t\t\t\t\ttoggleCollapse() {\n\t\t\t\t\t\t\tthis.sidebarCollapsed = !this.sidebarCollapsed;\n\t\t\t\t\t\t\tlocalStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);\n\t\t\t\t\t\t},\n\t\t\t\t\t\topenLLM()   { this.llmOpen = true; },\n\t\t\t\t\t\tcloseLLM()  { this.llmOpen = false; },\n\t\t\t\t\t\ttoggleLLM() { this.llmOpen = !this.llmOpen; },\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t</script><script src=\"https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js\" defer></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\"><link href=\"https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap\" rel=\"stylesheet\"></head><body><div class=\"shell\" x-data=\"Alpine.store('shell')\" x-init=\"$store.shell.init()\" @keydown.meta.j.window=\"$store.shell.toggleLLM()\" @keydown.ctrl.j.window=\"$store.shell.toggleLLM()\"><!-- Topbar -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -162,14 +214,14 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Modal Container --><div id=\"modal-container\"></div><!-- Drawer Container --><div id=\"drawer-container\"></div><!-- Toast Container --><div id=\"toast-container\"></div><!-- Global Scripts --><script src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></main></div></div><!-- Modal Container --><div id=\"modal-container\"></div><!-- Drawer Container --><div id=\"drawer-container\"></div><!-- LLM Drawer (Fase 6) --><div id=\"llm-drawer\"></div><!-- Toast Container --><div id=\"toast-container\"></div><!-- Global Scripts --><script src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 187, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 245, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -183,7 +235,7 @@ func Shell(config ShellConfig, content templ.Component) templ.Component {
 	})
 }
 
-// ShellTopbar componente da barra superior
+// ShellTopbar componente da barra superior — Sábio design
 func ShellTopbar(config ShellConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -205,32 +257,46 @@ func ShellTopbar(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<header class=\"shell-topbar\"><!-- Left: Menu Toggle & Logo --><div class=\"shell-topbar-left\"><!-- Mobile Hamburger -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<header class=\"sabio-topbar\"><!-- Mobile Hamburger -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if config.ShowSidebar {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button @click=\"toggleSidebar()\" class=\"shell-hamburger md:hidden focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if config.SidebarVariant == "patient" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " aria-label=\"Abrir menu do paciente\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " aria-label=\"Abrir menu de navegação\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " aria-expanded=\"false\" aria-controls=\"shell-sidebar\"><i class=\"fas fa-bars text-lg\"></i></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button @click=\"$store.shell.toggleSidebar()\" class=\"shell-hamburger md:hidden\" aria-label=\"Abrir menu de navegação\" aria-controls=\"shell-sidebar\"><i class=\"fas fa-bars\"></i></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<!-- Logo --><a href=\"/dashboard\" class=\"shell-logo\"><div class=\"shell-logo-icon\"><i class=\"fas fa-brain\"></i></div><span class=\"shell-logo-text\">Arandu</span></a></div><!-- Center: Search Bar --><div class=\"shell-topbar-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Breadcrumb --><nav class=\"sabio-breadcrumb\" aria-label=\"Localização\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for i, item := range deriveBreadcrumb(config) {
+			if i > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"sabio-breadcrumb-sep\">›</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " <span class=\"sabio-breadcrumb-item\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(item)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 273, Col: 46}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</nav><div class=\"sabio-topbar-spacer\"></div><!-- Search --><div class=\"sabio-search-wrap\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -238,20 +304,45 @@ func ShellTopbar(config ShellConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><!-- Right: User Profile --><div class=\"shell-topbar-right\"><div class=\"shell-user\"><div class=\"shell-user-avatar\"><i class=\"fas fa-user-md\"></i></div><span class=\"shell-user-name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><!-- LLM Button --><button class=\"sabio-llm-btn\" @click=\"$store.shell.toggleLLM()\" aria-label=\"Abrir inteligência clínica (⌘J)\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(config.UserEmail)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 236, Col: 52}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		templ_7745c5c3_Err = sabioSparklesIcon().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span></div></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<span>Arandu</span> <kbd class=\"sabio-kbd\">⌘J</kbd></button><!-- Settings --><button class=\"sabio-settings-btn\" title=\"Configurações\" aria-label=\"Configurações\"><i class=\"fas fa-cog\"></i></button></header>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// sabioSparklesIcon ícone sparkles inline SVG para o botão LLM
+func sabioSparklesIcon() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"></path> <path d=\"M5 3v4\"></path> <path d=\"M19 17v4\"></path> <path d=\"M3 5h4\"></path> <path d=\"M17 19h4\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -276,50 +367,12 @@ func ShellSearchBar() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"shell-search-container\"><input id=\"shell-patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#shell-search-results\" hx-indicator=\"#shell-search-loading\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"shell-search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"shell-search-input\"> <i class=\"fas fa-search shell-search-icon\"></i> <span id=\"shell-search-loading\" class=\"htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"shell-search-results\" class=\"absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// ShellSidebar componente da barra lateral
-func ShellSidebar(config ShellConfig) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
 		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var9 == nil {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<aside id=\"shell-sidebar\" class=\"shell-sidebar\" :class=\"{ 'shell-sidebar-collapsed': sidebarCollapsed, 'shell-sidebar-open': sidebarOpen }\" aria-label=\"Menu de navegação\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = ShellSidebarContent(config).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"shell-search-container\"><input id=\"shell-patient-search\" type=\"text\" name=\"q\" placeholder=\"Buscar paciente...\" hx-get=\"/patients/search\" hx-trigger=\"keyup changed delay:350ms\" hx-target=\"#shell-search-results\" hx-indicator=\"#shell-search-loading\" autocomplete=\"off\" role=\"combobox\" aria-label=\"Buscar paciente\" aria-controls=\"shell-search-results\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-haspopup=\"listbox\" class=\"shell-search-input\"> <i class=\"fas fa-search shell-search-icon\"></i> <span id=\"shell-search-loading\" class=\"htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500\" role=\"status\" aria-live=\"polite\">Buscando...</span><div id=\"shell-search-results\" class=\"absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden\" role=\"listbox\" aria-label=\"Resultados da busca de pacientes\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -327,8 +380,8 @@ func ShellSidebar(config ShellConfig) templ.Component {
 	})
 }
 
-// ShellSidebarContent conteúdo da sidebar
-func ShellSidebarContent(config ShellConfig) templ.Component {
+// ShellSidebar componente da barra lateral — Sábio design
+func ShellSidebar(config ShellConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -349,22 +402,53 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<!-- Header --><div class=\"shell-sidebar-header\"><div class=\"shell-sidebar-title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<aside id=\"shell-sidebar\" class=\"shell-sidebar\" :class=\"{ 'shell-sidebar-collapsed': $store.shell.sidebarCollapsed, 'shell-sidebar-open': $store.shell.sidebarOpen }\" aria-label=\"Menu de navegação\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if config.SidebarVariant == "patient" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "Perfil do Paciente")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "Inteligência Clínica")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		templ_7745c5c3_Err = ShellSidebarContent(config).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div><!-- Desktop Collapse Toggle --><button @click=\"toggleCollapse()\" class=\"hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2\" aria-label=\"Recolher menu\"><i class=\"fas\" :class=\"sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'\"></i></button><!-- Mobile Close Button --><button @click=\"closeSidebar()\" class=\"md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 focus:ring-offset-2\" aria-label=\"Fechar menu\"><i class=\"fas fa-times\"></i></button></div><!-- Navigation --><nav class=\"shell-sidebar-nav\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</aside>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// ShellSidebarContent conteúdo da sidebar — Sábio design
+func ShellSidebarContent(config ShellConfig) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- Brand Header --><div class=\"sabio-brand-header\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = sabioBrandMark().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"sabio-brand-text\"><div class=\"sabio-brand-name\">Arandu</div><div class=\"sabio-brand-sub\">CLÍNICO</div></div></div><!-- Navigation --><nav class=\"sabio-nav\"><div class=\"sabio-nav-section-label\">MENU</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -379,7 +463,75 @@ func ShellSidebarContent(config ShellConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</nav><!-- Footer --><div class=\"shell-sidebar-footer\"><a href=\"/logout\" class=\"shell-sidebar-nav-item logout-item\"><i class=\"fas fa-sign-out-alt shell-sidebar-nav-item-icon\"></i> <span class=\"shell-sidebar-nav-item-text\">Sair</span></a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"sabio-nav-section-label sabio-nav-section-gap\">ATALHOS</div><a href=\"/session/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-plus\"></i></span> <span class=\"sabio-nav-item-text\">Nova sessão</span></a> <a href=\"/patients/new\" class=\"sabio-nav-item\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-user-plus\"></i></span> <span class=\"sabio-nav-item-text\">Novo paciente</span></a></nav><!-- Footer: avatar + recolher --><div class=\"sabio-sidebar-footer\"><div class=\"sabio-user-row\"><div class=\"sabio-avatar\" aria-hidden=\"true\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(userInitials(config.UserEmail))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 387, Col: 80}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><div class=\"sabio-user-info\"><div class=\"sabio-user-name\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if config.UserName != "" {
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(config.UserName)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 391, Col: 23}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(config.UserEmail)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 393, Col: 24}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><div class=\"sabio-user-meta\"><a href=\"/logout\" style=\"color:inherit;text-decoration:none;\">Sair</a></div></div></div><button @click=\"$store.shell.toggleCollapse()\" class=\"sabio-collapse-btn\" aria-label=\"Recolher menu lateral\"><i class=\"fas\" :class=\"$store.shell.sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'\"></i> <span class=\"sabio-collapse-btn-text\">Recolher</span></button></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// sabioBrandMark glifo SVG identidade Sábio (folha + olho)
+func sabioBrandMark() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"sabio-brandmark\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3c-4 3-6 6-6 10 0 4 2 7 6 8 4-1 6-4 6-8 0-4-2-7-6-10z\"></path> <path d=\"M12 7v12\" opacity=\".55\"></path> <circle cx=\"12\" cy=\"13\" r=\"1.4\" fill=\"currentColor\" stroke=\"none\"></circle></svg></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -404,9 +556,9 @@ func ShellDefaultNavItems(activePage string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ShellNavItem("/dashboard", "dashboard", activePage, "fa-chart-line", "Dashboard").Render(ctx, templ_7745c5c3_Buffer)
@@ -414,10 +566,6 @@ func ShellDefaultNavItems(activePage string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = ShellNavItem("/patients/new", "new-patient", activePage, "fa-user-plus", "Novo Paciente").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -446,9 +594,9 @@ func ShellPatientNavItems(patientID string, activePage string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ShellNavItem("/patients/"+patientID, "patient-summary", activePage, "fa-user-md", "Resumo").Render(ctx, templ_7745c5c3_Buffer)
@@ -467,7 +615,7 @@ func ShellPatientNavItems(patientID string, activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<!-- Divider --><div class=\"my-2 border-t border-neutral-200\"></div><!-- Navegação completa: re-renderiza o shell inteiro com o nav correto --><a href=\"/dashboard\" class=\"shell-sidebar-nav-item group\" @click=\"if (window.innerWidth < 768) { $data.sidebarOpen = false; }\"><i class=\"fas fa-arrow-left shell-sidebar-nav-item-icon\"></i> <span class=\"shell-sidebar-nav-item-text\">Voltar ao Dashboard</span></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div style=\"height:1px;background:var(--color-line);margin:8px 12px;\"></div><a href=\"/dashboard\" class=\"sabio-nav-item\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\"><i class=\"fas fa-arrow-left\"></i></span> <span class=\"sabio-nav-item-text\">Voltar ao Dashboard</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -475,7 +623,7 @@ func ShellPatientNavItems(patientID string, activePage string) templ.Component {
 	})
 }
 
-// ShellNavItem item individual de navegação
+// ShellNavItem item individual de navegação — Sábio design
 func ShellNavItem(href string, page string, activePage string, icon string, label string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -492,83 +640,83 @@ func ShellNavItem(href string, page string, activePage string, icon string, labe
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 templ.SafeURL
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
+		var templ_7745c5c3_Var19 templ.SafeURL
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 365, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 450, Col: 28}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"shell-sidebar-nav-item group\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"sabio-nav-item\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if page == activePage {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " aria-current=\"page\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " aria-current=\"page\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, " hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(href)
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 370, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 455, Col: 15}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-target=\"#main-content\" hx-push-url=\"true\" hx-swap=\"innerHTML\" hx-head=\"merge\" hx-indicator=\"#shell-loading\" @click=\"if (window.innerWidth < 768) { $data.sidebarOpen = false; }\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 = []any{"fas " + icon + " shell-sidebar-nav-item-icon"}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" hx-target=\"#main-content\" hx-push-url=\"true\" hx-swap=\"innerHTML\" hx-head=\"merge\" hx-indicator=\"#shell-loading\" @click=\"if (window.innerWidth < 768) { $store.shell.sidebarOpen = false; }\"><span class=\"sabio-nav-item-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<i class=\"")
+		var templ_7745c5c3_Var21 = []any{"fas " + icon}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var16).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<i class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\"></i> <span class=\"shell-sidebar-nav-item-text\">")
+		var templ_7745c5c3_Var22 string
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var21).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(label)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 379, Col: 51}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\"></i></span> <span class=\"sabio-nav-item-text\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span></a>")
+		var templ_7745c5c3_Var23 string
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 464, Col: 43}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -594,12 +742,12 @@ func ShellContentWrapper(content templ.Component) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div id=\"main-content-swap\" hx-swap-oob=\"true\"><div class=\"shell-canvas-container shell-canvas-expanded\"><div class=\"shell-content\" id=\"shell-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div id=\"main-content-swap\" hx-swap-oob=\"true\"><div class=\"shell-canvas-container shell-canvas-expanded\"><div class=\"shell-content\" id=\"shell-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -607,7 +755,7 @@ func ShellContentWrapper(content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -633,12 +781,12 @@ func ShellContentContainer(content templ.Component) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var25 == nil {
+			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"shell-canvas-container\" style=\"padding-top: 80px; padding-left: 260px;\"><div class=\"shell-content\" id=\"shell-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"shell-canvas-container\" style=\"padding-top: 80px; padding-left: 260px;\"><div class=\"shell-content\" id=\"shell-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -646,7 +794,7 @@ func ShellContentContainer(content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -671,48 +819,48 @@ func ShellPageTitle(title string, subtitle string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var21 == nil {
-			templ_7745c5c3_Var21 = templ.NopComponent
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"mb-6\"><h1 class=\"text-2xl font-semibold text-neutral-800\" data-autofocus>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"mb-6\"><h1 class=\"text-2xl font-semibold text-neutral-800\" data-autofocus>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var22 string
-		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		var templ_7745c5c3_Var27 string
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 411, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 496, Col: 76}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if subtitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<p class=\"mt-1 text-sm text-neutral-500\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<p class=\"mt-1 text-sm text-neutral-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var23 string
-			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
+			var templ_7745c5c3_Var28 string
+			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 413, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 498, Col: 54}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -737,35 +885,35 @@ func ShellCard(title string, content templ.Component) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var24 == nil {
-			templ_7745c5c3_Var24 = templ.NopComponent
+		templ_7745c5c3_Var29 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var29 == nil {
+			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"bg-white rounded-xl border border-neutral-200 shadow-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if title != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"px-6 py-4 border-b border-neutral-200\"><h2 class=\"text-lg font-semibold text-neutral-800\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"px-6 py-4 border-b border-neutral-200\"><h2 class=\"text-lg font-semibold text-neutral-800\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var25 string
-			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+			var templ_7745c5c3_Var30 string
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `home/s015533607/Documentos/desenv/arandu/web/components/layout/shell_layout.templ`, Line: 423, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/layout/shell_layout.templ`, Line: 508, Col: 62}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</h2></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</h2></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -773,7 +921,7 @@ func ShellCard(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -798,12 +946,12 @@ func ShellLoading() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var26 == nil {
-			templ_7745c5c3_Var26 = templ.NopComponent
+		templ_7745c5c3_Var31 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var31 == nil {
+			templ_7745c5c3_Var31 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div id=\"shell-loading\" class=\"htmx-indicator fixed inset-0 z-[200] flex items-center justify-center bg-white/50 backdrop-blur-sm\"><div class=\"flex flex-col items-center gap-3\"><div class=\"w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin\"></div><span class=\"text-sm text-neutral-600 font-medium\">Carregando...</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div id=\"shell-loading\" class=\"htmx-indicator fixed inset-0 z-[200] flex items-center justify-center bg-white/50 backdrop-blur-sm\"><div class=\"flex flex-col items-center gap-3\"><div class=\"w-8 h-8 border-3 border-arandu-soft border-t-arandu-primary rounded-full animate-spin\"></div><span class=\"text-sm text-neutral-600 font-medium\">Carregando...</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
