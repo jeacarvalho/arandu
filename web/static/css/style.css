@@ -8813,3 +8813,302 @@ aside.shell-sidebar.shell-sidebar-collapsed {
   .sabio-dash-hero { grid-template-columns: 1fr; gap: 16px; }
   .sabio-dash-hero-actions { justify-content: flex-start; }
 }
+
+/* ================================================================
+   SÁBIO — Patient Profile (Phase 4)
+   ================================================================ */
+
+.sabio-patient {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+  max-width: 1100px;
+}
+
+/* Hero */
+.sabio-patient-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-avatar--lg {
+  width: 72px;
+  height: 72px;
+  font-size: 22px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.sabio-patient-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.sabio-patient-name {
+  margin: 0 0 8px;
+  font-size: 38px;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.sabio-patient-meta {
+  font-size: 13px;
+  color: var(--ink-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.sabio-meta-sep { color: var(--ink-4); }
+
+/* Stat blocks */
+.sabio-patient-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sabio-stat-block { text-align: right; }
+
+.sabio-stat-value {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.sabio-stat-label {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.sabio-stat-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+/* Body 2-col grid */
+.sabio-patient-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.sabio-patient-left,
+.sabio-patient-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card body padding */
+.sabio-card-body {
+  padding: 18px 20px;
+}
+
+/* Triage blockquote */
+.sabio-triage-quote {
+  margin: 0;
+  padding: 4px 0 4px 18px;
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+}
+
+.sabio-empty-inline {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+/* Timeline */
+.sabio-timeline { padding: 4px 0; }
+
+.sabio-timeline-item {
+  display: grid;
+  grid-template-columns: 80px auto 1fr auto;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.sabio-timeline-item--last { border-bottom: none; }
+
+.sabio-timeline-date {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  padding-top: 3px;
+  font-family: var(--font-mono);
+}
+
+.sabio-timeline-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.sabio-timeline-icon--session {
+  background: var(--accent);
+  border: 1px solid var(--accent-deep);
+  color: var(--paper);
+}
+
+.sabio-timeline-icon--note {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  color: var(--ink-3);
+}
+
+.sabio-timeline-title {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.sabio-timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+
+.sabio-timeline-summary {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+/* Action buttons */
+.sabio-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sabio-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .1s;
+}
+
+.sabio-action-btn:hover { background: var(--paper-2); }
+
+.sabio-action-btn--primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.sabio-action-btn--primary:hover { opacity: .88; background: var(--ink); }
+
+.sabio-action-icon { font-size: 13px; flex-shrink: 0; }
+.sabio-action-label { flex: 1; }
+.sabio-action-arrow { font-size: 10px; color: inherit; opacity: .5; }
+
+/* Observations */
+.sabio-obs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sabio-obs-item {
+  padding: 12px 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.sabio-obs-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.sabio-obs-date {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  margin-left: auto;
+  font-family: var(--font-mono);
+}
+
+.sabio-obs-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-family: var(--font-serif);
+}
+
+/* Session timeline (full-width) */
+.sabio-session-timeline {
+  padding: 4px 0;
+}
+
+.sabio-session-timeline .sabio-session-row {
+  display: grid;
+  grid-template-columns: 3px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px dashed var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+
+.sabio-session-timeline .sabio-session-row:last-child { border-bottom: none; }
+.sabio-session-timeline .sabio-session-row:hover { background: color-mix(in oklab, var(--paper) 60%, transparent); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sabio-patient-hero { grid-template-columns: auto 1fr; }
+  .sabio-patient-stats { display: none; }
+  .sabio-patient-body { grid-template-columns: 1fr; }
+}

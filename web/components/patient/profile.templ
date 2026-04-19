@@ -9,179 +9,227 @@ import (
 	"arandu/internal/domain/patient"
 )
 
-// PatientProfileView é o componente principal do perfil do paciente
 templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelineEvents []TimelineEventItem, recentSessions []SessionItem) {
-	<div class="sota-container">
-		
-		<!-- HEADER ROW -->
-		<div class="patient-profile-header-v2">
-			<div class="patient-header-left">
-				<!-- Avatar -->
-				<div class="patient-avatar-v2">
-					<span>{ getInitials(p.Name) }</span>
+	<div class="sabio-patient">
+		<!-- Hero editorial -->
+		<div class="sabio-patient-hero">
+			<div class="sabio-avatar sabio-avatar--lg">{ getInitials(p.Name) }</div>
+			<div class="sabio-patient-hero-info">
+				<div class="sabio-patient-eyebrow">Paciente #{ strings.ToUpper(p.ID[:min(6,len(p.ID))]) }</div>
+				<h1 class="sabio-patient-name serif">{ p.Name }</h1>
+				<div class="sabio-patient-meta">
+					{ formatFullIdentity(p.Gender, p.Ethnicity, p.Occupation, p.Education) }
+					<span class="sabio-meta-sep">·</span>
+					Desde { formatMonthYear(p.CreatedAt) }
 				</div>
-				
-				<!-- Nome + Info -->
-				<div class="patient-header-info-v2">
-					<div class="patient-name-row">
-						<h1 class="patient-name-v2">{p.Name}</h1>
-						<div class="patient-tags-row">
+			</div>
+			<div class="sabio-patient-stats">
+				<div class="sabio-stat-block">
+					<div class="sabio-stat-value serif">{ strconv.Itoa(len(recentSessions)) }</div>
+					<div class="sabio-stat-label">sessões</div>
+				</div>
+				<div class="sabio-stat-divider"></div>
+				<div class="sabio-stat-block">
+					<div class="sabio-stat-value serif">{ calculateTherapyTime(p.CreatedAt) }</div>
+					<div class="sabio-stat-label">em terapia</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Corpo: 2 colunas -->
+		<div class="sabio-patient-body">
+			<!-- Coluna esquerda: triagem + timeline -->
+			<div class="sabio-patient-left">
+				<!-- Triagem como blockquote editorial -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Notas de triagem</div>
+							<h2 class="sabio-card-title serif">Primeira escuta</h2>
 						</div>
 					</div>
-					<p class="patient-demographics">
-						{ formatFullIdentity(p.Gender, p.Ethnicity, p.Occupation, p.Education) } · Desde { formatMonthYear(p.CreatedAt) }
-					</p>
-				</div>
-			</div>
-			
-			<!-- Stats Cards -->
-			<div class="patient-header-stats-v2">
-				<div class="patient-stat-v2">
-					<span class="stat-value">{ strconv.Itoa(len(recentSessions)) }</span>
-					<span class="stat-label">sessões</span>
-				</div>
-				<div class="patient-stat-v2">
-					<span class="stat-value">{ calculateTherapyTime(p.CreatedAt) }</span>
-					<span class="stat-label">em terapia</span>
-				</div>
-			</div>
-		</div>
-
-		<!-- ROW 2: Grid 2 colunas (65/35) -->
-		<div class="patient-row2-grid">
-			
-			<!-- Coluna Esquerda: Notas + Observações -->
-			<div class="patient-left-column">
-				
-				<!-- Notas de Triagem -->
-				<div class="card-v2 card-notes">
-					<div class="card-header-v2">
-						<i class="fas fa-file-medical-alt"></i>
-						<h2>Notas de triagem</h2>
-					</div>
-					<div class="card-content-v2">
+					<div class="sabio-card-body">
 						if p.Notes != "" {
-							<p class="notes-text">{p.Notes}</p>
+							<blockquote class="sabio-triage-quote serif">{ p.Notes }</blockquote>
 						} else {
-							<p class="notes-text empty">Nenhuma nota de triagem registrada</p>
+							<p class="sabio-empty-inline">Nenhuma nota de triagem registrada.</p>
 						}
 					</div>
-			</div>
-			
-			<!-- Separador compacto -->
-			<hr class="section-divider-compact" />
-			
-			<!-- Observações Recentes -->
-				<div class="card-v2 card-observations">
-					<div class="card-header-v2">
-						<i class="fas fa-eye"></i>
-						<h2>Observações recentes</h2>
-					</div>
-					<div class="card-content-v2">
-						@ renderTop3Observations(timelineEvents)
-					</div>
-					<div class="card-footer-v2">
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", p.ID)) } class="see-all-link">
-							Ver todas as observações →
-						</a>
-					</div>
 				</div>
-				
-			</div>
-			
-			<!-- Coluna Direita: Acesso Rápido -->
-			<div class="patient-right-column">
-				<div class="card-v2 card-actions">
-					<div class="card-header-v2">
-						<i class="fas fa-bolt"></i>
-						<h2>Acesso rápido</h2>
+
+				<!-- Linha do tempo -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Percurso</div>
+							<h2 class="sabio-card-title serif">Linha do tempo clínica</h2>
+						</div>
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", p.ID)) } class="sabio-card-action">
+							Ver tudo <i class="fas fa-chevron-right"></i>
+						</a>
 					</div>
-					<div class="quick-actions-v2">
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) } class="action-btn-v2" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
-							<i class="fas fa-clipboard-list"></i>
-							<span>Anamnese clínica</span>
-						</a>
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) } class="action-btn-v2" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
-							<i class="fas fa-bullseye"></i>
-							<span>Plano terapêutico</span>
-						</a>
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/analysis/themes", p.ID)) } class="action-btn-v2" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
-							<i class="fas fa-chart-pie"></i>
-							<span>Análise de temas</span>
-						</a>
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="action-btn-v2 btn-primary" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
-							<i class="fas fa-plus"></i>
-							<span>Nova sessão</span>
-						</a>
+					<div class="sabio-timeline">
+						if len(timelineEvents) > 0 {
+							for i, ev := range timelineEvents {
+								@timelineItem(ev, i == len(timelineEvents)-1)
+							}
+						} else {
+							<div class="sabio-empty-state" style="padding:20px">
+								<p>Nenhum evento registrado ainda.</p>
+							</div>
+						}
 					</div>
 				</div>
 			</div>
-			
+
+			<!-- Coluna direita: ações + observações -->
+			<div class="sabio-patient-right">
+				<!-- Ações rápidas -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Atalhos</div>
+							<h2 class="sabio-card-title serif">Ações</h2>
+						</div>
+					</div>
+					<div class="sabio-card-body sabio-actions-list">
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/anamnesis", p.ID)) }
+						   class="sabio-action-btn"
+						   hx-get={ fmt.Sprintf("/patients/%s/anamnesis", p.ID) }
+						   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+							<i class="fas fa-clipboard-list sabio-action-icon"></i>
+							<span class="sabio-action-label">Anamnese clínica</span>
+							<i class="fas fa-chevron-right sabio-action-arrow"></i>
+						</a>
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/goals", p.ID)) }
+						   class="sabio-action-btn"
+						   hx-get={ fmt.Sprintf("/patients/%s/goals", p.ID) }
+						   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+							<i class="fas fa-bullseye sabio-action-icon"></i>
+							<span class="sabio-action-label">Plano terapêutico</span>
+							<i class="fas fa-chevron-right sabio-action-arrow"></i>
+						</a>
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/analysis/themes", p.ID)) }
+						   class="sabio-action-btn"
+						   hx-get={ fmt.Sprintf("/patients/%s/analysis/themes", p.ID) }
+						   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+							<i class="fas fa-chart-pie sabio-action-icon"></i>
+							<span class="sabio-action-label">Análise de temas</span>
+							<i class="fas fa-chevron-right sabio-action-arrow"></i>
+						</a>
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) }
+						   class="sabio-action-btn sabio-action-btn--primary"
+						   hx-get={ fmt.Sprintf("/patients/%s/sessions/new", p.ID) }
+						   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+							<i class="fas fa-plus sabio-action-icon"></i>
+							<span class="sabio-action-label">Nova sessão</span>
+							<i class="fas fa-chevron-right sabio-action-arrow"></i>
+						</a>
+					</div>
+				</div>
+
+				<!-- Observações recentes -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Percepções</div>
+							<h2 class="sabio-card-title serif">Observações recentes</h2>
+						</div>
+					</div>
+					<div class="sabio-card-body">
+						if hasObservations(timelineEvents) {
+							<div class="sabio-obs-list">
+								for _, ev := range filterObservations(timelineEvents, 3) {
+									<div class="sabio-obs-item">
+										<div class="sabio-obs-meta">
+											<span class="sabio-pill sabio-pill--accent">#observação</span>
+											<span class="sabio-obs-date mono">{ ev.Date }</span>
+										</div>
+										<p class="sabio-obs-text serif">{ ev.Content }</p>
+									</div>
+								}
+							</div>
+						} else {
+							<p class="sabio-empty-inline">Nenhuma observação registrada.</p>
+						}
+					</div>
+				</div>
+			</div>
 		</div>
 
-		<!-- ROW 3: Sessões Recentes -->
-		<div class="card-v2 card-sessions-full">
-			<div class="card-header-v2 header-flex">
-				<div class="header-left">
-					<i class="fas fa-calendar-alt"></i>
-					<h2>Sessões recentes</h2>
+		<!-- Sessões recentes (full-width) -->
+		<div class="sabio-card">
+			<div class="sabio-card-header">
+				<div>
+					<div class="sabio-card-eyebrow">Prontuário</div>
+					<h2 class="sabio-card-title serif">Sessões recentes</h2>
 				</div>
-				<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", p.ID)) } class="see-all-link">
-					Ver prontuário completo →
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", p.ID)) } class="sabio-card-action">
+					Ver prontuário completo <i class="fas fa-chevron-right"></i>
 				</a>
 			</div>
-			
-			<div class="sessions-list-v2">
+			<div class="sabio-session-timeline">
 				if len(recentSessions) > 0 {
-					for _, session := range recentSessions {
-						<a href={ templ.URL(fmt.Sprintf("/session/%s", session.ID)) } class="session-row-v2" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
-							<div class="session-date-v2">{session.Date}</div>
-							<div class="session-badge-v2">Sessão { strconv.Itoa(session.SessionNumber) }</div>
-							<div class="session-content-v2">
-								<span>{session.Summary}</span>
+					for _, s := range recentSessions {
+						<a href={ templ.URL(fmt.Sprintf("/session/%s", s.ID)) }
+						   class="sabio-session-row"
+						   hx-get={ fmt.Sprintf("/session/%s", s.ID) }
+						   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+							<div class="sabio-session-bar"></div>
+							<div class="sabio-session-body">
+								<div class="sabio-session-meta">
+									<span class="sabio-session-patient">Sessão { strconv.Itoa(s.SessionNumber) }</span>
+									<span class="sabio-session-dot">·</span>
+									<span class="sabio-session-date mono">{ s.Date }</span>
+								</div>
+								if s.Summary != "" {
+									<p class="sabio-session-preview serif">{ s.Summary }</p>
+								}
 							</div>
-							<i class="fas fa-chevron-right session-chevron"></i>
+							<i class="fas fa-chevron-right sabio-row-arrow"></i>
 						</a>
 					}
 				} else {
-					<div class="empty-sessions">
+					<div class="sabio-empty-state" style="padding:28px">
 						<i class="fas fa-calendar-alt"></i>
 						<p>Nenhuma sessão registrada ainda</p>
-						<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="btn-primary-sm" hx-boost="true" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+						<a href={ templ.URL(fmt.Sprintf("/patients/%s/sessions/new", p.ID)) } class="sabio-btn sabio-btn--ghost" style="margin-top:8px">
 							<i class="fas fa-plus"></i> Registrar primeira sessão
 						</a>
 					</div>
 				}
 			</div>
 		</div>
-		
 	</div>
 }
 
-// Renderiza apenas as 3 observações mais recentes
-templ renderTop3Observations(events []TimelineEventItem) {
-	if hasObservations(events) {
-		<div class="observations-v2">
-			@ renderObservationItem(events, 0)
-			@ renderObservationItem(events, 1)
-			@ renderObservationItem(events, 2)
+templ timelineItem(ev TimelineEventItem, last bool) {
+	<div class={ "sabio-timeline-item" + timelineItemLast(last) }>
+		<div class="sabio-timeline-date mono">{ ev.Date }</div>
+		<div class={ "sabio-timeline-icon" + timelineIconVariant(ev.Type) }>
+			<i class={ "fas " + timelineIconClass(ev.Type) }></i>
 		</div>
-	} else {
-		<p class="empty-text">Nenhuma observação registrada</p>
-	}
-}
-
-// Helper para renderizar item de observação específico
-templ renderObservationItem(events []TimelineEventItem, index int) {
-	if getObservationAtIndex(events, index) != nil {
-		<div class="observation-item-v2">
-			<div class="observation-content-v2">{ getObservationAtIndex(events, index).Content }</div>
-			<div class="observation-date-v2">{ getObservationAtIndex(events, index).Date }</div>
+		<div class="sabio-timeline-content">
+			<div class="sabio-timeline-header">
+				if ev.Title != "" {
+					<span class="sabio-timeline-title serif">{ ev.Title }</span>
+				} else {
+					<span class="sabio-timeline-title serif">{ ev.Content }</span>
+				}
+				<span class={ "sabio-pill " + timelinePillClass(ev.Type) }>{ timelineKindLabel(ev.Type) }</span>
+			</div>
+			if ev.Title != "" && ev.Content != "" {
+				<p class="sabio-timeline-summary">{ ev.Content }</p>
+			}
 		</div>
-	}
+		if ev.Href != "" {
+			<i class="fas fa-chevron-right sabio-row-arrow"></i>
+		}
+	</div>
 }
 
 // Helper functions
+
 func getInitials(name string) string {
 	parts := strings.Split(strings.TrimSpace(name), " ")
 	if len(parts) >= 2 && len(parts[0]) > 0 && len(parts[len(parts)-1]) > 0 {
@@ -191,6 +239,69 @@ func getInitials(name string) string {
 		return strings.ToUpper(string(parts[0][0]))
 	}
 	return "?"
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func timelineItemLast(last bool) string {
+	if last {
+		return " sabio-timeline-item--last"
+	}
+	return ""
+}
+
+func timelineIconVariant(t string) string {
+	if t == "session" {
+		return " sabio-timeline-icon--session"
+	}
+	return " sabio-timeline-icon--note"
+}
+
+func timelineIconClass(t string) string {
+	switch t {
+	case "session":
+		return "fa-notes-medical"
+	case "observation":
+		return "fa-eye"
+	default:
+		return "fa-thumbtack"
+	}
+}
+
+func timelinePillClass(t string) string {
+	if t == "session" {
+		return "sabio-pill--accent"
+	}
+	return "sabio-pill--neutral"
+}
+
+func timelineKindLabel(t string) string {
+	switch t {
+	case "session":
+		return "sessão"
+	case "observation":
+		return "observação"
+	default:
+		return "nota"
+	}
+}
+
+func filterObservations(events []TimelineEventItem, limit int) []TimelineEventItem {
+	var result []TimelineEventItem
+	for _, ev := range events {
+		if ev.Type == "observation" {
+			result = append(result, ev)
+			if len(result) >= limit {
+				break
+			}
+		}
+	}
+	return result
 }
 
 func getObservationAtIndex(events []TimelineEventItem, index int) *TimelineEventItem {
@@ -208,32 +319,44 @@ func getObservationAtIndex(events []TimelineEventItem, index int) *TimelineEvent
 
 func formatFullIdentity(gender, ethnicity, occupation, education string) string {
 	var parts []string
-	
+
 	switch gender {
-	case "m": parts = append(parts, "Masculino")
-	case "f": parts = append(parts, "Feminino")
-	case "o": parts = append(parts, "Outro")
+	case "m":
+		parts = append(parts, "Masculino")
+	case "f":
+		parts = append(parts, "Feminino")
+	case "o":
+		parts = append(parts, "Outro")
 	}
-	
+
 	switch ethnicity {
-	case "b": parts = append(parts, "Branca")
-	case "p": parts = append(parts, "Preta")
-	case "m": parts = append(parts, "Parda")
-	case "a": parts = append(parts, "Amarela")
-	case "i": parts = append(parts, "Indígena")
+	case "b":
+		parts = append(parts, "Branca")
+	case "p":
+		parts = append(parts, "Preta")
+	case "m":
+		parts = append(parts, "Parda")
+	case "a":
+		parts = append(parts, "Amarela")
+	case "i":
+		parts = append(parts, "Indígena")
 	}
-	
+
 	if occupation != "" {
 		parts = append(parts, occupation)
 	}
-	
+
 	switch education {
-	case "e": parts = append(parts, "Ensino Fundamental")
-	case "m": parts = append(parts, "Ensino Médio")
-	case "s": parts = append(parts, "Ensino Superior")
-	case "p": parts = append(parts, "Pós-graduação")
+	case "e":
+		parts = append(parts, "Ensino Fundamental")
+	case "m":
+		parts = append(parts, "Ensino Médio")
+	case "s":
+		parts = append(parts, "Ensino Superior")
+	case "p":
+		parts = append(parts, "Pós-graduação")
 	}
-	
+
 	return strings.Join(parts, " · ")
 }
 
