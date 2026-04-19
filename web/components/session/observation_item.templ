@@ -13,46 +13,33 @@ type ObservationItemData struct {
 }
 
 templ ObservationItem(obs ObservationItemData) {
-	<div
-		id={ "observation-" + obs.ID }
-		class="observation-item card-hover obs-item py-4"
-	>
-		<!-- Observation Content - Main focus with larger font -->
-		<div class="observation-content mb-3">
-			<p class="text-lg font-serif text-gray-800 leading-relaxed">{ obs.Content }</p>
-		</div>
-		
-		<!-- Tags: só renderiza bloco visível quando há tags; container vazio mantém target HTMX -->
+	<div id={ "observation-" + obs.ID } class="sabio-notes-item">
+		<p class="sabio-notes-item-text serif">{ obs.Content }</p>
 		if len(obs.Tags) > 0 {
-			<div id={ "observation-" + obs.ID + "-tags" } class="observation-tags my-2 flex flex-wrap gap-1">
+			<div id={ "observation-" + obs.ID + "-tags" } class="sabio-notes-item-tags">
 				@classification.TagList(obs.Tags, true)
 			</div>
 		} else {
 			<div id={ "observation-" + obs.ID + "-tags" }></div>
 		}
-		
-		<div class="obs-item-row">
-			<div class="obs-item-date">
-				<i class="fas fa-clock obs-item-icon"></i>{ obs.CreatedAt }
-			</div>
-			<div class="obs-item-actions flex items-center gap-2">
-				<button
-					class="btn btn-icon btn-sm text-arandu-primary"
-					hx-get={ "/observations/" + obs.ID + "/classify/edit" }
-					hx-target={ "#observation-" + obs.ID + "-tags" }
-					hx-swap="innerHTML"
-					title="Adicionar classificação"
-				>
+		<div class="sabio-notes-item-footer">
+			<span class="sabio-notes-item-date mono">
+				<i class="fas fa-clock"></i>{ obs.CreatedAt }
+			</span>
+			<div class="sabio-notes-item-actions">
+				<button class="sabio-notes-item-btn"
+				        hx-get={ "/observations/" + obs.ID + "/classify/edit" }
+				        hx-target={ "#observation-" + obs.ID + "-tags" }
+				        hx-swap="innerHTML"
+				        title="Classificar">
 					<i class="fas fa-tags"></i>
 				</button>
-				<div class="badge badge-primary">Observação</div>
-				<button
-					class="btn btn-icon btn-sm"
-					hx-get={ templ.URL("/observations/" + obs.ID + "/edit") }
-					hx-target={ "#observation-" + obs.ID }
-					hx-swap="outerHTML"
-					title="Editar observação"
-				>
+				<span class="sabio-pill sabio-pill--neutral">Observação</span>
+				<button class="sabio-notes-item-btn"
+				        hx-get={ templ.URL("/observations/" + obs.ID + "/edit") }
+				        hx-target={ "#observation-" + obs.ID }
+				        hx-swap="outerHTML"
+				        title="Editar">
 					<i class="fas fa-edit"></i>
 				</button>
 			</div>

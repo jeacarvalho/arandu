@@ -6,53 +6,40 @@ import (
 )
 
 type InterventionItemData struct {
-	ID string
-	Content string
+	ID        string
+	Content   string
 	CreatedAt string
-	Tags []*intervention.InterventionClassification
+	Tags      []*intervention.InterventionClassification
 }
 
 templ InterventionItem(interv InterventionItemData) {
-	<div
-		id={ "intervention-" + interv.ID }
-		class="intervention-item card-hover int-item py-4"
-	>
-		<!-- Intervention Content - Main focus with larger font -->
-		<div class="intervention-content mb-3">
-			<p class="text-lg font-serif text-gray-800 leading-relaxed">{ interv.Content }</p>
-		</div>
-		
-		<!-- Tags: só renderiza bloco visível quando há tags; container vazio mantém target HTMX -->
+	<div id={ "intervention-" + interv.ID } class="sabio-notes-item sabio-notes-item--intervention">
+		<p class="sabio-notes-item-text serif">{ interv.Content }</p>
 		if len(interv.Tags) > 0 {
-			<div id={ "intervention-" + interv.ID + "-tags" } class="intervention-tags my-2 flex flex-wrap gap-1">
+			<div id={ "intervention-" + interv.ID + "-tags" } class="sabio-notes-item-tags">
 				@interventionComponents.InterventionTagList(interv.Tags, true)
 			</div>
 		} else {
 			<div id={ "intervention-" + interv.ID + "-tags" }></div>
 		}
-		
-		<div class="obs-item-row">
-			<div class="obs-item-date">
-				<i class="fas fa-clock obs-item-icon"></i>{ interv.CreatedAt }
-			</div>
-			<div class="obs-item-actions flex items-center gap-2">
-				<button
-					class="btn btn-icon btn-sm text-arandu-primary"
-					hx-get={ "/interventions/" + interv.ID + "/classify/edit" }
-					hx-target={ "#intervention-" + interv.ID + "-tags" }
-					hx-swap="innerHTML"
-					title="Adicionar classificação"
-				>
+		<div class="sabio-notes-item-footer">
+			<span class="sabio-notes-item-date mono">
+				<i class="fas fa-clock"></i>{ interv.CreatedAt }
+			</span>
+			<div class="sabio-notes-item-actions">
+				<button class="sabio-notes-item-btn"
+				        hx-get={ "/interventions/" + interv.ID + "/classify/edit" }
+				        hx-target={ "#intervention-" + interv.ID + "-tags" }
+				        hx-swap="innerHTML"
+				        title="Classificar">
 					<i class="fas fa-tags"></i>
 				</button>
-				<div class="badge badge-secondary">Intervenção</div>
-				<button
-					class="btn btn-icon btn-sm"
-					hx-get={ templ.URL("/interventions/" + interv.ID + "/edit") }
-					hx-target={ "#intervention-" + interv.ID }
-					hx-swap="outerHTML"
-					title="Editar intervenção"
-				>
+				<span class="sabio-pill sabio-pill--accent">Intervenção</span>
+				<button class="sabio-notes-item-btn"
+				        hx-get={ templ.URL("/interventions/" + interv.ID + "/edit") }
+				        hx-target={ "#intervention-" + interv.ID }
+				        hx-swap="outerHTML"
+				        title="Editar">
 					<i class="fas fa-edit"></i>
 				</button>
 			</div>

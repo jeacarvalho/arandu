@@ -9650,3 +9650,63 @@ aside.shell-sidebar.shell-sidebar-collapsed {
   color: var(--accent, #6B4E3D);
   font-weight: 500;
 }
+
+/* ── Session notes items (observation / intervention) ──────────────────── */
+.sabio-notes-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-line, #EDE8E2);
+}
+.sabio-notes-item:last-child { border-bottom: none; }
+
+.sabio-notes-item-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink, #1F1A15);
+  margin: 0 0 10px;
+}
+.sabio-notes-item--intervention .sabio-notes-item-text {
+  border-left: 3px solid var(--accent, #6B4E3D);
+  padding-left: 12px;
+}
+.sabio-notes-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.sabio-notes-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.sabio-notes-item-date {
+  font-size: 11px;
+  color: var(--ink-muted, #6B6560);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sabio-notes-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sabio-notes-item-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-muted, #6B6560);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background .15s, color .15s;
+}
+.sabio-notes-item-btn:hover {
+  background: color-mix(in srgb, var(--accent, #6B4E3D) 10%, transparent);
+  color: var(--accent, #6B4E3D);
+}
