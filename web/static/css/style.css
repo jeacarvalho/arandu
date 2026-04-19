@@ -9112,3 +9112,235 @@ aside.shell-sidebar.shell-sidebar-collapsed {
   .sabio-patient-stats { display: none; }
   .sabio-patient-body { grid-template-columns: 1fr; }
 }
+
+/* ================================================================
+   SÁBIO — Session Edit (Phase 5)
+   ================================================================ */
+
+.sabio-session-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+  max-width: 1200px;
+}
+
+/* Session header */
+.sabio-session-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-session-back {
+  flex-shrink: 0;
+  font-size: 12.5px;
+}
+
+.sabio-session-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sabio-session-title {
+  margin: 0 0 6px;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.sabio-session-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.sabio-session-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Accent button variant */
+.sabio-btn--accent {
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  border: 1px solid var(--accent-deep);
+  color: var(--paper);
+}
+.sabio-btn--accent:hover { opacity: .88; }
+
+/* Error banner */
+.sabio-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: color-mix(in oklab, var(--danger) 8%, var(--paper));
+  border: 1px solid color-mix(in oklab, var(--danger) 25%, transparent);
+  border-radius: 10px;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* Notes grid — 2 equal columns */
+.sabio-notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* Notes column card */
+.sabio-notes-col {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.sabio-notes-col-header {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-notes-col-sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.sabio-notes-items {
+  flex: 1;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 120px;
+}
+
+.sabio-notes-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 16px;
+  color: var(--ink-4);
+  font-size: 12.5px;
+  font-style: italic;
+}
+
+.sabio-notes-empty i { font-size: 20px; opacity: .3; }
+
+/* Notes HTMX input area */
+.sabio-notes-input {
+  padding: 14px 20px 18px;
+  border-top: 1px dashed var(--line-2);
+  background: color-mix(in oklab, var(--paper) 50%, var(--paper-2));
+}
+
+.sabio-notes-input-label {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sabio-notes-textarea {
+  width: 100%;
+  resize: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  box-sizing: border-box;
+}
+
+.sabio-notes-textarea::placeholder { color: var(--ink-4); font-style: italic; }
+
+.sabio-notes-input-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sabio-notes-submit {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: var(--ink);
+  border: 0;
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.sabio-notes-submit:hover { opacity: .85; }
+
+/* Synthesis card */
+.sabio-synthesis-card .sabio-synthesis-body {
+  padding: 18px 20px 20px;
+}
+
+.sabio-synthesis-textarea {
+  width: 100%;
+  resize: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  font-family: var(--font-serif);
+  letter-spacing: -0.1px;
+  box-sizing: border-box;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.sabio-synthesis-textarea::placeholder { color: var(--ink-4); font-style: italic; }
+
+.sabio-synthesis-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .sabio-notes-grid { grid-template-columns: 1fr; }
+  .sabio-session-header { grid-template-columns: 1fr; gap: 12px; }
+  .sabio-session-back { display: none; }
+}

@@ -1,6 +1,9 @@
 package session
 
-import layoutComponents "arandu/web/components/layout"
+import (
+	"fmt"
+	layoutComponents "arandu/web/components/layout"
+)
 
 type EditSessionFormData struct {
 	Error         string
@@ -8,273 +11,205 @@ type EditSessionFormData struct {
 	ServerError   string
 	PatientName   string
 	SessionID     string
+	SessionNumber int
 	Observations  []Observation
 	Interventions []Intervention
 	Goals         []GoalDataItem
 }
 
 templ EditSessionForm(data EditSessionFormData) {
-	<div class="mb-xl">
-		<div class="flex flex-center gap-md">
-			<a href={ templ.URL("/patients/" + data.FormData.PatientID) } class="back-button">
-				<i class="fas fa-arrow-left"></i>
+	<div class="sabio-session-page">
+		<!-- Header editorial -->
+		<div class="sabio-session-header">
+			<a href={ templ.URL("/patients/" + data.FormData.PatientID) }
+			   class="sabio-btn sabio-btn--ghost sabio-session-back"
+			   hx-get={ "/patients/" + data.FormData.PatientID }
+			   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+				<i class="fas fa-arrow-left"></i> Voltar ao paciente
 			</a>
-			<div>
-				<h1 class="page-title">Editar Sessão</h1>
-				<p class="page-subtitle">{ data.PatientName }</p>
+			<div class="sabio-session-header-title">
+				<div class="sabio-session-eyebrow">
+					Sessão { sessionNumberStr(data.SessionNumber) }
+					if data.PatientName != "" {
+						<span class="sabio-meta-sep">·</span>{ data.PatientName }
+					}
+				</div>
+				<h1 class="sabio-session-title serif">Registro clínico</h1>
+				<div class="sabio-session-meta">
+					<span class="mono">{ data.FormData.Date }</span>
+					<span class="sabio-pill sabio-pill--neutral">Em rascunho</span>
+				</div>
+			</div>
+			<div class="sabio-session-header-actions">
+				<button type="submit" form="session-date-form" class="sabio-btn sabio-btn--ghost">
+					<i class="fas fa-save"></i> Salvar data
+				</button>
+				<button onclick={ templ.ComponentScript{Call: "document.getElementById('session-date-form').submit()"} }
+				        class="sabio-btn sabio-btn--primary">
+					<i class="fas fa-check"></i> Finalizar sessão
+				</button>
 			</div>
 		</div>
-	</div>
 
-	<div class="session-with-sidebar">
-		<div class="card-form">
-			if data.Error != "" {
-				<div class="p-xy-lg bg-error-50 border-error">
-					<p class="text-error error-text">
-						<i class="fas fa-exclamation-circle error-icon"></i>
-						{ data.Error }
-					</p>
-				</div>
-			}
+		if data.Error != "" {
+			<div class="sabio-error-banner">
+				<i class="fas fa-exclamation-circle"></i>
+				<p>{ data.Error }</p>
+			</div>
+		}
 
-			<form id="session-form" action={ templ.URL("/session/" + data.SessionID + "/update") } method="POST" class="card-form-pad">
-				<input type="hidden" name="patient_id" value={ data.FormData.PatientID }>
+		<!-- Hidden date form (minimal) -->
+		<form id="session-date-form"
+		      action={ templ.URL("/session/" + data.SessionID + "/update") }
+		      method="POST"
+		      style="display:none">
+			<input type="hidden" name="patient_id" value={ data.FormData.PatientID }>
+			<input type="hidden" name="date" value={ data.FormData.Date }>
+			<input type="hidden" name="summary" value={ data.FormData.Summary }>
+		</form>
 
-				<div class="mb-xl">
-					<div class="flex flex-center gap-md mb-lg">
-						<div class="card-icon card-icon-primary">
-							<i class="fas fa-calendar"></i>
-						</div>
-						<div>
-							<h2 class="section-title">Dados da Sessão</h2>
-						</div>
-					</div>
-					<div class="bg-neutral-50 p-lg rounded-lg">
-						<div class="mb-md">
-							<label class="label-uppercase">Data da Sessão</label>
-							<input type="date" name="date" required value={ data.FormData.Date } class="input-base">
-						</div>
-					</div>
-				</div>
-
-				<div class="mb-xl">
-					<div class="flex flex-center gap-md mb-lg">
-						<div class="card-icon card-icon-purple">
-							<i class="fas fa-file-medical-alt"></i>
-						</div>
-						<div>
-							<h2 class="section-title">Resumo da Sessão</h2>
-						</div>
-					</div>
-					<div class="bg-neutral-50 p-lg rounded-lg">
-						<div class="mb-md">
-							<div class="flex flex-between flex-center mb-xs">
-								<label class="label-uppercase">Resumo</label>
-								@layoutComponents.AutoSaveIndicator("summary", "idle")
-							</div>
-							<textarea
-								name="summary"
-								rows="6"
-								placeholder="Resumo da sessão..."
-								class="textarea-base"
-								hx-patch={ "/session/" + data.SessionID + "/summary" }
-								hx-trigger="input changed delay:1500ms"
-								hx-target="#autosave-indicator-summary"
-								hx-swap="outerHTML"
-								hx-include="this"
-							>{ data.FormData.Summary }</textarea>
-						</div>
-					</div>
-				</div>
-
-				<div class="flex flex-between border-top-light pt-lg mb-xl">
-					<a href={ templ.URL("/patients/" + data.FormData.PatientID) } class="btn-outline-light">
-						<i class="fas fa-times btn-icon-left"></i> Cancelar
-					</a>
-					<button type="submit" class="btn-primary-solid">
-						<i class="fas fa-save btn-icon-left"></i> Salvar Alterações
-					</button>
-				</div>
-
-				<!-- Observações Clínicas -->
-				<div class="card mb-lg">
-					<div class="flex flex-center gap-md mb-md">
-						<i class="fas fa-sticky-note icon-teal"></i>
-						<h3 class="section-title">Observações Clínicas</h3>
-					</div>
-				<div id="observations-list-main" class="mb-md" role="region" aria-live="polite" aria-label="Observações clínicas">
-						if len(data.Observations) > 0 {
-							for _, o := range data.Observations {
-								@ObservationItem(ObservationItemData{
-									ID:        o.ID,
-									Content:   o.Content,
-									CreatedAt: o.CreatedAt,
-								})
-							}
-						} else {
-							<div class="text-center text-neutral-600 p-lg">
-								<i class="fas fa-sticky-note icon-lg mb-md opacity-50"></i>
-								<p class="font-italic">Nenhuma observação registrada</p>
-							</div>
-						}
-					</div>
-					@ObservationFormInline(data.SessionID, "observations-list-main")
-				</div>
-
-				<!-- Intervenções Terapêuticas -->
-				<div class="card mb-lg">
-					<div class="flex flex-center gap-md mb-md">
-						<i class="fas fa-hands-helping icon-purple"></i>
-						<h3 class="section-title">Intervenções Terapêuticas</h3>
-					</div>
-				<div id="interventions-list-main" class="mb-md" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
-						if len(data.Interventions) > 0 {
-							for _, i := range data.Interventions {
-								@InterventionItem(InterventionItemData{
-									ID:        i.ID,
-									Content:   i.Content,
-									CreatedAt: i.CreatedAt,
-								})
-							}
-						} else {
-							<div class="text-center text-neutral-600 p-lg">
-								<i class="fas fa-hands-helping icon-lg mb-md opacity-50"></i>
-								<p class="font-italic">Nenhuma intervenção registrada</p>
-							</div>
-						}
-					</div>
-					@InterventionFormInline(data.SessionID, "interventions-list-main")
-				</div>
-
-				<!-- Metas Terapêuticas -->
-				<div class="card">
-					<div class="flex flex-center gap-md mb-md">
-						<i class="fas fa-bullseye icon-primary"></i>
-						<h3 class="section-title">Metas Terapêuticas</h3>
-					</div>
-				<ul id="session-goals-list-main" class="session-goals-list mb-md" role="region" aria-live="polite" aria-label="Metas terapêuticas">
-						if len(data.Goals) > 0 {
-							for _, g := range data.Goals {
-								<li class="goal-item">{ g.Title }</li>
-							}
-						}
-					</ul>
-					<div class="empty-state">
-						<p class="font-italic text-neutral-600">Nenhuma meta definida</p>
-					</div>
-					<form hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list-main" hx-swap="beforeend" hx-indicator="#goals-main-loading" hx-disabled-elt="this button[type='submit']" class="mt-md pt-md border-top-light">
-						<div class="silent-form-group">
-							<label class="silent-label"><i class="fas fa-plus-circle"></i> Nova Meta</label>
-							<input type="text" name="title" placeholder="Descreva a meta terapêutica..." class="silent-input" required>
-						</div>
-						<div class="form-actions form-actions-mt-sm">
-							<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus btn-icon"></i> Adicionar Meta</button>
-							<span id="goals-main-loading" class="htmx-indicator text-xs text-neutral-500 ml-2" aria-live="polite">
-								<i class="fas fa-spinner fa-spin mr-1"></i>Salvando...
-							</span>
-						</div>
-					</form>
-				</div>
-			</form>
-		</div>
-
-		<!-- Sidebar -->
-		<aside class="session-sidebar">
-			<!-- Observações Clínicas -->
-			<div class="session-sidebar-card">
-				<div class="session-sidebar-header">
-					<i class="fas fa-sticky-note icon-teal"></i>
-					<h4>Observações Clínicas</h4>
-				</div>
-				<div id="observations-list-sidebar" class="mb-md" role="region" aria-live="polite" aria-label="Observações clínicas">
+		<!-- Duas colunas de notas -->
+		<div class="sabio-notes-grid">
+			<!-- Coluna: Observações clínicas -->
+			<section class="sabio-notes-col">
+				<header class="sabio-notes-col-header">
+					<div class="sabio-card-eyebrow">Escuta</div>
+					<h2 class="sabio-card-title serif">Observações clínicas</h2>
+					<p class="sabio-notes-col-sub">O que foi percebido durante a sessão</p>
+				</header>
+				<div id="observations-list" class="sabio-notes-items" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(data.Observations) > 0 {
 						for _, o := range data.Observations {
 							@ObservationItem(ObservationItemData{
 								ID:        o.ID,
 								Content:   o.Content,
 								CreatedAt: o.CreatedAt,
+								Tags:      o.Tags,
 							})
 						}
 					} else {
-						<div class="text-center text-neutral-600 p-lg">
-							<i class="fas fa-sticky-note icon-lg mb-md opacity-50"></i>
-							<p class="font-italic">Nenhuma observação registrada</p>
+						<div class="sabio-notes-empty">
+							<i class="fas fa-sticky-note"></i>
+							<p>Nenhuma observação registrada</p>
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/observations") } hx-target="#observations-list-sidebar" hx-swap="beforeend" hx-disabled-elt="this button[type='submit']" hx-on::after-request="this.reset()">
-					<div class="silent-form-group">
-						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Observação</label>
-						<textarea name="content" placeholder="Digite sua percepção clínica aqui..." rows="3" class="silent-textarea" required></textarea>
+				<!-- HTMX input -->
+				<div class="sabio-notes-input">
+					<div class="sabio-notes-input-label">
+						<i class="fas fa-plus"></i> Nova observação
 					</div>
-					<div class="form-actions mt-md">
-						<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus btn-icon"></i>Adicionar</button>
-					</div>
-				</form>
-			</div>
-
-			<!-- Intervenções Terapêuticas -->
-			<div class="session-sidebar-card">
-				<div class="session-sidebar-header">
-					<i class="fas fa-hands-helping icon-purple"></i>
-					<h4>Intervenções</h4>
+					<form hx-post={ "/session/" + data.SessionID + "/observations" }
+					      hx-target="#observations-list"
+					      hx-swap="beforeend"
+					      hx-disabled-elt="this button[type='submit']"
+					      hx-on::after-request="if(event.detail.successful) this.reset()">
+						<textarea name="content"
+						          placeholder="Digite sua percepção clínica aqui…"
+						          rows="2"
+						          class="sabio-notes-textarea"
+						          required></textarea>
+						<div class="sabio-notes-input-footer">
+							<span class="sabio-pill sabio-pill--neutral">#observação</span>
+							<button type="submit" class="sabio-notes-submit">
+								<i class="fas fa-plus"></i> Registrar <kbd class="sabio-kbd">⌘↵</kbd>
+							</button>
+						</div>
+					</form>
 				</div>
-				<div id="interventions-list-sidebar" class="mb-md" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
+			</section>
+
+			<!-- Coluna: Intervenções terapêuticas -->
+			<section class="sabio-notes-col">
+				<header class="sabio-notes-col-header">
+					<div class="sabio-card-eyebrow">Ação</div>
+					<h2 class="sabio-card-title serif">Intervenções terapêuticas</h2>
+					<p class="sabio-notes-col-sub">Técnicas e intervenções realizadas</p>
+				</header>
+				<div id="interventions-list" class="sabio-notes-items" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 					if len(data.Interventions) > 0 {
 						for _, i := range data.Interventions {
 							@InterventionItem(InterventionItemData{
 								ID:        i.ID,
 								Content:   i.Content,
 								CreatedAt: i.CreatedAt,
+								Tags:      i.Tags,
 							})
 						}
 					} else {
-						<div class="text-center text-neutral-600 p-lg">
-							<i class="fas fa-hands-helping icon-lg mb-md opacity-50"></i>
-							<p class="font-italic">Nenhuma intervenção registrada</p>
+						<div class="sabio-notes-empty">
+							<i class="fas fa-hands-helping"></i>
+							<p>Nenhuma intervenção registrada</p>
 						</div>
 					}
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/session/" + data.SessionID + "/interventions") } hx-target="#interventions-list-sidebar" hx-swap="beforeend" hx-disabled-elt="this button[type='submit']" hx-on::after-request="this.reset()">
-					<div class="silent-form-group">
-						<label class="silent-label"><i class="fas fa-plus-circle"></i> Adicionar Nova Intervenção</label>
-						<textarea name="content" placeholder="Descreva a técnica ou intervenção realizada..." rows="3" class="silent-textarea" required></textarea>
+				<!-- HTMX input -->
+				<div class="sabio-notes-input">
+					<div class="sabio-notes-input-label">
+						<i class="fas fa-plus"></i> Nova intervenção
 					</div>
-					<div class="form-actions mt-md">
-						<button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-plus btn-icon"></i>Adicionar</button>
-					</div>
-				</form>
-			</div>
+					<form hx-post={ "/session/" + data.SessionID + "/interventions" }
+					      hx-target="#interventions-list"
+					      hx-swap="beforeend"
+					      hx-disabled-elt="this button[type='submit']"
+					      hx-on::after-request="if(event.detail.successful) this.reset()">
+						<textarea name="content"
+						          placeholder="Descreva a técnica ou intervenção realizada…"
+						          rows="2"
+						          class="sabio-notes-textarea"
+						          required></textarea>
+						<div class="sabio-notes-input-footer">
+							<span class="sabio-pill sabio-pill--ok">#intervenção</span>
+							<button type="submit" class="sabio-notes-submit">
+								<i class="fas fa-plus"></i> Registrar <kbd class="sabio-kbd">⌘↵</kbd>
+							</button>
+						</div>
+					</form>
+				</div>
+			</section>
+		</div>
 
-			<!-- Metas Terapêuticas -->
-			<div class="session-sidebar-card">
-				<div class="session-sidebar-header">
-					<i class="fas fa-bullseye icon-primary"></i>
-					<h4>Metas Terapêuticas</h4>
+		<!-- Síntese -->
+		<div class="sabio-synthesis-card sabio-card">
+			<div class="sabio-card-header">
+				<div>
+					<div class="sabio-card-eyebrow">Síntese</div>
+					<h2 class="sabio-card-title serif">Resumo da sessão</h2>
+					<p class="sabio-notes-col-sub" style="margin-top:2px">Texto contínuo para prontuário</p>
 				</div>
-				<ul id="session-goals-list-sidebar" class="session-goals-list mb-md" role="region" aria-live="polite" aria-label="Metas terapêuticas">
-					if len(data.Goals) > 0 {
-						for _, g := range data.Goals {
-							<li class="goal-item">{ g.Title }</li>
-						}
-					}
-				</ul>
-				<div class="session-goals-empty">
-					<p>Nenhuma meta definida</p>
+				<div style="display:flex;gap:8px;align-items:center">
+					@layoutComponents.AutoSaveIndicator("summary", "idle")
 				</div>
-				<form class="inline-form" hx-post={ templ.URL("/patients/" + data.FormData.PatientID + "/goals") } hx-target="#session-goals-list-sidebar" hx-swap="beforeend" hx-indicator="#goals-sidebar-loading" hx-disabled-elt="this button[type='submit']" hx-on::after-request="if(event.detail.successful) this.reset()" class="mt-md pt-md border-top-light">
-					<div class="silent-form-group">
-						<label class="silent-label"><i class="fas fa-plus-circle"></i> Nova Meta</label>
-						<input type="text" name="title" placeholder="Descreva a meta terapêutica..." class="silent-input" required>
-					</div>
-					<div class="form-actions mt-sm">
-						<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus btn-icon"></i> Adicionar Meta</button>
-						<span id="goals-sidebar-loading" class="htmx-indicator text-xs text-neutral-500 ml-2" aria-live="polite">
-							<i class="fas fa-spinner fa-spin mr-1"></i>Salvando...
-						</span>
-					</div>
-				</form>
 			</div>
-		</aside>
+			<div class="sabio-synthesis-body">
+				<textarea
+					name="summary"
+					rows="5"
+					placeholder="Escreva o resumo da sessão ou gere com Arandu…"
+					class="sabio-synthesis-textarea serif"
+					hx-patch={ "/session/" + data.SessionID + "/summary" }
+					hx-trigger="input changed delay:1500ms"
+					hx-target="#autosave-indicator-summary"
+					hx-swap="outerHTML"
+					hx-include="this"
+				>{ data.FormData.Summary }</textarea>
+				<div class="sabio-synthesis-actions">
+					<button type="button" class="sabio-btn sabio-btn--accent">
+						<i class="fas fa-sparkles"></i> Gerar síntese com Arandu
+					</button>
+					<button type="button" class="sabio-btn sabio-btn--ghost">
+						<i class="fas fa-edit"></i> Editar manualmente
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
+}
+
+func sessionNumberStr(n int) string {
+	if n <= 0 {
+		return "--"
+	}
+	s := fmt.Sprintf("%02d", n)
+	return s
 }
