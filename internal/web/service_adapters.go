@@ -98,6 +98,11 @@ func (a *PatientServiceAdapter) GetThemeFrequency(ctx context.Context, patientID
 	return a.service.GetThemeFrequency(ctx, patientID, limit)
 }
 
+// ListForDashboard implements handlers.PatientService interface
+func (a *PatientServiceAdapter) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	return a.service.ListForDashboard(ctx, limit)
+}
+
 // ObservationServiceAdapter adapts services.ObservationService to handlers.ObservationServiceInterface
 type ObservationServiceAdapter struct {
 	service *services.ObservationService

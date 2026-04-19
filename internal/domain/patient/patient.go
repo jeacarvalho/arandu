@@ -11,6 +11,7 @@ import (
 type Patient struct {
 	ID         string    `json:"id"`
 	Name       string    `json:"name"`
+	Tag        string    `json:"tag"`
 	Gender     string    `json:"gender"`
 	Ethnicity  string    `json:"ethnicity"`
 	Occupation string    `json:"occupation"`
@@ -18,6 +19,18 @@ type Patient struct {
 	Notes      string    `json:"notes"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+// DashboardSummary carries per-patient data for the dashboard patient list.
+// Populated by a single CTE query — no N+1.
+type DashboardSummary struct {
+	ID              string
+	Name            string
+	Tag             string
+	SessionCount    int
+	LastSessionDate *time.Time
+	NextApptDate    string // "2006-01-02"
+	NextApptTime    string // "15:04"
 }
 
 func NewPatient(name, gender, ethnicity, occupation, education, notes string) (*Patient, error) {
@@ -71,6 +84,9 @@ type Repository interface {
 
 	// Theme analysis
 	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
+
+	// Dashboard enriched list (single CTE query)
+	ListForDashboard(ctx context.Context, limit int) ([]*DashboardSummary, error)
 }
 
 // Theme represents a theme with its frequency

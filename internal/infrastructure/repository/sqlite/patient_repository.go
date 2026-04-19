@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"arandu/internal/domain/patient"
 )
@@ -26,6 +27,9 @@ type patientQueries struct {
 	countAll      string
 	findPaginated string
 
+	// Dashboard enriched query
+	listForDashboard string
+
 	// Anamnesis operations
 	getAnamnesis  string
 	saveAnamnesis string
@@ -34,35 +38,59 @@ type patientQueries struct {
 // newPatientQueries creates and returns a patientQueries struct with all queries initialized
 func newPatientQueries() *patientQueries {
 	return &patientQueries{
-		save: `INSERT INTO patients (id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		save: `INSERT INTO patients (id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-		findByID: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE id = ?`,
+		findByID: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE id = ?`,
 
-		findAll: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
+		findAll: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC`,
 
-		update: `UPDATE patients SET name = ?, gender = ?, ethnicity = ?, occupation = ?, education = ?, notes = ?, updated_at = ? WHERE id = ?`,
+		update: `UPDATE patients SET name = ?, tag = ?, gender = ?, ethnicity = ?, occupation = ?, education = ?, notes = ?, updated_at = ? WHERE id = ?`,
 
 		delete: `DELETE FROM patients WHERE id = ?`,
 
 		// Search patients by name (case-insensitive, partial match)
-		findByName: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
+		findByName: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name`,
 
 		// Search with pagination (using LIKE for backward compatibility)
-		search: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
+		search: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients WHERE LOWER(name) LIKE LOWER(?) ORDER BY name LIMIT ? OFFSET ?`,
 
 		// FTS5 search with pagination (simple version without content=)
-		searchFTS: `SELECT p.id, p.name, p.gender, p.ethnicity, p.occupation, p.education, p.notes, p.created_at, p.updated_at 
-			FROM patients p 
-			INNER JOIN patients_fts f ON p.id = f.patient_id 
-			WHERE patients_fts MATCH ? 
-			ORDER BY rank 
+		searchFTS: `SELECT p.id, p.name, p.tag, p.gender, p.ethnicity, p.occupation, p.education, p.notes, p.created_at, p.updated_at
+			FROM patients p
+			INNER JOIN patients_fts f ON p.id = f.patient_id
+			WHERE patients_fts MATCH ?
+			ORDER BY rank
 			LIMIT ? OFFSET ?`,
 
 		// Count all patients
 		countAll: `SELECT COUNT(*) FROM patients`,
 
 		// Paginated results
-		findPaginated: `SELECT id, name, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+		findPaginated: `SELECT id, name, tag, gender, ethnicity, occupation, education, notes, created_at, updated_at FROM patients ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+
+		// Dashboard enriched list — single CTE query, no N+1
+		listForDashboard: `
+WITH next_appts AS (
+    SELECT patient_id, date, start_time,
+           ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY date, start_time) AS rn
+    FROM appointments
+    WHERE date >= date('now')
+      AND status NOT IN ('cancelled', 'completed')
+)
+SELECT
+    p.id,
+    p.name,
+    COALESCE(p.tag, '')            AS tag,
+    COUNT(DISTINCT s.id)           AS session_count,
+    MAX(s.date)                    AS last_session_date,
+    COALESCE(na.date, '')          AS next_appt_date,
+    COALESCE(na.start_time, '')    AS next_appt_time
+FROM patients p
+LEFT JOIN sessions   s  ON s.patient_id  = p.id
+LEFT JOIN next_appts na ON na.patient_id = p.id AND na.rn = 1
+GROUP BY p.id, p.name, p.tag, na.date, na.start_time
+ORDER BY p.name ASC
+LIMIT ?`,
 
 		// Anamnesis operations
 		getAnamnesis:  `SELECT patient_id, chief_complaint, personal_history, family_history, mental_state_exam, updated_at FROM patient_anamnesis WHERE patient_id = ?`,
@@ -171,7 +199,7 @@ func (r *PatientRepository) Save(ctx context.Context, p *patient.Patient) error 
 		Valid: !p.UpdatedAt.IsZero(),
 	}
 
-	_, err := r.db.ExecContext(ctx, r.queries.save, p.ID, p.Name, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.CreatedAt, updatedAt)
+	_, err := r.db.ExecContext(ctx, r.queries.save, p.ID, p.Name, p.Tag, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.CreatedAt, updatedAt)
 	return err
 }
 
@@ -187,7 +215,7 @@ func (r *PatientRepository) FindByID(ctx context.Context, id string) (*patient.P
 	row := r.db.QueryRowContext(ctx, r.queries.findByID, id)
 
 	var p patient.Patient
-	err := row.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
+	err := row.Scan(&p.ID, &p.Name, &p.Tag, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -210,7 +238,7 @@ func (r *PatientRepository) FindAll(ctx context.Context) ([]*patient.Patient, er
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Tag, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -227,7 +255,7 @@ func (r *PatientRepository) Update(ctx context.Context, p *patient.Patient) erro
 		return err
 	}
 
-	_, err := r.db.ExecContext(ctx, r.queries.update, p.Name, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.UpdatedAt, p.ID)
+	_, err := r.db.ExecContext(ctx, r.queries.update, p.Name, p.Tag, p.Gender, p.Ethnicity, p.Occupation, p.Education, p.Notes, p.UpdatedAt, p.ID)
 	return err
 }
 
@@ -265,7 +293,7 @@ func (r *PatientRepository) FindByName(ctx context.Context, name string) ([]*pat
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Tag, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -314,7 +342,7 @@ func (r *PatientRepository) Search(ctx context.Context, query string, limit, off
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Tag, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
@@ -356,12 +384,49 @@ func (r *PatientRepository) FindPaginated(ctx context.Context, limit, offset int
 	var patients []*patient.Patient
 	for rows.Next() {
 		var p patient.Patient
-		if err := rows.Scan(&p.ID, &p.Name, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.Tag, &p.Gender, &p.Ethnicity, &p.Occupation, &p.Education, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
 		}
 		patients = append(patients, &p)
 	}
 	return patients, nil
+}
+
+// ListForDashboard returns enriched patient summaries for the dashboard patient list.
+// A single CTE query joins patients, sessions, and appointments — no N+1.
+func (r *PatientRepository) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+	rows, err := r.db.QueryContext(ctx, r.queries.listForDashboard, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []*patient.DashboardSummary
+	for rows.Next() {
+		var s patient.DashboardSummary
+		var lastSessionRaw sql.NullString
+		var nextDate, nextTime string
+		if err := rows.Scan(&s.ID, &s.Name, &s.Tag, &s.SessionCount, &lastSessionRaw, &nextDate, &nextTime); err != nil {
+			return nil, err
+		}
+		if lastSessionRaw.Valid && lastSessionRaw.String != "" {
+			t, err := time.Parse("2006-01-02T15:04:05Z", lastSessionRaw.String)
+			if err != nil {
+				// try alternate SQLite datetime format
+				t, err = time.Parse("2006-01-02 15:04:05", lastSessionRaw.String)
+			}
+			if err == nil {
+				s.LastSessionDate = &t
+			}
+		}
+		s.NextApptDate = nextDate
+		s.NextApptTime = nextTime
+		result = append(result, &s)
+	}
+	return result, nil
 }
 
 // GetThemeFrequency extracts the most common terms from a patient's observations and interventions

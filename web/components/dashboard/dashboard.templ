@@ -28,9 +28,13 @@ type AppointmentItem struct {
 }
 
 type PatientItem struct {
-	ID        string
-	Name      string
-	CreatedAt string
+	ID               string
+	Name             string
+	Tag              string
+	SessionCount     int
+	LastSessionLabel string // "última há 2 dias" | "última hoje"
+	NextApptLabel    string // "próxima qua, 10:30" | ""
+	CreatedAt        string
 }
 
 type SessionItem struct {
@@ -185,8 +189,25 @@ templ Dashboard(vm DashboardVM) {
 								   style={ lastItemStyle(i, len(vm.Patients)) }>
 									<div class="sabio-avatar sabio-avatar--sm">{ patientInitials(p.Name) }</div>
 									<div class="sabio-patient-info">
-										<div class="sabio-patient-name">{ p.Name }</div>
-										<div class="sabio-patient-since">Desde { p.CreatedAt }</div>
+										<div class="sabio-patient-name-row">
+											<span class="sabio-patient-name">{ p.Name }</span>
+											if p.Tag != "" {
+												<span class="sabio-patient-tag">{ p.Tag }</span>
+											}
+										</div>
+										<div class="sabio-patient-meta">
+											if p.SessionCount > 0 || p.LastSessionLabel != "" {
+												<span>{ itoa(p.SessionCount) } sessões</span>
+												if p.LastSessionLabel != "" {
+													<span class="sabio-meta-sep">·</span>
+													<span>{ p.LastSessionLabel }</span>
+												}
+											}
+											if p.NextApptLabel != "" {
+												<span class="sabio-meta-sep">·</span>
+												<span class="sabio-patient-next">{ p.NextApptLabel }</span>
+											}
+										</div>
 									</div>
 									<i class="fas fa-chevron-right sabio-row-arrow"></i>
 								</a>

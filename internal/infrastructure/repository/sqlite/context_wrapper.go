@@ -135,6 +135,15 @@ func (r *ContextAwarePatientRepository) GetThemeFrequency(ctx context.Context, p
 	return tempRepo.GetThemeFrequency(ctx, patientID, limit)
 }
 
+func (r *ContextAwarePatientRepository) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewPatientRepository(&DB{db})
+	return tempRepo.ListForDashboard(ctx, limit)
+}
+
 func (r *ContextAwarePatientRepository) GetAnamnesis(ctx context.Context, patientID string) (*patient.Anamnesis, error) {
 	db, err := r.factory.getDB(ctx)
 	if err != nil || db == nil {

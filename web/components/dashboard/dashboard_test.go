@@ -182,3 +182,44 @@ func TestDashboard_KpiWarnDeltaHasIcon(t *testing.T) {
 		t.Error("KPI com tone 'warn' deve ter ícone sabio-kpi-delta-icon")
 	}
 }
+
+// TestDashboard_PatientShowsTag verifica que a tag clínica é exibida no item de paciente.
+func TestDashboard_PatientShowsTag(t *testing.T) {
+	vm := makeSampleVM()
+	vm.Patients = []PatientItem{
+		{ID: "p001", Name: "André Barbosa", Tag: "BURNOUT", SessionCount: 5, LastSessionLabel: "última há 2 dias", NextApptLabel: "próxima qua, 10:30"},
+	}
+	var buf bytes.Buffer
+	if err := Dashboard(vm).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	html := buf.String()
+	if !strings.Contains(html, "BURNOUT") {
+		t.Error("Item de paciente deve exibir a tag clínica")
+	}
+	if !strings.Contains(html, "sabio-patient-tag") {
+		t.Error("Tag deve ter classe sabio-patient-tag")
+	}
+}
+
+// TestDashboard_PatientShowsSessionMeta verifica contagem de sessões e próxima consulta.
+func TestDashboard_PatientShowsSessionMeta(t *testing.T) {
+	vm := makeSampleVM()
+	vm.Patients = []PatientItem{
+		{ID: "p001", Name: "André Barbosa", Tag: "BURNOUT", SessionCount: 5, LastSessionLabel: "última há 2 dias", NextApptLabel: "próxima qua, 10:30"},
+	}
+	var buf bytes.Buffer
+	if err := Dashboard(vm).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+	html := buf.String()
+	if !strings.Contains(html, "5 sessões") {
+		t.Error("Item de paciente deve exibir contagem de sessões")
+	}
+	if !strings.Contains(html, "última há 2 dias") {
+		t.Error("Item de paciente deve exibir label da última sessão")
+	}
+	if !strings.Contains(html, "próxima qua, 10:30") {
+		t.Error("Item de paciente deve exibir label da próxima consulta")
+	}
+}

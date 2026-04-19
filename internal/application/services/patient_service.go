@@ -503,3 +503,11 @@ func (s *PatientService) GetThemeFrequency(ctx context.Context, patientID string
 
 	return themes, nil
 }
+
+// ListForDashboard returns enriched patient summaries for the dashboard list.
+func (s *PatientService) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+	return s.repo.ListForDashboard(ctx, limit)
+}

@@ -62,6 +62,7 @@ type PatientService interface {
 	CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error)
 	SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
 	GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error)
+	ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error)
 }
 
 // SessionService defines the interface for session operations

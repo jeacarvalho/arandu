@@ -9617,3 +9617,36 @@ aside.shell-sidebar.shell-sidebar-collapsed {
 
 .sabio-fade-in  { animation: sabioFadeIn  .2s ease; }
 .sabio-fade-out { animation: sabioFadeOut .2s ease; }
+
+/* ── Dashboard patient list — enriched items ───────────────────────────── */
+.sabio-patient-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sabio-patient-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent, #6B4E3D) 12%, transparent);
+  color: var(--accent, #6B4E3D);
+  line-height: 1.4;
+}
+.sabio-patient-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--ink-muted, #6B6560);
+  margin-top: 2px;
+}
+.sabio-patient-next {
+  color: var(--accent, #6B4E3D);
+  font-weight: 500;
+}

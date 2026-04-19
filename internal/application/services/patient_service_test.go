@@ -93,6 +93,10 @@ func (m *mockPatientRepository) GetThemeFrequency(ctx context.Context, patientID
 	return nil, nil
 }
 
+func (m *mockPatientRepository) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	return nil, nil
+}
+
 func TestPatientService_CreatePatient(t *testing.T) {
 	tests := []struct {
 		name      string

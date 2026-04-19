@@ -46,12 +46,6 @@ func (h *DashboardHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	patients, err := h.patientService.ListPatients(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	now := time.Now()
 	todayStr := now.Format("2006-01-02")
 	weekday := int(now.Weekday())
@@ -60,6 +54,32 @@ func (h *DashboardHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 	weekStart := now.AddDate(0, 0, -(weekday - 1))
 	weekStartStr := weekStart.Format("2006-01-02")
+
+	// Enriched patient list — single query, no N+1
+	dashSummaries, err := h.patientService.ListForDashboard(ctx, 20)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	patientItems := make([]dashboardComponents.PatientItem, len(dashSummaries))
+	for i, s := range dashSummaries {
+		patientItems[i] = dashboardComponents.PatientItem{
+			ID:               s.ID,
+			Name:             s.Name,
+			Tag:              s.Tag,
+			SessionCount:     s.SessionCount,
+			LastSessionLabel: lastSessionLabel(s.LastSessionDate, now),
+			NextApptLabel:    nextApptLabel(s.NextApptDate, s.NextApptTime, now),
+		}
+	}
+
+	// Session stats and recent items (kept for KPIs — ListPatients is still used)
+	patients, err := h.patientService.ListPatients(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	var recentItems []dashboardComponents.SessionItem
 	var totalSessions, sessionsThisWeek, sessionsToday int
@@ -93,15 +113,6 @@ func (h *DashboardHandler) Show(w http.ResponseWriter, r *http.Request) {
 	})
 	if len(recentItems) > 6 {
 		recentItems = recentItems[:6]
-	}
-
-	patientItems := make([]dashboardComponents.PatientItem, len(patients))
-	for i, p := range patients {
-		patientItems[i] = dashboardComponents.PatientItem{
-			ID:        p.ID,
-			Name:      p.Name,
-			CreatedAt: p.CreatedAt.Format("02/01/2006"),
-		}
 	}
 
 	// Today's schedule from agenda
@@ -190,6 +201,47 @@ func ptBRDateLabel(t time.Time) string {
 	weekdays := [...]string{"Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"}
 	months := [...]string{"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"}
 	return strings.ToUpper(fmt.Sprintf("%s, %d de %s", weekdays[t.Weekday()], t.Day(), months[t.Month()-1]))
+}
+
+// lastSessionLabel formats "última há N dias" / "última hoje" / "" from a nullable time.
+func lastSessionLabel(t *time.Time, now time.Time) string {
+	if t == nil {
+		return ""
+	}
+	days := int(now.Truncate(24*time.Hour).Sub(t.Truncate(24*time.Hour)).Hours() / 24)
+	switch {
+	case days == 0:
+		return "última hoje"
+	case days == 1:
+		return "última ontem"
+	case days < 30:
+		return fmt.Sprintf("última há %d dias", days)
+	default:
+		return "última há " + fmt.Sprintf("%d", days/30) + " meses"
+	}
+}
+
+// nextApptLabel formats "próxima seg, 14:00" / "próxima hoje, 14:00" from date+time strings.
+func nextApptLabel(date, startTime string, now time.Time) string {
+	if date == "" || startTime == "" {
+		return ""
+	}
+	t, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return ""
+	}
+	days := int(t.Truncate(24*time.Hour).Sub(now.Truncate(24*time.Hour)).Hours() / 24)
+	weekdays := [...]string{"dom", "seg", "ter", "qua", "qui", "sex", "sáb"}
+	var dayLabel string
+	switch days {
+	case 0:
+		dayLabel = "hoje"
+	case 1:
+		dayLabel = "amanhã"
+	default:
+		dayLabel = weekdays[t.Weekday()]
+	}
+	return fmt.Sprintf("próxima %s, %s", dayLabel, startTime)
 }
 
 func appointmentTypeLabel(typ string) string {
