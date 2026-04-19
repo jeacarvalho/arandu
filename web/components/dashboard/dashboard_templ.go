@@ -8,15 +8,31 @@ package dashboard
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "strconv"
+import (
+	"strings"
+	"time"
+)
 
 type Stats struct {
 	TotalPatients    int
-	NewThisWeek      int
-	ActiveThisMonth  int
 	TotalSessions    int
 	SessionsThisWeek int
 	SessionsToday    int
+}
+
+type KpiItem struct {
+	Label string
+	Value string
+	Delta string
+	Tone  string // "neutral" | "up" | "warn"
+	Dark  bool
+}
+
+type AppointmentItem struct {
+	Time        string
+	PatientName string
+	Type        string
+	Status      string // "done" | "next" | "upcoming"
 }
 
 type PatientItem struct {
@@ -29,10 +45,54 @@ type SessionItem struct {
 	ID          string
 	PatientName string
 	Date        string
+	RawDate     time.Time
 	Summary     string
+	Theme       string
 }
 
-func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) templ.Component {
+type DashboardVM struct {
+	GreetingName  string
+	DateLabel     string
+	Stats         Stats
+	KpiItems      []KpiItem
+	TodaySchedule []AppointmentItem
+	Patients      []PatientItem
+	Sessions      []SessionItem
+}
+
+func patientInitials(name string) string {
+	parts := strings.Fields(name)
+	if len(parts) == 0 {
+		return "?"
+	}
+	if len(parts) == 1 {
+		if len(parts[0]) >= 2 {
+			return strings.ToUpper(parts[0][:2])
+		}
+		return strings.ToUpper(parts[0])
+	}
+	return strings.ToUpper(string([]rune(parts[0])[0])) + strings.ToUpper(string([]rune(parts[len(parts)-1])[0]))
+}
+
+func scheduleItemClass(status string) string {
+	switch status {
+	case "done":
+		return "sabio-schedule-item sabio-schedule-item--done"
+	case "next":
+		return "sabio-schedule-item sabio-schedule-item--next"
+	default:
+		return "sabio-schedule-item"
+	}
+}
+
+func kpiCardClass(dark bool) string {
+	if dark {
+		return "sabio-kpi-card sabio-kpi-card--dark"
+	}
+	return "sabio-kpi-card"
+}
+
+func Dashboard(vm DashboardVM) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -53,102 +113,485 @@ func Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) temp
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"sota-container\"><!-- Header --><div class=\"dashboard-header\"><h1 class=\"dashboard-title\">Dashboard Clínico</h1><p class=\"dashboard-subtitle\">Visão geral para reflexão terapêutica e acompanhamento</p></div><!-- Grid de Evolução (4 indicadores) --><div class=\"evolution-grid\"><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"sabio-dash\"><!-- Hero editorial --><div class=\"sabio-dash-hero\"><div class=\"sabio-dash-hero-main\"><div class=\"sabio-dash-date\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.TotalSessions))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(vm.DateLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 43, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 92, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"stat-label-sota\">Sessões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><h1 class=\"sabio-dash-greeting serif\">Bom dia, <em class=\"sabio-dash-greeting-name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(stats.ActiveThisMonth))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(vm.GreetingName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 51, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 94, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"stat-label-sota\">Meses</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Padrões</div></div><div class=\"stat-card-sota\"><div class=\"stat-value-sota\">0</div><div class=\"stat-label-sota\">Hipóteses</div></div></div><!-- Estrutura de Duas Colunas --><div class=\"sota-two-columns\"><!-- Coluna Esquerda - Fluxo Narrativo --><div class=\"sota-narrative-column\"><!-- Pacientes Ativos --><div class=\"patients-card clinical-card\"><div class=\"patients-card-header\"><div class=\"patients-card-title\"><div class=\"patients-card-icon\"><i class=\"fas fa-user-friends\"></i></div><div><h2 class=\"patients-card-heading\">Pacientes Ativos</h2><p class=\"patients-card-subtitle\">Em acompanhamento clínico</p></div></div><a href=\"/patients\" class=\"patients-card-link\">Ver Todos</a></div><div class=\"patients-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</em>.</h1><p class=\"sabio-dash-subtitle\">Você tem <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(patients) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"patients-list-container\">")
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(itoa(vm.Stats.SessionsToday))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 98, Col: 43}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " sessões</strong> hoje e <strong>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(itoa(vm.Stats.TotalPatients))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 100, Col: 43}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " pacientes</strong> em acompanhamento.</p></div><div class=\"sabio-dash-hero-actions\"><a href=\"/agenda\" class=\"sabio-btn sabio-btn--ghost\"><i class=\"fas fa-calendar-alt\"></i> Abrir agenda</a> <a href=\"/session/new\" class=\"sabio-btn sabio-btn--primary\"><i class=\"fas fa-plus\"></i> Nova sessão</a></div></div><!-- KPIs --><div class=\"sabio-kpi-grid\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, kpi := range vm.KpiItems {
+			var templ_7745c5c3_Var6 = []any{kpiCardClass(kpi.Dark)}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, p := range patients {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var4 templ.SafeURL
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + p.ID))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 98, Col: 47}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"patient-item\"><div class=\"patient-avatar\"><i class=\"fas fa-user\"></i></div><div class=\"patient-info\"><div class=\"patient-name font-clinical\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 105, Col: 59}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"patient-since\">Desde ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.CreatedAt)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 106, Col: 57}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><div class=\"patient-status\"></div></a>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var6).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><div class=\"sabio-kpi-label\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(kpi.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 118, Col: 45}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"sabio-kpi-value serif\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(kpi.Value)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 119, Col: 51}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"patients-empty\"><i class=\"fas fa-user-friends\"></i><p>Nenhum paciente ativo</p></div>")
+			var templ_7745c5c3_Var10 = []any{"sabio-kpi-delta sabio-kpi-delta--" + kpi.Tone}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var10).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(kpi.Delta)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 120, Col: 78}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></div><!-- Coluna Direita - Métricas e Cronologia --><div class=\"sota-metrics-column\"><!-- Linha do Tempo --><div class=\"stat-card-sota clinical-card\"><h2 class=\"dashboard-section-heading-sm\">Linha do Tempo</h2><div class=\"timeline-container\"><div class=\"timeline-marker\"></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeira consulta</div><div class=\"timeline-event-date\">15 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Início da terapia</div><div class=\"timeline-event-date\">22 Jan 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Primeiro insight significativo</div><div class=\"timeline-event-date\">05 Fev 2024</div></div><div class=\"timeline-event\"><div class=\"timeline-dot\"></div><div class=\"timeline-event-content\">Última sessão</div><div class=\"timeline-event-date\">18 Mar 2024</div></div></div></div><!-- Ações Rápidas --><div class=\"quick-actions-card clinical-card\"><div class=\"quick-actions-header\"><div class=\"quick-actions-icon\"><i class=\"fas fa-bolt\"></i></div><h2 class=\"quick-actions-title\">Ações Rápidas</h2></div><div class=\"quick-actions-list\"><a href=\"/patients/new\" class=\"quick-action\"><i class=\"fas fa-user-plus\"></i> Novo Paciente</a> <a href=\"/observations/new\" class=\"quick-action\"><i class=\"fas fa-sticky-note\"></i> Nova Observação</a></div></div></div></div><!-- Painel de Insights (IA) --><div class=\"insights-panel\"><div class=\"insights-content-sota\"><i class=\"fas fa-lightbulb insights-icon-sota\"></i><div>O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.</div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><!-- Grid principal --><div class=\"sabio-dash-main\"><!-- Coluna esquerda: agenda do dia --><div class=\"sabio-card\"><div class=\"sabio-card-header\"><div class=\"sabio-card-eyebrow\">Hoje</div><h2 class=\"sabio-card-title serif\">Agenda do dia</h2></div><div class=\"sabio-schedule\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(vm.TodaySchedule) > 0 {
+			for i, appt := range vm.TodaySchedule {
+				var templ_7745c5c3_Var13 = []any{scheduleItemClass(appt.Status)}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var13).String())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 1, Col: 0}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" style=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(lastItemStyle(i, len(vm.TodaySchedule)))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 136, Col: 100}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\"><div class=\"sabio-schedule-time mono\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(appt.Time)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 137, Col: 57}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><div class=\"sabio-schedule-info\"><div class=\"sabio-schedule-patient\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(appt.PatientName)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 139, Col: 63}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><div class=\"sabio-schedule-type\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(appt.Type)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 140, Col: 53}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div><div class=\"sabio-schedule-status\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if appt.Status == "done" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"sabio-pill sabio-pill--ok\">Concluída</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else if appt.Status == "next" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<span class=\"sabio-pill sabio-pill--accent\">Próxima</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span class=\"sabio-pill sabio-pill--neutral\">Agendada</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"sabio-empty-state\"><i class=\"fas fa-calendar-alt\"></i><p>Nenhuma sessão agendada para hoje</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></div><!-- Coluna direita --><div class=\"sabio-dash-right\"><!-- Pacientes em acompanhamento --><div class=\"sabio-card\"><div class=\"sabio-card-header\"><div><div class=\"sabio-card-eyebrow\">Pacientes</div><h2 class=\"sabio-card-title serif\">Em acompanhamento</h2></div><a href=\"/patients\" class=\"sabio-card-action\">Ver todos <i class=\"fas fa-chevron-right\"></i></a></div><div class=\"sabio-patients-list\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(vm.Patients) > 0 {
+			for i, p := range vm.Patients {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var19 templ.SafeURL
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/patients/" + p.ID))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 176, Col: 48}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" class=\"sabio-patient-row\" style=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var20 string
+				templ_7745c5c3_Var20, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(lastItemStyle(i, len(vm.Patients)))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 178, Col: 53}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\"><div class=\"sabio-avatar sabio-avatar--sm\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var21 string
+				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(patientInitials(p.Name))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 179, Col: 77}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div><div class=\"sabio-patient-info\"><div class=\"sabio-patient-name\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var22 string
+				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 181, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><div class=\"sabio-patient-since\">Desde ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var23 string
+				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(p.CreatedAt)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 182, Col: 62}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div><i class=\"fas fa-chevron-right sabio-row-arrow\"></i></a>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"sabio-empty-state\"><i class=\"fas fa-user-friends\"></i><p>Nenhum paciente cadastrado</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div></div><!-- Sessões recentes --><div class=\"sabio-card\"><div class=\"sabio-card-header\"><div><div class=\"sabio-card-eyebrow\">Reflexão</div><h2 class=\"sabio-card-title serif\">Últimas sessões</h2></div></div><div class=\"sabio-sessions-list\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(vm.Sessions) > 0 {
+			for _, s := range vm.Sessions {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var24 templ.SafeURL
+				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/session/" + s.ID + "/edit"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 207, Col: 57}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" class=\"sabio-session-row\"><div class=\"sabio-session-bar\"></div><div class=\"sabio-session-body\"><div class=\"sabio-session-meta\"><span class=\"sabio-session-patient\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var25 string
+				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(s.PatientName)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 211, Col: 62}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</span> <span class=\"sabio-session-dot\">·</span> <span class=\"sabio-session-date mono\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var26 string
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(s.Date)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 213, Col: 57}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if s.Theme != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"sabio-pill sabio-pill--neutral\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var27 string
+					templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(s.Theme)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 215, Col: 66}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if s.Summary != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<p class=\"sabio-session-preview serif\">&#34;")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var28 string
+					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(s.Summary)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/components/dashboard/dashboard.templ`, Line: 219, Col: 66}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "&#34;</p>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></a>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"sabio-empty-state\"><i class=\"fas fa-calendar-alt\"></i><p>Nenhuma sessão registrada ainda</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div></div></div></div><!-- Painel de IA --><div class=\"sabio-ai-panel\"><i class=\"fas fa-flask sabio-ai-panel-icon\"></i><div><strong class=\"sabio-ai-panel-title\">Análise de padrões</strong> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if vm.Stats.TotalSessions >= 5 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "Análise disponível. Acesse o perfil de um paciente para ver os padrões identificados nas sessões.")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "Disponível após registrar 5 ou mais sessões. Continue documentando para desbloquear a inteligência clínica.")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	result := ""
+	neg := n < 0
+	if neg {
+		n = -n
+	}
+	for n > 0 {
+		result = string(rune('0'+n%10)) + result
+		n /= 10
+	}
+	if neg {
+		result = "-" + result
+	}
+	return result
+}
+
+func lastItemStyle(i, total int) string {
+	if i == total-1 {
+		return "border-bottom:none"
+	}
+	return ""
 }
 
 var _ = templruntime.GeneratedTemplate

@@ -135,7 +135,7 @@ func main() {
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
-	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
+	var dashboardHandler *handlers.DashboardHandler // initialized after agendaService below
 	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 
@@ -190,6 +190,7 @@ func main() {
 	// Agenda routes
 	agendaService := services.NewAgendaService(appointmentRepo)
 	agendaHandler := handlers.NewAgendaHandler(agendaService, patientServiceAdapter)
+	dashboardHandler = handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaService)
 
 	mux.HandleFunc("/agenda", agendaHandler.View)
 	mux.HandleFunc("/agenda/day", agendaHandler.DayView)
@@ -411,22 +412,26 @@ func main() {
 	// Screenshot test endpoint (bypasses auth for visual testing)
 	mux.HandleFunc("/screenshot/dashboard", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		stats := dashboard.Stats{
-			TotalPatients:    12,
-			TotalSessions:    47,
-			SessionsThisWeek: 5,
-			SessionsToday:    1,
+		vm := dashboard.DashboardVM{
+			GreetingName: "Terapeuta",
+			DateLabel:    "DOMINGO, 20 DE MARÇO",
+			Stats: dashboard.Stats{TotalPatients: 12, TotalSessions: 47, SessionsThisWeek: 5, SessionsToday: 1},
+			KpiItems: []dashboard.KpiItem{
+				{Label: "Sessões registradas", Value: "47", Delta: "+5 esta semana", Tone: "neutral", Dark: true},
+				{Label: "Pacientes ativos", Value: "12", Delta: "em acompanhamento", Tone: "up"},
+				{Label: "Hoje", Value: "1", Delta: "0 agendamentos", Tone: "neutral"},
+				{Label: "Esta semana", Value: "5", Delta: "sessões registradas", Tone: "neutral"},
+			},
+			Patients: []dashboard.PatientItem{
+				{ID: "1", Name: "Maria Silva", CreatedAt: "10/01/2024"},
+				{ID: "2", Name: "João Santos", CreatedAt: "15/02/2024"},
+			},
+			Sessions: []dashboard.SessionItem{
+				{ID: "1", PatientName: "Maria Silva", Date: "20/03/2024", Summary: "Exploramos questões sobre autoeficácia.", Theme: "Cognição"},
+				{ID: "2", PatientName: "João Santos", Date: "19/03/2024", Summary: "Gestão de estresse no trabalho.", Theme: "Ansiedade"},
+			},
 		}
-		patients := []dashboard.PatientItem{
-			{ID: "1", Name: "Maria Silva", CreatedAt: "10/01/2024"},
-			{ID: "2", Name: "João Santos", CreatedAt: "15/02/2024"},
-			{ID: "3", Name: "Ana Costa", CreatedAt: "01/03/2024"},
-		}
-		sessions := []dashboard.SessionItem{
-			{ID: "1", PatientName: "Maria Silva", Date: "20/03/2024", Summary: "Exploramos questões sobre autoeficácia e mecanismos de enfrentamento adaptativos."},
-			{ID: "2", PatientName: "João Santos", Date: "19/03/2024", Summary: "Discussão sobre gestão de estresse no trabalho e técnicas de respiração."},
-		}
-		dashboard.Dashboard(stats, patients, sessions).Render(r.Context(), w)
+		dashboard.Dashboard(vm).Render(r.Context(), w)
 	})
 
 	// File server with cache busting for development

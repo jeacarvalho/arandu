@@ -1,14 +1,30 @@
 package dashboard
 
-import "strconv"
+import (
+	"strings"
+	"time"
+)
 
 type Stats struct {
-	TotalPatients   int
-	NewThisWeek     int
-	ActiveThisMonth int
-	TotalSessions   int
+	TotalPatients    int
+	TotalSessions    int
 	SessionsThisWeek int
-	SessionsToday   int
+	SessionsToday    int
+}
+
+type KpiItem struct {
+	Label string
+	Value string
+	Delta string
+	Tone  string // "neutral" | "up" | "warn"
+	Dark  bool
+}
+
+type AppointmentItem struct {
+	Time        string
+	PatientName string
+	Type        string
+	Status      string // "done" | "next" | "upcoming"
 }
 
 type PatientItem struct {
@@ -21,183 +37,238 @@ type SessionItem struct {
 	ID          string
 	PatientName string
 	Date        string
+	RawDate     time.Time
 	Summary     string
+	Theme       string
 }
 
-templ Dashboard(stats Stats, patients []PatientItem, sessions []SessionItem) {
-	<div class="sota-container">
-		<!-- Header -->
-		<div class="dashboard-header">
-			<h1 class="dashboard-title">
-				Dashboard Clínico
-			</h1>
-			<p class="dashboard-subtitle">
-				Visão geral para reflexão terapêutica e acompanhamento
-			</p>
+type DashboardVM struct {
+	GreetingName  string
+	DateLabel     string
+	Stats         Stats
+	KpiItems      []KpiItem
+	TodaySchedule []AppointmentItem
+	Patients      []PatientItem
+	Sessions      []SessionItem
+}
+
+func patientInitials(name string) string {
+	parts := strings.Fields(name)
+	if len(parts) == 0 {
+		return "?"
+	}
+	if len(parts) == 1 {
+		if len(parts[0]) >= 2 {
+			return strings.ToUpper(parts[0][:2])
+		}
+		return strings.ToUpper(parts[0])
+	}
+	return strings.ToUpper(string([]rune(parts[0])[0])) + strings.ToUpper(string([]rune(parts[len(parts)-1])[0]))
+}
+
+func scheduleItemClass(status string) string {
+	switch status {
+	case "done":
+		return "sabio-schedule-item sabio-schedule-item--done"
+	case "next":
+		return "sabio-schedule-item sabio-schedule-item--next"
+	default:
+		return "sabio-schedule-item"
+	}
+}
+
+func kpiCardClass(dark bool) string {
+	if dark {
+		return "sabio-kpi-card sabio-kpi-card--dark"
+	}
+	return "sabio-kpi-card"
+}
+
+templ Dashboard(vm DashboardVM) {
+	<div class="sabio-dash">
+		<!-- Hero editorial -->
+		<div class="sabio-dash-hero">
+			<div class="sabio-dash-hero-main">
+				<div class="sabio-dash-date">{ vm.DateLabel }</div>
+				<h1 class="sabio-dash-greeting serif">
+					Bom dia, <em class="sabio-dash-greeting-name">{ vm.GreetingName }</em>.
+				</h1>
+				<p class="sabio-dash-subtitle">
+					Você tem
+					<strong>{ itoa(vm.Stats.SessionsToday) } sessões</strong>
+					hoje e
+					<strong>{ itoa(vm.Stats.TotalPatients) } pacientes</strong>
+					em acompanhamento.
+				</p>
+			</div>
+			<div class="sabio-dash-hero-actions">
+				<a href="/agenda" class="sabio-btn sabio-btn--ghost">
+					<i class="fas fa-calendar-alt"></i> Abrir agenda
+				</a>
+				<a href="/session/new" class="sabio-btn sabio-btn--primary">
+					<i class="fas fa-plus"></i> Nova sessão
+				</a>
+			</div>
 		</div>
 
-		<!-- Grid de Evolução (4 indicadores) -->
-		<div class="evolution-grid">
-			<div class="stat-card-sota">
-				<div class="stat-value-sota">
-					{ strconv.Itoa(stats.TotalSessions) }
+		<!-- KPIs -->
+		<div class="sabio-kpi-grid">
+			for _, kpi := range vm.KpiItems {
+				<div class={ kpiCardClass(kpi.Dark) }>
+					<div class="sabio-kpi-label">{ kpi.Label }</div>
+					<div class="sabio-kpi-value serif">{ kpi.Value }</div>
+					<div class={ "sabio-kpi-delta sabio-kpi-delta--" + kpi.Tone }>{ kpi.Delta }</div>
 				</div>
-				<div class="stat-label-sota">
-					Sessões
-				</div>
-			</div>
-			<div class="stat-card-sota">
-				<div class="stat-value-sota">
-					{ strconv.Itoa(stats.ActiveThisMonth) }
-				</div>
-				<div class="stat-label-sota">
-					Meses
-				</div>
-			</div>
-			<div class="stat-card-sota">
-				<div class="stat-value-sota">
-					0
-				</div>
-				<div class="stat-label-sota">
-					Padrões
-				</div>
-			</div>
-			<div class="stat-card-sota">
-				<div class="stat-value-sota">
-					0
-				</div>
-				<div class="stat-label-sota">
-					Hipóteses
-				</div>
-			</div>
+			}
 		</div>
 
-		<!-- Estrutura de Duas Colunas -->
-		<div class="sota-two-columns">
-			<!-- Coluna Esquerda - Fluxo Narrativo -->
-			<div class="sota-narrative-column">
-			<!-- Pacientes Ativos -->
-			<div class="patients-card clinical-card">
-				<div class="patients-card-header">
-						<div class="patients-card-title">
-							<div class="patients-card-icon">
-								<i class="fas fa-user-friends"></i>
+		<!-- Grid principal -->
+		<div class="sabio-dash-main">
+			<!-- Coluna esquerda: agenda do dia -->
+			<div class="sabio-card">
+				<div class="sabio-card-header">
+					<div class="sabio-card-eyebrow">Hoje</div>
+					<h2 class="sabio-card-title serif">Agenda do dia</h2>
+				</div>
+				<div class="sabio-schedule">
+					if len(vm.TodaySchedule) > 0 {
+						for i, appt := range vm.TodaySchedule {
+							<div class={ scheduleItemClass(appt.Status) } style={ lastItemStyle(i, len(vm.TodaySchedule)) }>
+								<div class="sabio-schedule-time mono">{ appt.Time }</div>
+								<div class="sabio-schedule-info">
+									<div class="sabio-schedule-patient">{ appt.PatientName }</div>
+									<div class="sabio-schedule-type">{ appt.Type }</div>
+								</div>
+								<div class="sabio-schedule-status">
+									if appt.Status == "done" {
+										<span class="sabio-pill sabio-pill--ok">Concluída</span>
+									} else if appt.Status == "next" {
+										<span class="sabio-pill sabio-pill--accent">Próxima</span>
+									} else {
+										<span class="sabio-pill sabio-pill--neutral">Agendada</span>
+									}
+								</div>
 							</div>
-							<div>
-								<h2 class="patients-card-heading">Pacientes Ativos</h2>
-								<p class="patients-card-subtitle">Em acompanhamento clínico</p>
-							</div>
+						}
+					} else {
+						<div class="sabio-empty-state">
+							<i class="fas fa-calendar-alt"></i>
+							<p>Nenhuma sessão agendada para hoje</p>
 						</div>
-						<a href="/patients" class="patients-card-link">Ver Todos</a>
+					}
+				</div>
+			</div>
+
+			<!-- Coluna direita -->
+			<div class="sabio-dash-right">
+				<!-- Pacientes em acompanhamento -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Pacientes</div>
+							<h2 class="sabio-card-title serif">Em acompanhamento</h2>
+						</div>
+						<a href="/patients" class="sabio-card-action">Ver todos <i class="fas fa-chevron-right"></i></a>
 					</div>
-					<div class="patients-list">
-						if len(patients) > 0 {
-							<div class="patients-list-container">
-								for _, p := range patients {
-									<a 
-										href={ templ.URL("/patients/" + p.ID) } 
-										class="patient-item"
-									>
-										<div class="patient-avatar">
-											<i class="fas fa-user"></i>
-										</div>
-										<div class="patient-info">
-											<div class="patient-name font-clinical">{ p.Name }</div>
-											<div class="patient-since">Desde { p.CreatedAt }</div>
-										</div>
-										<div class="patient-status"></div>
-									</a>
-								}
-							</div>
+					<div class="sabio-patients-list">
+						if len(vm.Patients) > 0 {
+							for i, p := range vm.Patients {
+								<a href={ templ.URL("/patients/" + p.ID) }
+								   class="sabio-patient-row"
+								   style={ lastItemStyle(i, len(vm.Patients)) }>
+									<div class="sabio-avatar sabio-avatar--sm">{ patientInitials(p.Name) }</div>
+									<div class="sabio-patient-info">
+										<div class="sabio-patient-name">{ p.Name }</div>
+										<div class="sabio-patient-since">Desde { p.CreatedAt }</div>
+									</div>
+									<i class="fas fa-chevron-right sabio-row-arrow"></i>
+								</a>
+							}
 						} else {
-							<div class="patients-empty">
+							<div class="sabio-empty-state">
 								<i class="fas fa-user-friends"></i>
-								<p>Nenhum paciente ativo</p>
+								<p>Nenhum paciente cadastrado</p>
+							</div>
+						}
+					</div>
+				</div>
+
+				<!-- Sessões recentes -->
+				<div class="sabio-card">
+					<div class="sabio-card-header">
+						<div>
+							<div class="sabio-card-eyebrow">Reflexão</div>
+							<h2 class="sabio-card-title serif">Últimas sessões</h2>
+						</div>
+					</div>
+					<div class="sabio-sessions-list">
+						if len(vm.Sessions) > 0 {
+							for _, s := range vm.Sessions {
+								<a href={ templ.URL("/session/" + s.ID + "/edit") } class="sabio-session-row">
+									<div class="sabio-session-bar"></div>
+									<div class="sabio-session-body">
+										<div class="sabio-session-meta">
+											<span class="sabio-session-patient">{ s.PatientName }</span>
+											<span class="sabio-session-dot">·</span>
+											<span class="sabio-session-date mono">{ s.Date }</span>
+											if s.Theme != "" {
+												<span class="sabio-pill sabio-pill--neutral">{ s.Theme }</span>
+											}
+										</div>
+										if s.Summary != "" {
+											<p class="sabio-session-preview serif">&#34;{ s.Summary }&#34;</p>
+										}
+									</div>
+								</a>
+							}
+						} else {
+							<div class="sabio-empty-state">
+								<i class="fas fa-calendar-alt"></i>
+								<p>Nenhuma sessão registrada ainda</p>
 							</div>
 						}
 					</div>
 				</div>
 			</div>
-
-			<!-- Coluna Direita - Métricas e Cronologia -->
-			<div class="sota-metrics-column">
-			<!-- Linha do Tempo -->
-			<div class="stat-card-sota clinical-card">
-				<h2 class="dashboard-section-heading-sm">
-					Linha do Tempo
-				</h2>
-					<div class="timeline-container">
-						<div class="timeline-marker"></div>
-						<div class="timeline-event">
-							<div class="timeline-dot"></div>
-							<div class="timeline-event-content">
-								Primeira consulta
-							</div>
-							<div class="timeline-event-date">
-								15 Jan 2024
-							</div>
-						</div>
-						<div class="timeline-event">
-							<div class="timeline-dot"></div>
-							<div class="timeline-event-content">
-								Início da terapia
-							</div>
-							<div class="timeline-event-date">
-								22 Jan 2024
-							</div>
-						</div>
-						<div class="timeline-event">
-							<div class="timeline-dot"></div>
-							<div class="timeline-event-content">
-								Primeiro insight significativo
-							</div>
-							<div class="timeline-event-date">
-								05 Fev 2024
-							</div>
-						</div>
-						<div class="timeline-event">
-							<div class="timeline-dot"></div>
-							<div class="timeline-event-content">
-								Última sessão
-							</div>
-							<div class="timeline-event-date">
-								18 Mar 2024
-							</div>
-						</div>
-					</div>
-				</div>
-
-			<!-- Ações Rápidas -->
-			<div class="quick-actions-card clinical-card">
-				<div class="quick-actions-header">
-						<div class="quick-actions-icon">
-							<i class="fas fa-bolt"></i>
-						</div>
-						<h2 class="quick-actions-title">Ações Rápidas</h2>
-					</div>
-					<div class="quick-actions-list">
-						<a href="/patients/new" class="quick-action">
-							<i class="fas fa-user-plus"></i>
-							Novo Paciente
-						</a>
-
-						<a href="/observations/new" class="quick-action">
-							<i class="fas fa-sticky-note"></i>
-							Nova Observação
-						</a>
-					</div>
-				</div>
-			</div>
 		</div>
 
-		<!-- Painel de Insights (IA) -->
-		<div class="insights-panel">
-			<div class="insights-content-sota">
-				<i class="fas fa-lightbulb insights-icon-sota"></i>
-				<div>
-					O sistema detectou padrões recorrentes nas últimas 3 sessões. Considere explorar a relação entre ansiedade e padrões de sono.
-				</div>
+		<!-- Painel de IA -->
+		<div class="sabio-ai-panel">
+			<i class="fas fa-flask sabio-ai-panel-icon"></i>
+			<div>
+				<strong class="sabio-ai-panel-title">Análise de padrões</strong>
+				if vm.Stats.TotalSessions >= 5 {
+					Análise disponível. Acesse o perfil de um paciente para ver os padrões identificados nas sessões.
+				} else {
+					Disponível após registrar 5 ou mais sessões. Continue documentando para desbloquear a inteligência clínica.
+				}
 			</div>
 		</div>
 	</div>
+}
+
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	result := ""
+	neg := n < 0
+	if neg {
+		n = -n
+	}
+	for n > 0 {
+		result = string(rune('0'+n%10)) + result
+		n /= 10
+	}
+	if neg {
+		result = "-" + result
+	}
+	return result
+}
+
+func lastItemStyle(i, total int) string {
+	if i == total-1 {
+		return "border-bottom:none"
+	}
+	return ""
 }
