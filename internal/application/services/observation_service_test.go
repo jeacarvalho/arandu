@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -10,11 +11,20 @@ import (
 	"github.com/google/uuid"
 )
 
+var errRepoFailed = errors.New("repository failed")
+
 type mockObservationRepository struct {
 	observations map[string]*observation.Observation
+	saveErr      error
+	findByIDErr  error
+	updateErr    error
+	deleteErr    error
 }
 
 func (m *mockObservationRepository) Save(ctx context.Context, o *observation.Observation) error {
+	if m.saveErr != nil {
+		return m.saveErr
+	}
 	if o.ID == "" {
 		o.ID = uuid.New().String()
 	}
@@ -26,6 +36,9 @@ func (m *mockObservationRepository) Save(ctx context.Context, o *observation.Obs
 }
 
 func (m *mockObservationRepository) FindByID(ctx context.Context, id string) (*observation.Observation, error) {
+	if m.findByIDErr != nil {
+		return nil, m.findByIDErr
+	}
 	return m.observations[id], nil
 }
 
@@ -48,11 +61,17 @@ func (m *mockObservationRepository) FindAll(ctx context.Context) ([]*observation
 }
 
 func (m *mockObservationRepository) Update(ctx context.Context, o *observation.Observation) error {
+	if m.updateErr != nil {
+		return m.updateErr
+	}
 	m.observations[o.ID] = o
 	return nil
 }
 
 func (m *mockObservationRepository) Delete(ctx context.Context, id string) error {
+	if m.deleteErr != nil {
+		return m.deleteErr
+	}
 	delete(m.observations, id)
 	return nil
 }
@@ -329,4 +348,84 @@ func TestObservationService_UpdateObservation(t *testing.T) {
 
 func contains(s, substr string) bool {
 	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && (s[:len(substr)] == substr || contains(s[1:], substr)))
+}
+
+func TestObservationService_CreateObservation_RepositoryError(t *testing.T) {
+	ctx := context.Background()
+	repo := &mockObservationRepository{
+		observations: make(map[string]*observation.Observation),
+		saveErr:      errRepoFailed,
+	}
+	service := NewObservationService(repo)
+
+	obs, err := service.CreateObservation(ctx, "session-123", "Valid content")
+
+	if err == nil {
+		t.Error("Expected error from repository, got nil")
+	}
+	if obs != nil {
+		t.Error("Expected nil observation on error")
+	}
+}
+
+func TestObservationService_UpdateObservation_NotFound(t *testing.T) {
+	ctx := context.Background()
+	repo := &mockObservationRepository{
+		observations: make(map[string]*observation.Observation),
+	}
+	service := NewObservationService(repo)
+
+	err := service.UpdateObservation(ctx, "non-existent", "New content")
+
+	if err == nil {
+		t.Error("Expected error for non-existent observation")
+	}
+}
+
+func TestObservationService_UpdateObservation_RepositoryError(t *testing.T) {
+	ctx := context.Background()
+	repo := &mockObservationRepository{
+		observations: map[string]*observation.Observation{
+			"obs-1": {ID: "obs-1", SessionID: "session-123", Content: "Old content"},
+		},
+		findByIDErr: errRepoFailed,
+	}
+	service := NewObservationService(repo)
+
+	err := service.UpdateObservation(ctx, "obs-1", "New content")
+
+	if err == nil {
+		t.Error("Expected error from findByID, got nil")
+	}
+}
+
+func TestObservationService_DeleteObservation_RepositoryError(t *testing.T) {
+	ctx := context.Background()
+	repo := &mockObservationRepository{
+		observations: map[string]*observation.Observation{
+			"obs-1": {ID: "obs-1", SessionID: "session-123"},
+		},
+		deleteErr: errRepoFailed,
+	}
+	service := NewObservationService(repo)
+
+	err := service.DeleteObservation(ctx, "obs-1")
+
+	if err == nil {
+		t.Error("Expected error from delete, got nil")
+	}
+}
+
+func TestObservationService_ListObservations_RepositoryError(t *testing.T) {
+	ctx := context.Background()
+	repo := &mockObservationRepository{
+		observations: make(map[string]*observation.Observation),
+	}
+	service := NewObservationService(repo)
+
+	_, err := service.ListObservations(ctx)
+
+	if err != nil {
+		t.Errorf("Expected no error from ListObservations, got %v", err)
+	}
 }
