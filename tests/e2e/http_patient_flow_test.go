@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/observation"
 	"arandu/internal/infrastructure/repository/sqlite"
 	"arandu/internal/platform/logger"
 	"arandu/internal/platform/middleware"
@@ -20,6 +21,21 @@ import (
 
 	"github.com/google/uuid"
 )
+
+type classificationMock2 struct{}
+
+func (m *classificationMock2) GetTags(ctx context.Context) ([]observation.Tag, error)             { return nil, nil }
+func (m *classificationMock2) GetTagsByType(ctx context.Context, tagType observation.TagType) ([]observation.Tag, error) { return nil, nil }
+func (m *classificationMock2) AddTagToObservation(ctx context.Context, observationID, tagID string, intensity int) error { return nil }
+func (m *classificationMock2) RemoveTagFromObservation(ctx context.Context, observationID, tagID string) error   { return nil }
+func (m *classificationMock2) GetObservationTags(ctx context.Context, observationID string) ([]observation.ObservationTag, error) { return nil, nil }
+func (m *classificationMock2) GetObservation(ctx context.Context, id string) (*observation.Observation, error) { return nil, nil }
+
+type agendaMock2 struct{}
+
+func (m *agendaMock2) GetDayView(ctx context.Context, date time.Time) (*services.DayView, error) {
+	return &services.DayView{}, nil
+}
 
 func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.TenantPool) http.Handler {
 	mux := http.NewServeMux()
@@ -51,6 +67,12 @@ func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.
 	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 	goalServiceAdapter := web.NewGoalServiceAdapter(goalRepo)
 
+	// Classification service mock
+	var classificationServiceAdapter handlers.ClassificationServiceInterface = &classificationMock2{}
+
+	// DashboardAgendaService mock
+	var agendaServiceAdapter handlers.DashboardAgendaService = &agendaMock2{}
+
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
 		GetMedicationsFunc: func(ctx context.Context, patientID string) ([]interface{}, error) {
 			meds, err := biopsychosocialService.GetMedications(ctx, patientID)
@@ -72,10 +94,10 @@ func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.
 	}
 
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, web.NewAnamnesisServiceAdapter(patientRepo))
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, classificationServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
-	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter)
+	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaServiceAdapter)
 	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 

@@ -51,9 +51,17 @@ clean:
 	@echo "✅ Limpo"
 
 # Executar testes
-test:
-	@echo "🧪 Executando testes..."
-	@go test ./... -v
+test: test-unit test-e2e
+
+test-unit:
+	@echo "🧪 Executando unit tests..."
+	@bash tests/run_unit.sh
+
+test-e2e:
+	@echo "🌐 Executando E2E tests..."
+	@bash tests/run_e2e.sh
+
+test-all: test-unit test-e2e
 
 # Lint
 golint:

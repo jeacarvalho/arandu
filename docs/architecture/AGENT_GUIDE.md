@@ -307,6 +307,50 @@ NOVA TASK RECEBIDA
 
 ---
 
-**Última Atualização**: Março 2026  
+### 13. Estrutura de Testes
+
+O Arandu consolidou todos os testes em `tests/`:
+
+```
+tests/
+├── run_unit.sh              # Entry point: unit tests Go
+├── run_e2e.sh              # Entry point: E2E (Go + JS + Shell)
+└── e2e/
+    ├── js/                  # Testes Playwright (Node.js)
+    │   └── run_js_tests.sh
+    ├── shell/              # Testes de scripts (Shell)
+    │   └── run_shell_tests.sh
+    └── *.go               # Testes E2E em Go
+```
+
+#### Executando Testes
+
+```bash
+# Unit tests (Makefile)
+make test-unit
+tests/run_unit.sh           # com coverage: tests/run_unit.sh -cover
+
+# E2E (Makefile)
+make test-e2e
+
+# E2E detalhado
+tests/run_e2e.sh go        # apenas Go E2E
+tests/run_e2e.sh js        # apenas JS/Playwright
+tests/run_e2e.sh shell     # apenas scripts shell
+tests/run_e2e.sh all       # tudo
+```
+
+#### Makefile Targets
+
+```bash
+make test     # unit + e2e
+make test-unit
+make test-e2e
+make test-all # alias para test
+```
+
+---
+
+**Última Atualização**: Abril 2026  
 **Status**: Em produção  
-**Para Agentes**: Este guia deve ser consultado ANTES de iniciar qualquer implementação
+**Para Agentes**: Este guia deve ser consultado ANTES de iniciar qualquer implementation

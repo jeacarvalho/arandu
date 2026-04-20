@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_DIR="$(cd "$SCRIPT_DIR/../../../scripts" && pwd)"
 source "$SCRIPT_DIR/test_framework.sh"
 
 echo "🧪 Testing arandu_trace.sh"
 echo "==========================="
 
 test_start "Script exists"
-if [ -f "$SCRIPT_DIR/arandu_trace.sh" ]; then
+if [ -f "$SCRIPTS_DIR/arandu_trace.sh" ]; then
   test_pass
 else
   test_fail "Script not found"
@@ -15,14 +16,14 @@ else
 fi
 
 test_start "Script is executable"
-if [ -x "$SCRIPT_DIR/arandu_trace.sh" ]; then
+if [ -x "$SCRIPTS_DIR/arandu_trace.sh" ]; then
   test_pass
 else
   test_fail "Not executable"
 fi
 
 test_start "Creates work/logs directory"
-source "$SCRIPT_DIR/arandu_trace.sh"
+source "$SCRIPTS_DIR/arandu_trace.sh"
 mkdir -p work/logs
 if [ -d "work/logs" ]; then
   test_pass
@@ -39,21 +40,21 @@ else
 fi
 
 test_start "Handles --trace flag"
-if grep -q "TRACE_ENABLED" "$SCRIPT_DIR/arandu_trace.sh"; then
+if grep -q "TRACE_ENABLED" "$SCRIPTS_DIR/arandu_trace.sh"; then
   test_pass
 else
   test_fail "Missing TRACE_ENABLED"
 fi
 
 test_start "Trace init function exists"
-if grep -q "trace_init()" "$SCRIPT_DIR/arandu_trace.sh"; then
+if grep -q "trace_init()" "$SCRIPTS_DIR/arandu_trace.sh"; then
   test_pass
 else
   test_fail "Missing trace_init"
 fi
 
 test_start "Trace function exists"
-if grep -q "^trace()" "$SCRIPT_DIR/arandu_trace.sh"; then
+if grep -q "^trace()" "$SCRIPTS_DIR/arandu_trace.sh"; then
   test_pass
 else
   test_fail "Missing trace function"
