@@ -12,6 +12,7 @@ import (
 	"arandu/internal/application/services"
 	"arandu/internal/domain/appointment"
 	"arandu/internal/domain/patient"
+	"arandu/internal/domain/session"
 
 	"github.com/google/uuid"
 )
@@ -93,6 +94,18 @@ func (m *mockPatientService) GetPatientByID(ctx context.Context, id string) (*pa
 	return &patient.Patient{ID: id, Name: "Test Patient"}, nil
 }
 
+// mockSessionService implements AgendaSessionServiceInterface
+type mockSessionService struct{}
+
+func (m *mockSessionService) CreateSession(ctx context.Context, patientID string, date time.Time, summary string) (*session.Session, error) {
+	return &session.Session{
+		ID:        uuid.New().String(),
+		PatientID: patientID,
+		Date:      date,
+		Summary:   summary,
+	}, nil
+}
+
 // MockAgendaService implements AgendaServiceInterface
 type MockAgendaService struct {
 	repo *mockAppointmentRepository
@@ -105,8 +118,9 @@ func NewMockAgendaService() *services.AgendaService {
 func TestAgendaHandler_View_FullPage(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda", nil)
 	w := httptest.NewRecorder()
@@ -138,8 +152,9 @@ func TestAgendaHandler_View_FullPage(t *testing.T) {
 func TestAgendaHandler_View_HTMXRequest(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda", nil)
 	req.Header.Set("HX-Request", "true")
@@ -162,8 +177,9 @@ func TestAgendaHandler_View_HTMXRequest(t *testing.T) {
 func TestAgendaHandler_DayView(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	// Test without HTMX header
 	req := httptest.NewRequest(http.MethodGet, "/agenda/day?date=2026-04-14", nil)
@@ -190,8 +206,9 @@ func TestAgendaHandler_DayView(t *testing.T) {
 func TestAgendaHandler_WeekView(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda/week", nil)
 	w := httptest.NewRecorder()
@@ -206,8 +223,9 @@ func TestAgendaHandler_WeekView(t *testing.T) {
 func TestAgendaHandler_MonthView(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda/month?year=2026&month=4", nil)
 	w := httptest.NewRecorder()
@@ -222,8 +240,9 @@ func TestAgendaHandler_MonthView(t *testing.T) {
 func TestAgendaHandler_Create_NonHTMX(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	formData := fmt.Sprintf("patient_id=patient-1&patient_name=João Silva&date=2026-04-14&start_time=10:00&duration=50&type=session")
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments", bytes.NewBufferString(formData))
@@ -246,8 +265,9 @@ func TestAgendaHandler_Create_NonHTMX(t *testing.T) {
 func TestAgendaHandler_Create_HTMX(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	formData := fmt.Sprintf("patient_id=patient-1&patient_name=João Silva&date=2026-04-14&start_time=10:00&duration=50&type=session")
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments", bytes.NewBufferString(formData))
@@ -271,8 +291,9 @@ func TestAgendaHandler_Create_HTMX(t *testing.T) {
 func TestAgendaHandler_Cancel_NotFound(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodDelete, "/agenda/appointments/non-existent-id", nil)
 	w := httptest.NewRecorder()
@@ -287,8 +308,9 @@ func TestAgendaHandler_Cancel_NotFound(t *testing.T) {
 func TestAgendaHandler_NewForm(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda/new", nil)
 	w := httptest.NewRecorder()
@@ -308,8 +330,9 @@ func TestAgendaHandler_NewForm(t *testing.T) {
 func TestAgendaHandler_GetSlots(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda/slots?date=2026-04-14", nil)
 	w := httptest.NewRecorder()
@@ -324,8 +347,9 @@ func TestAgendaHandler_GetSlots(t *testing.T) {
 func TestAgendaHandler_View_WithDate(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	// Test with specific date
 	req := httptest.NewRequest(http.MethodGet, "/agenda?date=2026-04-14&view=semana", nil)
@@ -347,8 +371,9 @@ func TestAgendaHandler_View_WithDate(t *testing.T) {
 func TestAgendaHandler_Show_NotFound(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodGet, "/agenda/appointments/non-existent-id", nil)
 	w := httptest.NewRecorder()
@@ -363,8 +388,9 @@ func TestAgendaHandler_Show_NotFound(t *testing.T) {
 func TestAgendaHandler_Create_InvalidDate(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	formData := fmt.Sprintf("patient_id=patient-1&date=invalid-date&start_time=10:00&duration=50")
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments", bytes.NewBufferString(formData))
@@ -381,8 +407,9 @@ func TestAgendaHandler_Create_InvalidDate(t *testing.T) {
 func TestAgendaHandler_Create_Conflict(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	// Create first appointment
 	formData := fmt.Sprintf("patient_id=patient-1&patient_name=João Silva&date=2026-04-14&start_time=10:00&duration=50&type=session")
@@ -407,8 +434,9 @@ func TestAgendaHandler_Create_Conflict(t *testing.T) {
 func TestAgendaHandler_Update(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	// Test PUT without proper ID
 	req := httptest.NewRequest(http.MethodPut, "/agenda/appointments/", nil)
@@ -425,8 +453,9 @@ func TestAgendaHandler_Update(t *testing.T) {
 func TestAgendaHandler_MethodNotAllowed(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	tests := []struct {
 		name   string
@@ -468,8 +497,9 @@ func TestAgendaHandler_MethodNotAllowed(t *testing.T) {
 func TestAgendaHandler_Reschedule(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	formData := fmt.Sprintf("date=2026-04-15&start_time=14:00&duration=50")
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/test-id/reschedule", bytes.NewBufferString(formData))
@@ -487,8 +517,9 @@ func TestAgendaHandler_Reschedule(t *testing.T) {
 func TestAgendaHandler_Complete(t *testing.T) {
 	agendaService := NewMockAgendaService()
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/test-id/complete", nil)
 	w := httptest.NewRecorder()
@@ -505,6 +536,7 @@ func TestAgendaHandler_Cancel_HTMX(t *testing.T) {
 	repo := newMockAppointmentRepository()
 	agendaService := services.NewAgendaService(repo)
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
 	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
 	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
@@ -513,7 +545,7 @@ func TestAgendaHandler_Cancel_HTMX(t *testing.T) {
 	}
 	repo.Save(context.Background(), appt)
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/cancel", nil)
 	req.Header.Set("HX-Request", "true")
@@ -533,6 +565,7 @@ func TestAgendaHandler_Cancel_NonHTMX(t *testing.T) {
 	repo := newMockAppointmentRepository()
 	agendaService := services.NewAgendaService(repo)
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
 	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
 	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
@@ -541,7 +574,7 @@ func TestAgendaHandler_Cancel_NonHTMX(t *testing.T) {
 	}
 	repo.Save(context.Background(), appt)
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/cancel", nil)
 	w := httptest.NewRecorder()
@@ -560,6 +593,7 @@ func TestAgendaHandler_Complete_HTMX(t *testing.T) {
 	repo := newMockAppointmentRepository()
 	agendaService := services.NewAgendaService(repo)
 	patientService := &mockPatientService{}
+	sessionService := &mockSessionService{}
 
 	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
 	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
@@ -568,7 +602,7 @@ func TestAgendaHandler_Complete_HTMX(t *testing.T) {
 	}
 	repo.Save(context.Background(), appt)
 
-	handler := NewAgendaHandler(agendaService, patientService)
+	handler := NewAgendaHandler(agendaService, patientService, sessionService)
 
 	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/complete", nil)
 	req.Header.Set("HX-Request", "true")

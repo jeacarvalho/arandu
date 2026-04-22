@@ -189,7 +189,7 @@ func main() {
 
 	// Agenda routes
 	agendaService := services.NewAgendaService(appointmentRepo)
-	agendaHandler := handlers.NewAgendaHandler(agendaService, patientServiceAdapter)
+	agendaHandler := handlers.NewAgendaHandler(agendaService, patientServiceAdapter, sessionServiceAdapter)
 	dashboardHandler = handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaService)
 
 	mux.HandleFunc("/agenda", agendaHandler.View)
@@ -212,6 +212,8 @@ func main() {
 			agendaHandler.Cancel(w, r)
 		} else if strings.Contains(path, "/reschedule") && r.Method == "POST" {
 			agendaHandler.Reschedule(w, r)
+		} else if strings.Contains(path, "/complete-with-session") && r.Method == "POST" {
+			agendaHandler.CompleteWithSession(w, r)
 		} else if strings.Contains(path, "/complete") && r.Method == "POST" {
 			agendaHandler.Complete(w, r)
 		} else {

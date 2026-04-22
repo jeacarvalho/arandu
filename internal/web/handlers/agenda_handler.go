@@ -10,6 +10,7 @@ import (
 
 	"arandu/internal/application/services"
 	"arandu/internal/domain/appointment"
+	"arandu/internal/domain/session"
 
 	agendaComponents "arandu/web/components/agenda"
 )
@@ -18,6 +19,12 @@ import (
 type AgendaHandler struct {
 	agendaService  AgendaServiceInterface
 	patientService PatientServiceInterface
+	sessionService AgendaSessionServiceInterface
+}
+
+// AgendaSessionServiceInterface defines the interface for session creation from agenda
+type AgendaSessionServiceInterface interface {
+	CreateSession(ctx context.Context, patientID string, date time.Time, summary string) (*session.Session, error)
 }
 
 // AgendaServiceInterface defines the interface for agenda operations
@@ -36,10 +43,11 @@ type AgendaServiceInterface interface {
 }
 
 // NewAgendaHandler creates a new agenda handler
-func NewAgendaHandler(agendaService AgendaServiceInterface, patientService PatientServiceInterface) *AgendaHandler {
+func NewAgendaHandler(agendaService AgendaServiceInterface, patientService PatientServiceInterface, sessionService AgendaSessionServiceInterface) *AgendaHandler {
 	return &AgendaHandler{
 		agendaService:  agendaService,
 		patientService: patientService,
+		sessionService: sessionService,
 	}
 }
 
@@ -786,6 +794,48 @@ func (h *AgendaHandler) Complete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	redirectURL := "/agenda?view=dia&date=" + appt.Date.Format("2006-01-02")
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", redirectURL)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+}
+
+// CompleteWithSession handles POST /agenda/appointments/{id}/complete-with-session
+func (h *AgendaHandler) CompleteWithSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := extractIDFromPath(r.URL.Path, "/agenda/appointments/")
+	id = strings.TrimSuffix(id, "/complete-with-session")
+	if id == "" {
+		http.Error(w, "Invalid appointment ID", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+
+	appt, err := h.agendaService.GetAppointment(ctx, id)
+	if err != nil || appt == nil {
+		http.Error(w, "Appointment not found", http.StatusNotFound)
+		return
+	}
+
+	sess, err := h.sessionService.CreateSession(ctx, appt.PatientID, appt.Date, "")
+	if err != nil {
+		http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.agendaService.CompleteAppointment(ctx, id, sess.ID); err != nil {
+		http.Error(w, "Failed to complete appointment", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/session/" + sess.ID
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", redirectURL)
 		w.WriteHeader(http.StatusOK)

@@ -106,15 +106,43 @@ templ AppointmentDetail(model AppointmentDetailModel) {
 							Ver Sessão
 						</a>
 					} else {
+						<!-- Botão inicial: mostra painel de confirmação -->
 						<button
-							hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
-							hx-target="#agenda-content"
-							hx-swap="outerHTML"
-							onclick="document.getElementById('modal-container').innerHTML=''"
+							id={ "btn-concluir-" + model.ID }
+							data-panel-id={ model.ID }
+							onclick="var p=this.getAttribute('data-panel-id');document.getElementById('confirm-panel-'+p).classList.remove('hidden');this.classList.add('hidden')"
 							class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors"
 						>
 							Concluir
 						</button>
+
+						<!-- Painel de confirmação (oculto inicialmente) -->
+						<div id={ "confirm-panel-" + model.ID } class="hidden w-full">
+							<p class="text-xs text-center mb-3" style="color:#6b7280">
+								Deseja registrar o atendimento no prontuário?
+							</p>
+							<div class="flex gap-2">
+								<button
+									onclick="document.getElementById('modal-container').innerHTML=''"
+									hx-post={ "/agenda/appointments/" + model.ID + "/complete-with-session" }
+									hx-target="body"
+									hx-swap="none"
+									class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors"
+								>
+									<i class="fas fa-file-medical text-xs mr-1"></i>Sim, documentar
+								</button>
+								<button
+									hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
+									hx-target="#agenda-content"
+									hx-swap="outerHTML"
+									onclick="document.getElementById('modal-container').innerHTML=''"
+									class="flex-1 h-10 text-sm font-medium rounded-xl border transition-colors"
+									style="color:#374151;border-color:#d1d5db"
+								>
+									Só concluir
+								</button>
+							</div>
+						</div>
 					}
 				}
 			</div>
