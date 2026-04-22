@@ -133,8 +133,11 @@ func main() {
 	// Create intervention classification handler
 	interventionClassificationHandler := handlers.NewInterventionClassificationHandler(interventionClassificationServiceAdapter)
 
+	// Create agenda service before handlers that need it
+	agendaService := services.NewAgendaService(appointmentRepo)
+
 	// Create new handlers with dependency injection
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter, agendaService)
 	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
@@ -191,7 +194,6 @@ func main() {
 	mux.HandleFunc("/auth/signup", authHandler.ServeHTTP)
 
 	// Agenda routes
-	agendaService := services.NewAgendaService(appointmentRepo)
 	agendaHandler := handlers.NewAgendaHandler(agendaService, patientServiceAdapter, sessionServiceAdapter)
 	dashboardHandler = handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaService)
 

@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/appointment"
 	"arandu/internal/domain/patient"
 	"arandu/internal/domain/session"
 	"arandu/internal/domain/timeline"
-
 	layoutComponents "arandu/web/components/layout"
 	patientComponents "arandu/web/components/patient"
 	sessionComponents "arandu/web/components/session"
@@ -22,10 +22,11 @@ import (
 
 // PatientViewData is a ViewModel that protects the domain from template concerns
 type PatientViewData struct {
-	Patient  *PatientViewModel
-	Sessions []*SessionViewModel
-	Insights []InsightViewModel
-	Error    string
+	Patient      *PatientViewModel
+	Sessions     []*SessionViewModel
+	Insights    []InsightViewModel
+	Appointments []patientComponents.AppointmentHistoryItem
+	Error       string
 }
 
 // PatientViewModel is a view-specific representation of a patient
@@ -118,11 +119,17 @@ type PatientHandler struct {
 	biopsychosocialService BiopsychosocialService
 	timelineService        TimelineServicePort
 	anamnesisService       AnamnesisService
+	agendaService        AgendaServicePort
 }
 
 // TimelineServicePort defines the interface for timeline operations
 type TimelineServicePort interface {
 	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error)
+}
+
+// AgendaServicePort defines the interface for agenda operations in patient handler
+type AgendaServicePort interface {
+	GetPatientAppointments(ctx context.Context, patientID string) ([]*appointment.Appointment, error)
 }
 
 // NewPatientHandler creates a new PatientHandler with dependency injection
@@ -133,6 +140,7 @@ func NewPatientHandler(
 	biopsychosocialService BiopsychosocialService,
 	timelineService TimelineServicePort,
 	anamnesisService AnamnesisService,
+	agendaService AgendaServicePort,
 ) *PatientHandler {
 	return &PatientHandler{
 		patientService:         patientService,
@@ -141,6 +149,7 @@ func NewPatientHandler(
 		biopsychosocialService: biopsychosocialService,
 		timelineService:        timelineService,
 		anamnesisService:       anamnesisService,
+		agendaService:        agendaService,
 	}
 }
 
@@ -349,6 +358,34 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 				Date:          sess.Date.Format("02/01/2006"),
 				Summary:       truncateText(sess.Summary, 100),
 			})
+		}
+	}
+
+	// Get appointments for the patient (limit to 20 most recent)
+	var appointments []patientComponents.AppointmentHistoryItem
+	if h.agendaService != nil {
+		appts, err := h.agendaService.GetPatientAppointments(r.Context(), id)
+		if err == nil && appts != nil {
+			appointments = make([]patientComponents.AppointmentHistoryItem, 0, min(20, len(appts)))
+			for i, a := range appts {
+				if i >= 20 {
+					break
+				}
+				sessionID := ""
+				if a.SessionID != nil {
+					sessionID = *a.SessionID
+				}
+				appointments = append(appointments, patientComponents.AppointmentHistoryItem{
+					ID:          a.ID,
+					Date:        a.Date.Format("02 jan 2006"),
+					StartTime:   a.StartTime,
+					Duration:    a.Duration,
+					StatusLabel: statusLabelForAppointment(string(a.Status)),
+					StatusClass: patientComponents.AppointmentStatusBadgeClass(string(a.Status)),
+					HasSession: sessionID != "",
+					SessionID:  sessionID,
+				})
+			}
 		}
 	}
 
@@ -650,7 +687,7 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	// Criar componente de perfil do paciente
-	patientProfile := patientComponents.PatientProfileView(patientData, bioContext, timelineEvents, recentSessions)
+	patientProfile := patientComponents.PatientProfileView(patientData, bioContext, timelineEvents, recentSessions, appointments)
 
 	// Check if this is an HTMX request - return just the content (wrappers are in DOM)
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
@@ -669,6 +706,23 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 }
 
 // Helper functions for biopsychosocial context
+func statusLabelForAppointment(status string) string {
+	switch status {
+	case "scheduled":
+		return "Agendada"
+	case "confirmed":
+		return "Confirmada"
+	case "completed":
+		return "Realizada"
+	case "cancelled":
+		return "Cancelada"
+	case "no_show":
+		return "Não Compareceu"
+	default:
+		return status
+	}
+}
+
 func getString(m map[string]interface{}, key string) string {
 	if val, ok := m[key]; ok {
 		if s, ok := val.(string); ok {

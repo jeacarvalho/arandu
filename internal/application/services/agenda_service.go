@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"sort"
 	"time"
 
 	"arandu/internal/domain/appointment"
@@ -379,4 +380,15 @@ func (s *AgendaService) filterByDate(appointments []*appointment.Appointment, da
 
 func sameDate(d1, d2 time.Time) bool {
 	return d1.Year() == d2.Year() && d1.Month() == d2.Month() && d1.Day() == d2.Day()
+}
+
+func (s *AgendaService) GetPatientAppointments(ctx context.Context, patientID string) ([]*appointment.Appointment, error) {
+	appts, err := s.apptRepo.FindByPatient(ctx, patientID)
+	if err != nil {
+		return nil, err
+	}
+	sort.Slice(appts, func(i, j int) bool {
+		return appts[i].Date.After(appts[j].Date)
+	})
+	return appts, nil
 }

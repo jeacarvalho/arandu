@@ -9,7 +9,7 @@ import (
 	"arandu/internal/domain/patient"
 )
 
-templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelineEvents []TimelineEventItem, recentSessions []SessionItem) {
+templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelineEvents []TimelineEventItem, recentSessions []SessionItem, appointments []AppointmentHistoryItem) {
 	<div class="sabio-patient">
 		<!-- Hero editorial -->
 		<div class="sabio-patient-hero">
@@ -204,6 +204,49 @@ templ PatientProfileView(p *patient.Patient, patientContext interface{}, timelin
 					</div>
 				}
 			</div>
+		</div>
+
+		<!-- Histórico de Agendamentos (full-width) -->
+		<div class="sabio-card">
+			<div class="sabio-card-header">
+				<div>
+					<div class="sabio-card-eyebrow">Agenda</div>
+					<h2 class="sabio-card-title serif">Agendamentos</h2>
+				</div>
+				<a href={ templ.URL("/agenda?patient=" + p.ID) } class="sabio-card-action">
+					Ver na agenda <i class="fas fa-chevron-right"></i>
+				</a>
+			</div>
+			if len(appointments) > 0 {
+				<div class="sabio-session-timeline">
+					for _, appt := range appointments {
+						<div class="sabio-session-row" style="cursor:default">
+							<div class="sabio-session-bar"></div>
+							<div class="sabio-session-body">
+								<div class="sabio-session-meta">
+									<span class="sabio-session-date mono">{ appt.Date }</span>
+									<span class="sabio-session-dot">·</span>
+									<span class="sabio-session-date mono">{ appt.StartTime }</span>
+									<span class={ appt.StatusClass }>{ appt.StatusLabel }</span>
+								</div>
+							</div>
+							if appt.HasSession {
+								<a href={ templ.URL("/session/" + appt.SessionID) }
+								   class="sabio-btn sabio-btn--ghost"
+								   hx-get={ fmt.Sprintf("/session/%s", appt.SessionID) }
+								   hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" hx-head="merge">
+									Ver sessão <i class="fas fa-chevron-right"></i>
+								</a>
+							}
+						</div>
+					}
+				</div>
+			} else {
+				<div class="sabio-empty-state" style="padding:28px">
+					<i class="fas fa-calendar-alt"></i>
+					<p>Nenhum agendamento registrado ainda</p>
+				</div>
+			}
 		</div>
 	</div>
 }
