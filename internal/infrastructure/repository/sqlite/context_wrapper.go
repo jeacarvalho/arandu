@@ -585,6 +585,15 @@ func (r *ContextAwareTimelineRepository) SearchInHistory(ctx context.Context, pa
 	return tempRepo.SearchInHistory(ctx, patientID, query)
 }
 
+func (r *ContextAwareTimelineRepository) SearchGlobal(ctx context.Context, query string, limit int) ([]*timeline.SearchResult, error) {
+	db, err := r.factory.getDB(ctx)
+	if err != nil || db == nil {
+		return nil, err
+	}
+	tempRepo := NewTimelineRepository(&DB{db})
+	return tempRepo.SearchGlobal(ctx, query, limit)
+}
+
 type ContextAwareMedicationRepository struct {
 	factory *ContextAwareRepositoryFactory
 }

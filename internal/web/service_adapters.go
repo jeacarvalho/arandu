@@ -73,6 +73,11 @@ func (a *PatientServiceAdapter) GetPatientByID(ctx context.Context, id string) (
 	return a.service.GetPatientByID(ctx, id)
 }
 
+// GetPatient is an alias for GetPatientByID (implements PatientServiceGetter interface)
+func (a *PatientServiceAdapter) GetPatient(ctx context.Context, id string) (*patient.Patient, error) {
+	return a.service.GetPatientByID(ctx, id)
+}
+
 // ListPatients implements handlers.PatientServiceInterface
 func (a *PatientServiceAdapter) ListPatients(ctx context.Context) ([]*patient.Patient, error) {
 	return a.service.ListPatients(ctx)
@@ -187,6 +192,7 @@ type InterventionServiceAdapter struct {
 type TimelineServiceContextAware interface {
 	GetPatientTimeline(ctx context.Context, patientID string, filterType *timeline.EventType, limit, offset int) (timeline.Timeline, error)
 	SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error)
+	SearchGlobal(ctx context.Context, query string) ([]*services.SearchGlobalResult, error)
 }
 
 // TimelineServiceAdapter adapts timeline services to handlers.TimelineService interface
@@ -207,6 +213,11 @@ func (a *TimelineServiceAdapter) GetPatientTimeline(ctx context.Context, patient
 // SearchInHistory implements handlers.TimelineService interface
 func (a *TimelineServiceAdapter) SearchInHistory(ctx context.Context, patientID, query string) ([]*timeline.SearchResult, error) {
 	return a.service.SearchInHistory(ctx, patientID, query)
+}
+
+// SearchGlobal implements global search
+func (a *TimelineServiceAdapter) SearchGlobal(ctx context.Context, query string) ([]*services.SearchGlobalResult, error) {
+	return a.service.SearchGlobal(ctx, query)
 }
 
 // NewInterventionServiceAdapter creates a new adapter

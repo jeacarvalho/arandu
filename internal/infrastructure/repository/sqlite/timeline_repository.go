@@ -274,6 +274,71 @@ func (r *TimelineRepository) SearchInHistory(ctx context.Context, patientID, que
 	return results, nil
 }
 
+func (r *TimelineRepository) SearchGlobal(ctx context.Context, query string, limit int) ([]*timeline.SearchResult, error) {
+	if query == "" {
+		return nil, nil
+	}
+
+	searchQuery := `
+		SELECT 
+			'observation' as type,
+			o.id,
+			o.created_at as date,
+			o.content,
+			snippet(observations_fts, 1, '<b>', '</b>', '...', 64) as snippet,
+			s.id as session_id,
+			s.patient_id
+		FROM observations_fts fts
+		JOIN observations o ON fts.source_id = o.id
+		JOIN sessions s ON o.session_id = s.id
+		WHERE fts.content MATCH ?
+		
+		UNION ALL
+		
+		SELECT 
+			'intervention' as type,
+			i.id,
+			i.created_at as date,
+			i.content,
+			snippet(interventions_fts, 1, '<b>', '</b>', '...', 64) as snippet,
+			s.id as session_id,
+			s.patient_id
+		FROM interventions_fts fts
+		JOIN interventions i ON fts.source_id = i.id
+		JOIN sessions s ON i.session_id = s.id
+		WHERE fts.content MATCH ?
+		
+		ORDER BY date DESC
+		LIMIT ?
+	`
+
+	rows, err := r.db.QueryContext(ctx, searchQuery, query, query, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []*timeline.SearchResult
+	for rows.Next() {
+		var result timeline.SearchResult
+		var eventTypeStr string
+
+		err := rows.Scan(&eventTypeStr, &result.ID, &result.Date, &result.Content, &result.Snippet, &result.SessionID, &result.PatientID)
+		if err != nil {
+			return nil, err
+		}
+
+		result.Type = timeline.EventType(eventTypeStr)
+		results = append(results, &result)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
 func parseMetadataJSON(jsonStr string) map[string]string {
 	result := make(map[string]string)
 

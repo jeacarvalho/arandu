@@ -88,7 +88,6 @@ func main() {
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-	timelineService := services.NewTimelineServiceContext(timelineRepo)
 
 	// Create service adapters for the new handler interfaces
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
@@ -96,8 +95,12 @@ func main() {
 	patientServiceAdapter := web.NewPatientServiceAdapter(patientService)
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
-	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
+	timelineServiceAdapter := web.NewTimelineServiceAdapter(nil) // placeholder, will be set below
 	goalServiceAdapter := web.NewGoalServiceAdapter(goalRepo)
+
+	// Timeline service needs patient service adapter for global search
+	timelineService := services.NewTimelineServiceContext(timelineRepo, patientServiceAdapter)
+	timelineServiceAdapter = web.NewTimelineServiceAdapter(timelineService)
 
 	// Create biopsychosocial service adapter
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
@@ -234,6 +237,10 @@ func main() {
 	mux.HandleFunc("/patients/new", patientHandler.NewPatient)
 	mux.HandleFunc("/patients/search", patientHandler.Search)
 	mux.HandleFunc("/patients/create", patientHandler.CreatePatient)
+
+	// Search route
+	searchHandler := handlers.NewSearchHandler(timelineServiceAdapter)
+	mux.HandleFunc("/search", searchHandler.Search)
 
 	// Session routes - using the actual method names from the new handlers
 	mux.HandleFunc("/session/", func(w http.ResponseWriter, r *http.Request) {

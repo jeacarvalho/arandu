@@ -312,19 +312,21 @@ templ sabioSparklesIcon() {
 
 // ShellSearchBar componente de busca na topbar
 templ ShellSearchBar() {
-	<div class="shell-search-container">
+	<form
+		class="shell-search-container"
+		hx-get="/search"
+		hx-trigger="submit, keyup changed delay:500ms from:find input"
+		hx-target="#main-content"
+		hx-push-url="true"
+	>
 		<input
 			id="shell-patient-search"
-			type="text"
+			type="search"
 			name="q"
-			placeholder="Buscar paciente..."
-			hx-get="/patients/search"
-			hx-trigger="keyup changed delay:350ms"
-			hx-target="#shell-search-results"
-			hx-indicator="#shell-search-loading"
+			placeholder="Buscar no prontuário..."
 			autocomplete="off"
 			role="combobox"
-			aria-label="Buscar paciente"
+			aria-label="Buscar no prontuário"
 			aria-controls="shell-search-results"
 			aria-autocomplete="list"
 			aria-expanded="false"
@@ -332,11 +334,7 @@ templ ShellSearchBar() {
 			class="shell-search-input"
 		/>
 		<i class="fas fa-search shell-search-icon"></i>
-		<span id="shell-search-loading" class="htmx-indicator absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500" role="status" aria-live="polite">
-			Buscando...
-		</span>
-		<div id="shell-search-results" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 max-h-96 overflow-y-auto z-20 hidden" role="listbox" aria-label="Resultados da busca de pacientes"></div>
-	</div>
+	</form>
 }
 
 // ShellSidebar componente da barra lateral — Sábio design

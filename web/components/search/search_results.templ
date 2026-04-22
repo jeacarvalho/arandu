@@ -1,0 +1,91 @@
+package search
+
+// SearchResultsPage shows the full search results page with layout
+templ SearchResultsPage(model SearchResultsViewModel) {
+	<div class="max-w-3xl mx-auto p-6">
+		<h1 class="text-xl font-semibold mb-6" style="color:#111827">
+			if model.Query != "" {
+				Busca: "{model.Query}" — {model.Total} resultado(s)
+			} else {
+				Busca no prontuário
+			}
+		</h1>
+		if model.Total == 0 && model.Query != "" {
+			<p class="text-neutral-500">Nenhum resultado para "{model.Query}"</p>
+		}
+		<div class="space-y-4">
+			for _, item := range model.Results {
+				<div class="bg-white rounded-xl p-4 shadow-sm">
+					<div class="flex items-center gap-2 mb-2">
+						<a
+							href={ templ.URL("/patient/" + item.PatientID) }
+							class="font-semibold text-sm hover:underline"
+							style="color:#111827"
+						>
+							{ item.PatientName }
+						</a>
+						<span class="text-xs" style="color:#9ca3af">•</span>
+						<span class="text-xs" style="color:#9ca3af">{ item.Type }</span>
+						<span class="text-xs" style="color:#9ca3af">•</span>
+						<span class="text-xs" style="color:#9ca3af">{ item.Date }</span>
+					</div>
+					<p class="font-serif text-sm mb-2" style="color:#374151">
+						@templ.Raw(item.Snippet)
+					</p>
+					if item.SessionID != "" {
+						<a
+							href={ templ.URL("/session/" + item.SessionID) }
+							class="text-xs hover:underline"
+							style="color:#6b7280"
+						>
+							Ver sessão →
+						</a>
+					}
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// SearchResults shows just the search results fragment for HTMX
+templ SearchResults(model SearchResultsViewModel) {
+	if model.Query != "" {
+		<h1 class="text-xl font-semibold mb-6" style="color:#111827">
+			Busca: "{model.Query}" — {model.Total} resultado(s)
+		</h1>
+	}
+	if model.Total == 0 && model.Query != "" {
+		<p class="text-neutral-500">Nenhum resultado para "{model.Query}"</p>
+	}
+	<div class="space-y-4">
+		for _, item := range model.Results {
+			<div class="bg-white rounded-xl p-4 shadow-sm">
+				<div class="flex items-center gap-2 mb-2">
+					<a
+						href={ templ.URL("/patient/" + item.PatientID) }
+						class="font-semibold text-sm hover:underline"
+						style="color:#111827"
+					>
+						{ item.PatientName }
+					</a>
+					<span class="text-xs" style="color:#9ca3af">•</span>
+					<span class="text-xs" style="color:#9ca3af">{ item.Type }</span>
+					<span class="text-xs" style="color:#9ca3af">•</span>
+					<span class="text-xs" style="color:#9ca3af">{ item.Date }</span>
+				</div>
+				<p class="font-serif text-sm mb-2" style="color:#374151">
+					@templ.Raw(item.Snippet)
+				</p>
+				if item.SessionID != "" {
+					<a
+						href={ templ.URL("/session/" + item.SessionID) }
+						class="text-xs hover:underline"
+						style="color:#6b7280"
+					>
+						Ver sessão →
+					</a>
+				}
+			</div>
+		}
+	</div>
+}
