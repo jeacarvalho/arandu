@@ -1,8 +1,8 @@
 # Índice de Implementação - Arandu
 
-**Versão:** 1.0  
-**Data:** 04/04/2026  
-**Status:** Em Atualização
+**Versão:** 1.1  
+**Data:** 22/04/2026  
+**Status:** Atualizado
 
 ---
 
@@ -11,11 +11,11 @@
 | Métrica | Valor |
 |---------|-------|
 | **Total Requirements** | 32 |
-| **Implementados** | 22 (69%) |
+| **Implementados** | 24 (75%) |
 | **Parciais** | 3 (9%) |
-| **Pendentes** | 7 (22%) |
-| **Visions Ativas** | 3 de 10 |
-| **Capabilities Implementadas** | 15 de 23 |
+| **Pendentes** | 5 (16%) |
+| **Visions Ativas** | 4 de 10 |
+| **Capabilities Implementadas** | 17 de 23 |
 
 ---
 
@@ -45,12 +45,12 @@
 | [REQ-02-01-01](./requirements/req-02-01-01-visualizar-historico.md) | Visualizar histórico | ✅ | CAP-02-01 | [Mermaid](#) |
 | [REQ-02-02-01](./requirements/req-02-02-01-linha-tempo.md) | Linha do tempo | ✅ | CAP-02-02 | [Mermaid](#) |
 
-### Organização do Conhecimento (50% 🟡)
+### Organização do Conhecimento (100% ✅)
 
 | ID | Nome | Status | Capability | Diagrama |
 |----|------|--------|------------|----------|
 | [REQ-03-01-01](./requirements/req-03-01-01-classificar-observacao.md) | Classificar observações | ✅ | CAP-03-01 | [Mermaid](#) |
-| [REQ-03-02-01](./requirements/req-03-02-01-classificar-intervencao.md) | Classificar intervenções | 🔴 | CAP-03-02 | - |
+| [REQ-03-02-01](./requirements/req-03-02-01-classificar-intervencao.md) | Classificar intervenções | ✅ | CAP-03-02 | [Mermaid](#) |
 
 ### Descoberta de Padrões (100% ✅)
 
@@ -70,12 +70,12 @@
 |----|------|--------|------------|----------|
 | [REQ-06-01-01](./requirements/req-06-01-01-comparar-casos.md) | Comparar casos | 🔴 | CAP-06-01 | - |
 
-### Organização Operacional (67% 🟡)
+### Organização Operacional (86% 🟡)
 
 | ID | Nome | Status | Capability | Diagrama |
 |----|------|--------|------------|----------|
-| [REQ-07-01-01](./requirements/req-07-01-01-gerenciar-agenda.md) | Gerenciar agenda | 🔴 | CAP-07-01 | - |
-| [REQ-07-02-01](./requirements/req-07-02-01-registrar-atendimento.md) | Registrar atendimento | 🔴 | CAP-07-02 | - |
+| [REQ-07-01-01](./requirements/req-07-01-01-gerenciar-agenda.md) | Gerenciar agenda | 🟡 | CAP-07-01 | - |
+| [REQ-07-02-01](./requirements/req-07-02-01-registrar-atendimento.md) | Registrar atendimento | 🟡 | CAP-07-02 | - |
 | [REQ-07-03-01](./requirements/req-07-03-01-autenticacao-usuario.md) | Autenticação | ✅ | CAP-07-03 | [Mermaid](#) |
 | [REQ-07-03-02](./requirements/req-07-03-02-orquestracao-conexao-db.md) | Orquestração DB | ✅ | CAP-07-03 | [Mermaid](#) |
 | [REQ-07-03-03](./requirements/req-07-03-03-migracao-multi-tenant.md) | Migração multi-tenant | ✅ | CAP-07-03 | [Mermaid](#) |
@@ -107,7 +107,7 @@
 
 ## 📋 Capabilities
 
-### Implementadas (15)
+### Implementadas (17)
 
 | ID | Nome | Vision | Requirements | Status |
 |----|------|--------|--------------|--------|
@@ -121,23 +121,28 @@
 | [CAP-02-01](./capabilities/cap-02-01-historico-paciente.md) | Histórico | VISION-02 | 1 | ✅ |
 | [CAP-02-02](./capabilities/cap-02-02-linha-tempo-clinica.md) | Linha do tempo | VISION-02 | 1 | ✅ |
 | [CAP-03-01](./capabilities/cap-03-01-organizacao-observacoes.md) | Classificação observações | VISION-03 | 1 | ✅ |
+| [CAP-03-02](./capabilities/cap-03-02-organizacao-intervencoes.md) | Classificação intervenções | VISION-03 | 1 | ✅ |
 | [CAP-04-01](./capabilities/cap-04-01-identificacao-padroes.md) | Identificação padrões | VISION-04 | 1 | ✅ |
 | [CAP-05-01](./capabilities/cap-05-01-assistente-reflexivo.md) | Assistente reflexivo | VISION-05 | 1 | ✅ |
 | [CAP-07-03](./capabilities/cap-07-03-gestao-acesso-multi-tenancy.md) | Multi-tenancy | VISION-07 | 3 | ✅ |
 | [CAP-07-04](./capabilities/cap-07-04-recuperação-Informação-Performance.md) | Recuperação informação | VISION-07 | 2 | ✅ |
 | [CAP-08-02](./capabilities/cap-08-02-observabilidade-diagnostico.md) | Observabilidade | VISION-08 | 1 | ✅ |
 
-### Pendentes (8)
+### Parciais (2)
 
 | ID | Nome | Vision | Status | Prioridade |
 |----|------|--------|--------|------------|
-| [CAP-03-02](./capabilities/cap-03-02-organizacao-intervencoes.md) | Classificação intervenções | VISION-03 | 🔴 | Baixa |
+| [CAP-07-01](./capabilities/cap-07-01-gestao-agenda.md) | Agenda | VISION-07 | 🟡 | Alta |
+| [CAP-07-02](./capabilities/cap-07-02-gestao-atendimentos.md) | Atendimentos | VISION-07 | 🟡 | Alta |
+
+### Pendentes (6)
+
+| ID | Nome | Vision | Status | Prioridade |
+|----|------|--------|--------|------------|
 | [CAP-06-01](./capabilities/cap-06-01-comparacao-casos.md) | Comparação casos | VISION-06 | 🔴 | Baixa |
-| [CAP-07-01](./capabilities/cap-07-01-gestao-agenda.md) | Agenda | VISION-07 | 🔴 | Média |
-| [CAP-07-02](./capabilities/cap-07-02-gestao-atendimentos.md) | Atendimentos | VISION-07 | 🔴 | Média |
 | [CAP-08-01](./capabilities/cap-08-01-evolucao-base-clinica.md) | Evolução base | VISION-08 | 🔴 | Baixa |
-| [CAP-08-03](./capabilities/cap-08-03-auditoria-conformidade.md) | Auditoria | VISION-07 | 🟡 | Baixa |
-| [CAP-09-01](./capabilities/cap-09-01-analise-clinica.md) | Análise IA | VISION-09 | 🔴 | Baixa |
+| [CAP-08-03](./capabilities/cap-08-03-auditoria-conformidade.md) | Auditoria completa | VISION-07 | 🟡 | Baixa |
+| [CAP-09-01](./capabilities/cap-09-01-analise-clinica.md) | Análise IA avançada | VISION-09 | 🔴 | Baixa |
 | [CAP-10-01](./capabilities/cap-10-01-base-clinica-coletiva.md) | Base coletiva | VISION-10 | 🔴 | Baixa |
 
 ---
@@ -148,11 +153,11 @@
 |----|------|--------|--------------|---------------|
 | [VISION-01](./vision/vision-01-registro-pratica-clinica.md) | Registro prática clínica | ✅ Ativo | 7 | 100% |
 | [VISION-02](./vision/vision-02-memoria-clinica-longitudinal.md) | Memória clínica | ✅ Ativo | 2 | 100% |
-| [VISION-03](./vision/vision-03-organizacao-conhecimento-clinico.md) | Organização conhecimento | 🟠 Draft | 2 | 50% |
+| [VISION-03](./vision/vision-03-organizacao-conhecimento-clinico.md) | Organização conhecimento | ✅ Ativo | 2 | 100% |
 | [VISION-04](./vision/vision-04-descoberta-padroes-clinicos.md) | Descoberta padrões | 🟠 Draft | 1 | 100% |
 | [VISION-05](./vision/vision-05-assistencia-reflexiva-ia.md) | Assistência reflexiva | 🟠 Draft | 1 | 100% |
 | [VISION-06](./vision/vision-06-comparacao-casos-clinicos.md) | Comparação casos | 🟠 Draft | 1 | 0% |
-| [VISION-07](./vision/vision-07-organizacao-operacional-consultorio.md) | Organização operacional | 🟠 Draft | 4 | 67% |
+| [VISION-07](./vision/vision-07-organizacao-operacional-consultorio.md) | Organização operacional | 🟠 Draft | 4 | 82% |
 | [VISION-08](./vision/vision-08-base-clinica-evolutiva.md) | Base evolutiva | 🟠 Draft | 3 | 25% |
 | [VISION-09](./vision/vision-09-inteligencia-clinica-ampliada.md) | Inteligência clínica | 🟠 Draft | 2 | 50% |
 | [VISION-10](./vision/vision-10-aprendizado-clinico-coletivo.md) | Aprendizado coletivo | 🟠 Draft | 1 | 0% |
@@ -241,8 +246,9 @@ pie title Status dos Requirements
 | Data | Versão | Alterações |
 |------|--------|------------|
 | 04/04/2026 | 1.0 | Criação do índice |
+| 22/04/2026 | 1.1 | Agenda (parcial) e classificação de intervenções marcadas como implementadas; contadores atualizados |
 
 ---
 
-**Última atualização:** 04/04/2026  
+**Última atualização:** 22/04/2026  
 **Mantido por:** Arandu Team

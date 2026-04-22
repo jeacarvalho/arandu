@@ -1,66 +1,134 @@
 # Convenções de Rotas - Arandu
 
-**Documento de Referência Arquitetural**
+**Documento de Referência Arquitetural**  
+**Última atualização:** 22/04/2026
 
 ---
 
 ## Princípios Gerais
 
-### 1. RESTful com Singular/Plural Consistente
+### 1. RESTful com Plural Consistente
 
-Seguimos convenções REST com distinção clara entre coleções (plural) e recursos específicos (singular):
+Todas as rotas de recurso usam **plural**. O mux Go usa prefix matching via trailing slash:
 
-- **Coleções**: Usam plural (`/patients`, `/sessions`)
-- **Recursos específicos**: Usam singular (`/patient/{id}`, `/session/{id}`)
-- **Sub-recursos**: Usam plural após recurso singular (`/patient/{id}/sessions`)
+- **Coleções**: `/patients`, `/sessions`
+- **Recurso específico**: `/patients/{id}` (não `/patient/{id}`)
+- **Sub-recursos**: `/patients/{id}/sessions`
+
+> ⚠️ Não existe `/patient/{id}` (singular). O handler `mux.HandleFunc("/patients/", ...)` captura todas as variantes.
 
 ### 2. Hierarquia de Recursos
 
 ```
-/patients                    # Coleção de pacientes (plural)
-/patient/{id}               # Recurso paciente específico (singular)
-/patient/{id}/sessions      # Sub-recursos: sessões do paciente (plural)
-/session/{id}               # Recurso sessão específica (singular)
-/session/{id}/observations  # Sub-recursos: observações da sessão (plural)
-/session/{id}/interventions # Sub-recursos: intervenções da sessão (plural)
+/patients                    # Coleção de pacientes
+/patients/{id}               # Recurso paciente específico
+/patients/{id}/sessions      # Sub-recursos: sessões do paciente
+/session/{id}                # Sessão específica (singular — herança histórica)
+/session/{id}/observations   # Sub-recursos: observações da sessão
+/session/{id}/interventions  # Sub-recursos: intervenções da sessão
 ```
 
 ---
 
-## Convenções Específicas
+## Rotas Implementadas
+
+### Dashboard e Sistema
+
+| Rota | Método | Descrição |
+|------|--------|-----------|
+| `/` | GET | Redireciona para `/dashboard` |
+| `/dashboard` | GET | Página inicial do sistema |
+| `/static/` | GET | Arquivos CSS, JS, imagens |
+
+### Autenticação
+
+| Rota | Método | Descrição |
+|------|--------|-----------|
+| `/login` | GET/POST | Login com email/senha |
+| `/auth/login` | GET/POST | Alias de `/login` |
+| `/auth/google` | GET | Inicia OAuth Google |
+| `/auth/google/callback` | GET | Callback OAuth Google |
+| `/auth/signup` | GET/POST | Cadastro de novo terapeuta |
+| `/logout` | GET | Encerra sessão |
 
 ### Pacientes
 
-| Rota | Método | Descrição | Exemplo |
-|------|--------|-----------|---------|
-| `/patients` | GET | Listar todos pacientes | `GET /patients` |
-| `/patients` | POST | Criar novo paciente | `POST /patients` |
-| `/patient/{id}` | GET | Detalhes do paciente | `GET /patient/abc123` |
-| `/patient/{id}/sessions` | GET | Listar sessões do paciente | `GET /patient/abc123/sessions` |
-| `/patient/{id}/sessions/new` | GET | Formulário nova sessão | `GET /patient/abc123/sessions/new` |
-| `/patient/{id}/history` | GET | Timeline do paciente | `GET /patient/abc123/history` |
+| Rota | Método | Handler | Descrição |
+|------|--------|---------|-----------|
+| `/patients` | GET | `PatientHandler.ListPatients` | Listar pacientes |
+| `/patients/new` | GET | `PatientHandler.NewPatient` | Formulário novo paciente |
+| `/patients/create` | POST | `PatientHandler.CreatePatient` | Criar paciente |
+| `/patients/search` | GET | `PatientHandler.Search` | Busca FTS5 de pacientes |
+| `/patients/{id}` | GET | `PatientHandler.Show` | Perfil do paciente |
+| `/patients/{id}/sessions` | GET | `PatientHandler.ListSessions` | Listar sessões |
+| `/patients/{id}/sessions/new` | GET | `SessionHandler.NewSession` | Formulário nova sessão |
+| `/patients/{id}/history` | GET | `TimelineHandler.ShowPatientHistory` | Timeline longitudinal |
+| `/patients/{id}/history/search` | GET | `TimelineHandler.SearchPatientHistory` | Busca na timeline |
+| `/patients/{id}/history/more` | GET | `TimelineHandler.LoadMoreEvents` | Infinite scroll |
+| `/patients/{id}/bio-context` | GET | `BiopsychosocialHandler.GetContextPanel` | Painel biopsicossocial |
+| `/patients/{id}/medications` | POST | `BiopsychosocialHandler.AddMedication` | Adicionar medicação |
+| `/patients/{id}/medications/{mid}/status` | POST | `BiopsychosocialHandler.UpdateMedicationStatus` | Atualizar status |
+| `/patients/{id}/vitals` | POST | `BiopsychosocialHandler.RecordVitals` | Registrar sinais vitais |
+| `/patients/{id}/anamnesis` | GET | `PatientHandler.ShowAnamnesis` | Exibir anamnese |
+| `/patients/{id}/anamnesis/{section}` | PATCH | `PatientHandler.UpdateAnamnesisSection` | Atualizar seção anamnese |
+| `/patients/{id}/goals` | POST | `SessionHandler.CreateGoal` | Criar meta terapêutica |
+| `/patients/{id}/goals/{gid}/close` | POST | `SessionHandler.CloseGoalWithNote` | Encerrar meta |
+| `/patients/{id}/therapeutic-plan-report` | GET | `SessionHandler.TherapeuticPlanReport` | Relatório do plano |
+| `/patients/{id}/ai/synthesis` | POST | `AIHandler.GeneratePatientSynthesis` | Síntese por IA |
+| `/patients/{id}/themes` | GET | `AnalysisHandler.ShowThemes` | Nuvem de temas |
 
 ### Sessões
 
-| Rota | Método | Descrição | Exemplo |
-|------|--------|-----------|---------|
-| `/session` | POST | Criar nova sessão | `POST /session` |
-| `/session/{id}` | GET | Detalhes da sessão | `GET /session/xyz789` |
-| `/session/{id}/edit` | GET | Formulário editar sessão | `GET /session/xyz789/edit` |
-| `/session/{id}/update` | POST | Atualizar sessão | `POST /session/xyz789/update` |
-| `/session/{id}/observations` | POST | Criar observação | `POST /session/xyz789/observations` |
-| `/session/{id}/interventions` | POST | Criar intervenção | `POST /session/xyz789/interventions` |
+| Rota | Método | Handler | Descrição |
+|------|--------|---------|-----------|
+| `/session` | POST | `SessionHandler.CreateSession` | Criar sessão |
+| `/session/{id}` | GET | — | **Redirect 301 → `/session/{id}/edit`** |
+| `/session/{id}/edit` | GET | `SessionHandler.EditSession` | Registro clínico (design Sábio) |
+| `/session/{id}/update` | POST | `SessionHandler.UpdateSession` | Atualizar data/resumo |
+| `/session/{id}/observations` | POST | `SessionHandler.CreateObservation` | Criar observação |
+| `/session/{id}/interventions` | POST | `SessionHandler.CreateIntervention` | Criar intervenção |
+| `/session/{id}/summary` | PATCH | `SessionHandler.PatchSummary` | Auto-save resumo (HTMX) |
 
-### Observações e Intervenções
+### Observações
 
-| Rota | Método | Descrição | Exemplo |
-|------|--------|-----------|---------|
-| `/observations/{id}` | GET | Detalhes da observação | `GET /observations/obs123` |
-| `/observations/{id}/edit` | GET | Formulário editar observação | `GET /observations/obs123/edit` |
-| `/observations/{id}` | PUT | Atualizar observação | `PUT /observations/obs123` |
-| `/interventions/{id}` | GET | Detalhes da intervenção | `GET /interventions/int456` |
-| `/interventions/{id}/edit` | GET | Formulário editar intervenção | `GET /interventions/int456/edit` |
-| `/interventions/{id}` | PUT | Atualizar intervenção | `PUT /interventions/int456` |
+| Rota | Método | Handler | Descrição |
+|------|--------|---------|-----------|
+| `/observations/{id}` | GET | `ObservationHandler.GetObservation` | Detalhes |
+| `/observations/{id}/edit` | GET | `ObservationHandler.GetObservationEditForm` | Formulário edição inline |
+| `/observations/{id}` | PUT | `ObservationHandler.UpdateObservation` | Atualizar |
+| `/observations/{id}/classify/edit` | GET | `ClassificationHandler.GetClassificationEdit` | Seletor de tags inline |
+| `/observations/{id}/classify` | POST | `ClassificationHandler.ClassifyObservation` | Aplicar tag |
+| `/observations/{id}/classify/{tag_id}` | DELETE | `ClassificationHandler.RemoveClassification` | Remover tag |
+| `/tags` | GET | `ClassificationHandler.GetTagsByType` | Tags de observações por tipo |
+
+### Intervenções
+
+| Rota | Método | Handler | Descrição |
+|------|--------|---------|-----------|
+| `/interventions/{id}` | GET | `InterventionHandler.GetIntervention` | Detalhes |
+| `/interventions/{id}/edit` | GET | `InterventionHandler.GetInterventionEditForm` | Formulário edição inline |
+| `/interventions/{id}` | PUT | `InterventionHandler.UpdateIntervention` | Atualizar |
+| `/interventions/{id}/classify/edit` | GET | `InterventionClassificationHandler.GetInterventionClassificationEdit` | Seletor de tags inline |
+| `/interventions/{id}/classify` | POST | `InterventionClassificationHandler.ClassifyIntervention` | Aplicar tag |
+| `/interventions/{id}/classify/{tag_id}` | DELETE | `InterventionClassificationHandler.RemoveInterventionClassification` | Remover tag |
+| `/tags/interventions` | GET | `InterventionClassificationHandler.GetInterventionTagsByType` | Tags de intervenções por tipo |
+
+### Agenda
+
+| Rota | Método | Handler | Descrição |
+|------|--------|---------|-----------|
+| `/agenda` | GET | `AgendaHandler.View` | Visualização principal |
+| `/agenda/day` | GET | `AgendaHandler.DayView` | View diária |
+| `/agenda/week` | GET | `AgendaHandler.WeekView` | View semanal |
+| `/agenda/month` | GET | `AgendaHandler.MonthView` | View mensal |
+| `/agenda/new` | GET | `AgendaHandler.NewForm` | Formulário novo compromisso |
+| `/agenda/slots` | GET | `AgendaHandler.GetSlots` | Slots disponíveis |
+| `/agenda/appointments` | POST | `AgendaHandler.Create` | Criar compromisso |
+| `/agenda/appointments/{id}` | GET | `AgendaHandler.Show` | Detalhe do compromisso |
+| `/agenda/appointments/{id}` | PUT | `AgendaHandler.Update` | Atualizar compromisso |
+| `/agenda/appointments/{id}` | DELETE | `AgendaHandler.Cancel` | Cancelar compromisso |
+| `/agenda/appointments/{id}/reschedule` | POST | `AgendaHandler.Reschedule` | Reagendar |
+| `/agenda/appointments/{id}/complete` | POST | `AgendaHandler.Complete` | Marcar como realizada |
 
 ---
 
@@ -68,95 +136,48 @@ Seguimos convenções REST com distinção clara entre coleções (plural) e rec
 
 ### 1. URLs em Templates
 
-Sempre use `templ.URL()` para gerar URLs em templates:
-
 ```go
 // ✅ CORRETO
-<a href={ templ.URL("/patient/" + patientID) }>Ver paciente</a>
+<a href={ templ.URL("/patients/" + patientID) }>Ver paciente</a>
 
-// ❌ ERRADO  
-<a href="/patient/{patientID}">Ver paciente</a>
+// ❌ ERRADO — sem templ.URL()
+<a href="/patients/{patientID}">Ver paciente</a>
+
+// ❌ ERRADO — singular
+<a href={ templ.URL("/patient/" + patientID) }>Ver paciente</a>
 ```
 
 ### 2. Extração de IDs em Handlers
 
-Use funções auxiliares consistentes para extrair IDs:
-
 ```go
-func extractPatientID(path string) string {
-    parts := strings.Split(path, "/")
-    for i, part := range parts {
-        if part == "patient" && i+1 < len(parts) {
-            return parts[i+1]
-        }
-    }
-    return ""
-}
+// Use r.PathValue() no Go 1.22+ ou strings.Split para extrair segmentos
+patientID := strings.TrimPrefix(r.URL.Path, "/patients/")
+patientID = strings.Split(patientID, "/")[0]
 ```
 
 ### 3. Verificação de Método HTTP
 
-Sempre verifique o método HTTP no handler:
-
 ```go
-func (h *Handler) HandlePatient(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case "GET":
-        h.showPatient(w, r)
-    case "POST":
-        h.createPatient(w, r)
-    case "PUT":
-        h.updatePatient(w, r)
-    default:
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    }
+switch r.Method {
+case http.MethodGet:
+    h.show(w, r)
+case http.MethodPost:
+    h.create(w, r)
+default:
+    http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 }
 ```
 
----
+### 4. HTMX: Fragmento vs Página Completa
 
-## Exceções e Casos Especiais
-
-### 1. Dashboard
-
-| Rota | Método | Descrição |
-|------|--------|-----------|
-| `/` | GET | Redireciona para dashboard |
-| `/dashboard` | GET | Página inicial do sistema |
-
-### 2. Arquivos Estáticos
-
-| Rota | Descrição |
-|------|-----------|
-| `/static/` | Arquivos CSS, JS, imagens |
-
-### 3. Rotas Especiais
-
-| Rota | Método | Descrição |
-|------|--------|-----------|
-| `/patients/new` | GET | Formulário novo paciente |
-| `/patient/create` | POST | Criar paciente (legado - migrar para POST /patients) |
-
----
-
-## Validação e Manutenção
-
-### Scripts de Verificação
-
-Use os scripts do projeto para validar consistência:
-
-```bash
-./scripts/arandu_validate_handlers.sh  # Valida handlers
-./scripts/arandu_checkpoint.sh         # Checkpoint arquitetural
-./scripts/arandu_guard.sh              # Verifica integridade
-```
-
-### Atualização de Contexto
-
-Após mudanças significativas nas rotas, atualize o contexto:
-
-```bash
-./scripts/arandu_update_context.sh
+```go
+if r.Header.Get("HX-Request") == "true" {
+    // retorna apenas o componente
+    component.Render(r.Context(), w)
+    return
+}
+// retorna com layout completo
+layout.Shell(config, component).Render(r.Context(), w)
 ```
 
 ---
@@ -165,8 +186,8 @@ Após mudanças significativas nas rotas, atualize o contexto:
 
 | Data | Mudança | Justificativa |
 |------|---------|---------------|
-| 2026-03-17 | Padronização singular/plural | Consistência RESTful |
-| 2026-03-17 | Criação deste documento | Documentação obrigatória |
+| 2026-03-17 | Criação do documento | Documentação obrigatória |
+| 2026-04-22 | Adição de todas as rotas implementadas | Sync com main.go real |
 
 ---
 

@@ -1,8 +1,8 @@
 # Visão Geral da Arquitetura - Arandu
 
-**Versão:** 1.0  
-**Data:** 04/04/2026  
-**Status:** Documentado
+**Versão:** 1.1  
+**Data:** 22/04/2026  
+**Status:** Atualizado
 
 ---
 
@@ -71,39 +71,46 @@ C4Container
 
 ```
 internal/web/
-├── handlers/           # 15 handlers
+├── handlers/           # 13 handlers
 │   ├── patient_handler.go
 │   ├── session_handler.go
 │   ├── observation_handler.go
 │   ├── intervention_handler.go
 │   ├── classification_handler.go
+│   ├── intervention_classification_handler.go
 │   ├── timeline_handler.go
 │   ├── analysis_handler.go
 │   ├── ai_handler.go
 │   ├── auth_handler.go
 │   ├── dashboard_handler.go
+│   ├── agenda_handler.go
 │   └── biopsychosocial_handler.go
+└── service_adapters.go  # Adaptadores para injeção de dependência
 ```
 
 **Componentes UI:**
 ```
 web/components/
-├── patient/           # 15 componentes
-├── session/           # 10 componentes
-├── classification/    # 6 componentes
+├── patient/           # 15 componentes (profile, anamnesis, goals, biopsychosocial...)
+├── session/           # 10 componentes (edit_form Sábio, observation_item, intervention_item...)
+├── classification/    # 5 componentes (tags para observações)
+├── intervention/      # 3 componentes (tags para intervenções)
 ├── timeline/          # 5 componentes
-├── analysis/          # 5 componentes
-├── layout/            # 4 componentes
-├── dashboard/         # 3 componentes
+├── analysis/          # 5 componentes (theme_cloud, patterns)
+├── layout/            # 8 componentes (shell_layout, llm_drawer, toast...)
+├── agenda/            # 4 componentes (agenda_layout, appointment_detail, new_form)
+├── dashboard/         # 2 componentes
 ├── ai/                # 2 componentes
 └── auth/              # 2 componentes
 ```
 
 **Tecnologias:**
 - Go 1.21+
-- Templ (templating)
-- HTMX (interatividade)
-- Tailwind CSS (estilos)
+- Templ 0.3.x (templating type-safe)
+- HTMX **2.x** (servido localmente em `/static/js/htmx.min.js`)
+- Tailwind CSS **v4** (build via `input-v2.css`)
+- Alpine.js 3.13.5 (estado mínimo do cliente)
+- CSS Sábio design system (`style.css`)
 
 ---
 
@@ -115,16 +122,18 @@ web/components/
 internal/application/services/
 ├── patient_service.go
 ├── session_service.go
+├── create_session_service.go   # caso de uso isolado
 ├── observation_service.go
 ├── intervention_service.go
 ├── timeline_service.go
+├── timeline_service_context.go # contexto biopsicossocial na timeline
 ├── biopsychosocial_service.go
 ├── goal_service.go
 ├── insight_service.go
 ├── ai_service.go
 ├── audit_service.go
 ├── tenant_service.go
-└── ...
+└── agenda_service.go
 ```
 
 **Padrão:** Cada service implementa uma interface (Port) definida no handler
@@ -148,17 +157,30 @@ type PatientService interface {
 ```
 internal/domain/
 ├── patient/
-│   └── patient.go       # Entidade e regras
+│   ├── patient.go       # Aggregate Root + DashboardSummary
+│   ├── goal.go          # Meta terapêutica
+│   ├── anamnesis.go     # Anamnese multidimensional
+│   ├── medication.go
+│   └── vitals.go
 ├── session/
-│   └── session.go
+│   ├── session.go
+│   ├── entity.go
+│   └── repository.go    # Interface Repository
 ├── observation/
 │   ├── observation.go
-│   └── tag.go
+│   └── tag.go           # ObservationTag + classificação
 ├── intervention/
-│   └── intervention.go
+│   ├── intervention.go
+│   └── classification.go # InterventionClassification
+├── appointment/
+│   └── appointment.go   # Entidade de agenda
+├── insight/
+│   └── insight.go       # Insights gerados por IA
 ├── timeline/
-│   └── timeline.go
-└── ...
+│   └── timeline.go      # Read model longitudinal
+└── shared/
+    ├── tenant.go         # Entidade de tenant
+    └── user.go           # Entidade de usuário
 ```
 
 **Princípio:** Camada independente de frameworks e infraestrutura
@@ -181,12 +203,26 @@ internal/infrastructure/
 │       ├── goal_repository.go
 │       ├── medication_repository.go
 │       ├── vitals_repository.go
-│       ├── tenant_pool.go
-│       └── migrations/
+│       ├── appointment_repository.go
+│       ├── insight_repository.go
+│       ├── context_wrapper.go   # Extrai tenant DB do context
+│       ├── tenant_pool.go       # Pool de conexões por tenant
+│       ├── central_db.go        # Control plane DB
+│       ├── db.go                # Abstração de conexão
+│       └── migrations/          # 0001..0014 arquivos .up.sql
 ├── ai/
-│   └── gemini_client.go
+│   ├── gemini_client.go
+│   └── cache.go
 └── auth/
     └── google_provider.go
+
+internal/platform/       # Utilitários transversais
+├── context/             # Injeção de tenant DB no context
+├── env/                 # Variáveis de ambiente (IsDev, etc.)
+├── helpers/             # CSS versioning hash
+├── logger/              # Logger estruturado
+├── middleware/          # Auth, telemetry, cache, request_id
+└── version/             # Versão do binário
 ```
 
 ---
@@ -451,12 +487,13 @@ arandu/
 | Camada | Tecnologia | Versão |
 |--------|------------|--------|
 | Linguagem | Go | 1.21+ |
-| Template | Templ | 0.3.1001 |
-| CSS | Tailwind | 3.x |
-| HTMX | HTMX | 1.9.10 |
+| Template | Templ | 0.3.x |
+| CSS | Tailwind | **v4** |
+| CSS Design | Sábio (`style.css`) | — |
+| HTMX | HTMX | **2.x** (local) |
 | Alpine.js | Alpine | 3.13.5 |
 | DB | SQLite | 3.x |
-| Auth | JWT / OAuth2 | - |
+| Auth | Cookie session + OAuth2 | — |
 | AI | Google Gemini | API |
 
 ---
@@ -525,6 +562,7 @@ type PatientServiceImpl struct {
 | Data | Versão | Alterações |
 |------|--------|------------|
 | 04/04/2026 | 1.0 | Criação do documento |
+| 22/04/2026 | 1.1 | Stack atualizada (HTMX 2.x, Tailwind v4, Alpine), handlers e domínios adicionados (agenda, insight, shared), platform/ documentada |
 
 ---
 

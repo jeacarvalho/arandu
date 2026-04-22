@@ -17,9 +17,9 @@ O Arandu está atualmente em **Fase 2** de desenvolvimento, com 69% dos requirem
 | Fase | Descrição | Progresso | Status |
 |------|-----------|-----------|--------|
 | **Fase 1: Fundação** | Core clínico básico | 100% | ✅ Completa |
-| **Fase 2: Consolidação** | Histórico e organização | 80% | 🟠 Em execução |
-| **Fase 3: Inteligência** | Análise e padrões | 40% | 🔵 Planejada |
-| **Fase 4: Escala** | Multi-tenant e operacional | 60% | 🟠 Parcial |
+| **Fase 2: Consolidação** | Histórico e organização | 100% | ✅ Completa |
+| **Fase 3: Inteligência** | Análise e padrões | 50% | 🟠 Em execução |
+| **Fase 4: Escala** | Multi-tenant e operacional | 75% | 🟠 Em execução |
 | **Fase 5: Pesquisa** | Base coletiva | 0% | 🔴 Futura |
 
 ---
@@ -72,15 +72,15 @@ gantt
 
 ---
 
-### 🟠 Fase 2: Consolidação (Em Execução)
+### ✅ Fase 2: Consolidação (Concluída)
 **Período:** Fev-Abr/2026  
 **Objetivo:** Construir memória clínica e organização do conhecimento
 
-#### Em Progresso
+#### Entregues
 - [x] Visualização de histórico (prontuário)
 - [x] Linha do tempo clínica
 - [x] Classificação de observações (tags)
-- [ ] Classificação de intervenções ⏳ Q2/2026
+- [x] Classificação de intervenções
 
 #### Funcionalidades
 | Feature | Status | Estimativa |
@@ -88,9 +88,9 @@ gantt
 | Timeline interativa | ✅ | Concluído |
 | Filtros por tipo | ✅ | Concluído |
 | Tags para observações | ✅ | Concluído |
-| Tags para intervenções | 🟡 | Abril/2026 |
+| Tags para intervenções | ✅ | Concluído |
 
-**Requirements:** 3 de 4 (75%) 🟡
+**Requirements:** 4 de 4 (100%) ✅
 
 ---
 
@@ -127,9 +127,17 @@ gantt
 - [x] Logs estruturados
 - [x] Serviço de auditoria (parcial)
 
+#### Implementado
+- [x] Multi-tenancy completo
+- [x] Migrações automáticas
+- [x] Paginação e busca
+- [x] Logs estruturados
+- [x] Serviço de auditoria (parcial)
+- [x] Agenda clínica (backend + UI parcial) ✅
+- [x] Registro de atendimentos (via agenda) 🟡
+
 #### A Implementar
-- [ ] Agenda clínica ⏳
-- [ ] Registro de atendimentos ⏳
+- [ ] UI completa da agenda (views diária/semanal/mensal)
 - [ ] Auditoria completa de acessos ⏳
 - [ ] Evolução da base clínica ⏳
 
@@ -140,11 +148,12 @@ gantt
 | Tenant pool | ✅ | Concluído |
 | Logs estruturados | ✅ | Concluído |
 | Auditoria básica | ✅ | Concluído |
-| Agenda | 🔵 | Maio/2026 |
-| Atendimentos | 🔵 | Junho/2026 |
-| Auditoria completa | 🔵 | Julho/2026 |
+| Agenda (backend) | ✅ | Concluído |
+| Agenda (UI completa) | 🟡 | Q2/2026 |
+| Atendimentos (backend) | 🟡 | Concluído parcial |
+| Auditoria completa | 🔵 | Q3/2026 |
 
-**Requirements:** 6 de 10 (60%) 🟠
+**Requirements:** 8 de 10 (80%) 🟠
 
 ---
 
@@ -173,18 +182,16 @@ gantt
 ## 🎯 Objetivos por Trimestre
 
 ### Q2/2026 (Abr-Jun)
-**Foco:** Completar consolidação e iniciar inteligência
+**Foco:** Completar agenda, Sábio design system e iniciar IA avançada
 
 #### Metas
-- [ ] Completar Fase 2 (Consolidação)
-  - [ ] Classificação de intervenções
-- [ ] Avançar Fase 3 (Inteligência)
-  - [ ] Análise IA avançada
-  - [ ] Insights automáticos
-- [ ] Iniciar Fase 4 (Escala)
-  - [ ] Agenda clínica básica
+- [x] ~~Completar Fase 2~~ — Concluída (classificação de intervenções ✅)
+- [x] ~~Agenda clínica básica~~ — Backend implementado ✅
+- [ ] UI completa da agenda (views diária/semanal/mensal)
+- [ ] Análise IA avançada
+- [ ] Insights automáticos
 
-**Milestone:** Sistema com análise de padrões funcional
+**Milestone:** Agenda operacional + design system Sábio unificado
 
 ---
 
@@ -229,8 +236,9 @@ gantt
 - [x] Tags para observações
 
 ### Prioridade 2: Essencial (Atual)
-- [ ] Tags para intervenções
-- [ ] Agenda clínica
+- [x] ~~Tags para intervenções~~ ✅
+- [x] ~~Agenda clínica (backend)~~ ✅
+- [ ] UI completa da agenda
 - [ ] Auditoria completa
 
 ### Prioridade 3: Valor (Próximo)

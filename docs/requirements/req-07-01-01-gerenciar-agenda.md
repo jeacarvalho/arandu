@@ -7,9 +7,9 @@
 | **ID** | REQ-07-01-01 |
 | **Capability** | CAP-07-01 — Gestão de Agenda Clínica |
 | **Vision** | VISION-07 — Organização Operacional do Consultório |
-| **Status** | 🟡 Draft |
+| **Status** | 🟡 Parcialmente Implementado |
 | **Prioridade** | Alta |
-| **Data de Implementação** | 2026-Q2 |
+| **Data de Implementação** | 2026-Q1/Q2 |
 
 ---
 
@@ -507,18 +507,23 @@ Este requisito **NÃO** inclui:
 
 ## Checklist de Implementação
 
-- [ ] Handler criado com todos os métodos
-- [ ] Service implementado com validações
-- [ ] Repository com queries otimizadas
-- [ ] Componentes UI criados (view, header, day, week, month, card, form, modal)
-- [ ] Migrações criadas e testadas
-- [ ] Rotas registradas no main.go
-- [ ] Testes unitários escritos (service, repository)
-- [ ] Testes de integração escritos (handler)
-- [ ] Testes E2E escritos (agenda flow)
-- [ ] Documentação atualizada
-- [ ] Revisão de código realizada
-- [ ] Deploy em staging testado
+- [x] Handler criado com todos os métodos (`internal/web/handlers/agenda_handler.go`)
+- [x] Service implementado com validações (`internal/application/services/agenda_service.go`)
+- [x] Repository com queries otimizadas (`internal/infrastructure/repository/sqlite/appointment_repository.go`)
+- [x] Domain entity (`internal/domain/appointment/appointment.go`)
+- [x] Migrações criadas e testadas (`0013_add_appointments.up.sql`)
+- [x] Rotas registradas no `cmd/arandu/main.go`
+- [x] Componente agenda_layout.templ (container principal)
+- [x] Componente appointment_detail.templ (detalhe/modal)
+- [x] Componente new_appointment_form.templ (formulário)
+- [ ] View diária com slots horários
+- [ ] View semanal (7 colunas)
+- [ ] View mensal (grid 5x7)
+- [ ] Card individual de compromisso
+- [ ] Alerta de conflito de horário
+- [ ] Testes unitários (service, repository)
+- [ ] Testes de integração (handler)
+- [ ] Testes E2E (agenda flow)
 
 ---
 
