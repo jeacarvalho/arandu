@@ -501,6 +501,93 @@ func TestAgendaHandler_Complete(t *testing.T) {
 	}
 }
 
+func TestAgendaHandler_Cancel_HTMX(t *testing.T) {
+	repo := newMockAppointmentRepository()
+	agendaService := services.NewAgendaService(repo)
+	patientService := &mockPatientService{}
+
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
+	if err != nil {
+		t.Fatalf("Failed to create appointment: %v", err)
+	}
+	repo.Save(context.Background(), appt)
+
+	handler := NewAgendaHandler(agendaService, patientService)
+
+	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/cancel", nil)
+	req.Header.Set("HX-Request", "true")
+	w := httptest.NewRecorder()
+
+	handler.Cancel(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", w.Code)
+	}
+	if w.Header().Get("HX-Redirect") == "" {
+		t.Error("Expected HX-Redirect header for HTMX request")
+	}
+}
+
+func TestAgendaHandler_Cancel_NonHTMX(t *testing.T) {
+	repo := newMockAppointmentRepository()
+	agendaService := services.NewAgendaService(repo)
+	patientService := &mockPatientService{}
+
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
+	if err != nil {
+		t.Fatalf("Failed to create appointment: %v", err)
+	}
+	repo.Save(context.Background(), appt)
+
+	handler := NewAgendaHandler(agendaService, patientService)
+
+	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/cancel", nil)
+	w := httptest.NewRecorder()
+
+	handler.Cancel(w, req)
+
+	if w.Code != http.StatusSeeOther {
+		t.Errorf("Expected status 303, got %d", w.Code)
+	}
+	if w.Header().Get("Location") != "/agenda" {
+		t.Errorf("Expected Location /agenda, got %s", w.Header().Get("Location"))
+	}
+}
+
+func TestAgendaHandler_Complete_HTMX(t *testing.T) {
+	repo := newMockAppointmentRepository()
+	agendaService := services.NewAgendaService(repo)
+	patientService := &mockPatientService{}
+
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, err := appointment.NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, appointment.AppointmentTypeSession, "")
+	if err != nil {
+		t.Fatalf("Failed to create appointment: %v", err)
+	}
+	repo.Save(context.Background(), appt)
+
+	handler := NewAgendaHandler(agendaService, patientService)
+
+	req := httptest.NewRequest(http.MethodPost, "/agenda/appointments/"+appt.ID+"/complete", nil)
+	req.Header.Set("HX-Request", "true")
+	w := httptest.NewRecorder()
+
+	handler.Complete(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", w.Code)
+	}
+	redirect := w.Header().Get("HX-Redirect")
+	if redirect == "" {
+		t.Error("Expected HX-Redirect header for HTMX request")
+	}
+	if !bytes.Contains([]byte(redirect), []byte("/agenda?view=dia")) {
+		t.Errorf("Expected redirect to include /agenda?view=dia&date=, got %s", redirect)
+	}
+}
+
 // Helper to generate UUID for testing
 func generateTestID() string {
 	return uuid.New().String()

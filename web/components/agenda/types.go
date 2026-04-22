@@ -276,3 +276,11 @@ func TodayColumnClasses(isToday bool) string {
 	}
 	return base
 }
+
+// ConflictAlertClasses returns Tailwind CSS classes for conflict error alert
+func ConflictAlertClasses(visible bool) string {
+	if visible {
+		return "mt-2 p-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700"
+	}
+	return "hidden"
+}

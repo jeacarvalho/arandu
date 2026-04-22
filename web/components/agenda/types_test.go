@@ -86,3 +86,20 @@ func TestTodayColumnClasses_TodayHasHighlight(t *testing.T) {
 		t.Errorf("today column should highlight with arandu-primary, got: %q", today)
 	}
 }
+
+func TestConflictAlertClasses_HiddenByDefault(t *testing.T) {
+	got := agenda.ConflictAlertClasses(false)
+	if got != "hidden" {
+		t.Errorf("ConflictAlertClasses(false) = %q, want hidden", got)
+	}
+}
+
+func TestConflictAlertClasses_VisibleHasErrorClasses(t *testing.T) {
+	got := agenda.ConflictAlertClasses(true)
+	if !strings.Contains(got, "bg-red-50") {
+		t.Errorf("expected bg-red-50 in classes, got: %q", got)
+	}
+	if !strings.Contains(got, "text-red-700") {
+		t.Errorf("expected text-red-700 in classes, got: %q", got)
+	}
+}

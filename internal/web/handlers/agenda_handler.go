@@ -343,39 +343,19 @@ func (h *AgendaHandler) WeekView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	weekView, err := h.agendaService.GetWeekView(ctx, date)
+	vm, err := h.viewModelForWeek(ctx, date)
 	if err != nil {
 		http.Error(w, "Failed to load week view", http.StatusInternalServerError)
 		return
 	}
-
-	days := make([]agendaComponents.DayViewModel, 0, len(weekView.Days))
-	for _, day := range weekView.Days {
-		days = append(days, agendaComponents.DayViewModel{
-			Date:         day.Date,
-			DayName:      day.Date.Format("Mon"),
-			DayNumber:    day.Date.Format("2"),
-			IsToday:      isToday(day.Date),
-			Appointments: convertAppointmentsForWeek(day.Appointments),
-		})
-	}
-
-	viewModel := agendaComponents.AgendaViewModel{
-		WeekStart:   weekView.StartDate,
-		WeekEnd:     weekView.EndDate,
-		WeekLabel:   fmt.Sprintf("%d – %d de %s", weekView.StartDate.Day(), weekView.EndDate.Day(), weekView.EndDate.Format("January")),
-		Days:        days,
-		CurrentView: "semana",
-	}
+	vm.CurrentView = "semana"
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	if r.Header.Get("HX-Request") == "true" {
-		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+		agendaComponents.AgendaContent(vm).Render(ctx, w)
 		return
 	}
-
-	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
+agendaComponents.AgendaPage(vm).Render(ctx, w)
 }
 
 // MonthView handles GET /agenda/month
@@ -402,37 +382,22 @@ func (h *AgendaHandler) MonthView(w http.ResponseWriter, r *http.Request) {
 		month = int(now.Month())
 	}
 
+	date := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
+
 	ctx := r.Context()
-	monthView, err := h.agendaService.GetMonthView(ctx, year, month)
+	vm, err := h.viewModelForMonth(ctx, date)
 	if err != nil {
 		http.Error(w, "Failed to load month view", http.StatusInternalServerError)
 		return
 	}
-
-	days := make([]agendaComponents.DayViewModel, 0, len(monthView.Days))
-	for _, day := range monthView.Days {
-		days = append(days, agendaComponents.DayViewModel{
-			Date:      day.Date,
-			DayName:   day.Date.Format("Mon"),
-			DayNumber: day.Date.Format("2"),
-			IsToday:   isToday(day.Date),
-		})
-	}
-
-	viewModel := agendaComponents.AgendaViewModel{
-		WeekLabel:   fmt.Sprintf("%s %d", time.Month(month).String(), year),
-		Days:        days,
-		CurrentView: "mes",
-	}
+	vm.CurrentView = "mes"
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	if r.Header.Get("HX-Request") == "true" {
-		agendaComponents.AgendaContent(viewModel).Render(ctx, w)
+		agendaComponents.AgendaContent(vm).Render(ctx, w)
 		return
 	}
-
-	agendaComponents.AgendaPage(viewModel).Render(ctx, w)
+	agendaComponents.AgendaPage(vm).Render(ctx, w)
 }
 
 // NewForm handles GET /agenda/new
@@ -727,7 +692,13 @@ func (h *AgendaHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	redirectURL := "/agenda"
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", redirectURL)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 // Reschedule handles POST /agenda/appointments/{id}/reschedule
@@ -802,13 +773,25 @@ func (h *AgendaHandler) Complete(w http.ResponseWriter, r *http.Request) {
 	sessionID := r.FormValue("session_id")
 
 	ctx := r.Context()
-	err := h.agendaService.CompleteAppointment(ctx, id, sessionID)
+	appt, err := h.agendaService.GetAppointment(ctx, id)
+	if err != nil {
+		http.Error(w, "Failed to get appointment", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.agendaService.CompleteAppointment(ctx, id, sessionID)
 	if err != nil {
 		http.Error(w, "Failed to complete appointment", http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	redirectURL := "/agenda?view=dia&date=" + appt.Date.Format("2006-01-02")
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", redirectURL)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 // Helper functions

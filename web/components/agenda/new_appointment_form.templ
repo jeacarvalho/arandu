@@ -15,10 +15,11 @@ templ NewAppointmentForm(data NewAppointmentFormData) {
 		</div>
 		
 		<!-- Form -->
-		<form 
+		<form
 			hx-post="/agenda/appointments"
 			hx-target="#agenda-content"
 			hx-swap="outerHTML"
+			hx-on::htmx:response-error="if(event.detail.xhr.status===409){document.getElementById('conflict-warning').className='mt-2 p-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700'}"
 			class="flex-1 overflow-y-auto p-5 space-y-4"
 		>
 			<!-- Date -->
@@ -109,7 +110,13 @@ templ NewAppointmentForm(data NewAppointmentFormData) {
 					placeholder="Opcional..."
 				></textarea>
 			</div>
-			
+
+			<!-- Conflict warning -->
+			<div id="conflict-warning" class={ ConflictAlertClasses(false) }>
+				<i class="fas fa-exclamation-triangle mr-1.5"></i>
+				Horário ocupado. Escolha outro slot disponível.
+			</div>
+
 			<!-- Actions -->
 			<div class="flex gap-3 pt-4">
 				<button
