@@ -1,0 +1,67 @@
+package agenda
+
+templ RescheduleForm(model RescheduleFormModel) {
+	<div id="drawer" class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl z-50 flex flex-col">
+		<!-- Header -->
+		<div class="flex items-center justify-between px-5 py-4 border-b border-neutral-200 bg-neutral-50 flex-shrink-0">
+			<h3 class="text-base font-semibold text-neutral-800">Reagendar Consulta</h3>
+			<button onclick="document.getElementById('drawer-container').innerHTML=''"
+				class="w-8 h-8 flex items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors">
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+
+		<!-- Form -->
+		<form
+			hx-post={ "/agenda/appointments/" + model.AppointmentID + "/reschedule" }
+			hx-target="#agenda-content"
+			hx-swap="outerHTML"
+			class="flex-1 overflow-y-auto p-5 space-y-4"
+		>
+			<!-- Date -->
+			<div>
+				<label class="block text-sm font-medium text-neutral-700 mb-1.5">Nova data</label>
+				<input type="date" name="date"
+					value={ model.CurrentDate.Format("2006-01-02") }
+					class="w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/50"
+					required/>
+			</div>
+
+			<!-- Start time -->
+			<div>
+				<label class="block text-sm font-medium text-neutral-700 mb-1.5">Novo horário</label>
+				<input type="time" name="start_time"
+					value={ model.CurrentStart }
+					class="w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/50"
+					required/>
+			</div>
+
+			<!-- Duration -->
+			<div>
+				<label class="block text-sm font-medium text-neutral-700 mb-1.5">Duração</label>
+				<select name="duration"
+					class="w-full h-10 px-3 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-arandu-primary/50">
+					<option value="30" selected?={ model.Duration == 30 }>30 min</option>
+					<option value="50" selected?={ model.Duration == 50 }>50 min</option>
+					<option value="60" selected?={ model.Duration == 60 }>60 min</option>
+				</select>
+			</div>
+
+			<!-- Actions -->
+			<div class="flex gap-3 pt-4">
+				<button type="button"
+					onclick="document.getElementById('drawer-container').innerHTML=''"
+					class="flex-1 h-10 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors">
+					Cancelar
+				</button>
+				<button type="submit"
+					class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-lg transition-colors">
+					Confirmar
+				</button>
+			</div>
+		</form>
+	</div>
+	<!-- Backdrop -->
+	<div class="fixed inset-0 bg-black/30 z-40"
+		onclick="document.getElementById('drawer-container').innerHTML=''"></div>
+}

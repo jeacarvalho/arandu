@@ -83,7 +83,9 @@ Um prompt incompleto é mais perigoso que nenhum prompt.
 
 ### 🏗️ Contexto do sistema (leia antes de escrever qualquer código)
 
-**Stack**: Go 1.22+ · Templ · HTMX · Tailwind CSS · SQLite (database-per-tenant)
+**Stack**: Go 1.22+ · Templ · HTMX · **DaisyUI v4 + Tailwind CSS** · SQLite (database-per-tenant)
+
+**Design system**: DaisyUI v4 com tema Arandu customizado. Consultar skill `daisyui-arandu` antes de criar qualquer componente visual.
 
 **Estrutura de pastas** (não desvie):
 ```
@@ -210,6 +212,8 @@ O código está pronto quando:
 - Não acesse tenant DB globalmente — sempre extraia do `context.Context`
 - Não invente rotas — siga a tabela acima
 - Não use `float64` para valores monetários — use `int64` (centavos)
+- Não crie CSS custom — use componentes DaisyUI + utilities Tailwind; consultar skill `daisyui-arandu`
+- Não edite `input-v2.css` nem `tailwind-v2.css` — esses arquivos são legacy
 - [restrições específicas da feature, se houver]
 
 ---
@@ -345,6 +349,7 @@ func ReconstituteObservation(id, sessionID uuid.UUID, content string, createdAt,
 - Não inclua `content` em nenhum log ou payload externo
 - Não retorne a página completa no POST — apenas o fragmento HTMX da nova Observation
 - Não use html/template — apenas .templ
+- Não crie CSS custom — usar componentes DaisyUI; consultar skill `daisyui-arandu`
 
 ---
 

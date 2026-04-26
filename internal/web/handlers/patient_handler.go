@@ -692,6 +692,18 @@ func (h *PatientHandler) Show(w http.ResponseWriter, r *http.Request) {
 	// Check if this is an HTMX request - return just the content (wrappers are in DOM)
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 	if isHTMXRequest {
+		// Render OOB swaps first: sidebar and breadcrumb
+		sidebarConfig := layoutComponents.ShellConfig{
+			SidebarVariant: "patient",
+			PatientID:     id,
+			ActivePage:    "patient-summary",
+		}
+		layoutComponents.ShellSidebarOOB(sidebarConfig).Render(r.Context(), w)
+
+		breadcrumb := []string{"Pacientes", patientData.Name}
+		layoutComponents.ShellBreadcrumb(breadcrumb).Render(r.Context(), w)
+
+		// Then render the main content
 		patientProfile.Render(r.Context(), w)
 		return
 	}
@@ -999,6 +1011,23 @@ func (h *PatientHandler) ShowAnamnesis(w http.ResponseWriter, r *http.Request) {
 
 	// Render full page with new layout v2
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	// Check if HTMX request - add OOB swaps
+	if r.Header.Get("HX-Request") == "true" {
+		sidebarConfig := layoutComponents.ShellConfig{
+			SidebarVariant: "patient",
+			PatientID:     patientID,
+			ActivePage:    "patient-anamnesis",
+		}
+		layoutComponents.ShellSidebarOOB(sidebarConfig).Render(ctx, w)
+
+		breadcrumb := []string{"Pacientes", patient.Name, "Anamnese"}
+		layoutComponents.ShellBreadcrumb(breadcrumb).Render(ctx, w)
+
+		patientComponents.AnamnesisPageV2(anamnesisVM).Render(ctx, w)
+		return
+	}
+
 	patientComponents.AnamnesisPageV2(anamnesisVM).Render(ctx, w)
 }
 

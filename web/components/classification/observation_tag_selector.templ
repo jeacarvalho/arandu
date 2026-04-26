@@ -1,0 +1,146 @@
+package classification
+
+import (
+	"arandu/internal/domain/observation"
+	"fmt"
+)
+
+// ObservationTagSelectorData is the data needed for the inline tag selector
+type ObservationTagSelectorData struct {
+	ObservationID string
+	AvailableTags []observation.Tag
+	SelectedTags []observation.ObservationTag
+}
+
+// ObservationTagSelectorInline renders an inline tag selector with checkboxes for bulk selection
+// Similar to the intervention tag selector
+templ ObservationTagSelectorInline(data ObservationTagSelectorData) {
+	<div class="bg-white rounded-lg border border-base-300 shadow-lg p-4 max-w-2xl" id={ "selector-" + data.ObservationID }>
+		<div class="flex items-center justify-between mb-4">
+			<h3 class="text-sm font-semibold text-base-content flex items-center gap-2">
+				<i class="fas fa-tags text-primary"></i>
+				Classificar
+			</h3>
+			<button
+				type="button"
+				hx-get={ "/observations/" + data.ObservationID + "/classify/edit" }
+				hx-target={ "#observation-" + data.ObservationID + "-tags" }
+				hx-swap="outerHTML"
+				class="btn btn-ghost btn-xs"
+			>✕</button>
+		</div>
+
+		<form
+			hx-post={ "/observations/" + data.ObservationID + "/classify/bulk" }
+			hx-target={ "#observation-" + data.ObservationID + "-tags" }
+			hx-swap="outerHTML"
+		>
+			<div class="space-y-3">
+				{{ tagIDs := make(map[string]bool) }}
+				{{ for _, t := range data.SelectedTags { tagIDs[t.TagID] = true } }}
+
+				for _, tagType := range observation.TagTypeOrder {
+					{{ groupTags := data.TagsByType(tagType) }}
+					if len(groupTags) > 0 {
+						<div class="mb-3">
+							<div 
+								class="text-xs font-semibold uppercase tracking-wider mb-2"
+								style={ "color: " + observation.GetTagTypeColor(tagType) }
+							>
+								{ observation.GetTagTypeDisplayName(tagType) }
+							</div>
+							<div class="flex flex-wrap gap-1">
+								for _, tag := range groupTags {
+									{{ isSelected := tagIDs[tag.ID] }}
+									<label
+										x-data={ fmt.Sprintf(`{"sel":%t}`, isSelected) }
+										:style={ fmt.Sprintf(`sel ? 'background:%s;color:white;border-color:%s;' : 'background:transparent;color:%s;border-color:%s;'`, tag.Color, tag.Color, tag.Color, tag.Color) }
+										class="badge badge-sm cursor-pointer transition-all"
+									>
+										<input
+											type="checkbox"
+											name="tag_ids"
+											value={ tag.ID }
+											class="hidden"
+											x-model="sel"
+											if isSelected { checked }
+										/>
+										{ tag.Name }
+									</label>
+								}
+							</div>
+						</div>
+					}
+				}
+			</div>
+
+			<div class="flex justify-end mt-4 pt-3 border-t border-base-300 gap-2">
+				<button
+					type="button"
+					hx-get={ "/observations/" + data.ObservationID + "/classify/edit" }
+					hx-target={ "#observation-" + data.ObservationID + "-tags" }
+					hx-swap="outerHTML"
+					class="btn btn-ghost btn-sm"
+				>Cancelar</button>
+				<button type="submit" class="btn btn-sm btn-primary">Salvar</button>
+			</div>
+		</form>
+	</div>
+}
+
+// TagsByType returns tags grouped by type for the template
+func (d ObservationTagSelectorData) TagsByType(tagType observation.TagType) []observation.Tag {
+	var result []observation.Tag
+	for _, tag := range d.AvailableTags {
+		if tag.TagType == tagType {
+			result = append(result, tag)
+		}
+	}
+	return result
+}
+
+// ObservationTagData is used by the observation tag badge
+type ObservationTagData struct {
+	ObservationID string
+	Tag            observation.Tag
+	ShowClose      bool
+}
+
+// ObservationTag renders a single classification tag with colored dot
+templ ObservationTag(data ObservationTagData) {
+	<span
+		class="badge badge-outline gap-1 text-xs"
+		style={ "border-color: " + data.Tag.Color + "; color: " + data.Tag.Color + ";" }
+	>
+		<span class="w-2 h-2 rounded-full" style={ "background-color: " + data.Tag.Color + ";" }></span>
+		{ data.Tag.Name }
+		if data.ShowClose {
+			<button
+				hx-delete={ "/observations/" + data.ObservationID + "/classify/" + data.Tag.ID }
+				hx-target={ "#observation-" + data.ObservationID + "-tags" }
+				hx-swap="outerHTML"
+				title="Remover"
+				class="hover:text-error ml-1"
+			>×</button>
+		}
+	</span>
+}
+
+// ObservationTagList renders a list of tags (used by session item template)
+templ ObservationTagList(tags []observation.ObservationTag, showRemove bool) {
+	if len(tags) == 0 {
+		<span class="text-xs text-base-content/40 italic">Nenhuma classificação</span>
+	} else {
+		<div class="flex flex-wrap gap-1">
+			for _, ot := range tags {
+				if ot.Tag != nil {
+					@ObservationTag(ObservationTagData{
+						ObservationID: ot.ObservationID,
+						Tag:            *ot.Tag,
+						ShowClose:       showRemove,
+					})
+				}
+			}
+		</div>
+	}
+}

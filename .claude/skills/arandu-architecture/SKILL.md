@@ -277,43 +277,39 @@ func extractPatientID(path string) string {
 O Arandu usa uma estética de **"anti-fadiga"** — a UI desaparece para que o conteúdo
 clínico seja o protagonista.
 
-### Tokens de design
+### Stack CSS
 
-```css
-/* Fundo global */
-background: #F7F8FA;  /* Cinza papel — não branco puro */
+**DaisyUI v4 + Tailwind CSS.** Componentes semânticos em vez de classes utilitárias acumuladas.
 
-/* Tipografia dual */
---font-ui:       'Inter', sans-serif;          /* Toda a interface */
---font-clinical: 'Source Serif 4', serif;      /* Conteúdo clínico */
-
-/* Silent inputs — sem bordas pesadas */
-.input-silent {
-  @apply bg-transparent border-0 border-b border-gray-200
-         focus:border-gray-400 focus:ring-0
-         text-gray-900 placeholder-gray-300;
-}
+```
+DaisyUI v4   ← btn, card, badge, stat, drawer, modal, table, input…
+Tailwind     ← utilities de espaçamento, tamanho, layout quando DaisyUI não cobre
+style.css    ← APENAS: variáveis do tema Arandu + classe .clinical
 ```
 
-### Regra tipográfica
+> **Não criar CSS custom.** Não editar `input-v2.css` nem `tailwind-v2.css` (legacy).
+> Referência completa: skill `daisyui-arandu`.
 
-| Contexto | Fonte | Tailwind |
-|----------|-------|---------|
-| Labels, botões, navegação, metadados | Inter | `font-sans` |
-| Observações clínicas, notas, prontuário | Source Serif 4 | `font-serif text-xl leading-relaxed` |
-| Código, IDs, timestamps | Mono | `font-mono text-sm` |
+### Tipografia dual — duas classes, não mais
 
-### Hierarquia visual
+```css
+body      { font-family: 'Inter', sans-serif; }   /* toda UI */
+.clinical { font-family: 'Source Serif 4', serif; } /* conteúdo clínico */
+```
+
+| Contexto | Classe |
+|----------|--------|
+| Títulos de página, prontuário, observações, resumo | `.clinical` |
+| Labels, botões, navegação, metadados, timestamps | padrão (Inter) |
 
 ```templ
-// Conteúdo clínico — sempre Serif
-<p class="font-serif text-xl leading-relaxed text-gray-800">
-    { observation.Content }
-</p>
+// ✅ Conteúdo clínico
+<h1 class="clinical text-3xl font-medium">{ patient.Name }</h1>
+<p class="clinical text-lg leading-relaxed">{ observation.Content }</p>
 
-// Metadados — sempre Sans
-<span class="font-sans text-xs text-gray-400">
-    { observation.CreatedAt.Format("02/01/2006 15:04") }
+// ✅ Metadados
+<span class="text-xs text-base-content/50">
+    { createdAt.Format("02/01/2006 15:04") }
 </span>
 ```
 
@@ -347,9 +343,11 @@ background: #F7F8FA;  /* Cinza papel — não branco puro */
 ```
 [ ] Arquivo em web/components/{entidade}/
 [ ] Executa templ generate antes de testar
-[ ] Conteúdo clínico usa font-serif
+[ ] Conteúdo clínico usa classe .clinical (Source Serif 4) — não font-serif do Tailwind
+[ ] Componentes visuais usam DaisyUI (btn, card, badge…) — consultar skill daisyui-arandu
+[ ] Sem CSS custom inline — apenas classes DaisyUI + utilities Tailwind
 [ ] URLs via templ.URL()
-[ ] Página completa herda de templates.Layout()
+[ ] Página completa herda de layout.Shell(config, content)
 ```
 
 ### Após mudanças de rota

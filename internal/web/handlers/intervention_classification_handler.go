@@ -141,6 +141,58 @@ func InterventionTagsWrapper(interventionID string, tags []*intervention.Interve
 	})
 }
 
+// BulkClassifyIntervention handles POST /interventions/{id}/classify/bulk
+func (h *InterventionClassificationHandler) BulkClassifyIntervention(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	interventionID := extractInterventionIDFromPath(r.URL.Path)
+	if interventionID == "" {
+		http.Error(w, "ID da intervenção é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	tagIDs := r.Form["tag_ids"]
+
+	currentTags, err := h.service.GetInterventionTags(r.Context(), interventionID)
+	if err != nil {
+		log.Printf("Error getting current tags: %v", err)
+		http.Error(w, "Erro ao buscar tags atuais", http.StatusInternalServerError)
+		return
+	}
+
+	currentTagIDs := make(map[string]bool)
+	for _, t := range currentTags {
+		currentTagIDs[t.TagID] = true
+	}
+
+	for _, tagID := range tagIDs {
+		if !currentTagIDs[tagID] {
+			if err := h.service.AddTagToIntervention(r.Context(), interventionID, tagID, 1); err != nil {
+				log.Printf("Error adding tag %s: %v", tagID, err)
+			}
+		}
+	}
+
+	tags, err := h.service.GetInterventionTags(r.Context(), interventionID)
+	if err != nil {
+		log.Printf("Error getting intervention tags: %v", err)
+		http.Error(w, "Erro ao buscar tags", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	component := InterventionTagsWrapper(interventionID, tags)
+	component.Render(r.Context(), w)
+}
+
 // RemoveInterventionClassification handles DELETE /interventions/{id}/classify/{tag_id}
 func (h *InterventionClassificationHandler) RemoveInterventionClassification(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete && r.Method != http.MethodPost {
@@ -218,7 +270,7 @@ func (h *InterventionClassificationHandler) GetInterventionClassificationEdit(w 
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		component := interventionComponents.TagSelectorGrid(data)
+		component := interventionComponents.TagSelectorInline(data)
 		component.Render(r.Context(), w)
 		return
 	}

@@ -47,18 +47,18 @@ async function testPatientsListMigration() {
             return {
                 cssFiles,
                 hasV2: cssFiles.some(href => href.includes('tailwind-v2.css')),
-                shellExists: !!document.querySelector('.shell'),
-                topbarExists: !!document.querySelector('.shell-topbar'),
-                sidebarExists: !!document.querySelector('.shell-sidebar')
+                shellExists: !!document.querySelector('.drawer, .drawer-open'),
+                topbarExists: !!document.querySelector('.navbar, header.navbar'),
+                sidebarExists: !!document.querySelector('#shell-sidebar, .arandu-sidebar, .drawer-side')
             };
         });
         
         console.log('   ✅ Screenshot salvo:', screenshotPath);
         console.log('   📄 CSS:', cssInfo.hasV2 ? 'v2 (Shell)' : 'v1 (Base)');
         console.log('   🏗️  Elementos Shell:');
-        console.log(`      - .shell: ${cssInfo.shellExists ? '✅' : '❌'}`);
-        console.log(`      - .shell-topbar: ${cssInfo.topbarExists ? '✅' : '❌'}`);
-        console.log(`      - .shell-sidebar: ${cssInfo.sidebarExists ? '✅' : '❌'}`);
+        console.log(`      - .drawer: ${cssInfo.shellExists ? '✅' : '❌'}`);
+        console.log(`      - .navbar: ${cssInfo.topbarExists ? '✅' : '❌'}`);
+        console.log(`      - #shell-sidebar: ${cssInfo.sidebarExists ? '✅' : '❌'}`);
         
         if (!cssInfo.shellExists) {
             console.log('   ❌ ERRO: Layout Shell não encontrado!');

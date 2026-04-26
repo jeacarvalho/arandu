@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"arandu/internal/domain/timeline"
 	layoutComponents "arandu/web/components/layout"
@@ -21,6 +22,7 @@ type TimelineService interface {
 
 type TimelineHandler struct {
 	timelineService TimelineService
+	patientService PatientService
 }
 
 // TimelineEventViewModel é uma versão do TimelineEvent para templates
@@ -36,9 +38,10 @@ type TimelineEventViewModel struct {
 
 type TimelineViewModel []*TimelineEventViewModel
 
-func NewTimelineHandler(timelineService TimelineService) *TimelineHandler {
+func NewTimelineHandler(timelineService TimelineService, patientService PatientService) *TimelineHandler {
 	return &TimelineHandler{
 		timelineService: timelineService,
+		patientService: patientService,
 	}
 }
 
@@ -70,6 +73,7 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
+	// Get timeline events
 	events, err := h.timelineService.GetPatientTimeline(ctx, patientID, filterType, limit, offset)
 	if err != nil {
 		log.Printf("Error getting patient timeline: %v", err)
@@ -77,19 +81,119 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	data := patientComponents.TimelinePageData{
-		PatientID: patientID,
-		Events:    events,
-		Filter:    filterType,
-		Limit:     limit,
-		Offset:    offset,
+	// Get patient info
+	patient, err := h.patientService.GetPatientByID(ctx, patientID)
+	if err != nil {
+		log.Printf("Error getting patient: %v", err)
+		http.Error(w, "Failed to load patient", http.StatusInternalServerError)
+		return
+	}
+
+	// Build the new ViewModel
+	currentFilter := r.URL.Query().Get("filter")
+	if currentFilter == "" {
+		currentFilter = "all"
+	}
+
+	// Age - not available in Patient struct, show therapy duration instead
+	ageStr := ""
+	_ = ageStr
+
+	// Build therapy since
+	since := ""
+	if !patient.CreatedAt.IsZero() {
+		since = "Desde " + strings.ToLower(patient.CreatedAt.Format("Jan/2006"))
+	}
+
+	// Count sessions
+	sessionCount := 0
+	timelineEvents := make([]patientComponents.PatientTimelineEvent, 0, len(events))
+	for _, e := range events {
+		isSession := string(e.Type) == "session"
+		if isSession {
+			sessionCount++
+		}
+
+		title := patientComponents.BuildTimelineTitle(string(e.Type), e.Metadata["title"])
+		dotAccent := isSession
+
+		dateStr := e.Date.Format("02 Jan · 2006")
+		if e.Date.Year() == time.Now().Year() {
+			dateStr = e.Date.Format("02 Jan")
+		}
+
+		summary := patientComponents.TruncateStr(e.Content, 120)
+
+		href := ""
+		if isSession {
+			href = "/session/" + e.Metadata["session_id"]
+		}
+
+		kind := "Observação"
+		kindTone := "neutral"
+		switch string(e.Type) {
+		case "session":
+			kind = "Sessão"
+			kindTone = "accent"
+		case "intervention":
+			kind = "Intervenção"
+		}
+
+		timelineEvents = append(timelineEvents, patientComponents.PatientTimelineEvent{
+			ID:        e.ID,
+			Kind:      kind,
+			KindTone:  kindTone,
+			DateStr:   dateStr,
+			Title:     title,
+			Summary:   summary,
+			IsSession: isSession,
+			Href:      href,
+			DotAccent: dotAccent,
+		})
+	}
+
+	// Recent observations (last 3)
+	recentObs := make([]patientComponents.PatientRecentObs, 0)
+	allEvents, _ := h.timelineService.GetPatientTimeline(ctx, patientID, nil, 1000, 0)
+	obsCount := 0
+	for _, e := range allEvents {
+		if string(e.Type) == "observation" && obsCount < 3 {
+			recentObs = append(recentObs, patientComponents.PatientRecentObs{
+				Tag:     "obs",
+				DateStr: e.Date.Format("02 Jan"),
+				Text:   patientComponents.TruncateStr(e.Content, 160),
+			})
+			obsCount++
+		}
+	}
+
+	// Therapy duration
+	therapyDuration := "< 1 mês"
+	if !patient.CreatedAt.IsZero() {
+		therapyDuration = patientComponents.FormatTherapyDuration(patient.CreatedAt)
+	}
+
+	vm := patientComponents.PatientHistoryViewModel{
+		PatientID:         patientID,
+		PatientName:      patient.Name,
+		Initials:         patientComponents.BuildInitials(patient.Name),
+		AgeStr:           ageStr,
+		Since:            since,
+		SessionCount:      sessionCount,
+		TherapyDuration:   therapyDuration,
+		Frequency:        "Semanal",
+		TriageContent:    patient.Notes,
+		TriageDate:       patient.CreatedAt.Format("02/01/2006"),
+		Events:           timelineEvents,
+		CurrentFilter:   currentFilter,
+		PatientIDForURL: patientID,
+		RecentObservations: recentObs,
 	}
 
 	isHTMXRequest := r.Header.Get("HX-Request") == "true"
 
 	if isHTMXRequest {
-		// Para requisições HTMX, renderizar apenas o conteúdo
-		patientComponents.TimelineContainer(data).Render(ctx, w)
+		patientComponents.PatientHistoryContent(vm).Render(ctx, w)
 	} else {
 		layoutComponents.Shell(layoutComponents.ShellConfig{
 			PageTitle:      "Prontuário",
@@ -97,7 +201,7 @@ func (h *TimelineHandler) ShowPatientHistory(w http.ResponseWriter, r *http.Requ
 			ShowSidebar:    true,
 			SidebarVariant: "patient",
 			PatientID:      patientID,
-		}, patientComponents.TimelineContainer(data)).Render(ctx, w)
+		}, patientComponents.PatientHistoryPage(vm)).Render(ctx, w)
 	}
 }
 

@@ -5,14 +5,18 @@ import "time"
 // AgendaViewModel represents the agenda view data
 type AgendaViewModel struct {
 	WeekStart        time.Time
-	WeekEnd          time.Time
-	WeekLabel        string // "6 – 12 de abril de 2026"
-	Days             []DayViewModel
-	TotalCount       int
-	CurrentView      string // "dia" | "semana" | "mes"
-	PrevDate         string // "2026-03-30"
-	NextDate         string // "2026-04-13"
+	WeekEnd        time.Time
+	WeekLabel      string // "6 – 12 de abril de 2026"
+	MonthLabel    string // "abril 2026"
+	Days          []DayViewModel
+	TotalCount    int
+	Confirmed    int
+	Pending      int
+	CurrentView  string // "dia" | "semana" | "mes"
+	PrevDate     string // "2026-03-30"
+	NextDate     string // "2026-04-13"
 	MonthStartOffset int    // 0=Seg, 1=Ter, ..., 6=Dom — células vazias antes do dia 1
+	Metrics      []AgendaMetric
 }
 
 // DayViewModel represents a single day in the agenda
@@ -34,8 +38,15 @@ type AppointmentViewModel struct {
 	EndTime     string // "10:50"
 	SessionType string // "Sessão individual"
 	Status      string // "confirmed" | "pending" | "first_session" | "cancelled"
+	Tone        string // "accent" | "info" | "warn" | "danger" | "moss" | "ghost" | "neutral"
 	TopPx       int    // (startHour - 8) * 60 + startMinute
 	HeightPx    int    // durationMinutes - 4
+}
+
+// AgendaMetric represents a metric displayed in the hero
+type AgendaMetric struct {
+	Value string
+	Label string
 }
 
 // PatientOption represents a patient for autocomplete
@@ -283,4 +294,50 @@ func ConflictAlertClasses(visible bool) string {
 		return "mt-2 p-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700"
 	}
 	return "hidden"
+}
+
+// RescheduleFormModel represents the reschedule form
+type RescheduleFormModel struct {
+	AppointmentID string
+	CurrentDate   time.Time
+	CurrentStart  string
+	Duration      int
+}
+
+// StatusToTone maps appointment status to Sábio tone
+func StatusToTone(status string) string {
+	switch status {
+	case "confirmed", "completed", "scheduled":
+		return "accent"
+	case "first_session":
+		return "info"
+	case "pending":
+		return "warn"
+	case "no_show", "risk":
+		return "danger"
+	case "cancelled":
+		return "ghost"
+	default:
+		return "neutral"
+	}
+}
+
+// ToneStyles returns background, border, and text colors for week view appointments
+func ToneStyles(tone string) (bg, bd, fg string) {
+	switch tone {
+	case "accent":
+		return "#EADFCB", "#6B4E3D", "#3E2A1E"
+	case "info":
+		return "#DDE6EE", "#3C5C7A", "#1F3A55"
+	case "warn":
+		return "#F3E3C4", "#B8842A", "#6B4A10"
+	case "danger":
+		return "#EDCFC7", "#A0463A", "#6F241A"
+	case "moss":
+		return "#D9E2D3", "#4A5D4F", "#263326"
+	case "ghost":
+		return "repeating-linear-gradient(135deg,var(--paper-3),var(--paper-3) 4px,var(--paper-2) 4px,var(--paper-2) 8px)", "var(--ink-4)", "var(--ink-3)"
+	default:
+		return "var(--paper)", "var(--ink-4)", "var(--ink-2)"
+	}
 }

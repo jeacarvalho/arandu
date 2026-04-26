@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/appointment"
 	"arandu/internal/domain/observation"
 	"arandu/internal/infrastructure/repository/sqlite"
 	"arandu/internal/platform/middleware"
@@ -38,6 +39,13 @@ type agendaMock struct{}
 func (m *agendaMock) GetDayView(ctx context.Context, date time.Time) (*services.DayView, error) {
 	return &services.DayView{}, nil
 }
+
+func (m *agendaMock) GetPatientAppointments(ctx context.Context, patientID string) ([]*appointment.Appointment, error) {
+	return nil, nil
+}
+
+var _ handlers.DashboardAgendaService = &agendaMock{}
+var _ handlers.AgendaServicePort = &agendaMock{}
 
 type E2ETestSuite struct {
 	t             *testing.T
@@ -118,21 +126,23 @@ func setupRouterE2E(s *E2ETestSuite) {
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-	timelineService := services.NewTimelineServiceContext(timelineRepo)
 
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
 	insightServiceAdapter := web.NewInsightServiceAdapter(insightService)
 	patientServiceAdapter := web.NewPatientServiceAdapter(patientService)
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
-	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 	goalServiceAdapter := web.NewGoalServiceAdapter(goalRepo)
+
+	timelineService := services.NewTimelineServiceContext(timelineRepo, patientServiceAdapter)
+	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 
 	// Classification service mock - minimal implementation
 	var classificationServiceAdapter handlers.ClassificationServiceInterface = &classificationMock{}
 
 	// DashboardAgendaService mock
-	var agendaServiceAdapter handlers.DashboardAgendaService = &agendaMock{}
+	var agendaServiceAdapter handlers.AgendaServicePort = &agendaMock{}
+	var dashboardAgendaAdapter handlers.DashboardAgendaService = &agendaMock{}
 
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
 		GetMedicationsFunc: func(ctx context.Context, patientID string) ([]interface{}, error) {
@@ -154,12 +164,12 @@ func setupRouterE2E(s *E2ETestSuite) {
 		},
 	}
 
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, web.NewAnamnesisServiceAdapter(patientRepo))
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, classificationServiceAdapter)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, web.NewAnamnesisServiceAdapter(patientRepo), agendaServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, classificationServiceAdapter, nil)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
-	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaServiceAdapter)
-	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
+	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, dashboardAgendaAdapter)
+	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter, patientServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 	authHandler := handlers.NewAuthHandler(s.centralDB)
 

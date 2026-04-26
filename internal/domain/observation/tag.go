@@ -10,9 +10,59 @@ const (
 	TagTypeBehavior     TagType = "behavior"
 	TagTypeCognition    TagType = "cognition"
 	TagTypeRelationship TagType = "relationship"
-	TagTypeSomatic      TagType = "somatic"
-	TagTypeContext      TagType = "context"
+	TagTypeSomatic    TagType = "somatic"
+	TagTypeContext     TagType = "context"
 )
+
+// GetTagTypeColor returns the color for a given tag type
+func GetTagTypeColor(tagType TagType) string {
+	switch tagType {
+	case TagTypeEmotion:
+		return "#0F766E"
+	case TagTypeBehavior:
+		return "#059669"
+	case TagTypeCognition:
+		return "#7C3AED"
+	case TagTypeRelationship:
+		return "#0891B2"
+	case TagTypeSomatic:
+		return "#DC2626"
+	case TagTypeContext:
+		return "#F59E0B"
+	default:
+		return "#6B7280"
+	}
+}
+
+// GetTagTypeDisplayName returns the display name for a tag type
+func GetTagTypeDisplayName(tagType TagType) string {
+	switch tagType {
+	case TagTypeEmotion:
+		return "Emoção"
+	case TagTypeBehavior:
+		return "Comportamento"
+	case TagTypeCognition:
+		return "Cognição"
+	case TagTypeRelationship:
+		return "Relação"
+	case TagTypeSomatic:
+		return "Soma"
+	case TagTypeContext:
+		return "Contexto"
+	default:
+		return string(tagType)
+	}
+}
+
+// TagTypeOrder defines the display order for tag types
+var TagTypeOrder = []TagType{
+	TagTypeCognition,
+	TagTypeBehavior,
+	TagTypeEmotion,
+	TagTypeRelationship,
+	TagTypeSomatic,
+	TagTypeContext,
+}
 
 // Tag represents a pre-defined classification tag
 type Tag struct {

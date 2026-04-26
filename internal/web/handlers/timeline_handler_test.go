@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"arandu/internal/application/services"
+	"arandu/internal/domain/patient"
 	"arandu/internal/domain/timeline"
 )
 
@@ -34,6 +36,41 @@ func (m *mockTimelineService) SearchInHistory(ctx context.Context, patientID, qu
 	return m.searchResults, nil
 }
 
+type mockNotesPatientServiceForTimeline struct {
+	patient *patient.Patient
+}
+
+func (m *mockNotesPatientServiceForTimeline) GetPatientByID(ctx context.Context, id string) (*patient.Patient, error) {
+	if m.patient == nil {
+		return &patient.Patient{ID: id, Name: "Test Patient"}, nil
+	}
+	return m.patient, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) ListPatients(ctx context.Context) ([]*patient.Patient, error) {
+	return nil, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) ListPatientsPaginated(ctx context.Context, page, pageSize int) ([]*patient.Patient, int, error) {
+	return nil, 0, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) CreatePatient(ctx context.Context, input services.CreatePatientInput) (*patient.Patient, error) {
+	return nil, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error) {
+	return nil, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) GetThemeFrequency(ctx context.Context, patientID string, limit int) ([]map[string]interface{}, error) {
+	return nil, nil
+}
+
+func (m *mockNotesPatientServiceForTimeline) ListForDashboard(ctx context.Context, limit int) ([]*patient.DashboardSummary, error) {
+	return nil, nil
+}
+
 func TestTimelineHandler_ShowPatientHistory(t *testing.T) {
 	now := time.Now()
 
@@ -45,7 +82,8 @@ func TestTimelineHandler_ShowPatientHistory(t *testing.T) {
 		},
 	}
 
-	handler := NewTimelineHandler(service)
+	ps := &mockNotesPatientServiceForTimeline{}
+	handler := NewTimelineHandler(service, ps)
 
 	t.Run("GET /patients/{id}/history returns timeline", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/patients/patient-123/history", nil)
@@ -108,7 +146,8 @@ func TestTimelineHandler_LoadMoreEvents(t *testing.T) {
 	}
 
 	service := &mockTimelineService{events: events}
-	handler := NewTimelineHandler(service)
+	ps := &mockNotesPatientServiceForTimeline{}
+	handler := NewTimelineHandler(service, ps)
 
 	t.Run("Load more events with HTMX", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/patients/patient-123/history/load-more?offset=20", nil)
@@ -157,7 +196,8 @@ func TestTimelineHandler_SearchPatientHistory(t *testing.T) {
 		},
 	}
 
-	handler := NewTimelineHandler(service)
+	ps := &mockNotesPatientServiceForTimeline{}
+	handler := NewTimelineHandler(service, ps)
 
 	t.Run("Search with query returns results", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/patients/patient-123/history/search?q=anxiety", nil)

@@ -23,7 +23,7 @@ type AnamnesisSectionViewModel struct {
 
 templ AnamnesisView(anamnesis AnamnesisViewModel) {
 	<div class="anamnesis-container fade-in">
-		<header class="mb-12">
+		<div class="mb-12">
 			<nav class="breadcrumb mb-4">
 				<a href={ templ.URL(fmt.Sprintf("/patients/%s", anamnesis.PatientID)) } class="back-link">
 					<i class="fas fa-chevron-left mr-2"></i> Voltar ao Perfil
@@ -31,7 +31,7 @@ templ AnamnesisView(anamnesis AnamnesisViewModel) {
 			</nav>
 			<h1 class="anamnesis-title">{ anamnesis.PatientName } — Anamnese</h1>
 			<p class="anamnesis-subtitle">História profunda e fundamentos do caso clínico.</p>
-		</header>
+		</div>
 
 		<div class="anamnesis-layout">
 			<nav class="anamnesis-nav">

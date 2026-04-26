@@ -138,8 +138,8 @@ div button.agenda-tab-active,
 
 body {
     font-family: var(--font-sans);
-    background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */
-    color: var(--text-primary);
+    background: var(--paper, #F5EFE6);
+    color: var(--ink, #1F1A15);
     line-height: 1.6;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -238,7 +238,7 @@ p {
 .app-container {
     display: flex;
     min-height: 100vh;
-    background: var(--arandu-bg); /* Papel de Seda (#E1F5EE) */
+    background: var(--paper, #F5EFE6);
 }
 
 /* Sidebar - Retractable */
@@ -1925,15 +1925,6 @@ body > div > header {
     .form-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-}
-
-/* Top Bar - Always visible */
-header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 100 !important;
 }
 
 /* App container with top bar */
@@ -8019,10 +8010,10 @@ aside.shell-sidebar {
 
 /* ------ Topbar ------ */
 .sabio-topbar {
-    position: fixed;
+    position: sticky;
     top: 0; left: 0; right: 0;
     height: 64px;
-    background: color-mix(in oklab, var(--color-paper) 92%, transparent);
+    background: color-mix(in oklab, var(--color-paper) 88%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--color-line);
@@ -8030,7 +8021,8 @@ aside.shell-sidebar {
     align-items: center;
     padding: 0 28px;
     gap: 12px;
-    z-index: 50;
+    z-index: 20;
+    flex-shrink: 0;
 }
 
 .sabio-breadcrumb {
@@ -8146,9 +8138,13 @@ aside.shell-sidebar {
 }
 
 /* ------ Sidebar ------ */
-aside.shell-sidebar {
+aside.shell-sidebar,
+aside.arandu-sidebar {
     background: var(--color-paper) !important;
     border-right: 1px solid var(--color-line) !important;
+}
+
+aside.shell-sidebar {
     width: 232px !important;
 }
 
@@ -8375,17 +8371,14 @@ aside.shell-sidebar.shell-sidebar-collapsed {
 
 .shell-sidebar-collapsed .sabio-collapse-btn-text { display: none; }
 
-/* Sidebar is a flex sibling of shell-main — no padding-left offset needed on canvas */
-.shell-canvas-expanded  {}
-.shell-canvas-collapsed {}
+/* Sidebar é flex sibling — canvas NÃO precisa de padding-left para compensar sidebar */
+.shell-canvas-expanded  { padding-left: 0 !important; }
+.shell-canvas-collapsed { padding-left: 0 !important; }
 
-/* Fix layout conflicts from input-v2.css outside-@layer rules:
-   - shell-body already has margin-top:64px from @layer; padding-top:64px is double-offset
-   - shell-canvas-container padding offsets are for fixed/abs sidebar, not flex sidebar
-   - shell-canvas min-height conflicts with flex-1 height management */
+/* Resets de conflitos legados do input-v2.css (regras fora do @layer ganham cascade) */
 .shell-body { padding-top: 0; }
 .shell-canvas { min-height: auto; }
-.shell-canvas-container { padding-top: 0; padding-left: 0; }
+.shell-canvas-container { padding-top: 0 !important; padding-left: 0 !important; }
 
 /* ================================================================
    SÁBIO — Dashboard (Phase 3)
@@ -9717,4 +9710,1461 @@ aside.shell-sidebar.shell-sidebar-collapsed {
 .sabio-notes-item-btn:hover {
   background: color-mix(in srgb, var(--accent, #6B4E3D) 10%, transparent);
   color: var(--accent, #6B4E3D);
+}
+
+/* ============================================
+   TIPOGRAFIA — classes utilitárias Sábio
+   ============================================ */
+.serif {
+  font-family: var(--font-serif, "Fraunces", Georgia, serif);
+}
+
+.mono {
+  font-family: var(--font-mono, "Geist Mono", "Courier New", monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   AGENDA SÁBIO
+   ============================================ */
+
+/* Hero */
+.sabio-agenda-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sabio-agenda-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sabio-agenda-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sabio-agenda-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.sabio-agenda-title {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  margin: 10px 0 0;
+  color: var(--ink);
+}
+
+.sabio-agenda-title-em {
+  font-style: italic;
+  color: var(--accent-deep);
+}
+
+.sabio-agenda-metrics {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+
+.sabio-agenda-metric-value {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.sabio-agenda-metric-label {
+  margin-left: 4px;
+}
+
+.sabio-agenda-metric-sep {
+  margin: 0 10px;
+  color: var(--ink-4);
+}
+
+/* View Toggle */
+.sabio-view-toggle {
+  padding: 3px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: flex;
+}
+
+.sabio-view-toggle-btn {
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-3);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sabio-view-toggle-btn:hover {
+  color: var(--ink-2);
+}
+
+.sabio-view-toggle-btn-active {
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+}
+
+/* Nav Buttons */
+.sabio-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sabio-nav-btn {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 8px;
+  border-radius: 10px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+}
+
+.sabio-nav-btn:hover {
+  background: var(--paper-3);
+}
+
+.sabio-nav-btn-today {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 12.5px;
+}
+
+.sabio-nav-btn-today:hover {
+  background: var(--paper-3);
+}
+
+.sabio-new-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sabio-new-btn:hover {
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+}
+
+/* Main Grid */
+.sabio-agenda-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  margin-top: 22px;
+}
+
+@media (max-width: 900px) {
+  .sabio-agenda-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Week View */
+.sabio-week-container {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.sabio-week-header {
+  display: grid;
+  grid-template-columns: 64px repeat(7, 1fr);
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-week-header-time {
+  padding: 14px 10px;
+}
+
+.sabio-week-header-day {
+  padding: 14px 10px;
+  text-align: center;
+  border-left: 1px solid var(--line);
+}
+
+.sabio-week-header-day-today {
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+
+.sabio-week-dow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.sabio-week-daynum {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  margin-top: 3px;
+  color: var(--ink);
+}
+
+.sabio-week-daynum-today {
+  color: var(--accent-deep);
+}
+
+.sabio-week-body {
+  display: grid;
+  grid-template-columns: 64px repeat(7, 1fr);
+}
+
+.sabio-week-time-col {
+  border-right: 1px solid var(--line);
+}
+
+.sabio-week-time-slot {
+  height: 32px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.sabio-week-time-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-4);
+  padding-right: 10px;
+  padding-top: 6px;
+}
+
+.sabio-week-slot {
+  height: 32px;
+  border-bottom: 1px dashed color-mix(in oklab, var(--line) 50%, transparent);
+}
+
+.sabio-week-slot-hour {
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-week-time-slot-half {
+  border-bottom: none;
+}
+
+.sabio-week-day-col {
+  position: relative;
+  border-left: 1px solid var(--line);
+}
+
+.sabio-week-day-col-today {
+  background: color-mix(in oklab, var(--accent) 4%, transparent);
+}
+
+.sabio-week-appt {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.sabio-week-appt-time {
+  display: block;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.sabio-week-appt-name {
+  display: block;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sabio-week-legend {
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--ink-3);
+  flex-wrap: wrap;
+}
+
+.sabio-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sabio-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+/* Day View */
+.sabio-day-container {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  position: relative;
+  min-height: 640px;
+}
+
+.sabio-day-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-serif);
+  font-size: 18px;
+}
+
+.sabio-day-header-dow {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  color: var(--ink-3);
+}
+
+.sabio-day-slot-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  height: 64px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.sabio-day-slot-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  padding: 8px 10px 0 0;
+  text-align: right;
+}
+
+.sabio-day-slot-line {
+  border-left: 1px dashed var(--line-2);
+}
+
+.sabio-day-appt {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0 24px 10px;
+}
+
+.sabio-day-appt-left {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sabio-day-appt-center {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sabio-day-appt-patient {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.sabio-day-appt-type {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* Month View */
+.sabio-month-container {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.sabio-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-month-header-cell {
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.sabio-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.sabio-month-cell {
+  padding: 10px 12px;
+  min-height: 100px;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.sabio-month-cell-today {
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+}
+
+.sabio-month-day-num {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+.sabio-month-daynum-today {
+  background: var(--accent);
+  color: var(--paper);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sabio-month-appt-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  margin-top: 4px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  cursor: pointer;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.sabio-month-appt-time {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.sabio-month-appt-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sidebar */
+.sabio-agenda-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sabio-sidebar-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.sabio-sidebar-card-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sabio-sidebar-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sabio-sidebar-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.sabio-sidebar-card-body {
+  padding: 18px 20px;
+}
+
+.sabio-sidebar-empty {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* ============================================
+   PATIENT HISTORY SÁBIO
+   ============================================ */
+
+.sabio-pt-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: center;
+  padding: 8px 0 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+
+.sabio-pt-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 80%, var(--paper)), var(--accent));
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.sabio-pt-hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.sabio-pt-hero-name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sabio-pt-hero-meta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.sabio-pt-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.sabio-pt-stat {
+  text-align: right;
+}
+
+.sabio-pt-stat-value {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sabio-pt-stat-label {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.sabio-pt-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+.sabio-pt-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.sabio-pt-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sabio-pt-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sabio-pt-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 12px);
+  overflow: hidden;
+}
+
+.sabio-pt-card-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sabio-pt-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sabio-pt-card-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+}
+
+.sabio-pt-card-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.sabio-pt-card-body {
+  padding: 18px 20px;
+}
+
+.sabio-pt-triage {
+  margin: 0;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+}
+
+.sabio-pt-filters {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sabio-pt-filter-btn {
+  padding: 5px 11px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.sabio-pt-filter-btn:hover {
+  background: var(--paper);
+}
+
+.sabio-pt-filter-btn-active {
+  padding: 5px 11px;
+  border-radius: 20px;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  color: var(--paper);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.sabio-pt-timeline {
+  padding: 0 20px;
+}
+
+.sabio-pt-event {
+  display: grid;
+  grid-template-columns: 96px 28px 1fr auto;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--line);
+  cursor: default;
+  width: 100%;
+  text-align: left;
+}
+
+.sabio-pt-event-last {
+  border-bottom: none;
+}
+
+.sabio-pt-event-clickable {
+  cursor: pointer;
+}
+
+.sabio-pt-event-clickable:hover .sabio-pt-event-title {
+  color: var(--accent);
+}
+
+.sabio-pt-event-date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+
+.sabio-pt-event-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.sabio-pt-event-dot-accent {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 1px solid var(--accent-deep);
+  flex-shrink: 0;
+}
+
+.sabio-pt-event-body {
+}
+
+.sabio-pt-event-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.sabio-pt-event-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: color .15s;
+}
+
+.sabio-pt-event-pill {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 2px 8px;
+  line-height: 1;
+}
+
+.sabio-pt-pill-accent {
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  color: var(--accent-deep);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.sabio-pt-pill-neutral {
+  background: color-mix(in oklab, var(--ink) 6%, transparent);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+.sabio-pt-event-summary {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+.sabio-pt-event-chevron {
+  font-size: 18px;
+  color: var(--ink-4);
+  padding-top: 4px;
+}
+
+.sabio-pt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sabio-pt-action {
+  display: flex;
+  align-items: center;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .15s;
+}
+
+.sabio-pt-action:hover {
+  background: var(--paper-2);
+}
+
+.sabio-pt-action-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.sabio-pt-action-primary:hover {
+  background: var(--ink-2);
+}
+
+.sabio-pt-obs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sabio-pt-obs-card {
+  padding: 12px 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.sabio-pt-obs-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sabio-pt-obs-tag {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  color: var(--accent-deep);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.sabio-pt-obs-date {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  margin-left: auto;
+}
+
+.sabio-pt-obs-text {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* ============================================
+   NOTES LIBRARY SÁBIO
+   ============================================ */
+
+.sabio-nl-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: flex-end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.sabio-nl-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.sabio-nl-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sabio-nl-title-dot {
+  font-style: italic;
+  color: var(--accent-deep);
+}
+
+.sabio-nl-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.sabio-nl-hero-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sabio-nl-btn-outline {
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sabio-nl-btn-primary {
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sabio-nl-btn-primary:hover {
+  background: var(--ink-2);
+}
+
+.sabio-nl-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sabio-nl-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-3);
+  cursor: pointer;
+}
+
+.sabio-nl-chip-active {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.sabio-nl-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.sabio-nl-list-panel {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 12px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sabio-nl-list-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sabio-nl-search {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--ink);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.sabio-nl-search::placeholder {
+  color: var(--ink-4);
+}
+
+.sabio-nl-list-count {
+  font-size: 11px;
+  color: var(--ink-4);
+}
+
+.sabio-nl-list-scroll {
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+.sabio-nl-record-item {
+  width: 100%;
+  text-align: left;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px dashed var(--line);
+  background: transparent;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.sabio-nl-record-item:last-child {
+  border-bottom: none;
+}
+
+.sabio-nl-record-item:hover {
+  background: color-mix(in oklab, var(--ink) 4%, transparent);
+}
+
+.sabio-nl-record-item-focused {
+  width: 100%;
+  text-align: left;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px dashed var(--line);
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  border-left: 3px solid var(--accent);
+  cursor: pointer;
+  position: relative;
+}
+
+.sabio-nl-record-item-focused:last-child {
+  border-bottom: none;
+}
+
+.sabio-nl-focus-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+
+.sabio-nl-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 70%, var(--paper)), var(--accent));
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.sabio-nl-record-info {
+  min-width: 0;
+}
+
+.sabio-nl-record-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.sabio-nl-record-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.sabio-nl-record-meta {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sabio-nl-record-id {
+  font-family: var(--font-mono);
+}
+
+.sabio-nl-record-tags {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sabio-nl-tag {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  line-height: 1;
+  background: color-mix(in oklab, var(--ink) 6%, transparent);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+.sabio-nl-tag-status {
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  color: var(--accent-deep);
+  border-color: color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+.sabio-nl-chevron {
+  font-size: 18px;
+  color: var(--ink-4);
+}
+
+.sabio-nl-detail {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 12px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.sabio-nl-detail-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.sabio-nl-detail-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sabio-nl-detail-id {
+  font-family: var(--font-mono);
+}
+
+.sabio-nl-detail-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+
+.sabio-nl-detail-title-em {
+  font-style: italic;
+  color: var(--accent-deep);
+}
+
+.sabio-nl-detail-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.sabio-nl-icon-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.sabio-nl-icon-btn:hover {
+  background: var(--paper-2);
+}
+
+.sabio-nl-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in oklab, var(--paper) 60%, var(--paper-2));
+}
+
+.sabio-nl-tab {
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-3);
+  font-size: 13px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.sabio-nl-tab-active {
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.sabio-nl-tab-count {
+  font-size: 10px;
+  color: var(--ink-4);
+}
+
+.sabio-nl-detail-body {
+  flex: 1;
+  padding: 28px 36px 32px;
+  overflow-y: auto;
+  background: var(--paper);
+  max-height: 600px;
+}
+
+.sabio-nl-doc {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.sabio-nl-doc-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.sabio-nl-doc-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.sabio-nl-doc-divider {
+  margin: 18px 0 22px;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--line) 0, var(--line) 4px, transparent 4px, transparent 8px);
+}
+
+.sabio-nl-doc-body {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  margin-top: 0;
+}
+
+.sabio-nl-doc-quote {
+  margin: 22px 0;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.sabio-nl-empty {
+  color: var(--ink-4);
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.sabio-nl-detail-footer {
+  padding: 12px 22px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: color-mix(in oklab, var(--paper) 60%, var(--paper-2));
+}
+
+.sabio-nl-detail-pages {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.sabio-nl-detail-footer-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.sabio-nl-footer-btn {
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sabio-nl-footer-btn:hover {
+  background: var(--paper-2);
+}
+
+.sabio-nl-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sabio-nl-event-item {
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.sabio-nl-event-item:last-child {
+  border-bottom: none;
+}
+
+.sabio-nl-event-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.sabio-nl-event-content {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
 }

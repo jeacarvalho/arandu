@@ -15,13 +15,11 @@ type ObservationItemData struct {
 templ ObservationItem(obs ObservationItemData) {
 	<div id={ "observation-" + obs.ID } class="sabio-notes-item">
 		<p class="sabio-notes-item-text serif">{ obs.Content }</p>
-		if len(obs.Tags) > 0 {
-			<div id={ "observation-" + obs.ID + "-tags" } class="sabio-notes-item-tags">
-				@classification.TagList(obs.Tags, true)
-			</div>
-		} else {
-			<div id={ "observation-" + obs.ID + "-tags" }></div>
-		}
+		<div id={ "observation-" + obs.ID + "-tags" } class="sabio-notes-item-tags">
+			if len(obs.Tags) > 0 {
+				@classification.ObservationTagList(obs.Tags, true)
+			}
+		</div>
 		<div class="sabio-notes-item-footer">
 			<span class="sabio-notes-item-date mono">
 				<i class="fas fa-clock"></i>{ obs.CreatedAt }
@@ -30,7 +28,7 @@ templ ObservationItem(obs ObservationItemData) {
 				<button class="sabio-notes-item-btn"
 				        hx-get={ "/observations/" + obs.ID + "/classify/edit" }
 				        hx-target={ "#observation-" + obs.ID + "-tags" }
-				        hx-swap="innerHTML"
+				        hx-swap="outerHTML"
 				        title="Classificar">
 					<i class="fas fa-tags"></i>
 				</button>

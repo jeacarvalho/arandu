@@ -146,6 +146,42 @@ func TestAppointment_MarkNoShow(t *testing.T) {
 	}
 }
 
+func TestAppointment_Confirm_AlreadyCancelled_ReturnsError(t *testing.T) {
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, _ := NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, AppointmentTypeSession, "")
+	appt.Cancel()
+
+	err := appt.Confirm()
+	if !errors.Is(err, ErrAlreadyCancelled) {
+		t.Errorf("expected ErrAlreadyCancelled, got %v", err)
+	}
+}
+
+func TestAppointment_Confirm_AlreadyCompleted_ReturnsError(t *testing.T) {
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, _ := NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, AppointmentTypeSession, "")
+	appt.Complete()
+
+	err := appt.Confirm()
+	if !errors.Is(err, ErrAlreadyCompleted) {
+		t.Errorf("expected ErrAlreadyCompleted, got %v", err)
+	}
+}
+
+func TestAppointment_MarkNoShow_AlreadyConfirmed(t *testing.T) {
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	appt, _ := NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, AppointmentTypeSession, "")
+	appt.Confirm()
+
+	err := appt.MarkNoShow()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if appt.Status != AppointmentStatusNoShow {
+		t.Errorf("expected status no_show, got %s", appt.Status)
+	}
+}
+
 func TestAppointment_Overlaps_SameTimeTrue(t *testing.T) {
 	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
 	appt1, _ := NewAppointment("patient-1", "Paciente Teste", date, "10:00", "10:50", 50, AppointmentTypeSession, "")

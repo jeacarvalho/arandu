@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Arandu — Proposta de Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root {
+    /* Paleta Sábio — terrosa, acolhedora, editorial */
+    --paper: #F5EFE6;
+    --paper-2: #EDE5D8;
+    --paper-3: #E3D9C6;
+    --ink: #1F1A15;
+    --ink-2: #3A332B;
+    --ink-3: #6B5F52;
+    --ink-4: #9B8E7E;
+    --line: #D9CDB8;
+    --line-2: #C6B89F;
+    --accent: #6B4E3D;        /* marrom terroso */
+    --accent-deep: #4A3527;
+    --accent-soft: #A67C52;   /* caramelo */
+    --moss: #2E3A2C;          /* verde profundo, quase preto */
+    --moss-2: #4A5D4F;
+    --sage: #8FA68E;
+    --clay: #C67B5C;          /* terracota (acento de alerta suave) */
+    --gold: #B8925A;
+    --ok: #4A5D4F;
+    --warn: #C67B5C;
+    --danger: #A0463A;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-lg: 22px;
+    --shadow-sm: 0 1px 0 rgba(31,26,21,.04), 0 1px 2px rgba(31,26,21,.04);
+    --shadow-md: 0 1px 0 rgba(31,26,21,.04), 0 8px 24px -8px rgba(31,26,21,.08);
+    --shadow-lg: 0 1px 0 rgba(31,26,21,.05), 0 24px 48px -16px rgba(31,26,21,.14);
+    --font-ui: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-serif: 'Fraunces', 'Instrument Serif', Georgia, serif;
+    --font-mono: 'Geist Mono', ui-monospace, monospace;
+  }
+
+  /* Variante MUSGO (mais verde, fiel à ideia original mas refinada) */
+  [data-palette="moss"] {
+    --paper: #F1F2EC;
+    --paper-2: #E7E9E0;
+    --paper-3: #D8DCCE;
+    --ink: #1C221E;
+    --ink-2: #2F3830;
+    --ink-3: #5F6A5F;
+    --ink-4: #8A978B;
+    --line: #CFD4C4;
+    --line-2: #B5BCA5;
+    --accent: #3A4A38;
+    --accent-deep: #24301F;
+    --accent-soft: #6C8169;
+    --moss: #3A4A38;
+    --moss-2: #5A6E57;
+    --sage: #8FA68E;
+    --clay: #B06A4F;
+    --gold: #A88A52;
+    --ok: #3A4A38;
+    --warn: #B06A4F;
+    --danger: #8F3C30;
+  }
+
+  /* Variante BARRO (mais clay/terracota) */
+  [data-palette="clay"] {
+    --paper: #F7F0E5;
+    --paper-2: #EFE5D3;
+    --paper-3: #E6D7BD;
+    --ink: #2A1C12;
+    --ink-2: #4A2F20;
+    --ink-3: #7A5A44;
+    --ink-4: #A68B72;
+    --line: #E0CEAF;
+    --line-2: #CEB98F;
+    --accent: #8B4A32;
+    --accent-deep: #5E2F1F;
+    --accent-soft: #C67B5C;
+    --moss: #5A6B4C;
+    --moss-2: #6F8260;
+    --sage: #9AAE87;
+    --clay: #C67B5C;
+    --gold: #B8925A;
+    --ok: #5A6B4C;
+    --warn: #C67B5C;
+    --danger: #9B3B28;
+  }
+
+  /* Variante NOITE (modo escuro suave, não preto) — aplica-se em qualquer paleta */
+  [data-theme="night"] {
+    --paper: #17140F;
+    --paper-2: #1F1B15;
+    --paper-3: #28231B;
+    --ink: #F0E8DA;
+    --ink-2: #D9CDB8;
+    --ink-3: #9B8E7E;
+    --ink-4: #6B5F52;
+    --line: #342E26;
+    --line-2: #4A4038;
+    --accent: #C9A57E;
+    --accent-deep: #E8C8A3;
+    --accent-soft: #A67C52;
+    --moss: #8FA68E;
+    --moss-2: #A8BCA6;
+    --sage: #C0D0BE;
+    --clay: #D98B6A;
+    --gold: #D9B47A;
+    --ok: #8FA68E;
+    --warn: #D98B6A;
+    --danger: #D97560;
+    --shadow-sm: 0 1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3);
+    --shadow-md: 0 1px 0 rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.5);
+    --shadow-lg: 0 1px 0 rgba(0,0,0,.4), 0 24px 48px -16px rgba(0,0,0,.6);
+  }
+
+  /* Noite + Musgo */
+  [data-theme="night"][data-palette="moss"] {
+    --paper: #131611;
+    --paper-2: #1A1E18;
+    --paper-3: #232822;
+    --ink: #E6ECDF;
+    --ink-2: #C8D2C0;
+    --ink-3: #8D9B8B;
+    --ink-4: #66735F;
+    --line: #2A2F28;
+    --line-2: #3D4538;
+    --accent: #A3BC9E;
+    --accent-deep: #C6D9C0;
+    --accent-soft: #7D947A;
+    --moss: #A3BC9E;
+    --moss-2: #8AA286;
+    --sage: #C6D9C0;
+  }
+
+  /* Noite + Barro */
+  [data-theme="night"][data-palette="clay"] {
+    --paper: #1A120C;
+    --paper-2: #22170F;
+    --paper-3: #2B1E14;
+    --ink: #F4E4D1;
+    --ink-2: #DCC4A8;
+    --ink-3: #A48870;
+    --ink-4: #705A47;
+    --line: #352518;
+    --line-2: #4A3525;
+    --accent: #E39772;
+    --accent-deep: #F2B894;
+    --accent-soft: #C27A58;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { font-size: 14px; line-height: 1.5; }
+
+  .serif { font-family: var(--font-serif); font-optical-sizing: auto; }
+  .mono { font-family: var(--font-mono); }
+
+  /* Densidade */
+  [data-density="cozy"] { --dens: 1; }
+  [data-density="compact"] { --dens: 0.85; }
+  [data-density="roomy"] { --dens: 1.15; }
+
+  button { font-family: inherit; cursor: pointer; }
+
+  /* Scrollbars discretas */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 10px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+  #root { min-height: 100vh; }
+
+  /* Utilidades */
+  .dashed-divider {
+    background-image: linear-gradient(to right, var(--line-2) 50%, transparent 50%);
+    background-size: 8px 1px;
+    background-repeat: repeat-x;
+    background-position: left center;
+    height: 1px;
+  }
+</style>
+</head>
+<body data-theme="day" data-palette="sage" data-density="cozy">
+  <div id="root"></div>
+  <script type="application/json" id="tweak-defaults">
+  {
+    "theme": "day",
+    "palette": "sage",
+    "density": "cozy",
+    "serifTitles": true,
+    "sidebarStyle": "rail",
+    "llmPanel": "drawer"
+  }
+  </script>
+  <script type="text/babel" data-presets="react" src="data.jsx"></script>
+  <script type="text/babel" data-presets="react" src="icons.jsx"></script>
+  <script type="text/babel" data-presets="react" src="chrome.jsx"></script>
+  <script type="text/babel" data-presets="react" src="page_dashboard.jsx"></script>
+  <script type="text/babel" data-presets="react" src="page_patient.jsx"></script>
+  <script type="text/babel" data-presets="react" src="page_session.jsx"></script>
+  <script type="text/babel" data-presets="react" src="llm_panel.jsx"></script>
+  <script type="text/babel" data-presets="react" src="tweaks.jsx"></script>
+  <script type="text/babel" data-presets="react" src="app.jsx"></script>
+</body>
+</html>

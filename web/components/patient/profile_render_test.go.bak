@@ -1,0 +1,97 @@
+package patient
+
+import (
+	"bytes"
+	"testing"
+	"time"
+
+	domainPatient "arandu/internal/domain/patient"
+	"arandu/web/components/patient"
+)
+
+func newTestPatient() *domainPatient.Patient {
+	return &domainPatient.Patient{
+		ID:        "patient-test-123",
+		Name:      "Ana Souza",
+		Gender:    "f",
+		Ethnicity: "b",
+		Occupation: "Professora",
+		Education: "s",
+		Notes:     "Paciente de teste",
+		CreatedAt: time.Now().Add(-180 * 24 * time.Hour),
+		UpdatedAt: time.Now(),
+	}
+}
+
+func TestPatientProfileView_NoFakeStatusTag(t *testing.T) {
+	p := newTestPatient()
+
+	var buf bytes.Buffer
+	err := patient.PatientProfileView(p, nil, nil, nil, nil).Render(t.Context(), &buf)
+	if err != nil {
+		t.Fatalf("Failed to render PatientProfileView: %v", err)
+	}
+
+	html := buf.String()
+	if bytes.Contains([]byte(html), []byte("Em tratamento")) {
+		t.Errorf("PatientProfileView não deve conter status hardcoded 'Em tratamento'.\nHTML: %s", html)
+	}
+}
+
+func TestPatientProfileView_NoFakeDiagnosisTag(t *testing.T) {
+	p := newTestPatient()
+
+	var buf bytes.Buffer
+	err := patient.PatientProfileView(p, nil, nil, nil, nil).Render(t.Context(), &buf)
+	if err != nil {
+		t.Fatalf("Failed to render PatientProfileView: %v", err)
+	}
+
+	html := buf.String()
+	if bytes.Contains([]byte(html), []byte(`class="patient-tag-v2 tag-diagnosis"`)) {
+		t.Errorf("PatientProfileView não deve conter tag de diagnóstico hardcoded.\nHTML: %s", html)
+	}
+}
+
+func TestPatientProfileView_NoMisleadingAgeFromRegistration(t *testing.T) {
+	p := newTestPatient()
+
+	var buf bytes.Buffer
+	err := patient.PatientProfileView(p, nil, nil, nil, nil).Render(t.Context(), &buf)
+	if err != nil {
+		t.Fatalf("Failed to render PatientProfileView: %v", err)
+	}
+
+	html := buf.String()
+	if bytes.Contains([]byte(html), []byte(`tag-age`)) {
+		t.Errorf("PatientProfileView não deve conter tag de idade calculada a partir da data de cadastro.\nHTML: %s", html)
+	}
+}
+
+func TestPatientProfileView_RendersPatientName(t *testing.T) {
+	p := newTestPatient()
+
+	var buf bytes.Buffer
+	err := patient.PatientProfileView(p, nil, nil, nil, nil).Render(t.Context(), &buf)
+	if err != nil {
+		t.Fatalf("Failed to render PatientProfileView: %v", err)
+	}
+
+	if !bytes.Contains([]byte(buf.String()), []byte("Ana Souza")) {
+		t.Errorf("PatientProfileView deve conter o nome do paciente 'Ana Souza'")
+	}
+}
+
+func TestPatientProfileView_RendersTherapyDuration(t *testing.T) {
+	p := newTestPatient()
+
+	var buf bytes.Buffer
+	err := patient.PatientProfileView(p, nil, nil, nil, nil).Render(t.Context(), &buf)
+	if err != nil {
+		t.Fatalf("Failed to render PatientProfileView: %v", err)
+	}
+
+	if !bytes.Contains([]byte(buf.String()), []byte("em terapia")) {
+		t.Errorf("PatientProfileView deve exibir o tempo em terapia com label 'em terapia'")
+	}
+}

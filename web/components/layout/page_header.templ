@@ -18,7 +18,7 @@ type BreadcrumbItem struct {
 // PageHeader componente de cabeçalho de página reutilizável
 // Uso: @PageHeader(PageHeaderProps{Title: "Anamnese", Subtitle: "...", BreadcrumbItems: items})
 templ PageHeader(props PageHeaderProps) {
-	<header class="mb-8">
+	<div class="mb-8">
 		<!-- Breadcrumb -->
 		if len(props.BreadcrumbItems) > 0 {
 			<nav class="mb-4" aria-label="Breadcrumb">
@@ -70,7 +70,7 @@ templ PageHeader(props PageHeaderProps) {
 				</div>
 			}
 		</div>
-	</header>
+		</div>
 }
 
 // PageHeaderSimple versão simplificada sem breadcrumb

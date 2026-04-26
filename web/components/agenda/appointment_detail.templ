@@ -2,203 +2,171 @@ package agenda
 
 import "fmt"
 
-// AppointmentDetail shows appointment details in a modal
+// AppointmentDetail shows appointment details in a modal - DaisyUI design
 templ AppointmentDetail(model AppointmentDetailModel) {
-	<div
-		class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-		onclick="if(event.target===this)document.getElementById('modal-container').innerHTML=''"
-	>
-		<div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-			<!-- Colored status strip at top -->
-			<div class={ appointmentStatusStripClass(model.Status) }></div>
-
-			<!-- Body -->
-			<div class="p-6">
-				<!-- Top row: patient avatar + name + close -->
-				<div class="flex items-start gap-4 mb-6">
-					<div class="w-12 h-12 rounded-full bg-arandu-primary flex items-center justify-center flex-shrink-0 text-white text-lg font-bold">
-						{ string([]rune(model.PatientName)[0:1]) }
-					</div>
-					<div class="flex-1 min-w-0">
-						<h2 class="text-lg font-bold leading-snug" style="color:#111827">{ model.PatientName }</h2>
-						<p class="text-sm mt-0.5" style="color:#6b7280">{ model.SessionType }</p>
-					</div>
-					<button
-						onclick="document.getElementById('modal-container').innerHTML=''"
-						class="w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-						style="color:#9ca3af"
-						onmouseover="this.style.background='#f3f4f6';this.style.color='#374151'"
-						onmouseout="this.style.background='';this.style.color='#9ca3af'"
-					>
-						<i class="fas fa-times text-sm"></i>
-					</button>
-				</div>
-
-				<!-- Status badge -->
-				<div class="mb-5">
-					<span class={ getStatusBadgeClass(model.Status) }>{ getStatusLabel(model.Status) }</span>
-				</div>
-
-				<!-- Info rows with icons -->
-				<div class="space-y-3">
-					<div class="flex items-center gap-3">
-						<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#f3f4f6">
-							<i class="fas fa-calendar-day text-xs" style="color:#9ca3af"></i>
-						</div>
-						<div>
-							<div class="text-xs font-medium uppercase tracking-wide" style="color:#9ca3af">Data</div>
-							<div class="text-sm font-semibold" style="color:#1f2937">{ model.Date.Format("02 de January de 2006") }</div>
-						</div>
-					</div>
-					<div class="flex items-center gap-3">
-						<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#f3f4f6">
-							<i class="fas fa-clock text-xs" style="color:#9ca3af"></i>
-						</div>
-						<div>
-							<div class="text-xs font-medium uppercase tracking-wide" style="color:#9ca3af">Horário</div>
-							<div class="text-sm font-semibold" style="color:#1f2937">
-								{ model.StartTime } – { model.EndTime }
-								<span class="text-xs font-normal ml-1" style="color:#9ca3af">{ fmt.Sprintf("(%d min)", model.Duration) }</span>
-							</div>
-						</div>
+	<div class="modal modal-open" onclick="if(event.target===this)document.getElementById('modal-container').innerHTML=''">
+		<div class="modal-box max-w-sm" onclick="event.stopPropagation()">
+			<!-- Header: avatar + name + close -->
+			<div class="flex items-start gap-4 mb-5">
+				<div class="avatar placeholder">
+					<div class="bg-primary text-primary-content rounded-full w-12">
+						<span class="text-lg font-bold">{ string([]rune(model.PatientName)[0:1]) }</span>
 					</div>
 				</div>
-
-				if model.Notes != "" {
-					<div class="mt-4 rounded-xl p-3.5" style="background:#f9fafb">
-						<div class="text-xs font-medium uppercase tracking-wide mb-2" style="color:#9ca3af">Observações</div>
-						<p class="text-sm leading-relaxed" style="color:#374151">{ model.Notes }</p>
-					</div>
-				}
-			</div>
-
-			<!-- Actions -->
-			<div class="px-6 pb-6 flex gap-2">
-				<button
-					onclick="document.getElementById('modal-container').innerHTML=''"
-					class="flex-1 h-10 text-sm font-medium rounded-xl transition-colors"
-					style="background:#f3f4f6;color:#374151"
-					onmouseover="this.style.background='#e5e7eb'"
-					onmouseout="this.style.background='#f3f4f6'"
-				>
-					Fechar
+				<div class="flex-1">
+					<h3 class="font-semibold text-base-content">{ model.PatientName }</h3>
+					<p class="text-sm text-base-content/60">{ model.SessionType }</p>
+				</div>
+				<button class="btn btn-ghost btn-sm btn-circle" onclick="document.getElementById('modal-container').innerHTML=''">
+					✕
 				</button>
-				if model.Status == "scheduled" || model.Status == "confirmed" {
-					<button
-						hx-post={ "/agenda/appointments/" + model.ID + "/cancel" }
-						hx-confirm="Cancelar esta consulta?"
-						hx-target="#agenda-content"
-						hx-swap="outerHTML"
-						onclick="document.getElementById('modal-container').innerHTML=''"
-						class="h-10 px-4 text-sm font-medium rounded-xl border transition-colors"
-						style="color:#dc2626;border-color:#fecaca"
-						onmouseover="this.style.background='#fef2f2'"
-						onmouseout="this.style.background=''"
-					>
-						<i class="fas fa-ban text-xs mr-1"></i>Cancelar
-					</button>
-					if model.SessionID != nil {
-						<a
-							href={ templ.SafeURL("/session/" + *model.SessionID) }
-							class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors inline-flex items-center justify-center gap-1.5"
-						>
-							<i class="fas fa-file-medical text-xs"></i>
-							Ver Sessão
-						</a>
-					} else {
-						<!-- Botão inicial: mostra painel de confirmação -->
-						<button
-							id={ "btn-concluir-" + model.ID }
-							data-panel-id={ model.ID }
-							onclick="var p=this.getAttribute('data-panel-id');document.getElementById('confirm-panel-'+p).classList.remove('hidden');this.classList.add('hidden')"
-							class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors"
-						>
-							Concluir
-						</button>
-
-						<!-- Painel de confirmação (oculto inicialmente) -->
-						<div id={ "confirm-panel-" + model.ID } class="hidden w-full">
-							<p class="text-xs text-center mb-3" style="color:#6b7280">
-								Deseja registrar o atendimento no prontuário?
-							</p>
-							<div class="flex gap-2">
-								<button
-									onclick="document.getElementById('modal-container').innerHTML=''"
-									hx-post={ "/agenda/appointments/" + model.ID + "/complete-with-session" }
-									hx-target="body"
-									hx-swap="none"
-									class="flex-1 h-10 text-sm font-medium text-white bg-arandu-primary hover:bg-arandu-dark rounded-xl transition-colors"
-								>
-									<i class="fas fa-file-medical text-xs mr-1"></i>Sim, documentar
-								</button>
-								<button
-									hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
-									hx-target="#agenda-content"
-									hx-swap="outerHTML"
-									onclick="document.getElementById('modal-container').innerHTML=''"
-									class="flex-1 h-10 text-sm font-medium rounded-xl border transition-colors"
-									style="color:#374151;border-color:#d1d5db"
-								>
-									Só concluir
-								</button>
-							</div>
-						</div>
-					}
-				}
 			</div>
+
+			<!-- Status badge -->
+			@appointmentStatusBadge(model.Status)
+
+			<!-- Info: date, time, duration -->
+			<div class="space-y-2 my-5">
+				<div class="flex items-center gap-3">
+					<div class="w-8 h-8 rounded-lg flex items-center justify-center bg-base-200">
+						<i class="fas fa-calendar-day text-xs text-base-content/50"></i>
+					</div>
+					<div>
+						<div class="text-xs font-medium uppercase tracking-wide text-base-content/50">Data</div>
+						<div class="text-sm font-semibold text-base-content">{ model.Date.Format("02 de January de 2006") }</div>
+					</div>
+				</div>
+				<div class="flex items-center gap-3">
+					<div class="w-8 h-8 rounded-lg flex items-center justify-center bg-base-200">
+						<i class="fas fa-clock text-xs text-base-content/50"></i>
+					</div>
+					<div>
+						<div class="text-xs font-medium uppercase tracking-wide text-base-content/50">Horário</div>
+						<div class="text-sm font-semibold text-base-content">
+							{ model.StartTime } – { model.EndTime }
+							<span class="text-xs font-normal text-base-content/50">{ fmt.Sprintf("(%d min)", model.Duration) }</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Notes -->
+			if model.Notes != "" {
+				<div class="rounded-xl p-3.5 bg-base-200 mt-4">
+					<div class="text-xs font-medium uppercase tracking-wide mb-2 text-base-content/50">Observações</div>
+					<p class="text-sm leading-relaxed text-base-content">{ model.Notes }</p>
+				</div>
+			}
+
+			<!-- Actions by status -->
+			@appointmentModalActions(model)
 		</div>
 	</div>
 }
 
-func appointmentStatusStripClass(status string) string {
+// appointmentStatusBadge shows status as DaisyUI badge
+templ appointmentStatusBadge(status string) {
 	switch status {
 	case "scheduled":
-		return "h-1.5 bg-amber-400"
+		<div class="badge badge-ghost mb-4">Agendada</div>
 	case "confirmed":
-		return "h-1.5 bg-emerald-500"
+		<div class="badge badge-primary mb-4">Confirmada</div>
 	case "completed":
-		return "h-1.5 bg-arandu-primary"
+		<div class="badge badge-success mb-4">Concluída</div>
 	case "cancelled":
-		return "h-1.5 bg-neutral-300"
+		<div class="badge badge-error badge-outline mb-4">Cancelada</div>
 	case "no_show":
-		return "h-1.5 bg-red-400"
-	default:
-		return "h-1.5 bg-arandu-primary"
+		<div class="badge badge-warning mb-4">Não Compareceu</div>
 	}
 }
 
-func getStatusBadgeClass(status string) string {
-	base := "inline-flex px-2.5 py-1 text-xs font-semibold rounded-full"
-	switch status {
-	case "scheduled":
-		return base + " bg-amber-100 text-amber-800"
-	case "confirmed":
-		return base + " bg-arandu-primary/10 text-arandu-primary"
-	case "completed":
-		return base + " bg-emerald-100 text-emerald-800"
-	case "cancelled":
-		return base + " bg-neutral-100 text-neutral-500 line-through"
-	case "no_show":
-		return base + " bg-red-100 text-red-700"
-	default:
-		return base + " bg-neutral-100 text-neutral-700"
-	}
-}
-
-func getStatusLabel(status string) string {
-	switch status {
-	case "scheduled":
-		return "Agendada"
-	case "confirmed":
-		return "Confirmada"
-	case "completed":
-		return "Realizada"
-	case "cancelled":
-		return "Cancelada"
-	case "no_show":
-		return "Não Compareceu"
-	default:
-		return status
+// appointmentModalActions shows actions based on appointment status
+templ appointmentModalActions(model AppointmentDetailModel) {
+	if model.Status == "scheduled" || model.Status == "confirmed" {
+		<div class="modal-action flex-wrap gap-2 justify-start">
+			if model.Status == "scheduled" {
+				<button
+					class="btn btn-primary btn-sm"
+					hx-post={ "/agenda/appointments/" + model.ID + "/confirm" }
+					hx-confirm="Confirmar presença do paciente?"
+					hx-target="#modal-container"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-check"></i> Confirmar
+				</button>
+			}
+			if model.Status == "confirmed" {
+				if model.SessionID != nil {
+					<a
+						href={ templ.SafeURL("/session/" + *model.SessionID) }
+						class="btn btn-primary btn-sm"
+					>
+						<i class="fas fa-file-medical"></i> Ver Sessão
+					</a>
+				} else {
+					<button
+						id={ "btn-concluir-" + model.ID }
+						data-panel-id={ model.ID }
+						onclick="var p=this.getAttribute('data-panel-id');document.getElementById('confirm-panel-'+p).classList.remove('hidden');this.classList.add('hidden')"
+						class="btn btn-success btn-sm"
+					>
+						<i class="fas fa-check-double"></i> Concluir
+					</button>
+					<div id={ "confirm-panel-" + model.ID } class="hidden w-full">
+						<p class="text-xs text-center mb-3 text-base-content/60">
+							Deseja registrar o atendimento no prontuário?
+						</p>
+						<div class="flex gap-2">
+							<button
+								hx-post={ "/agenda/appointments/" + model.ID + "/complete-with-session" }
+								hx-target="body"
+								hx-swap="none"
+								class="btn btn-primary btn-sm flex-1"
+							>
+								<i class="fas fa-file-medical text-xs mr-1"></i>Sim, documentar
+							</button>
+							<button
+								hx-post={ "/agenda/appointments/" + model.ID + "/complete" }
+								hx-target="#agenda-content"
+								hx-swap="outerHTML"
+								onclick="document.getElementById('modal-container').innerHTML=''"
+								class="btn btn-ghost btn-sm flex-1"
+							>
+								Só concluir
+							</button>
+						</div>
+					</div>
+				}
+				<button
+					class="btn btn-warning btn-sm"
+					hx-post={ "/agenda/appointments/" + model.ID + "/no-show" }
+					hx-confirm="Registrar falta do paciente?"
+					hx-target="#modal-container"
+					hx-swap="innerHTML"
+				>
+					<i class="fas fa-user-times"></i> Faltou
+				</button>
+			}
+			<button
+				class="btn btn-ghost btn-sm"
+				hx-get={ "/agenda/appointments/" + model.ID + "/reschedule-form" }
+				hx-target="#drawer-container"
+				hx-swap="innerHTML"
+				hx-on::htmx:before-request="document.getElementById('modal-container').innerHTML=''"
+			>
+				<i class="fas fa-calendar-alt"></i> Reagendar
+			</button>
+			<button
+				class="btn btn-error btn-outline btn-sm"
+				hx-post={ "/agenda/appointments/" + model.ID + "/cancel" }
+				hx-confirm="Cancelar este agendamento?"
+				hx-target="#agenda-content"
+				hx-swap="outerHTML"
+				onclick="document.getElementById('modal-container').innerHTML=''"
+			>
+				<i class="fas fa-times"></i> Cancelar
+			</button>
+		</div>
 	}
 }
 
@@ -208,7 +176,7 @@ templ SlotsList(model SlotsViewModel) {
 		if slot.Available {
 			<label class="cursor-pointer">
 				<input type="radio" name="start_time" value={ slot.StartTime } class="peer sr-only" required />
-				<div class="text-center px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md peer-checked:bg-arandu-primary peer-checked:text-white peer-checked:border-arandu-primary hover:bg-arandu-primary/5 transition-colors">
+				<div class="text-center px-3 py-2 text-sm bg-white border border-neutral-200 rounded-md peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary hover:bg-primary/5 transition-colors">
 					{ slot.StartTime }
 				</div>
 			</label>

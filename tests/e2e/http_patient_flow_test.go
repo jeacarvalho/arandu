@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/appointment"
 	"arandu/internal/domain/observation"
 	"arandu/internal/infrastructure/repository/sqlite"
 	"arandu/internal/platform/logger"
@@ -37,6 +38,13 @@ func (m *agendaMock2) GetDayView(ctx context.Context, date time.Time) (*services
 	return &services.DayView{}, nil
 }
 
+func (m *agendaMock2) GetPatientAppointments(ctx context.Context, patientID string) ([]*appointment.Appointment, error) {
+	return nil, nil
+}
+
+var _ handlers.DashboardAgendaService = &agendaMock2{}
+var _ handlers.AgendaServicePort = &agendaMock2{}
+
 func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.TenantPool) http.Handler {
 	mux := http.NewServeMux()
 
@@ -57,21 +65,23 @@ func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.
 	observationService := services.NewObservationService(observationRepo)
 	interventionService := services.NewInterventionService(interventionRepo)
 	insightService := services.NewInsightService(insightRepo)
-	timelineService := services.NewTimelineServiceContext(timelineRepo)
 
 	sessionServiceAdapter := web.NewSessionServiceAdapter(sessionService)
 	insightServiceAdapter := web.NewInsightServiceAdapter(insightService)
 	patientServiceAdapter := web.NewPatientServiceAdapter(patientService)
 	observationServiceAdapter := web.NewObservationServiceAdapter(observationService)
 	interventionServiceAdapter := web.NewInterventionServiceAdapter(interventionService)
-	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 	goalServiceAdapter := web.NewGoalServiceAdapter(goalRepo)
+
+	timelineService := services.NewTimelineServiceContext(timelineRepo, patientServiceAdapter)
+	timelineServiceAdapter := web.NewTimelineServiceAdapter(timelineService)
 
 	// Classification service mock
 	var classificationServiceAdapter handlers.ClassificationServiceInterface = &classificationMock2{}
 
 	// DashboardAgendaService mock
-	var agendaServiceAdapter handlers.DashboardAgendaService = &agendaMock2{}
+	var agendaServiceAdapter handlers.AgendaServicePort = &agendaMock2{}
+	var dashboardAgendaAdapter handlers.DashboardAgendaService = &agendaMock2{}
 
 	biopsychosocialServiceAdapterImpl := handlers.BiopsychosocialServiceFuncs{
 		GetMedicationsFunc: func(ctx context.Context, patientID string) ([]interface{}, error) {
@@ -93,12 +103,12 @@ func setupRouter(db *sqlite.DB, centralDB *sqlite.CentralDB, tenantPool *sqlite.
 		},
 	}
 
-	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, web.NewAnamnesisServiceAdapter(patientRepo))
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, classificationServiceAdapter)
+	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, web.NewAnamnesisServiceAdapter(patientRepo), agendaServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, classificationServiceAdapter, nil)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
-	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, agendaServiceAdapter)
-	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
+	dashboardHandler := handlers.NewDashboardHandler(patientServiceAdapter, sessionServiceAdapter, dashboardAgendaAdapter)
+	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter, patientServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

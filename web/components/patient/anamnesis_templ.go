@@ -50,7 +50,7 @@ func AnamnesisView(anamnesis AnamnesisViewModel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"anamnesis-container fade-in\"><header class=\"mb-12\"><nav class=\"breadcrumb mb-4\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"anamnesis-container fade-in\"><div class=\"mb-12\"><nav class=\"breadcrumb mb-4\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -76,7 +76,7 @@ func AnamnesisView(anamnesis AnamnesisViewModel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " — Anamnese</h1><p class=\"anamnesis-subtitle\">História profunda e fundamentos do caso clínico.</p></header><div class=\"anamnesis-layout\"><nav class=\"anamnesis-nav\"><ul class=\"nav-list\"><li><a href=\"#queixa\" class=\"nav-link active\" data-section=\"queixa\"><i class=\"fas fa-comment-medical nav-icon\"></i> Queixa Principal</a></li><li><a href=\"#pessoal\" class=\"nav-link\" data-section=\"pessoal\"><i class=\"fas fa-user-circle nav-icon\"></i> História Pessoal</a></li><li><a href=\"#familiar\" class=\"nav-link\" data-section=\"familiar\"><i class=\"fas fa-users nav-icon\"></i> História Familiar</a></li><li><a href=\"#mental\" class=\"nav-link\" data-section=\"mental\"><i class=\"fas fa-brain nav-icon\"></i> Exame Mental</a></li></ul></nav><main class=\"anamnesis-sections\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " — Anamnese</h1><p class=\"anamnesis-subtitle\">História profunda e fundamentos do caso clínico.</p></div><div class=\"anamnesis-layout\"><nav class=\"anamnesis-nav\"><ul class=\"nav-list\"><li><a href=\"#queixa\" class=\"nav-link active\" data-section=\"queixa\"><i class=\"fas fa-comment-medical nav-icon\"></i> Queixa Principal</a></li><li><a href=\"#pessoal\" class=\"nav-link\" data-section=\"pessoal\"><i class=\"fas fa-user-circle nav-icon\"></i> História Pessoal</a></li><li><a href=\"#familiar\" class=\"nav-link\" data-section=\"familiar\"><i class=\"fas fa-users nav-icon\"></i> História Familiar</a></li><li><a href=\"#mental\" class=\"nav-link\" data-section=\"mental\"><i class=\"fas fa-brain nav-icon\"></i> Exame Mental</a></li></ul></nav><main class=\"anamnesis-sections\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

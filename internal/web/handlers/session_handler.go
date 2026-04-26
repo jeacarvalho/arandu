@@ -89,12 +89,13 @@ type InterventionServiceInterface interface {
 
 // SessionHandler handles HTTP requests related to sessions
 type SessionHandler struct {
-	sessionService        SessionServiceInterface
-	patientService        PatientServiceInterface
-	observationService    ObservationServiceInterface
-	interventionService   InterventionServiceInterface
-	goalService           GoalServiceInterface
-	classificationService ClassificationServiceInterface
+	sessionService                       SessionServiceInterface
+	patientService                       PatientServiceInterface
+	observationService                   ObservationServiceInterface
+	interventionService                  InterventionServiceInterface
+	goalService                          GoalServiceInterface
+	classificationService                ClassificationServiceInterface
+	interventionClassificationService    InterventionClassificationServiceInterface
 }
 
 // GoalServiceInterface defines the interface for goal operations
@@ -114,14 +115,16 @@ func NewSessionHandler(
 	interventionService InterventionServiceInterface,
 	goalService GoalServiceInterface,
 	classificationService ClassificationServiceInterface,
+	interventionClassificationService InterventionClassificationServiceInterface,
 ) *SessionHandler {
 	return &SessionHandler{
-		sessionService:        sessionService,
-		patientService:        patientService,
-		observationService:    observationService,
-		interventionService:   interventionService,
-		goalService:           goalService,
-		classificationService: classificationService,
+		sessionService:                    sessionService,
+		patientService:                    patientService,
+		observationService:                observationService,
+		interventionService:               interventionService,
+		goalService:                       goalService,
+		classificationService:             classificationService,
+		interventionClassificationService: interventionClassificationService,
 	}
 }
 
@@ -254,7 +257,18 @@ func (h *SessionHandler) Show(w http.ResponseWriter, r *http.Request) {
 
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
-		// Render just the content, HTMX will swap into #main-content
+		// Render OOB swaps first: sidebar and breadcrumb
+		sidebarConfig := layoutComponents.ShellConfig{
+			SidebarVariant: "patient",
+			PatientID:     sess.PatientID,
+			ActivePage:    "patient-history",
+		}
+		layoutComponents.ShellSidebarOOB(sidebarConfig).Render(r.Context(), w)
+		
+		breadcrumb := []string{"Pacientes", patient.Name}
+		layoutComponents.ShellBreadcrumb(breadcrumb).Render(r.Context(), w)
+		
+		// Then render the main content
 		detail.Render(r.Context(), w)
 		return
 	}
@@ -492,10 +506,12 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 	observations := []sessionComponents.Observation{}
 	for _, obs := range obsList {
 		if o, ok := obs.(*observation.Observation); ok {
+			obsTags, _ := h.classificationService.GetObservationTags(r.Context(), o.ID)
 			observations = append(observations, sessionComponents.Observation{
 				ID:        o.ID,
 				Content:   o.Content,
 				CreatedAt: o.CreatedAt.Format("02/01/2006 15:04"),
+				Tags:      obsTags,
 			})
 		}
 	}
@@ -504,10 +520,15 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 	interventions := []sessionComponents.Intervention{}
 	for _, interv := range intList {
 		if i, ok := interv.(*interventionDomain.Intervention); ok {
+			var intTags []*interventionDomain.InterventionClassification
+			if h.interventionClassificationService != nil {
+				intTags, _ = h.interventionClassificationService.GetInterventionTags(r.Context(), i.ID)
+			}
 			interventions = append(interventions, sessionComponents.Intervention{
 				ID:        i.ID,
 				Content:   i.Content,
 				CreatedAt: i.CreatedAt.Format("02/01/2006 15:04"),
+				Tags:      intTags,
 			})
 		}
 	}
@@ -546,7 +567,18 @@ func (h *SessionHandler) EditSession(w http.ResponseWriter, r *http.Request) {
 
 	// HTMX-aware rendering
 	if r.Header.Get("HX-Request") == "true" {
-		// Render just the form fragment
+		// Render OOB swaps first: sidebar and breadcrumb
+		sidebarConfig := layoutComponents.ShellConfig{
+			SidebarVariant: "patient",
+			PatientID:     sess.PatientID,
+			ActivePage:    "patient-history",
+		}
+		layoutComponents.ShellSidebarOOB(sidebarConfig).Render(r.Context(), w)
+
+		breadcrumb := []string{"Pacientes", patient.Name}
+		layoutComponents.ShellBreadcrumb(breadcrumb).Render(r.Context(), w)
+
+		// Then render the main content
 		sessionComponents.EditSessionForm(formData).Render(r.Context(), w)
 		return
 	}

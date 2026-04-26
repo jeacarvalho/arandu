@@ -45,11 +45,14 @@ Use `scripts/arandu_e2e_all.sh` for automated E2E; `scripts/e2e/config.sh` handl
 - `internal/web/handlers/` — HTTP handlers: extract params → call service → map to ViewModel → render via templ
 - `web/components/` — `.templ` files organized by feature; helper Go functions for CSS class strings live in `types.go` alongside the ViewModels
 
-**Web rendering:** templ + HTMX 2.x + Tailwind CSS v4. HTMX is served locally at `/static/js/htmx.min.js`. All pages use `layout.Shell(config, content)`.
+**Web rendering:** templ + HTMX 2.x + **DaisyUI v4 + Tailwind CSS**. HTMX is served locally at `/static/js/htmx.min.js`. All pages use `layout.Shell(config, content)`.
 
-Key containers in shell (outside `#agenda-content`):
+Key containers in shell:
+- `#main-content` — primary HTMX swap target
+- `#shell-sidebar` — sidebar OOB swap target (`hx-swap-oob="innerHTML"`)
+- `#shell-breadcrumb` — breadcrumb OOB swap target (`hx-swap-oob="true"`)
 - `#modal-container` — appointment detail modals
-- `#drawer-container` — slide-in forms (new appointment, etc.)
+- `#drawer-container` — slide-in forms
 
 ## Critical Rules
 
@@ -63,9 +66,17 @@ Key containers in shell (outside `#agenda-content`):
 
 **ViewModels:** Domain entities must never reach templ templates. Handlers map domain objects to ViewModels (structs in `web/components/<feature>/types.go`) before rendering.
 
-## Tailwind Design Tokens
+## Design System — DaisyUI + Tema Arandu
 
-- Primary color: `arandu-primary` (not `primary-*` — those don't exist here)
-- Active/confirmed: `arandu-active`
-- Background: `bg-[#F7F8FA]`
-- Clinical text: Source Serif 4 font; UI text: Inter
+**Stack CSS:** DaisyUI v4 (componentes semânticos) + Tailwind utilities. Não criar CSS custom — usar classes DaisyUI.
+
+**Regras de ouro:**
+- Botões: `btn btn-primary`, `btn btn-ghost`, `btn btn-error btn-outline`
+- Cards: `card bg-base-100 border border-base-300 shadow-sm`
+- Badges de status: `badge badge-success`, `badge badge-warning`, `badge badge-ghost`
+- Tipografia clínica: classe `.clinical` (Source Serif 4) para prontuários, observações, títulos de página
+- UI text: Inter (padrão do body)
+- Não editar `input-v2.css` nem `tailwind-v2.css` — são arquivos legacy
+
+**Referência completa:** skill `daisyui-arandu`
+**Protótipo visual:** `design_handoff_arandu_redesign/daisyui_shell_dashboard.html`

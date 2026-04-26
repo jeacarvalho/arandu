@@ -84,6 +84,10 @@ func (m *mockAppointmentRepo) FindByPatient(ctx context.Context, patientID strin
 	return nil, nil
 }
 
+func (m *mockAppointmentRepo) FindBySessionID(ctx context.Context, sessionID string) (*appointment.Appointment, error) {
+	return nil, nil
+}
+
 func TestAgendaService_GetWeekView_StartOnMonday(t *testing.T) {
 	repo := &mockAppointmentRepo{}
 	svc := NewAgendaService(repo)
@@ -279,5 +283,84 @@ func TestAgendaService_Complete_LinksSession(t *testing.T) {
 	}
 	if updated.SessionID == nil || *updated.SessionID != "session-xyz" {
 		t.Errorf("expected SessionID to be session-xyz, got %v", updated.SessionID)
+	}
+}
+
+func TestAgendaService_ConfirmAppointment_SetsStatusConfirmed(t *testing.T) {
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	var updated *appointment.Appointment
+
+	repo := &mockAppointmentRepo{
+		findByIDFunc: func(ctx context.Context, id string) (*appointment.Appointment, error) {
+			return &appointment.Appointment{
+				ID:     id,
+				Date:   date,
+				Status: appointment.AppointmentStatusScheduled,
+			}, nil
+		},
+		updateFunc: func(ctx context.Context, appt *appointment.Appointment) error {
+			updated = appt
+			return nil
+		},
+	}
+	svc := NewAgendaService(repo)
+
+	err := svc.ConfirmAppointment(context.Background(), "appt-1")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if updated == nil {
+		t.Error("expected appointment to be updated")
+	}
+	if updated.Status != appointment.AppointmentStatusConfirmed {
+		t.Errorf("expected status confirmed, got %s", updated.Status)
+	}
+}
+
+func TestAgendaService_ConfirmAppointment_NotFound(t *testing.T) {
+	repo := &mockAppointmentRepo{
+		findByIDFunc: func(ctx context.Context, id string) (*appointment.Appointment, error) {
+			return nil, nil
+		},
+	}
+	svc := NewAgendaService(repo)
+
+	err := svc.ConfirmAppointment(context.Background(), "appt-1")
+
+	if err == nil {
+		t.Error("expected error for not found appointment")
+	}
+}
+
+func TestAgendaService_MarkNoShow_SetsStatusNoShow(t *testing.T) {
+	date := time.Date(2026, 4, 22, 0, 0, 0, 0, time.Local)
+	var updated *appointment.Appointment
+
+	repo := &mockAppointmentRepo{
+		findByIDFunc: func(ctx context.Context, id string) (*appointment.Appointment, error) {
+			return &appointment.Appointment{
+				ID:     id,
+				Date:   date,
+				Status: appointment.AppointmentStatusConfirmed,
+			}, nil
+		},
+		updateFunc: func(ctx context.Context, appt *appointment.Appointment) error {
+			updated = appt
+			return nil
+		},
+	}
+	svc := NewAgendaService(repo)
+
+	err := svc.MarkNoShow(context.Background(), "appt-1")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if updated == nil {
+		t.Error("expected appointment to be updated")
+	}
+	if updated.Status != appointment.AppointmentStatusNoShow {
+		t.Errorf("expected status no_show, got %s", updated.Status)
 	}
 }

@@ -125,18 +125,18 @@ func (h *ClassificationHandler) ClassifyObservation(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusOK)
 }
 
-// TagsWrapper renders the tags list wrapped in the proper div for HTMX
+// TagsWrapper renders the tags list wrapped in the proper div for HTMX, with edit button
 func TagsWrapper(observationID string, tags []observation.ObservationTag) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
-		_, err := fmt.Fprintf(w, `<div id="observation-%s-tags" class="observation-tags my-3 py-2 border-t border-b border-gray-100">`, observationID)
+		_, err := fmt.Fprintf(w, `<div id="observation-%s-tags" class="observation-tags my-3 flex flex-wrap items-center gap-2">`, observationID)
 		if err != nil {
 			return err
 		}
-		component := classification.TagList(tags, true)
+		component := classification.ObservationTagList(tags, true)
 		if err := component.Render(ctx, w); err != nil {
 			return err
 		}
-		_, err = fmt.Fprint(w, `</div>`)
+		_, err = fmt.Fprintf(w, `<button hx-get="/observations/%s/classify/edit" hx-target="#observation-%s-tags" hx-swap="outerHTML" class="btn btn-ghost btn-xs"><i class="fas fa-tags"></i>Classificar</button></div>`, observationID, observationID)
 		return err
 	})
 }
@@ -209,16 +209,94 @@ func (h *ClassificationHandler) GetClassificationEdit(w http.ResponseWriter, r *
 		return
 	}
 
-	data := classification.TagSelectorGridData{
-		ObservationID: observationID,
-		AvailableTags: tags,
-		SelectedTags:  selectedTags,
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		data := classification.ObservationTagSelectorData{
+			ObservationID: observationID,
+			AvailableTags: tags,
+			SelectedTags: selectedTags,
+		}
+		component := classification.ObservationTagSelectorInline(data)
+		component.Render(r.Context(), w)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+// BulkClassifyObservation handles POST /observations/{id}/classify/bulk
+func (h *ClassificationHandler) BulkClassifyObservation(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	observationID := extractObservationIDFromPath(r.URL.Path)
+	if observationID == "" {
+		http.Error(w, "ID da observação é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Erro ao processar formulário", http.StatusBadRequest)
+		return
+	}
+
+	tagIDs := r.Form["tag_ids"]
+	log.Printf("[BulkClassifyObservation] Processing %d tag_ids for observation %s", len(tagIDs), observationID)
+
+	currentTags, err := h.service.GetObservationTags(r.Context(), observationID)
+	if err != nil {
+		log.Printf("[BulkClassifyObservation] Error getting current tags: %v", err)
+	}
+
+	currentTagIDs := make(map[string]bool)
+	for _, t := range currentTags {
+		currentTagIDs[t.TagID] = true
+	}
+
+	availableTags, err := h.service.GetTags(r.Context())
+	if err != nil {
+		log.Printf("[BulkClassifyObservation] Error getting available tags: %v", err)
+		http.Error(w, "Erro ao buscar tags", http.StatusInternalServerError)
+		return
+	}
+
+	validTagIDs := make(map[string]bool)
+	for _, tag := range availableTags {
+		validTagIDs[tag.ID] = true
+	}
+
+	for _, tagID := range tagIDs {
+		if !validTagIDs[tagID] {
+			log.Printf("[BulkClassifyObservation] Invalid tag ID: %s", tagID)
+			continue
+		}
+		if currentTagIDs[tagID] {
+			log.Printf("[BulkClassifyObservation] Tag %s already exists, skipping", tagID)
+			continue
+		}
+		if err := h.service.AddTagToObservation(r.Context(), observationID, tagID, 3); err != nil {
+			log.Printf("[BulkClassifyObservation] Error adding tag %s: %v", tagID, err)
+			http.Error(w, "Erro ao adicionar tag: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		log.Printf("[BulkClassifyObservation] Added tag %s", tagID)
+	}
+
+	tags, err := h.service.GetObservationTags(r.Context(), observationID)
+	if err != nil {
+		log.Printf("[BulkClassifyObservation] Error getting observation tags: %v", err)
+		http.Error(w, "Erro ao buscar tags", http.StatusInternalServerError)
+		return
 	}
 
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		component := classification.TagSelectorGrid(data)
+		component := classification.ObservationTagList(tags, true)
 		component.Render(r.Context(), w)
 		return
 	}
@@ -276,6 +354,7 @@ func (h *ClassificationHandler) GetTagsByType(w http.ResponseWriter, r *http.Req
 func extractObservationIDFromPath(path string) string {
 	path = strings.TrimPrefix(path, "/observations/")
 	path = strings.TrimSuffix(path, "/classify/edit")
+	path = strings.TrimSuffix(path, "/classify/bulk")
 	path = strings.TrimSuffix(path, "/classify")
 	path = strings.Trim(path, "/")
 

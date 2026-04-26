@@ -116,7 +116,7 @@ func ShellWithContext(ctx goContext.Context, config ShellConfig, content templ.C
 // Uso: @Shell(config, conteúdo)
 templ Shell(config ShellConfig, content templ.Component) {
 	<!DOCTYPE html>
-	<html lang="pt-BR">
+	<html lang="pt-BR" data-theme="arandu">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -171,7 +171,11 @@ templ Shell(config ShellConfig, content templ.Component) {
 							this.sidebarCollapsed = localStorage.getItem('arandu-sidebar-collapsed') === 'true';
 						},
 						toggleSidebar()  { this.sidebarOpen = !this.sidebarOpen; },
-						closeSidebar()   { this.sidebarOpen = false; },
+						closeSidebar() {
+							this.sidebarOpen = false;
+							const drawerInput = document.getElementById('shell-drawer');
+							if (drawerInput) drawerInput.checked = false;
+						},
 						toggleCollapse() {
 							this.sidebarCollapsed = !this.sidebarCollapsed;
 							localStorage.setItem('arandu-sidebar-collapsed', this.sidebarCollapsed);
@@ -189,83 +193,89 @@ templ Shell(config ShellConfig, content templ.Component) {
 	</head>
 	<body>
 		<div
-			class="shell"
+			class="drawer lg:drawer-open min-h-screen"
 			x-data="Alpine.store('shell')"
 			x-init="$store.shell.init()"
 			@keydown.meta.j.window="$store.shell.toggleLLM()"
 			@keydown.ctrl.j.window="$store.shell.toggleLLM()"
 		>
-			<!-- Topbar -->
+			<input
+				id="shell-drawer"
+				type="checkbox"
+				class="drawer-toggle"
+				:checked="sidebarOpen"
+				@change="sidebarOpen = $event.target.checked"
+			/>
+
+<div class="drawer-content flex flex-col h-screen overflow-y-auto">
 			@ShellTopbar(config)
+			<main class="flex-1">
+					<div class="p-6 md:p-8 max-w-screen-xl mx-auto">
+						<div id="main-content" hx-history="false">
+							@content
+						</div>
+					</div>
+				</main>
+			</div>
 
-			<!-- Body -->
-			<div class="shell-body">
-				<!-- Mobile Sidebar Overlay -->
-				<div
+			<div class="drawer-side z-40">
+				<label
+					for="shell-drawer"
+					aria-label="close sidebar"
+					class="drawer-overlay"
 					@click="closeSidebar()"
-					class="shell-sidebar-overlay"
-					:class="sidebarOpen ? 'shell-sidebar-overlay-open' : ''"
-				></div>
-
-				<!-- Sidebar -->
+				></label>
 				if config.ShowSidebar {
 					@ShellSidebar(config)
 				}
-
-				<!-- Main Content Area -->
-			<main class="shell-main">
-				<!-- Scrollable Canvas -->
-				<div class="shell-canvas">
-					<div 
-						class="shell-canvas-container"
-						:class="sidebarCollapsed ? 'shell-canvas-collapsed' : 'shell-canvas-expanded'"
-					>
-			<div class="shell-content" id="main-content" hx-history="false">
-				@content
-			</div>
-					</div>
-				</div>
-			</main>
 			</div>
 		</div>
 
-		<!-- Modal Container -->
 		<div id="modal-container"></div>
-
-		<!-- Drawer Container -->
 		<div id="drawer-container"></div>
-
-		<!-- LLM Drawer -->
 		@LLMDrawer()
-
-		<!-- Toast Container -->
 		<div id="toast-container"></div>
 
-<!-- Global Scripts -->
-	<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
-	<!-- Debug Script - Remove in production -->
-	<script src="/static/js/htmx-debug.js"></script>
+		<script src={ "/static/js/htmx-handlers.js?v=" + helpers.GetJSVersion() }></script>
+		<script src="/static/js/htmx-debug.js"></script>
 	</body>
 	</html>
 }
 
-// ShellTopbar componente da barra superior — Sábio design
+// ShellBreadcrumb OOB-ready breadcrumb for HTMX swap
+templ ShellBreadcrumb(items []string) {
+	<nav id="shell-breadcrumb" class="sabio-breadcrumb" aria-label="Localização" hx-swap-oob="true">
+		for i, item := range items {
+			if i > 0 {
+				<span class="sabio-breadcrumb-sep">›</span>
+			}
+			<span class="sabio-breadcrumb-item">{ item }</span>
+		}
+	</nav>
+}
+
+// ShellSidebarOOB OOB-ready sidebar content for HTMX swap
+// Usa innerHTML para preservar os Alpine bindings do <aside> original
+templ ShellSidebarOOB(config ShellConfig) {
+	<aside id="shell-sidebar" hx-swap-oob="innerHTML">
+		@ShellSidebarContent(config)
+	</aside>
+}
 templ ShellTopbar(config ShellConfig) {
 	<header class="sabio-topbar">
 		<!-- Mobile Hamburger -->
 		if config.ShowSidebar {
-			<button
-				@click="$store.shell.toggleSidebar()"
-				class="shell-hamburger md:hidden"
-				aria-label="Abrir menu de navegação"
-				aria-controls="shell-sidebar"
+			<label
+				for="shell-drawer"
+				class="btn btn-ghost btn-sm btn-square lg:hidden drawer-button"
+				@click="toggleSidebar()"
 			>
 				<i class="fas fa-bars"></i>
-			</button>
+			</label>
 		}
 
 		<!-- Breadcrumb -->
-		<nav class="sabio-breadcrumb" aria-label="Localização">
+		<nav id="shell-breadcrumb" class="sabio-breadcrumb" aria-label="Localização">
 			for i, item := range deriveBreadcrumb(config) {
 				if i > 0 {
 					<span class="sabio-breadcrumb-sep">›</span>
@@ -341,8 +351,7 @@ templ ShellSearchBar() {
 templ ShellSidebar(config ShellConfig) {
 	<aside
 		id="shell-sidebar"
-		class="shell-sidebar"
-		:class="{ 'shell-sidebar-collapsed': $store.shell.sidebarCollapsed, 'shell-sidebar-open': $store.shell.sidebarOpen }"
+		class="arandu-sidebar w-60 min-h-screen flex flex-col"
 		aria-label="Menu de navegação"
 	>
 		@ShellSidebarContent(config)
@@ -407,13 +416,13 @@ templ ShellSidebarContent(config ShellConfig) {
 	</div>
 }
 
-// sabioBrandMark glifo SVG identidade Sábio (folha + olho)
+// sabioBrandMark glifo Aperture Áurea — triângulo + contra-forma + barra accent
 templ sabioBrandMark() {
 	<div class="sabio-brandmark">
-		<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-			<path d="M12 3c-4 3-6 6-6 10 0 4 2 7 6 8 4-1 6-4 6-8 0-4-2-7-6-10z"></path>
-			<path d="M12 7v12" opacity=".55"></path>
-			<circle cx="12" cy="13" r="1.4" fill="currentColor" stroke="none"></circle>
+		<svg width="30" height="30" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+			<path d="M48 6 L86 82 L10 82 Z" fill="currentColor"/>
+			<path d="M48 32 L70 76 L26 76 Z" fill="var(--paper, #F5EFE6)"/>
+			<rect x="34" y="60" width="28" height="3" fill="var(--accent, #6B4E3D)"/>
 		</svg>
 	</div>
 }
@@ -423,6 +432,7 @@ templ ShellDefaultNavItems(activePage string) {
 	@ShellNavItem("/dashboard", "dashboard", activePage, "fa-chart-line", "Dashboard")
 	@ShellNavItem("/patients", "patients", activePage, "fa-users", "Pacientes")
 	@ShellNavItem("/agenda", "agenda", activePage, "fa-calendar", "Agenda")
+	@ShellNavItem("/notes", "notes", activePage, "fa-book-medical", "Prontuários")
 }
 
 // ShellPatientNavItems itens de navegação do contexto paciente

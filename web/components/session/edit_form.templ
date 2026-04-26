@@ -72,11 +72,11 @@ templ EditSessionForm(data EditSessionFormData) {
 		<div class="sabio-notes-grid">
 			<!-- Coluna: Observações clínicas -->
 			<section class="sabio-notes-col">
-				<header class="sabio-notes-col-header">
+				<div class="sabio-notes-col-header">
 					<div class="sabio-card-eyebrow">Escuta</div>
 					<h2 class="sabio-card-title serif">Observações clínicas</h2>
 					<p class="sabio-notes-col-sub">O que foi percebido durante a sessão</p>
-				</header>
+				</div>
 				<div id="observations-list" class="sabio-notes-items" role="region" aria-live="polite" aria-label="Observações clínicas">
 					if len(data.Observations) > 0 {
 						for _, o := range data.Observations {
@@ -121,11 +121,11 @@ templ EditSessionForm(data EditSessionFormData) {
 
 			<!-- Coluna: Intervenções terapêuticas -->
 			<section class="sabio-notes-col">
-				<header class="sabio-notes-col-header">
+				<div class="sabio-notes-col-header">
 					<div class="sabio-card-eyebrow">Ação</div>
 					<h2 class="sabio-card-title serif">Intervenções terapêuticas</h2>
 					<p class="sabio-notes-col-sub">Técnicas e intervenções realizadas</p>
-				</header>
+				</div>
 				<div id="interventions-list" class="sabio-notes-items" role="region" aria-live="polite" aria-label="Intervenções terapêuticas">
 					if len(data.Interventions) > 0 {
 						for _, i := range data.Interventions {

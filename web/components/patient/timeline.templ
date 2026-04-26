@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"fmt"
 	"strconv"
 
 	"arandu/internal/domain/timeline"
@@ -233,4 +234,187 @@ func getEventIcon(eventType timeline.EventType) string {
 	default:
 		return "fas fa-calendar-day"
 	}
+}
+
+func filterBtnClass(filter, current string) string {
+	if filter == current {
+		return "sabio-pt-filter-btn-active"
+	}
+	return "sabio-pt-filter-btn"
+}
+
+func timelineEventBorder(last bool) string {
+	if last {
+		return "sabio-pt-event sabio-pt-event-last"
+	}
+	return "sabio-pt-event"
+}
+
+func timelineDotClass(accent bool) string {
+	if accent {
+		return "sabio-pt-event-dot-accent"
+	}
+	return "sabio-pt-event-dot"
+}
+
+func timelineEventPillClass(tone string) string {
+	if tone == "accent" {
+		return "sabio-pt-event-pill sabio-pt-pill-accent"
+	}
+	return "sabio-pt-event-pill sabio-pt-pill-neutral"
+}
+
+// ============================================
+// Patient History Page (Sábio redesign)
+// ============================================
+
+// PatientHistoryPage renders the full page shell
+templ PatientHistoryPage(vm PatientHistoryViewModel) {
+	<div class="sabio-pt-hero">
+		<div class="sabio-pt-avatar">{ vm.Initials }</div>
+		<div class="sabio-pt-hero-info">
+			<div class="sabio-pt-hero-eyebrow">Paciente #{ vm.PatientID }</div>
+			<h1 class="sabio-pt-hero-name">{ vm.PatientName }</h1>
+			<div class="sabio-pt-hero-meta">{ vm.Since }</div>
+		</div>
+		<div class="sabio-pt-stats">
+			<div class="sabio-pt-stat">
+				<div class="sabio-pt-stat-value">{ fmt.Sprintf("%d", vm.SessionCount) }</div>
+				<div class="sabio-pt-stat-label">Sessões</div>
+			</div>
+			<div class="sabio-pt-stat-divider"></div>
+			<div class="sabio-pt-stat">
+				<div class="sabio-pt-stat-value">{ vm.TherapyDuration }</div>
+				<div class="sabio-pt-stat-label">Em terapia</div>
+			</div>
+			<div class="sabio-pt-stat-divider"></div>
+			<div class="sabio-pt-stat">
+				<div class="sabio-pt-stat-value">{ vm.Frequency }</div>
+				<div class="sabio-pt-stat-label">Frequência</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="sabio-pt-grid">
+		<div class="sabio-pt-main">
+			if vm.TriageContent != "" {
+				<div class="sabio-pt-card">
+					<div class="sabio-pt-card-header">
+						<div>
+							<div class="sabio-pt-eyebrow">Notas de triagem</div>
+							<h3 class="sabio-pt-card-title">Primeira escuta</h3>
+							<div class="sabio-pt-card-subtitle">Registrada em { vm.TriageDate }</div>
+						</div>
+					</div>
+					<div class="sabio-pt-card-body">
+						<blockquote class="sabio-pt-triage">{ vm.TriageContent }</blockquote>
+					</div>
+				</div>
+			}
+
+			<div class="sabio-pt-card">
+				<div class="sabio-pt-card-header">
+					<div>
+						<div class="sabio-pt-eyebrow">Percurso</div>
+						<h3 class="sabio-pt-card-title">Linha do tempo clínica</h3>
+					</div>
+					<div class="sabio-pt-filters">
+						<button
+							class={ filterBtnClass("all", vm.CurrentFilter) }
+							hx-get={ "/patients/" + vm.PatientIDForURL + "/history?filter=all" }
+							hx-target="#timeline-content"
+							hx-swap="innerHTML"
+						>Tudo</button>
+						<button
+							class={ filterBtnClass("session", vm.CurrentFilter) }
+							hx-get={ "/patients/" + vm.PatientIDForURL + "/history?filter=session" }
+							hx-target="#timeline-content"
+							hx-swap="innerHTML"
+						>Sessões</button>
+						<button
+							class={ filterBtnClass("observation", vm.CurrentFilter) }
+							hx-get={ "/patients/" + vm.PatientIDForURL + "/history?filter=observation" }
+							hx-target="#timeline-content"
+							hx-swap="innerHTML"
+						>Notas</button>
+					</div>
+				</div>
+				<div id="timeline-content" class="sabio-pt-card-body sabio-pt-timeline">
+					for i, e := range vm.Events {
+						@PatientTimelineEventRow(e, i == len(vm.Events)-1)
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="sabio-pt-sidebar">
+			<div class="sabio-pt-card">
+				<div class="sabio-pt-card-header">
+					<div class="sabio-pt-eyebrow">Atalhos</div>
+					<h3 class="sabio-pt-card-title">Ações</h3>
+				</div>
+				<div class="sabio-pt-card-body sabio-pt-actions">
+					<a href={ templ.URL("/patients/" + vm.PatientIDForURL + "/sessions/new") } class="sabio-pt-action sabio-pt-action-primary">
+						+ Nova sessão
+					</a>
+					<a href="#" class="sabio-pt-action">Anamnese</a>
+					<a href="#" class="sabio-pt-action">Plano terapêutico</a>
+				</div>
+			</div>
+
+			if len(vm.RecentObservations) > 0 {
+				<div class="sabio-pt-card">
+					<div class="sabio-pt-card-header">
+						<div class="sabio-pt-eyebrow">Percepções</div>
+						<h3 class="sabio-pt-card-title">Observações recentes</h3>
+					</div>
+					<div class="sabio-pt-card-body sabio-pt-obs-list">
+						for _, o := range vm.RecentObservations {
+							<div class="sabio-pt-obs-card">
+								<div class="sabio-pt-obs-meta">
+									<span class="sabio-pt-obs-tag">#{ o.Tag }</span>
+									<span class="sabio-pt-obs-date">{ o.DateStr }</span>
+								</div>
+								<p class="sabio-pt-obs-text">{ o.Text }</p>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// PatientHistoryContent renders content for HTMX (new signature)
+templ PatientHistoryContent(vm PatientHistoryViewModel) {
+	<div id="timeline-content" class="sabio-pt-card-body sabio-pt-timeline">
+		for i, e := range vm.Events {
+			@PatientTimelineEventRow(e, i == len(vm.Events)-1)
+		}
+	</div>
+}
+
+// PatientTimelineEventRow renders a single timeline event with Sábio design
+templ PatientTimelineEventRow(e PatientTimelineEvent, last bool) {
+	<div
+		class={ timelineEventBorder(last), map[bool]string{true: "sabio-pt-event-clickable"}[e.IsSession] }
+		if e.IsSession && e.Href != "" {
+			hx-get={ e.Href }
+			hx-swap="innerHTML"
+			hx-target="#main-content"
+		}
+	>
+		<span class="sabio-pt-event-date">{ e.DateStr }</span>
+		<div class={ timelineDotClass(e.DotAccent) }></div>
+		<div class="sabio-pt-event-body">
+			<div class="sabio-pt-event-header">
+				<h4 class="sabio-pt-event-title">{ e.Title }</h4>
+				<span class={ timelineEventPillClass(e.KindTone) }>{ e.Kind }</span>
+			</div>
+			<p class="sabio-pt-event-summary">{ e.Summary }</p>
+		</div>
+		if e.IsSession {
+			<span class="sabio-pt-event-chevron">›</span>
+		}
+	</div>
 }

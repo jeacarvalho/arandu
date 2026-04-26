@@ -5,8 +5,19 @@ import (
 	"testing"
 	"time"
 
+	"arandu/internal/domain/patient"
 	"arandu/internal/domain/timeline"
 )
+
+type mockPatientServiceGetter struct{}
+
+func (m *mockPatientServiceGetter) GetPatient(ctx context.Context, id string) (*patient.Patient, error) {
+	return nil, nil
+}
+
+func (m *mockPatientServiceGetter) GetPatientByID(ctx context.Context, id string) (*patient.Patient, error) {
+	return nil, nil
+}
 
 // mockTimelineRepositoryContextAware implements TimelineRepositoryContextAware for testing
 type mockTimelineRepositoryContextAware struct {
@@ -29,6 +40,10 @@ func (m *mockTimelineRepositoryContextAware) SearchInHistory(ctx context.Context
 	return m.searchResults, nil
 }
 
+func (m *mockTimelineRepositoryContextAware) SearchGlobal(ctx context.Context, query string, limit int) ([]*timeline.SearchResult, error) {
+	return nil, nil
+}
+
 func TestTimelineServiceContext_GetPatientTimeline(t *testing.T) {
 	now := time.Now()
 	mockEvents := timeline.Timeline{
@@ -47,7 +62,8 @@ func TestTimelineServiceContext_GetPatientTimeline(t *testing.T) {
 	}
 
 	mockRepo := &mockTimelineRepositoryContextAware{events: mockEvents}
-	service := NewTimelineServiceContext(mockRepo)
+	mockPatientSvc := &mockPatientServiceGetter{}
+	service := NewTimelineServiceContext(mockRepo, mockPatientSvc)
 
 	t.Run("Get timeline with events", func(t *testing.T) {
 		events, err := service.GetPatientTimeline(context.Background(), "patient-123", nil, 10, 0)
@@ -109,7 +125,7 @@ func TestTimelineServiceContext_GetPatientTimeline(t *testing.T) {
 
 	t.Run("Handle errors gracefully", func(t *testing.T) {
 		errRepo := &mockTimelineRepositoryContextAware{err: context.DeadlineExceeded}
-		errService := NewTimelineServiceContext(errRepo)
+		errService := NewTimelineServiceContext(errRepo, &mockPatientServiceGetter{})
 
 		_, err := errService.GetPatientTimeline(context.Background(), "patient-123", nil, 10, 0)
 
@@ -122,7 +138,7 @@ func TestTimelineServiceContext_GetPatientTimeline(t *testing.T) {
 func TestTimelineServiceContext_EdgeCases(t *testing.T) {
 	t.Run("Empty timeline", func(t *testing.T) {
 		mockRepo := &mockTimelineRepositoryContextAware{events: timeline.Timeline{}}
-		service := NewTimelineServiceContext(mockRepo)
+		service := NewTimelineServiceContext(mockRepo, &mockPatientServiceGetter{})
 
 		events, err := service.GetPatientTimeline(context.Background(), "patient-123", nil, 10, 0)
 
@@ -137,7 +153,7 @@ func TestTimelineServiceContext_EdgeCases(t *testing.T) {
 
 	t.Run("Nil filter type", func(t *testing.T) {
 		mockRepo := &mockTimelineRepositoryContextAware{events: timeline.Timeline{}}
-		service := NewTimelineServiceContext(mockRepo)
+		service := NewTimelineServiceContext(mockRepo, &mockPatientServiceGetter{})
 
 		events, err := service.GetPatientTimeline(context.Background(), "patient-123", nil, 10, 0)
 

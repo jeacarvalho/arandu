@@ -1,0 +1,256 @@
+package notes
+
+import (
+	"fmt"
+)
+
+templ NotesLibraryPage(vm NotesLibraryViewModel) {
+	<div class="sabio-nl-hero">
+		<div class="sabio-nl-hero-left">
+			<div class="sabio-nl-eyebrow">Biblioteca Clínica</div>
+			<h1 class="sabio-nl-title">Prontuários<em class="sabio-nl-title-dot">.</em></h1>
+			<p class="sabio-nl-subtitle">{ fmt.Sprintf("%d", vm.TotalRecords) } registros · { fmt.Sprintf("%d", vm.TotalEvents) } páginas indexadas</p>
+		</div>
+		<div class="sabio-nl-hero-actions">
+			<button class="sabio-nl-btn-outline">Filtros</button>
+			<button class="sabio-nl-btn-primary">+ Novo prontuário</button>
+		</div>
+	</div>
+
+	<div class="sabio-nl-chips">
+		<button
+			class={ chipClass("all", vm.CurrentFilter) }
+			hx-get="/notes?filter=all"
+			hx-target="#notes-content"
+			hx-swap="outerHTML"
+			hx-push-url="true"
+		>Tudo</button>
+		for _, tag := range vm.FilterTags {
+			<button
+				class={ chipClass(tag, vm.CurrentFilter) }
+				hx-get={ fmt.Sprintf("/notes?filter=%s", tag) }
+				hx-target="#notes-content"
+				hx-swap="outerHTML"
+				hx-push-url="true"
+			>{ tag }</button>
+		}
+	</div>
+
+	<div id="notes-content">
+		<div class="sabio-nl-split">
+			<section class="sabio-nl-list-panel" id="notes-list">
+				<header class="sabio-nl-list-header">
+					<input
+						class="sabio-nl-search"
+						placeholder="Buscar por nome, tag, trecho…"
+						hx-get="/notes/search"
+						hx-target="#notes-list-scroll"
+						hx-swap="innerHTML"
+						hx-trigger="input delay:400ms"
+						name="q"
+						value={ vm.SearchQuery }
+					/>
+					<span class="sabio-nl-list-count">{ fmt.Sprintf("%d", vm.TotalRecords) }</span>
+				</header>
+				<input type="hidden" name="patient" value={ vm.FocusedRecord.PatientID } />
+				<div class="sabio-nl-list-scroll" id="notes-list-scroll">
+					for _, rec := range vm.Records {
+						@NoteRecordItem(rec)
+					}
+				</div>
+			</section>
+
+			<div id="notes-detail">
+				@NotesDetailPanel(vm.FocusedRecord)
+			</div>
+		</div>
+	</div>
+}
+
+templ NotesLibraryContent(vm NotesLibraryViewModel) {
+	<div id="notes-content">
+		<div class="sabio-nl-split">
+			<section class="sabio-nl-list-panel" id="notes-list">
+				<header class="sabio-nl-list-header">
+					<input
+						class="sabio-nl-search"
+						placeholder="Buscar por nome, tag, trecho…"
+						hx-get="/notes/search"
+						hx-target="#notes-list-scroll"
+						hx-swap="innerHTML"
+						hx-trigger="input delay:400ms"
+						name="q"
+						value={ vm.SearchQuery }
+					/>
+					<span class="sabio-nl-list-count">{ fmt.Sprintf("%d", vm.TotalRecords) }</span>
+				</header>
+				<input type="hidden" name="patient" value={ vm.FocusedRecord.PatientID } />
+				<div class="sabio-nl-list-scroll" id="notes-list-scroll">
+					for _, rec := range vm.Records {
+						@NoteRecordItem(rec)
+					}
+				</div>
+			</section>
+
+			<div id="notes-detail">
+				@NotesDetailPanel(vm.FocusedRecord)
+			</div>
+		</div>
+	</div>
+}
+
+// NoteRecordItems — fragmento retornado pelo endpoint /notes/search
+templ NoteRecordItems(records []NoteRecord) {
+	for _, rec := range records {
+		@NoteRecordItem(rec)
+	}
+}
+
+templ NoteRecordItem(rec NoteRecord) {
+	<button
+		class={ noteRecordItemClass(rec.IsFocused) }
+		hx-get={ fmt.Sprintf("/notes/detail/%s?patient=%s", rec.PatientID, rec.PatientID) }
+		hx-target="#notes-detail"
+		hx-swap="innerHTML"
+		aria-selected={ fmt.Sprintf("%t", rec.IsFocused) }
+	>
+		if rec.IsFocused {
+			<span class="sabio-nl-focus-bar"></span>
+		}
+		<div class="sabio-nl-avatar">{ rec.Initials }</div>
+		<div class="sabio-nl-record-info">
+			<div class="sabio-nl-record-name-row">
+				<span class="sabio-nl-record-name">{ rec.PatientName }</span>
+			</div>
+			<div class="sabio-nl-record-meta">
+				<span class="sabio-nl-record-id">{ rec.RecordID }</span>
+				<span>·</span>
+				<span>{ fmt.Sprintf("%d", rec.EventCount) }p</span>
+				<span>·</span>
+				<span>atualiz. { rec.LastUpdate }</span>
+			</div>
+			<div class="sabio-nl-record-tags">
+				for _, tag := range rec.Tags {
+					<span class="sabio-nl-tag">{ tag }</span>
+				}
+				<span class="sabio-nl-tag sabio-nl-tag-status">{ rec.Status }</span>
+			</div>
+		</div>
+		<span class="sabio-nl-chevron">›</span>
+	</button>
+}
+
+templ NotesDetailPanel(detail NoteRecordDetail) {
+	<section class="sabio-nl-detail">
+		<header class="sabio-nl-detail-header">
+			<div>
+				<div class="sabio-nl-detail-eyebrow">
+					<span class="sabio-nl-detail-id">{ detail.RecordID }</span> · { detail.PatientName }
+				</div>
+				<h2 class="sabio-nl-detail-title">
+					Prontuário <em class="sabio-nl-detail-title-em">completo</em>
+				</h2>
+			</div>
+			<div class="sabio-nl-detail-actions">
+				<button class="sabio-nl-icon-btn" title="Análise IA">✦</button>
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", detail.PatientID)) } class="sabio-nl-icon-btn" title="Ver histórico">↗</a>
+			</div>
+		</header>
+
+		<nav class="sabio-nl-tabs">
+			for _, s := range detail.Sections {
+				<button
+					class={ tabClass(s.Active) }
+					hx-get={ fmt.Sprintf("/notes/detail/%s?tab=%s", detail.PatientID, s.Key) }
+					hx-target="#notes-detail"
+					hx-swap="innerHTML"
+				>
+					{ s.Label }
+					<span class="sabio-nl-tab-count">{ fmt.Sprintf("%d", s.Count) }p</span>
+				</button>
+			}
+		</nav>
+
+		<div class="sabio-nl-detail-body" id="notes-detail-body">
+			if detail.ActiveTab == "evolucao" && detail.LastEntryTitle != "" {
+				<div class="sabio-nl-doc">
+					<div class="sabio-nl-doc-eyebrow">Evolução · última entrada em { detail.LastEntryDate }</div>
+					<h3 class="sabio-nl-doc-title">{ detail.LastEntryTitle }</h3>
+					<div class="sabio-nl-doc-divider"></div>
+					<p class="sabio-nl-doc-body">{ detail.LastEntryContent }</p>
+					if detail.LastEntryQuote != "" {
+						<blockquote class="sabio-nl-doc-quote">{ detail.LastEntryQuote }</blockquote>
+					}
+				</div>
+			} else if detail.ActiveTab == "evolucao" {
+				<p class="sabio-nl-empty">Nenhuma sessão registrada.</p>
+			} else if detail.ActiveTab == "anamnese" {
+				if detail.AnamneseText != "" {
+					<div class="sabio-nl-doc">
+						<p class="sabio-nl-doc-body">{ detail.AnamneseText }</p>
+					</div>
+				} else {
+					<p class="sabio-nl-empty">Anamnese não registrada.</p>
+				}
+			} else if detail.ActiveTab == "observacoes" {
+				if len(detail.ObservationItems) > 0 {
+					<div class="sabio-nl-event-list">
+						for _, item := range detail.ObservationItems {
+							<div class="sabio-nl-event-item">
+								<span class="sabio-nl-event-date">{ item.DateStr }</span>
+								<p class="sabio-nl-event-content">{ item.Content }</p>
+							</div>
+						}
+					</div>
+				} else {
+					<p class="sabio-nl-empty">Nenhuma observação registrada.</p>
+				}
+			} else if detail.ActiveTab == "intervencoes" {
+				if len(detail.InterventionItems) > 0 {
+					<div class="sabio-nl-event-list">
+						for _, item := range detail.InterventionItems {
+							<div class="sabio-nl-event-item">
+								<span class="sabio-nl-event-date">{ item.DateStr }</span>
+								<p class="sabio-nl-event-content">{ item.Content }</p>
+							</div>
+						}
+					</div>
+				} else {
+					<p class="sabio-nl-empty">Nenhuma intervenção registrada.</p>
+				}
+			} else {
+				<p class="sabio-nl-empty">Sem registros.</p>
+			}
+		</div>
+
+		<footer class="sabio-nl-detail-footer">
+			<span class="sabio-nl-detail-pages">{ fmt.Sprintf("%d", detail.TotalEvents) } eventos indexados</span>
+			<div class="sabio-nl-detail-footer-actions">
+				<a href={ templ.URL(fmt.Sprintf("/patients/%s/history", detail.PatientID)) } class="sabio-nl-footer-btn">
+					Ver prontuário completo
+				</a>
+			</div>
+		</footer>
+	</section>
+}
+
+func chipClass(tag, current string) string {
+	if tag == current || (current == "" && tag == "all") {
+		return "sabio-nl-chip-active"
+	}
+	return "sabio-nl-chip"
+}
+
+func noteRecordItemClass(focused bool) string {
+	if focused {
+		return "sabio-nl-record-item-focused"
+	}
+	return "sabio-nl-record-item"
+}
+
+func tabClass(active bool) string {
+	if active {
+		return "sabio-nl-tab-active"
+	}
+	return "sabio-nl-tab"
+}

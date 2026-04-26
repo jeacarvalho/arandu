@@ -81,6 +81,10 @@ func (r *mockAppointmentRepository) FindUpcoming(ctx context.Context, fromDate t
 	return []*appointment.Appointment{}, nil
 }
 
+func (r *mockAppointmentRepository) FindBySessionID(ctx context.Context, sessionID string) (*appointment.Appointment, error) {
+	return nil, nil
+}
+
 type mockPatientService struct{}
 
 func (m *mockPatientService) ListPatients(ctx context.Context) ([]*patient.Patient, error) {

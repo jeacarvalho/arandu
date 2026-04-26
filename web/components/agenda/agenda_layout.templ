@@ -23,245 +23,299 @@ templ AgendaContent(vm AgendaViewModel) {
 		aria-live="polite"
 		aria-label="Agenda de consultas"
 	>
-		<!-- Page header: title + view selector + new appointment -->
-		<div class="mb-5 flex items-end justify-between gap-4">
-			<div>
-				<h1 class="text-2xl font-semibold text-neutral-800">Agenda</h1>
-				<p class="mt-1 text-sm text-neutral-500">Gerencie horários e acompanhe a semana clínica</p>
+		<!-- Hero -->
+		<div class="sabio-agenda-hero">
+			<div class="sabio-agenda-hero-left">
+				<div class="sabio-agenda-eyebrow">
+					{ "AGENDA · " + getViewLabel(vm.CurrentView) }
+				</div>
+				<h1 class="sabio-agenda-title">
+					{ getTitlePart1(vm.WeekLabel) }
+					<em class="sabio-agenda-title-em">{ getTitlePart2(vm.WeekLabel) }</em>
+				</h1>
+				<div class="sabio-agenda-metrics">
+					<span class="sabio-agenda-metric-value">{ fmt.Sprintf("%d", vm.TotalCount) }</span>
+					<span class="sabio-agenda-metric-label">sessões</span>
+					<span class="sabio-agenda-metric-sep">·</span>
+					<span class="sabio-agenda-metric-value">{ fmt.Sprintf("%d", vm.Confirmed) }</span>
+					<span class="sabio-agenda-metric-label">confirmadas</span>
+					<span class="sabio-agenda-metric-sep">·</span>
+					<span class="sabio-agenda-metric-value">{ fmt.Sprintf("%d", vm.Pending) }</span>
+					<span class="sabio-agenda-metric-label">pendentes</span>
+				</div>
 			</div>
-			<div class="flex items-center gap-3 flex-shrink-0">
-				<!-- View Tabs -->
-				<div class="flex bg-white border border-neutral-200 rounded-xl p-1 gap-1 shadow-sm">
+			<div class="sabio-agenda-hero-right">
+				<!-- View Toggle Pills -->
+				<div class="sabio-view-toggle">
 					<button
-						class={ ViewTabClasses("dia", vm.CurrentView) }
+						class={ ViewToggleClass("dia", vm.CurrentView) }
 						hx-get={ fmt.Sprintf("/agenda?view=dia&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="outerHTML"
 						hx-push-url="true"
 					>
-						<i class="fas fa-calendar-day text-xs mr-1.5"></i>Dia
+						Dia
 					</button>
 					<button
-						class={ ViewTabClasses("semana", vm.CurrentView) }
+						class={ ViewToggleClass("semana", vm.CurrentView) }
 						hx-get={ fmt.Sprintf("/agenda?view=semana&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="outerHTML"
 						hx-push-url="true"
 					>
-						<i class="fas fa-calendar-week text-xs mr-1.5"></i>Semana
+						Semana
 					</button>
 					<button
-						class={ ViewTabClasses("mes", vm.CurrentView) }
+						class={ ViewToggleClass("mes", vm.CurrentView) }
 						hx-get={ fmt.Sprintf("/agenda?view=mes&date=%s", vm.WeekStart.Format("2006-01-02")) }
 						hx-target="#agenda-content"
 						hx-swap="outerHTML"
 						hx-push-url="true"
 					>
-						<i class="fas fa-calendar-alt text-xs mr-1.5"></i>Mês
+						Mês
 					</button>
 				</div>
-				<!-- New Appointment Button -->
-				<button
-					class="btn btn-primary"
-					hx-get="/agenda/new"
-					hx-target="#drawer-container"
-					hx-swap="innerHTML"
-					hx-indicator=".new-btn-spinner"
-				>
-					<span class="new-btn-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-arandu-primary rounded-lg">
-						<i class="fas fa-spinner fa-spin text-xs text-white"></i>
-					</span>
-					<i class="fas fa-plus"></i>
-					<span>Nova Marcação</span>
-				</button>
-			</div>
-		</div>
-
-		<div class="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
-			<!-- Navigation Bar: arrows + today + period label only -->
-			<div class="h-12 bg-neutral-50 border-b border-neutral-200 flex items-center px-5 gap-3 flex-shrink-0">
-				<!-- Navigation Arrows -->
-				<div class="flex gap-1">
+				<!-- Navigation -->
+				<div class="sabio-nav-buttons">
 					<button
-						class="w-8 h-8 border border-neutral-200 rounded-lg bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 relative"
+						class="sabio-nav-btn"
 						aria-label="Período anterior"
 						hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.PrevDate, vm.CurrentView) }
 						hx-target="#agenda-content"
 						hx-swap="outerHTML"
 						hx-push-url="true"
-						hx-indicator=".nav-spinner"
 					>
-						<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
-							<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
-						</span>
-						<i class="fas fa-chevron-left text-xs text-neutral-500"></i>
+						‹
 					</button>
 					<button
-						class="w-8 h-8 border border-neutral-200 rounded-lg bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 relative"
+						class="sabio-nav-btn-today"
+						hx-get="/agenda"
+						hx-target="#agenda-content"
+						hx-swap="outerHTML"
+						hx-push-url="true"
+					>
+						Hoje
+					</button>
+					<button
+						class="sabio-nav-btn"
 						aria-label="Próximo período"
 						hx-get={ fmt.Sprintf("/agenda?date=%s&view=%s", vm.NextDate, vm.CurrentView) }
 						hx-target="#agenda-content"
 						hx-swap="outerHTML"
 						hx-push-url="true"
-						hx-indicator=".nav-spinner"
 					>
-						<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
-							<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
-						</span>
-						<i class="fas fa-chevron-right text-xs text-neutral-500"></i>
+						›
+					</button>
+					<button
+						class="sabio-new-btn"
+						hx-get="/agenda/new"
+						hx-target="#drawer-container"
+						hx-swap="innerHTML"
+					>
+						+ Novo agendamento
 					</button>
 				</div>
-
-				<!-- Today Button -->
-				<button
-					class="h-8 px-4 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-600 bg-white hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-arandu-primary/50 relative"
-					hx-get="/agenda"
-					hx-target="#agenda-content"
-					hx-swap="outerHTML"
-					hx-push-url="true"
-					hx-indicator=".nav-spinner"
-				>
-					<span class="nav-spinner htmx-indicator absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
-						<i class="fas fa-spinner fa-spin text-xs text-arandu-primary"></i>
-					</span>
-					<span class="relative">Hoje</span>
-				</button>
-
-				<!-- Period Label -->
-				<span class="text-sm font-semibold text-neutral-800 capitalize">{ vm.WeekLabel }</span>
 			</div>
+		</div>
 
-			if vm.CurrentView == "mes" {
-				@MonthGrid(vm)
-			} else {
-				<!-- Timeline calendar (dia / semana) -->
-				<div class="flex overflow-hidden min-h-[780px]">
-					<div class="flex-1 flex overflow-y-auto overflow-x-hidden">
-					<!-- Time column -->
-					<div class="w-13 flex-shrink-0 border-r border-neutral-200 bg-white">
-						<div class="h-11 border-b border-neutral-200"></div>
-						for _, h := range []string{"08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00"} {
-							<div class="h-20 flex items-start justify-end pr-2 pt-1">
-								<span class="text-xs text-neutral-400 font-medium">{ h }</span>
-							</div>
-						}
-					</div>
-					<!-- Days area -->
-					<div class="flex-1 flex flex-col min-w-0">
-						<!-- Days header -->
-						<div class={ "h-11 grid border-b border-neutral-200 bg-white flex-shrink-0 sticky top-0 z-10", DayGridClass(len(vm.Days)) }>
-							for _, day := range vm.Days {
-								<div class="flex flex-col items-center justify-center border-r border-neutral-200 last:border-r-0 px-0.5 py-1">
-									<span class="text-xs font-semibold text-neutral-400 uppercase tracking-wide">{ TranslateDayName(day.DayName) }</span>
-									<div class={ TodayBadgeClasses(day.IsToday) }>
-										{ day.DayNumber }
-									</div>
-								</div>
-							}
-						</div>
-						<!-- Days body -->
-						<div class={ "grid flex-1", DayGridClass(len(vm.Days)) }>
-							for _, day := range vm.Days {
-								@DayColumn(day)
-							}
-						</div>
-					</div>
-				</div>
+		<!-- Main Grid -->
+		<div class="sabio-agenda-grid">
+			<!-- Calendar Column -->
+			<div class="sabio-agenda-calendar">
+				if vm.CurrentView == "mes" {
+					@MonthGrid(vm)
+				} else if vm.CurrentView == "dia" {
+					@DayGrid(vm)
+				} else {
+					@WeekGrid(vm)
+				}
 			</div>
-				<!-- Legend -->
-				<div class="h-9 bg-neutral-50 border-t border-neutral-200 flex items-center px-5 gap-3.5 flex-shrink-0">
-					<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
-						<div class="w-2 h-2 rounded-sm bg-arandu-active"></div>
-						Confirmado
-					</div>
-					<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
-						<div class="w-2 h-2 rounded-sm bg-amber-500"></div>
-						Aguardando
-					</div>
-					<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
-						<div class="w-2 h-2 rounded-sm bg-blue-500"></div>
-						1ª consulta
-					</div>
-					<div class="flex items-center gap-1.5 text-xs text-neutral-500 whitespace-nowrap">
-						<div class="w-2 h-2 rounded-sm bg-neutral-300"></div>
-						Cancelado
-					</div>
-					<div class="ml-auto text-xs text-neutral-600 font-semibold bg-white border border-neutral-200 px-2.5 py-0.5 rounded-full">
-						{ fmt.Sprintf("%d consultas esta semana", vm.TotalCount) }
-					</div>
+			<!-- Sidebar -->
+			@AgendaSidebar()
+		</div>
+	</div>
+}
+
+// getViewLabel returns the label for view type
+func getViewLabel(view string) string {
+	switch view {
+	case "dia":
+		return "DIA"
+	case "semana":
+		return "SEMANA"
+	case "mes":
+		return "MÊS"
+	default:
+		return "SEMANA"
+	}
+}
+
+// getTitlePart1 returns the first part of the title (before italic)
+func getTitlePart1(label string) string {
+	if label == "" {
+		return ""
+	}
+	// Get everything before " de " (the month starts with the month name)
+	parts := splitLabel(label)
+	if len(parts) > 0 {
+		return parts[0]
+	}
+	return label
+}
+
+// getTitlePart2 returns the second part of the title (italic)
+func getTitlePart2(label string) string {
+	parts := splitLabel(label)
+	if len(parts) > 1 {
+		return parts[1]
+	}
+	return ""
+}
+
+func splitLabel(label string) []string {
+	// Find " de " separator
+	for i := 0; i < len(label)-2; i++ {
+		if label[i:i+3] == " de " {
+			return []string{label[:i], label[i+3:]}
+		}
+	}
+	return []string{label}
+}
+
+// ViewToggleClass returns CSS classes for view toggle buttons
+func ViewToggleClass(view, current string) string {
+	if view == current {
+		return "sabio-view-toggle-btn-active"
+	}
+	return "sabio-view-toggle-btn"
+}
+
+// WeekGrid renders the week calendar view
+templ WeekGrid(vm AgendaViewModel) {
+	<div class="sabio-week-container">
+		<!-- Days Header -->
+		<div class="sabio-week-header">
+			<div class="sabio-week-header-time"></div>
+			for _, day := range vm.Days {
+				<div class={ "sabio-week-header-day", DayHeaderTodayClass(day.IsToday) }>
+					<div class="sabio-week-dow">{ getDayName(day.DayName) }</div>
+					<div class={ "sabio-week-daynum", DayNumTodayClass(day.IsToday) }>{ day.DayNumber }</div>
 				</div>
 			}
 		</div>
+		<!-- Week Slots -->
+		<div class="sabio-week-body">
+			<!-- Time Column -->
+			<div class="sabio-week-time-col">
+				for _, h := range []int{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18} {
+					<div class="sabio-week-time-slot">
+						<span class="sabio-week-time-label">{ fmt.Sprintf("%02d:00", h) }</span>
+					</div>
+					<div class="sabio-week-time-slot sabio-week-time-slot-half"></div>
+				}
+			</div>
+			<!-- Days Columns -->
+			for _, day := range vm.Days {
+				<div class={ "sabio-week-day-col", TodayColumnClass(day.IsToday) }>
+					for i := 0; i < 22; i++ {
+						<div class={ WeekSlotClass(i) }></div>
+					}
+					<!-- Appointments -->
+					for _, appt := range day.Appointments {
+						@WeekAppointmentCard(appt)
+					}
+				</div>
+			}
+		</div>
+		<!-- Legend -->
+		<div class="sabio-week-legend">
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:#6B4E3D"></span>
+				<span>Retorno</span>
+			</div>
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:#3C5C7A"></span>
+				<span>1ª consulta</span>
+			</div>
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:#B8842A"></span>
+				<span>Atenção</span>
+			</div>
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:#A0463A"></span>
+				<span>Risco</span>
+			</div>
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:#4A5D4F"></span>
+				<span>Supervisão</span>
+			</div>
+			<div class="sabio-legend-item">
+				<span class="sabio-legend-dot" style="background:var(--ink-4)"></span>
+				<span>Cancelado</span>
+			</div>
+		</div>
+	</div>
+}
+
+// DayGrid renders the day calendar view
+templ DayGrid(vm AgendaViewModel) {
+	<div class="sabio-day-container">
+		for _, day := range vm.Days {
+			<div class="sabio-day-header">
+				<span class="sabio-day-header-dow">{ getDayName(day.DayName) }</span>
+			</div>
+			for _, hour := range []int{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18} {
+				<div class="sabio-day-slot-row">
+					<span class="sabio-day-slot-time">{ fmt.Sprintf("%02d:00", hour) }</span>
+					<div class="sabio-day-slot-line"></div>
+				</div>
+			}
+			<!-- Day appointments -->
+			for _, appt := range day.Appointments {
+				@DayAppointmentCard(appt)
+			}
+		}
 	</div>
 }
 
 // MonthGrid renders the month calendar view
 templ MonthGrid(vm AgendaViewModel) {
-	<div class="flex flex-col">
-		<!-- Day of week headers -->
-		<div class="grid grid-cols-7 border-b border-neutral-200">
-			for _, name := range []string{"Seg","Ter","Qua","Qui","Sex","Sáb","Dom"} {
-				<div class="py-2.5 text-center text-xs font-semibold text-neutral-400 uppercase tracking-wide">{ name }</div>
+	<div class="sabio-month-container">
+		<!-- Day headers -->
+		<div class="sabio-month-header">
+			for _, name := range []string{"Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"} {
+				<div class="sabio-month-header-cell">{ name }</div>
 			}
 		</div>
-		<!-- Calendar grid: gap-px with bg-neutral-200 creates 1px grid lines -->
-		<!-- Service already includes prev/next month filler days to complete each week -->
-		<div class="grid grid-cols-7 gap-px bg-neutral-200">
+		<!-- Calendar grid -->
+		<div class="sabio-month-grid">
 			for _, day := range vm.Days {
-				<div class={ MonthCellClasses(day.IsToday, day.IsCurrentMonth) }>
+				<div class={ "sabio-month-cell", MonthCellTodayClass(day.IsToday) }>
 					if day.IsCurrentMonth {
-						<div class={ MonthDayNumberClass(day.IsToday) }>{ day.DayNumber }</div>
-					} else {
-						<div class={ MonthDayNumberOutsideClass() }>{ day.DayNumber }</div>
-					}
-					if day.IsCurrentMonth {
+						<div class={ "sabio-month-day-num", MonthDayNumClass(day.IsToday) }>{ day.DayNumber }</div>
 						for _, appt := range day.Appointments {
 							<div
-								class={ MonthAppointmentPillClasses(appt.Status) }
+								class="sabio-month-appt-pill"
 								hx-get={ fmt.Sprintf("/agenda/appointments/%s", appt.ID) }
 								hx-target="#modal-container"
 								hx-swap="innerHTML"
-								role="button"
-								tabindex="0"
-								aria-label={ fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime) }
 							>
-								<span class="font-semibold shrink-0">{ appt.StartTime }</span>
-								<span class="truncate">{ appt.PatientName }</span>
+								<span class="sabio-month-appt-time">{ appt.StartTime }</span>
+								<span class="sabio-month-appt-name">{ appt.PatientName }</span>
 							</div>
 						}
 					}
 				</div>
 			}
 		</div>
-		<!-- Footer -->
-		<div class="h-9 bg-neutral-50 border-t border-neutral-200 flex items-center px-5">
-			<div class="ml-auto text-xs text-neutral-600 font-semibold bg-white border border-neutral-200 px-2.5 py-0.5 rounded-full">
-				{ fmt.Sprintf("%d consultas este mês", vm.TotalCount) }
-			</div>
-		</div>
 	</div>
 }
 
-// DayColumn renders a single day column
-templ DayColumn(day DayViewModel) {
-	<div class={ TodayColumnClasses(day.IsToday) }>
-		<!-- 13 hour rows (08:00-20:00) -->
-		for i := 0; i < 13; i++ {
-			<div class="h-20 border-b border-dashed border-neutral-100 last:border-b-0"></div>
-		}
-		
-		<!-- Appointments -->
-		for _, appt := range day.Appointments {
-			@AppointmentCard(appt)
-		}
-	</div>
-}
-
-// AppointmentCard renders an appointment card
-templ AppointmentCard(appt AppointmentViewModel) {
+// WeekAppointmentCard renders an appointment in week view
+templ WeekAppointmentCard(appt AppointmentViewModel) {
 	<div
-		class={ "absolute left-0.5 right-0.5 rounded-md px-1.5 py-1 text-xs cursor-pointer overflow-hidden border-l-[3px] transition-all hover:brightness-[0.96]", GetAppointmentCardClasses(appt.Status) }
-		style={ fmt.Sprintf("top:%dpx;height:%dpx", appt.TopPx, appt.HeightPx) }
+		class="sabio-week-appt"
+		style={ fmt.Sprintf("top:%dpx;height:%dpx;background:%s;border-left:3px solid %s;color:%s", appt.TopPx, appt.HeightPx, getToneBg(appt.Tone), getToneBd(appt.Tone), getToneFg(appt.Tone)) }
 		role="button"
 		tabindex="0"
 		aria-label={ fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime) }
@@ -269,8 +323,137 @@ templ AppointmentCard(appt AppointmentViewModel) {
 		hx-target="#modal-container"
 		hx-swap="innerHTML"
 	>
-		<div class="text-xs font-medium opacity-75 mb-0.5 truncate">{ appt.StartTime } – { appt.EndTime }</div>
-		<div class="font-semibold leading-tight truncate">{ appt.PatientName }</div>
-		<div class="text-xs opacity-65 mt-0.5 truncate">{ StatusLabel(appt.Status) }</div>
+		<span class="sabio-week-appt-time">{ appt.StartTime }</span>
+		<span class="sabio-week-appt-name">{ appt.PatientName }</span>
 	</div>
+}
+
+// DayAppointmentCard renders an appointment in day view
+templ DayAppointmentCard(appt AppointmentViewModel) {
+	<div
+		class="sabio-day-appt"
+		style={ fmt.Sprintf("border-left:4px solid %s", getToneBd(appt.Tone)) }
+		role="button"
+		tabindex="0"
+		aria-label={ fmt.Sprintf("Consulta de %s às %s", appt.PatientName, appt.StartTime) }
+		hx-get={ fmt.Sprintf("/agenda/appointments/%s", appt.ID) }
+		hx-target="#modal-container"
+		hx-swap="innerHTML"
+	>
+		<div class="sabio-day-appt-left">
+			<span class="sabio-day-appt-time-mono" style={ fmt.Sprintf("color:%s", getToneBd(appt.Tone)) }>{ appt.StartTime }</span>
+		</div>
+		<div class="sabio-day-appt-center">
+			<span class="sabio-day-appt-patient">{ appt.PatientName }</span>
+			<span class="sabio-day-appt-type">{ appt.SessionType }</span>
+		</div>
+	</div>
+}
+
+// AgendaSidebar renders the sidebar with requests and availability
+templ AgendaSidebar() {
+	<div class="sabio-agenda-sidebar">
+		<!-- Requests Card -->
+		<div class="sabio-sidebar-card">
+			<div class="sabio-sidebar-card-header">
+				<div class="sabio-sidebar-eyebrow">Solicitações</div>
+				<h3 class="sabio-sidebar-title">Em aberto</h3>
+			</div>
+			<div class="sabio-sidebar-card-body">
+				<p class="sabio-sidebar-empty">Nenhuma solicitação no momento.</p>
+			</div>
+		</div>
+		<!-- Availability Card -->
+		<div class="sabio-sidebar-card">
+			<div class="sabio-sidebar-card-header">
+				<div class="sabio-sidebar-eyebrow">Disponibilidade</div>
+				<h3 class="sabio-sidebar-title">Horários livres</h3>
+			</div>
+			<div class="sabio-sidebar-card-body">
+				<p class="sabio-sidebar-empty">Configure sua disponibilidade na configuração de agenda.</p>
+			</div>
+		</div>
+	</div>
+}
+
+// Helper functions for CSS classes
+func getDayName(day string) string {
+	switch day {
+	case "Mon":
+		return "Seg"
+	case "Tue":
+		return "Ter"
+	case "Wed":
+		return "Qua"
+	case "Thu":
+		return "Qui"
+	case "Fri":
+		return "Sex"
+	case "Sat":
+		return "Sáb"
+	case "Sun":
+		return "Dom"
+	default:
+		return day
+	}
+}
+
+func DayHeaderTodayClass(isToday bool) string {
+	if isToday {
+		return "sabio-week-header-day-today"
+	}
+	return ""
+}
+
+func DayNumTodayClass(isToday bool) string {
+	if isToday {
+		return "sabio-week-daynum-today"
+	}
+	return ""
+}
+
+func TodayColumnClass(isToday bool) string {
+	if isToday {
+		return "sabio-week-day-col-today"
+	}
+	return "sabio-week-day-col"
+}
+
+func MonthCellTodayClass(isToday bool) string {
+	if isToday {
+		return "sabio-month-cell-today"
+	}
+	return "sabio-month-cell"
+}
+
+func MonthDayNumClass(isToday bool) string {
+	if isToday {
+		return "sabio-month-daynum-today"
+	}
+	return ""
+}
+
+// WeekSlotClass returns CSS class for a week grid slot.
+// Even index = full hour (border-bottom to mark hour boundary after the :30 slot above).
+// Odd index = half-hour (dashed lighter border).
+func WeekSlotClass(i int) string {
+	if i%2 == 1 {
+		return "sabio-week-slot sabio-week-slot-hour"
+	}
+	return "sabio-week-slot"
+}
+
+func getToneBg(tone string) string {
+	bg, _, _ := ToneStyles(tone)
+	return bg
+}
+
+func getToneBd(tone string) string {
+	_, bd, _ := ToneStyles(tone)
+	return bd
+}
+
+func getToneFg(tone string) string {
+	_, _, fg := ToneStyles(tone)
+	return fg
 }

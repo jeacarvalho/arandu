@@ -15,6 +15,8 @@ type AgendaServiceInterface interface {
 	GetAppointment(ctx context.Context, id string) (*appointment.Appointment, error)
 	UpdateAppointment(ctx context.Context, id string, patientID, patientName string, date time.Time, startTime, endTime string, duration int, notes string) error
 	CancelAppointment(ctx context.Context, id string) error
+	ConfirmAppointment(ctx context.Context, id string) error
+	MarkNoShow(ctx context.Context, id string) error
 	CompleteAppointment(ctx context.Context, id string, sessionID string) error
 	GetDayView(ctx context.Context, date time.Time) (*DayView, error)
 	GetWeekView(ctx context.Context, date time.Time) (*WeekView, error)
@@ -28,6 +30,7 @@ type AgendaServiceInterface interface {
 type AppointmentRepository interface {
 	Save(ctx context.Context, appt *appointment.Appointment) error
 	FindByID(ctx context.Context, id string) (*appointment.Appointment, error)
+	FindBySessionID(ctx context.Context, sessionID string) (*appointment.Appointment, error)
 	FindByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*appointment.Appointment, error)
 	FindByPatient(ctx context.Context, patientID string) ([]*appointment.Appointment, error)
 	FindByDate(ctx context.Context, date time.Time) ([]*appointment.Appointment, error)
@@ -157,6 +160,23 @@ func (s *AgendaService) CancelAppointment(ctx context.Context, id string) error 
 	}
 
 	if err := appt.Cancel(); err != nil {
+		return err
+	}
+
+	return s.apptRepo.Update(ctx, appt)
+}
+
+// ConfirmAppointment confirms an appointment
+func (s *AgendaService) ConfirmAppointment(ctx context.Context, id string) error {
+	appt, err := s.apptRepo.FindByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("failed to find appointment: %w", err)
+	}
+	if appt == nil {
+		return fmt.Errorf("appointment not found")
+	}
+
+	if err := appt.Confirm(); err != nil {
 		return err
 	}
 
@@ -391,4 +411,8 @@ func (s *AgendaService) GetPatientAppointments(ctx context.Context, patientID st
 		return appts[i].Date.After(appts[j].Date)
 	})
 	return appts, nil
+}
+
+func (s *AgendaService) GetAppointmentBySession(ctx context.Context, sessionID string) (*appointment.Appointment, error) {
+	return s.apptRepo.FindBySessionID(ctx, sessionID)
 }

@@ -49,8 +49,8 @@ async function testPatientDetailAndNavigation() {
             return {
                 cssFiles,
                 hasV2: cssFiles.some(href => href.includes('tailwind-v2.css')),
-                shellExists: !!document.querySelector('.shell'),
-                sidebarTitle: document.querySelector('.shell-sidebar-title')?.textContent || 'N/A'
+                shellExists: !!document.querySelector('.drawer, .drawer-open'),
+                sidebarTitle: document.querySelector('.sabio-brand-name, .arandu-sidebar .sabio-brand-name')?.textContent || 'N/A'
             };
         });
         
@@ -100,7 +100,7 @@ async function testPatientDetailAndNavigation() {
             const anamneseCheck = await page.evaluate(() => {
                 return {
                     hasV2: document.querySelector('link[href*="tailwind-v2.css"]') !== null,
-                    shellExists: !!document.querySelector('.shell'),
+                    shellExists: !!document.querySelector('.drawer, .drawer-open'),
                     widgetExists: !!document.querySelector('.widget-wrapper'),
                     title: document.querySelector('h1')?.textContent || 'N/A'
                 };

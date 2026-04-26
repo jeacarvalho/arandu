@@ -1,4 +1,40 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+[data-theme="arandu"] {
+  color-scheme: light;
+
+  /* Base — papel cru Sábio */
+  --color-base-100:    #F5EFE6;   /* --paper */
+  --color-base-200:    #EDE5D8;   /* --paper-2 */
+  --color-base-300:    #E3D9C6;   /* --paper-3 */
+  --color-base-content: #1F1A15;  /* --ink */
+
+  /* Primary — acento marrom terroso */
+  --color-primary:         #4A3527;   /* --accent-deep */
+  --color-primary-content: #F5EFE6;  /* --paper */
+
+  /* Secondary / Accent */
+  --color-secondary:         #6B4E3D;  /* --accent */
+  --color-secondary-content: #F5EFE6;
+  --color-accent:            #A67C52;  /* --accent-soft */
+  --color-accent-content:    #F5EFE6;
+
+  /* Status */
+  --color-success:  #4A5D4F;  /* --moss-2 */
+  --color-warning:  #C67B5C;  /* --clay */
+  --color-error:    #A0463A;  /* --danger */
+  --color-info:     #6B5F52;  /* --ink-3 */
+
+  /* Neutral */
+  --color-neutral:         #1F1A15;
+  --color-neutral-content: #F5EFE6;
+
+  /* Raios */
+  --radius-box:   0.875rem;  /* 14px */
+  --radius-btn:   0.5rem;    /* 8px */
+  --radius-badge: 999px;
+}
 
 @source "../../components/**/*.templ";
 @source "../../components/**/*.go";
@@ -1544,7 +1580,7 @@ main .patient-form-wrapper,
   border-top: 1px solid #e5e7eb !important;
 }
 
-.btn {
+.patient-form-wrapper .btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1888,34 +1924,68 @@ main .patient-form-wrapper,
   background-color: var(--color-paper);
 }
 
-.shell-canvas {
-  min-height: calc(100vh - 64px);
+/* Sidebar é position:relative no flex flow — sem padding-left no canvas */
+.shell-canvas-expanded { padding-left: 0; }
+.shell-canvas-collapsed { padding-left: 0; }
+
+/* ============================================
+   ARANDU SIDEBAR — design Sábio
+   ============================================ */
+.arandu-sidebar {
+  background: var(--paper, #F5EFE6);
+  border-right: 1px solid var(--line, #D9CDB8);
+  color: var(--ink, #1F1A15);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.shell-canvas-container {
-  padding: 1.5rem;
-  /* Account for fixed topbar (64px) + some spacing */
-  padding-top: 80px;
-  /* Default: expanded sidebar padding */
-  padding-left: 260px;
-  transition: padding-left 0.2s ease;
+/* Nav items */
+.arandu-sidebar .sabio-nav-item {
+  color: var(--ink-2, #3A332B);
+  border-radius: 10px;
+  transition: background .15s ease, color .15s ease;
 }
 
-/* Sidebar state classes - applied by Alpine */
-.shell-canvas-expanded {
-  padding-left: 280px;
+.arandu-sidebar .sabio-nav-item:hover {
+  background: color-mix(in oklab, var(--accent, #6B4E3D) 8%, transparent);
+  color: var(--ink, #1F1A15);
 }
 
-.shell-canvas-collapsed {
-  padding-left: 80px;
+.arandu-sidebar .sabio-nav-item[aria-current="page"] {
+  background: color-mix(in oklab, var(--accent, #6B4E3D) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent, #6B4E3D) 22%, transparent);
+  color: var(--accent-deep, #4A3527);
+  font-weight: 500;
 }
 
-/* Mobile: reduced padding */
-@media (max-width: 767px) {
-  .shell-canvas-container {
-    padding-left: 1rem;
-    padding-top: 80px;
-  }
+/* Seção labels (MENU / ATALHOS) */
+.arandu-sidebar .sabio-nav-section-label {
+  color: var(--ink-4, #9B8E7E);
 }
+
+/* Brand header */
+.arandu-sidebar .sabio-brand-header {
+  border-bottom: 1px solid var(--line, #D9CDB8);
+}
+
+/* Footer */
+.arandu-sidebar .sabio-sidebar-footer {
+  border-top: 1px solid var(--line, #D9CDB8);
+}
+
+.arandu-sidebar .sabio-collapse-btn {
+  border: 1px dashed var(--line-2, #C6B89F);
+  color: var(--ink-3, #6B5F52);
+}
+
+/* Avatar iniciais */
+.arandu-sidebar .sabio-avatar {
+  font-family: var(--font-serif, 'Fraunces', serif);
+  background: linear-gradient(135deg,
+    color-mix(in oklab, var(--accent, #6B4E3D) 80%, var(--paper)),
+    var(--accent, #6B4E3D));
+  color: var(--paper, #F5EFE6);
+}
+
 
 /* Cache bust: 1775356309 */

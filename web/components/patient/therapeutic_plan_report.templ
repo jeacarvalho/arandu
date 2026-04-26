@@ -28,7 +28,7 @@ type GoalReportItemVM struct {
 templ TherapeuticPlanReport(data TherapeuticPlanReportData) {
 	<div class="plan-report-container">
 		<!-- Report Header -->
-		<header class="plan-report-header">
+		<div class="plan-report-header">
 			<div class="plan-report-logo">
 				<i class="fas fa-heartbeat"></i>
 				<span>Arandu</span>
@@ -38,7 +38,7 @@ templ TherapeuticPlanReport(data TherapeuticPlanReportData) {
 				<p class="plan-report-patient">{ data.PatientName }</p>
 				<p class="plan-report-date">Gerado em { data.ReportDate }</p>
 			</div>
-		</header>
+		</div>
 
 		<!-- Report Summary -->
 		<div class="plan-report-summary">

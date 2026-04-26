@@ -54,7 +54,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"plan-report-container\"><!-- Report Header --><header class=\"plan-report-header\"><div class=\"plan-report-logo\"><i class=\"fas fa-heartbeat\"></i> <span>Arandu</span></div><div class=\"plan-report-meta\"><p class=\"plan-report-title\">Relatório de Plano Terapêutico</p><p class=\"plan-report-patient\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"plan-report-container\"><!-- Report Header --><div class=\"plan-report-header\"><div class=\"plan-report-logo\"><i class=\"fas fa-heartbeat\"></i> <span>Arandu</span></div><div class=\"plan-report-meta\"><p class=\"plan-report-title\">Relatório de Plano Terapêutico</p><p class=\"plan-report-patient\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +80,7 @@ func TherapeuticPlanReport(data TherapeuticPlanReportData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></header><!-- Report Summary --><div class=\"plan-report-summary\"><div class=\"plan-report-stat\"><span class=\"plan-report-stat-number\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></div><!-- Report Summary --><div class=\"plan-report-summary\"><div class=\"plan-report-stat\"><span class=\"plan-report-stat-number\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

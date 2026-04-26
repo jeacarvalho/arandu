@@ -29,6 +29,7 @@ run_suite() {
 run_suite "Checkpoint" "test_checkpoint.sh"
 run_suite "Guard" "test_guard.sh"
 run_suite "Trace" "test_trace.sh"
+run_suite "Layout Geometry" "test_layout_geometry.sh"
 
 echo ""
 echo "================================"

@@ -33,6 +33,8 @@ type AgendaServiceInterface interface {
 	GetAppointment(ctx context.Context, id string) (*appointment.Appointment, error)
 	UpdateAppointment(ctx context.Context, id string, patientID, patientName string, date time.Time, startTime, endTime string, duration int, notes string) error
 	CancelAppointment(ctx context.Context, id string) error
+	ConfirmAppointment(ctx context.Context, id string) error
+	MarkNoShow(ctx context.Context, id string) error
 	CompleteAppointment(ctx context.Context, id string, sessionID string) error
 	GetDayView(ctx context.Context, date time.Time) (*services.DayView, error)
 	GetWeekView(ctx context.Context, date time.Time) (*services.WeekView, error)
@@ -114,9 +116,18 @@ func (h *AgendaHandler) viewModelForWeek(ctx context.Context, date time.Time) (a
 
 	days := make([]agendaComponents.DayViewModel, 0, len(weekView.Days))
 	total := 0
+	confirmed := 0
+	pending := 0
 	for _, d := range weekView.Days {
 		appts := convertAppointmentsForWeek(d.Appointments)
 		total += len(appts)
+		for _, ap := range appts {
+			if ap.Status == "confirmed" || ap.Status == "completed" {
+				confirmed++
+			} else if ap.Status == "pending" {
+				pending++
+			}
+		}
 		days = append(days, agendaComponents.DayViewModel{
 			Date:         d.Date,
 			DayName:      d.Date.Format("Mon"),
@@ -132,8 +143,15 @@ func (h *AgendaHandler) viewModelForWeek(ctx context.Context, date time.Time) (a
 		WeekLabel:  fmt.Sprintf("%d – %d de %s de %d", weekView.StartDate.Day(), weekView.EndDate.Day(), strings.ToLower(weekView.EndDate.Format("January")), weekView.EndDate.Year()),
 		Days:       days,
 		TotalCount: total,
+		Confirmed:  confirmed,
+		Pending:   pending,
 		PrevDate:   weekView.StartDate.AddDate(0, 0, -7).Format("2006-01-02"),
 		NextDate:   weekView.StartDate.AddDate(0, 0, 7).Format("2006-01-02"),
+		Metrics: []agendaComponents.AgendaMetric{
+			{Value: fmt.Sprintf("%d", total), Label: "sessões esta semana"},
+			{Value: fmt.Sprintf("%d", confirmed), Label: "confirmadas"},
+			{Value: fmt.Sprintf("%d", pending), Label: "pendentes"},
+		},
 	}, nil
 }
 
@@ -144,6 +162,15 @@ func (h *AgendaHandler) viewModelForDay(ctx context.Context, date time.Time) (ag
 	}
 
 	appts := convertAppointmentsForWeek(dayView.Appointments)
+	confirmed := 0
+	pending := 0
+	for _, ap := range appts {
+		if ap.Status == "confirmed" || ap.Status == "completed" {
+			confirmed++
+		} else if ap.Status == "pending" {
+			pending++
+		}
+	}
 	days := []agendaComponents.DayViewModel{{
 		Date:         date,
 		DayName:      date.Format("Mon"),
@@ -158,8 +185,15 @@ func (h *AgendaHandler) viewModelForDay(ctx context.Context, date time.Time) (ag
 		WeekLabel:  fmt.Sprintf("%d de %s de %d", date.Day(), strings.ToLower(date.Format("January")), date.Year()),
 		Days:       days,
 		TotalCount: len(appts),
+		Confirmed:  confirmed,
+		Pending:   pending,
 		PrevDate:   date.AddDate(0, 0, -1).Format("2006-01-02"),
 		NextDate:   date.AddDate(0, 0, 1).Format("2006-01-02"),
+		Metrics: []agendaComponents.AgendaMetric{
+			{Value: fmt.Sprintf("%d", len(appts)), Label: "sessões este dia"},
+			{Value: fmt.Sprintf("%d", confirmed), Label: "confirmadas"},
+			{Value: fmt.Sprintf("%d", pending), Label: "pendentes"},
+		},
 	}, nil
 }
 
@@ -173,21 +207,32 @@ func (h *AgendaHandler) viewModelForMonth(ctx context.Context, date time.Time) (
 	apptsByDate := make(map[string][]agendaComponents.AppointmentViewModel)
 	for _, a := range monthView.Appointments {
 		key := a.Date.Format("2006-01-02")
+		mappedStatus := mapAppointmentStatus(string(a.Status))
 		apptsByDate[key] = append(apptsByDate[key], agendaComponents.AppointmentViewModel{
 			ID:          a.ID,
 			PatientName: a.PatientName,
 			StartTime:   a.StartTime,
 			EndTime:     a.EndTime,
-			Status:      mapAppointmentStatus(string(a.Status)),
+			Status:      mappedStatus,
+			Tone:        agendaComponents.StatusToTone(mappedStatus),
 		})
 	}
 
 	days := make([]agendaComponents.DayViewModel, 0, len(monthView.Days))
 	total := 0
+	confirmed := 0
+	pending := 0
 	for _, d := range monthView.Days {
 		key := d.Date.Format("2006-01-02")
 		dayAppts := apptsByDate[key]
 		total += len(dayAppts)
+		for _, ap := range dayAppts {
+			if ap.Status == "confirmed" || ap.Status == "completed" {
+				confirmed++
+			} else if ap.Status == "pending" {
+				pending++
+			}
+		}
 		days = append(days, agendaComponents.DayViewModel{
 			Date:             d.Date,
 			DayName:          d.Date.Format("Mon"),
@@ -207,8 +252,15 @@ func (h *AgendaHandler) viewModelForMonth(ctx context.Context, date time.Time) (
 		WeekLabel:  fmt.Sprintf("%s de %d", strings.ToLower(date.Format("January")), date.Year()),
 		Days:       days,
 		TotalCount: total,
+		Confirmed:  confirmed,
+		Pending:   pending,
 		PrevDate:   fmt.Sprintf("%d-%02d-01", prev.Year(), prev.Month()),
 		NextDate:   fmt.Sprintf("%d-%02d-01", next.Year(), next.Month()),
+		Metrics: []agendaComponents.AgendaMetric{
+			{Value: fmt.Sprintf("%d", total), Label: "sessões este mês"},
+			{Value: fmt.Sprintf("%d", confirmed), Label: "confirmadas"},
+			{Value: fmt.Sprintf("%d", pending), Label: "pendentes"},
+		},
 	}, nil
 }
 
@@ -223,12 +275,12 @@ func convertAppointmentsForWeek(appointments []*appointment.Appointment) []agend
 	for _, a := range appointments {
 		startHour := a.GetStartDateTime().Hour()
 		startMin := a.GetStartDateTime().Minute()
-		topPx := ((startHour-8)*60 + startMin) * 80 / 60
+		topPx := ((startHour-8)*60 + startMin) * 64 / 60
 		if topPx < 0 {
 			topPx = 0
 		}
 
-		heightPx := (a.Duration * 80 / 60) - 4
+		heightPx := (a.Duration * 64 / 60) - 4
 		if heightPx < 20 {
 			heightPx = 20
 		}
@@ -249,6 +301,7 @@ func convertAppointmentsForWeek(appointments []*appointment.Appointment) []agend
 			EndTime:     a.EndTime,
 			SessionType: sessionType,
 			Status:      status,
+			Tone:       agendaComponents.StatusToTone(status),
 			TopPx:       topPx,
 			HeightPx:    heightPx,
 		})
@@ -709,6 +762,76 @@ func (h *AgendaHandler) Cancel(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
+// Confirm handles POST /agenda/appointments/{id}/confirm
+func (h *AgendaHandler) Confirm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := extractIDFromPath(r.URL.Path, "/agenda/appointments/")
+	id = strings.TrimSuffix(id, "/confirm")
+	if id == "" {
+		http.Error(w, "Invalid appointment ID", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	err := h.agendaService.ConfirmAppointment(ctx, id)
+	if err != nil {
+		http.Error(w, "Failed to confirm appointment", http.StatusInternalServerError)
+		return
+	}
+
+	appt, err := h.agendaService.GetAppointment(ctx, id)
+	if err != nil {
+		http.Error(w, "Failed to get appointment", http.StatusInternalServerError)
+		return
+	}
+
+	vm := mapToAppointmentDetailModel(appt)
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AppointmentDetail(vm).Render(r.Context(), w)
+		return
+	}
+	http.Redirect(w, r, "/agenda", http.StatusSeeOther)
+}
+
+// NoShow handles POST /agenda/appointments/{id}/no-show
+func (h *AgendaHandler) NoShow(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := extractIDFromPath(r.URL.Path, "/agenda/appointments/")
+	id = strings.TrimSuffix(id, "/no-show")
+	if id == "" {
+		http.Error(w, "Invalid appointment ID", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	err := h.agendaService.MarkNoShow(ctx, id)
+	if err != nil {
+		http.Error(w, "Failed to mark no-show", http.StatusInternalServerError)
+		return
+	}
+
+	appt, err := h.agendaService.GetAppointment(ctx, id)
+	if err != nil {
+		http.Error(w, "Failed to get appointment", http.StatusInternalServerError)
+		return
+	}
+
+	vm := mapToAppointmentDetailModel(appt)
+	if r.Header.Get("HX-Request") == "true" {
+		agendaComponents.AppointmentDetail(vm).Render(r.Context(), w)
+		return
+	}
+	http.Redirect(w, r, "/agenda", http.StatusSeeOther)
+}
+
 // Reschedule handles POST /agenda/appointments/{id}/reschedule
 func (h *AgendaHandler) Reschedule(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -870,4 +993,27 @@ func convertTimeSlots(slots []appointment.TimeSlot) []agendaComponents.TimeSlotV
 		result = append(result, slot)
 	}
 	return result
+}
+
+func mapToAppointmentDetailModel(appt *appointment.Appointment) agendaComponents.AppointmentDetailModel {
+	sessionType := "Sessão individual"
+	if appt.Type == appointment.AppointmentTypeFollowup {
+		sessionType = "Acompanhamento"
+	} else if appt.Type == appointment.AppointmentTypeBlocked {
+		sessionType = "Bloqueado"
+	}
+
+	return agendaComponents.AppointmentDetailModel{
+		ID:          appt.ID,
+		PatientID:   appt.PatientID,
+		PatientName: appt.PatientName,
+		Date:        appt.Date,
+		StartTime:   appt.StartTime,
+		EndTime:     appt.EndTime,
+		Duration:    appt.Duration,
+		SessionType: sessionType,
+		Status:      string(appt.Status),
+		Notes:       appt.Notes,
+		SessionID:   appt.SessionID,
+	}
 }
