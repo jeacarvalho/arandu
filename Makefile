@@ -50,18 +50,27 @@ clean:
 	@find web/components -name "*_templ.go" -delete
 	@echo "✅ Limpo"
 
-# Executar testes
-test: test-unit test-e2e
+# Executar testes (paralelo -usa todos os núcleos)
+test:
+	@echo "🧪 Executando testes em paralelo..."
+	@bash tests/run_parallel.sh
 
+# Testes unitários apenas
 test-unit:
-	@echo "🧪 Executando unit tests..."
-	@bash tests/run_unit.sh
+	@echo "🧪 Unit Tests..."
+	@go test $(go list ./... | grep -v -E '(tests/e2e|scripts|cmd|migrations)')
 
+# Testes E2E apenas
 test-e2e:
-	@echo "🌐 Executando E2E tests..."
-	@bash tests/run_e2e.sh
+	@echo "🌐 E2E Tests..."
+	@bash tests/run_e2e_parallel.sh
 
-test-all: test-unit test-e2e
+# Playwright E2E Tests
+test-playwright:
+	@echo "🎭 Playwright E2E Tests..."
+	@go test ./tests/e2e/ -run TestPlaywrightClinicalWorkflow -v -timeout 120s
+
+test-all: test-unit test-e2e test-playwright
 
 # Lint
 golint:

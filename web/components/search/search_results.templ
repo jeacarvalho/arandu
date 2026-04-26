@@ -1,9 +1,8 @@
 package search
 
-// SearchResultsPage shows the full search results page with layout
 templ SearchResultsPage(model SearchResultsViewModel) {
 	<div class="max-w-3xl mx-auto p-6">
-		<h1 class="text-xl font-semibold mb-6" style="color:#111827">
+		<h1 class="text-xl font-semibold mb-6">
 			if model.Query != "" {
 				Busca: "{model.Query}" — {model.Total} resultado(s)
 			} else {
@@ -11,33 +10,46 @@ templ SearchResultsPage(model SearchResultsViewModel) {
 			}
 		</h1>
 		if model.Total == 0 && model.Query != "" {
-			<p class="text-neutral-500">Nenhum resultado para "{model.Query}"</p>
+			<p class="text-base-content/50">Nenhum resultado para "{model.Query}"</p>
+		}
+		if len(model.Patients) > 0 {
+			<div class="mb-4">
+				<div class="text-xs font-semibold uppercase tracking-wider text-base-content/50 px-2 mb-2">
+					Pacientes
+				</div>
+				for _, p := range model.Patients {
+					<a
+						href={ templ.URL("/patients/" + p.ID) }
+						class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-colors"
+					>
+						<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+							<i class="fas fa-user text-primary text-xs"></i>
+						</div>
+						<span class="text-sm font-medium">{ p.Name }</span>
+					</a>
+				}
+			</div>
+		}
+		if len(model.Patients) > 0 && len(model.Results) > 0 {
+			<div class="divider my-2 text-xs text-base-content/40">Registros Clínicos</div>
 		}
 		<div class="space-y-4">
 			for _, item := range model.Results {
-				<div class="bg-white rounded-xl p-4 shadow-sm">
+				<div class="card bg-base-100 border border-base-300 shadow-sm">
 					<div class="flex items-center gap-2 mb-2">
-						<a
-							href={ templ.URL("/patient/" + item.PatientID) }
-							class="font-semibold text-sm hover:underline"
-							style="color:#111827"
-						>
+						<a href={ templ.URL("/patient/" + item.PatientID) } class="font-semibold text-sm hover:underline">
 							{ item.PatientName }
 						</a>
-						<span class="text-xs" style="color:#9ca3af">•</span>
-						<span class="text-xs" style="color:#9ca3af">{ item.Type }</span>
-						<span class="text-xs" style="color:#9ca3af">•</span>
-						<span class="text-xs" style="color:#9ca3af">{ item.Date }</span>
+						<span class="text-xs text-base-content/50">•</span>
+						<span class="text-xs text-base-content/50">{ item.Type }</span>
+						<span class="text-xs text-base-content/50">•</span>
+						<span class="text-xs text-base-content/50">{ item.Date }</span>
 					</div>
-					<p class="font-serif text-sm mb-2" style="color:#374151">
+					<p class="clinical text-sm mb-2">
 						@templ.Raw(item.Snippet)
 					</p>
 					if item.SessionID != "" {
-						<a
-							href={ templ.URL("/session/" + item.SessionID) }
-							class="text-xs hover:underline"
-							style="color:#6b7280"
-						>
+						<a href={ templ.URL("/session/" + item.SessionID) } class="text-xs hover:underline">
 							Ver sessão →
 						</a>
 					}
@@ -47,41 +59,53 @@ templ SearchResultsPage(model SearchResultsViewModel) {
 	</div>
 }
 
-// SearchResults shows just the search results fragment for HTMX
 templ SearchResults(model SearchResultsViewModel) {
 	if model.Query != "" {
-		<h1 class="text-xl font-semibold mb-6" style="color:#111827">
+		<h1 class="text-xl font-semibold mb-6">
 			Busca: "{model.Query}" — {model.Total} resultado(s)
 		</h1>
 	}
 	if model.Total == 0 && model.Query != "" {
-		<p class="text-neutral-500">Nenhum resultado para "{model.Query}"</p>
+		<p class="text-base-content/50">Nenhum resultado para "{model.Query}"</p>
+	}
+	if len(model.Patients) > 0 {
+		<div class="mb-4">
+			<div class="text-xs font-semibold uppercase tracking-wider text-base-content/50 px-2 mb-2">
+				Pacientes
+			</div>
+			for _, p := range model.Patients {
+				<a
+					href={ templ.URL("/patients/" + p.ID) }
+					class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-colors"
+				>
+					<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+						<i class="fas fa-user text-primary text-xs"></i>
+					</div>
+					<span class="text-sm font-medium">{ p.Name }</span>
+				</a>
+			}
+		</div>
+	}
+	if len(model.Patients) > 0 && len(model.Results) > 0 {
+		<div class="divider my-2 text-xs text-base-content/40">Registros Clínicos</div>
 	}
 	<div class="space-y-4">
 		for _, item := range model.Results {
-			<div class="bg-white rounded-xl p-4 shadow-sm">
+			<div class="card bg-base-100 border border-base-300 shadow-sm">
 				<div class="flex items-center gap-2 mb-2">
-					<a
-						href={ templ.URL("/patient/" + item.PatientID) }
-						class="font-semibold text-sm hover:underline"
-						style="color:#111827"
-					>
+					<a href={ templ.URL("/patient/" + item.PatientID) } class="font-semibold text-sm hover:underline">
 						{ item.PatientName }
 					</a>
-					<span class="text-xs" style="color:#9ca3af">•</span>
-					<span class="text-xs" style="color:#9ca3af">{ item.Type }</span>
-					<span class="text-xs" style="color:#9ca3af">•</span>
-					<span class="text-xs" style="color:#9ca3af">{ item.Date }</span>
+					<span class="text-xs text-base-content/50">•</span>
+					<span class="text-xs text-base-content/50">{ item.Type }</span>
+					<span class="text-xs text-base-content/50">•</span>
+					<span class="text-xs text-base-content/50">{ item.Date }</span>
 				</div>
-				<p class="font-serif text-sm mb-2" style="color:#374151">
+				<p class="clinical text-sm mb-2">
 					@templ.Raw(item.Snippet)
 				</p>
 				if item.SessionID != "" {
-					<a
-						href={ templ.URL("/session/" + item.SessionID) }
-						class="text-xs hover:underline"
-						style="color:#6b7280"
-					>
+					<a href={ templ.URL("/session/" + item.SessionID) } class="text-xs hover:underline">
 						Ver sessão →
 					</a>
 				}

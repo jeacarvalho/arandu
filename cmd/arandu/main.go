@@ -138,11 +138,12 @@ func main() {
 
 	// Create new handlers with dependency injection
 	patientHandler := handlers.NewPatientHandler(patientServiceAdapter, sessionServiceAdapter, insightServiceAdapter, biopsychosocialServiceAdapterImpl, timelineServiceAdapter, anamnesisServiceAdapter, agendaService)
-	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter)
+	sessionHandler := handlers.NewSessionHandler(sessionServiceAdapter, patientServiceAdapter, observationServiceAdapter, interventionServiceAdapter, goalServiceAdapter, observationServiceAdapter, interventionClassificationServiceAdapter)
 	observationHandler := handlers.NewObservationHandler(observationServiceAdapter)
 	interventionHandler := handlers.NewInterventionHandler(interventionServiceAdapter)
 	var dashboardHandler *handlers.DashboardHandler // initialized after agendaService below
-	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter)
+	timelineHandler := handlers.NewTimelineHandler(timelineServiceAdapter, patientServiceAdapter)
+	notesHandler := handlers.NewNotesHandler(patientServiceAdapter, timelineServiceAdapter)
 	biopsychosocialHandler := handlers.NewBiopsychosocialHandler(biopsychosocialService)
 
 	// Create Analysis Handler for theme cloud and pattern detection
@@ -221,6 +222,10 @@ func main() {
 			agendaHandler.CompleteWithSession(w, r)
 		} else if strings.Contains(path, "/complete") && r.Method == "POST" {
 			agendaHandler.Complete(w, r)
+		} else if strings.Contains(path, "/confirm") && r.Method == "POST" {
+			agendaHandler.Confirm(w, r)
+		} else if strings.Contains(path, "/no-show") && r.Method == "POST" {
+			agendaHandler.NoShow(w, r)
 		} else {
 			http.NotFound(w, r)
 		}
@@ -233,6 +238,11 @@ func main() {
 	})
 	mux.HandleFunc("/dashboard", dashboardHandler.Show)
 
+	// Notes library route (before patient routes to avoid conflict)
+	mux.HandleFunc("/notes", notesHandler.Index)
+	mux.HandleFunc("/notes/search", notesHandler.Search)
+	mux.HandleFunc("/notes/detail/", notesHandler.Detail)
+
 	// Patient routes - using the actual method names from the new handlers
 	mux.HandleFunc("/patients", patientHandler.ListPatients)
 	// TODO: Migrate to templ
@@ -241,7 +251,7 @@ func main() {
 	mux.HandleFunc("/patients/create", patientHandler.CreatePatient)
 
 	// Search route
-	searchHandler := handlers.NewSearchHandler(timelineServiceAdapter)
+	searchHandler := handlers.NewSearchHandler(timelineServiceAdapter, patientServiceAdapter)
 	mux.HandleFunc("/search", searchHandler.Search)
 
 	// Session routes - using the actual method names from the new handlers
@@ -284,6 +294,11 @@ func main() {
 			// Check if it's the edit form request
 			if r.Method == "GET" && strings.HasSuffix(path, "/edit") {
 				classificationHandler.GetClassificationEdit(w, r)
+				return
+			}
+			// POST to /observations/{id}/classify/bulk - bulk add tags
+			if r.Method == "POST" && strings.HasSuffix(path, "/classify/bulk") {
+				classificationHandler.BulkClassifyObservation(w, r)
 				return
 			}
 			// POST to /observations/{id}/classify - add tag
@@ -332,6 +347,11 @@ func main() {
 			// Check if it's the edit form request
 			if r.Method == "GET" && strings.HasSuffix(path, "/edit") {
 				interventionClassificationHandler.GetInterventionClassificationEdit(w, r)
+				return
+			}
+			// POST bulk to /interventions/{id}/classify/bulk - add multiple tags
+			if r.Method == "POST" && strings.HasSuffix(path, "/classify/bulk") {
+				interventionClassificationHandler.BulkClassifyIntervention(w, r)
 				return
 			}
 			// POST to /interventions/{id}/classify - add tag

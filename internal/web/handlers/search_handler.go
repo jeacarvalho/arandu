@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"arandu/internal/application/services"
+	"arandu/internal/domain/patient"
 	"arandu/internal/domain/timeline"
 	searchComponents "arandu/web/components/search"
 )
@@ -12,6 +13,7 @@ import (
 // SearchHandler handles global search requests
 type SearchHandler struct {
 	timelineService TimelineSearchServiceInterface
+	patientService PatientSearchServiceInterface
 }
 
 // TimelineSearchServiceInterface defines the interface for timeline search operations
@@ -19,9 +21,17 @@ type TimelineSearchServiceInterface interface {
 	SearchGlobal(ctx context.Context, query string) ([]*services.SearchGlobalResult, error)
 }
 
+// PatientSearchServiceInterface defines the interface for patient search operations
+type PatientSearchServiceInterface interface {
+	SearchPatients(ctx context.Context, query string, limit, offset int) ([]*patient.Patient, error)
+}
+
 // NewSearchHandler creates a new search handler
-func NewSearchHandler(timelineService TimelineSearchServiceInterface) *SearchHandler {
-	return &SearchHandler{timelineService: timelineService}
+func NewSearchHandler(timelineService TimelineSearchServiceInterface, patientService PatientSearchServiceInterface) *SearchHandler {
+	return &SearchHandler{
+		timelineService: timelineService,
+		patientService: patientService,
+	}
 }
 
 // Search handles GET /search?q=termo
@@ -34,14 +44,29 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("q")
 
 	vm := searchComponents.SearchResultsViewModel{
-		Query:   query,
-		Results: []searchComponents.SearchResultItem{},
-		Total:   0,
+		Query:    query,
+		Patients: []searchComponents.PatientSearchResultItem{},
+		Results:  []searchComponents.SearchResultItem{},
+		Total:    0,
 	}
 
 	if len(query) < 2 {
 		h.renderSearchResults(w, r, vm)
 		return
+	}
+
+	if h.patientService != nil {
+		patients, err := h.patientService.SearchPatients(r.Context(), query, 10, 0)
+		if err == nil && patients != nil {
+			patientItems := make([]searchComponents.PatientSearchResultItem, 0, len(patients))
+			for _, p := range patients {
+				patientItems = append(patientItems, searchComponents.PatientSearchResultItem{
+					ID:   p.ID,
+					Name: p.Name,
+				})
+			}
+			vm.Patients = patientItems
+		}
 	}
 
 	results, err := h.timelineService.SearchGlobal(r.Context(), query)
@@ -71,7 +96,7 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vm.Results = items
-	vm.Total = len(items)
+	vm.Total = len(vm.Patients) + len(items)
 
 	h.renderSearchResults(w, r, vm)
 }

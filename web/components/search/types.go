@@ -1,5 +1,11 @@
 package search
 
+// PatientSearchResultItem represents a patient search result
+type PatientSearchResultItem struct {
+	ID   string
+	Name string
+}
+
 // SearchResultItem represents a single search result
 type SearchResultItem struct {
 	ID          string
@@ -13,7 +19,8 @@ type SearchResultItem struct {
 
 // SearchResultsViewModel is the view model for search results
 type SearchResultsViewModel struct {
-	Query   string
-	Results []SearchResultItem
-	Total   int
+	Query     string
+	Patients  []PatientSearchResultItem
+	Results   []SearchResultItem
+	Total     int
 }
